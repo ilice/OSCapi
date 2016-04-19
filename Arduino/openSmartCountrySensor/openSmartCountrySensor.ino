@@ -4,11 +4,8 @@
 
 aws_iot_mqtt_client myClient; //inicio el cliente mqtt
 char msg[32]; //bufer de lectura y escritura para el mensaje a enviar TODO pasarlo a un mensaje por cada sensor
-int cnt = 0; //contador para el número de veces que se ejecuta TODO quitar este contador
 int rc = -100; //valor devuelto por el placeholder?
 bool success_connect = false; //indicador para saber si está o no conectado
-
-
 
 // Función para sacar por el serial el mensaje
 void msg_callback(char* src, int len) {
@@ -85,8 +82,7 @@ void loop() {
   if(success_connect){
     //Se construye el mensaje en formato JSON con los valores de temperatura y luz
     sprintf(msg, "{\"temp\": \"%d\",\"light\": \"%d\"}", tempValue,lightValue);
-    //sprintf(msg, "new message %d", cnt);
-    
+        
     //Se publica el mensaje en el tópico que se pasa por parámetro
     if((rc = myClient.publish("topic2", msg, strlen(msg), 1, false)) != 0){
       Serial.println("Publish failed!");
@@ -101,10 +97,6 @@ void loop() {
       Serial.println("Yield failed!");
       Serial.println(rc);
     }
-  
-    //Se termina la iteración si se ha conectado bien, publicando a través del serial qué se ha hecho
-    sprintf(msg, "loop %d done", cnt++);
-    Serial.println(msg);
   
     delay(1000);
   }
