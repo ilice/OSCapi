@@ -3,6 +3,7 @@
 #include "aws_iot_config.h"
 
 aws_iot_mqtt_client myClient; //inicio el cliente mqtt
+char str_tempValue[5];
 char msg[100]; //bufer de escritura para el mensaje JSON a enviar
 bool success_connect = false; //indicador para saber si está o no conectado
 int error_counter = 0;
@@ -60,19 +61,22 @@ void loop() {
   lightValue = analogRead(lightSensor);
 
   float voltage = (analogRead(tempSensor) / 1024.0) * 5.0;
-  tempValue = (voltage - .5) * 100;
+  tempValue = (voltage - .5) * 100.0;
 
   if (success_connect) {
 
+    dtostrf(tempValue, 4, 1, str_tempValue);
+    str_tempValue[4] = '\0';
+    
     //Se construye el mensaje en formato JSON con los valores de temperatura y luz
-    sprintf(msg, "{\"state\":{\"reported\":{\"Temp\":%d, \"Light\":%d}}}", tempValue, lightValue);
+    sprintf(msg, "{\"state\":{\"reported\":{\"Temp\": %s, \"Light\": %d}}}", str_tempValue, lightValue);
 
     //Se actualiza la shadow
     print_log("shadow update", myClient.shadow_update(AWS_IOT_MY_THING_NAME, msg, strlen(msg), NULL, 5));
 
     print_log("yield", myClient.yield());
 
-    delay(1000);
+    delay(2000);
 
     if (error_counter >= 10) {
       Serial.println(F("Too many failures: reset connection"));
