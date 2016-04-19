@@ -4,7 +4,7 @@
 
 aws_iot_mqtt_client myClient; //inicio el cliente mqtt
 char msg[32]; //bufer de lectura y escritura para el mensaje a enviar TODO pasarlo a un mensaje por cada sensor
-int rc = -100; //valor devuelto por el placeholder?
+int rc = -100; //valor devuelto por la librería al realizar las peticiones
 bool success_connect = false; //indicador para saber si está o no conectado
 
 // Función para sacar por el serial el mensaje
@@ -25,7 +25,7 @@ const int tempSensor = A1;
 int lightValue = 0;
 int tempValue = 0;
 
-
+char topic[80];
 
 void setup() {
   // Inicializa el Serial para la salida y espera hasta que está activo
@@ -37,6 +37,9 @@ void setup() {
   sprintf(curr_version, "AWS IoT SDK Version(dev) %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
   Serial.println(curr_version);
 
+  //Construye el nombre del topic en el que se va a publicar la información
+  sprintf(topic, "%s/%s", AWS_IOT_CLIENT_ID, AWS_IOT_MY_THING_NAME);
+
   while(!success_connect){
     //Configura el cliente
     //En todo momento se va guardando en la variable rc el resultado de la llamada a la librería para poder saber por qué falla
@@ -47,7 +50,7 @@ void setup() {
         if((rc = myClient.connect()) == 0) {
           success_connect = true;
           // Mediante la conexión, se suscribe al tópico que se le pasa por parámetros
-          if((rc=myClient.subscribe("topic2", 1, msg_callback)) != 0) {
+          if((rc=myClient.subscribe(topic, 1, msg_callback)) != 0) {
             Serial.println(F("Subscribe failed!"));
             Serial.print(rc);
           }
@@ -84,7 +87,7 @@ void loop() {
     sprintf(msg, "{\"temp\": \"%d\",\"light\": \"%d\"}", tempValue,lightValue);
         
     //Se publica el mensaje en el tópico que se pasa por parámetro
-    if((rc = myClient.publish("topic2", msg, strlen(msg), 1, false)) != 0){
+    if((rc = myClient.publish(topic, msg, strlen(msg), 1, false)) != 0){
       Serial.println("Publish failed!");
       Serial.println(rc);
     }
