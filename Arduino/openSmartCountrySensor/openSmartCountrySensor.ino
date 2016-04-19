@@ -3,21 +3,29 @@
 #include "aws_iot_config.h"
 
 aws_iot_mqtt_client myClient; //inicio el cliente mqtt
-char msg[32]; //bufer de lectura y escritura para el mensaje a enviar TODO pasarlo a un mensaje por cada sensor
-int cnt = 0; //contador para el número de veces que se ejecuta TODO quitar este contador
-int rc = -100; //valor devuelto por el placeholder?
+char msg[100]; //bufer de escritura para el mensaje JSON a enviar
 bool success_connect = false; //indicador para saber si está o no conectado
+int error_counter = 0;
+bool debug_mode = false;
 
-
-
-// Función para sacar por el serial el mensaje
-void msg_callback(char* src, int len) {
-  Serial.println("CALLBACK:");
-  int i;
-  for(i=0; i<len; i++){
-    Serial.print(src[i]);
+// Función de log
+bool print_log(char* src, int code) {
+  bool ret = true;
+  if (code == 0) {
+    Serial.print(F("[INFO] command: "));
+    Serial.print(src);
+    Serial.println(F(" completed."));
+    ret = true;
   }
-  Serial.println("");
+  else {
+    Serial.print(F("[ERROR] command: "));
+    Serial.print(src);
+    Serial.println(F(" code: "));
+    Serial.print(code);
+    ret = false;
+    error_counter++;
+  }
+  return ret;
 }
 
 //Constantes que fijan los pines en los que están conectados los sensores
@@ -26,86 +34,72 @@ const int tempSensor = A1;
 
 //Variables para guardar el valor del sensor en cada intervalo de medida
 int lightValue = 0;
-int tempValue = 0;
+float tempValue = 0.0;
 
-
+// Función para sacar datos que cambien en el shadow, por ejemplo si se modifican desde una app, de momento no la usamos
+//void msg_callback_delta(char* src, int len) {
+//}
 
 void setup() {
   // Inicializa el Serial para la salida y espera hasta que está activo
   Serial.begin(115200);
-  while(!Serial);
-  
+  if (debug_mode) {
+    while (!Serial);
+  }
+
   //Saca por el serial la versión del SDK de Amazon que estamos utilizando, los valores están en el archivo aws_iot_version.h en la carpeta de la librería
   char curr_version[80];
   sprintf(curr_version, "AWS IoT SDK Version(dev) %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
   Serial.println(curr_version);
 
-  while(!success_connect){
-    //Configura el cliente
-    //En todo momento se va guardando en la variable rc el resultado de la llamada a la librería para poder saber por qué falla
-    if((rc =myClient.setup(AWS_IOT_CLIENT_ID)) == 0) {
-      //Se carga la configuración de usuario que está especificada en el archivo aws_iot_config.h
-      if((rc=myClient.config(AWS_IOT_MQTT_HOST, AWS_IOT_MQTT_PORT, AWS_IOT_ROOT_CA_PATH, AWS_IOT_PRIVATE_KEY_PATH, AWS_IOT_CERTIFICATE_PATH)) ==0){
-        //Se intenta conectar con la configuración redeterminada: 60 segundos
-        if((rc = myClient.connect()) == 0) {
-          success_connect = true;
-          // Mediante la conexión, se suscribe al tópico que se le pasa por parámetros
-          if((rc=myClient.subscribe("topic2", 1, msg_callback)) != 0) {
-            Serial.println(F("Subscribe failed!"));
-            Serial.print(rc);
-          }
-        }
-        else {
-          Serial.println(F("Connect failed!"));
-          Serial.println(rc);
-        }
-      }
-      else {
-        Serial.println(F("Config failed!"));
-        Serial.print(rc);
-      }
-    }
-    else {
-      Serial.println(F("Setup failed!"));
-      Serial.println(rc);
-    }
-    //Delay para asegurar que SUBACK está recibido, puede variar de acuerdo al servidor
-    delay(2000);
-  }
+  conectTOAWSIoT();
 }
 
 void loop() {
 
   lightValue = analogRead(lightSensor);
-  
+
   float voltage = (analogRead(tempSensor) / 1024.0) * 5.0;
   tempValue = (voltage - .5) * 100;
 
-  
-  if(success_connect){
+  if (success_connect) {
+
     //Se construye el mensaje en formato JSON con los valores de temperatura y luz
-    sprintf(msg, "{\"temp\": \"%d\",\"light\": \"%d\"}", tempValue,lightValue);
-    //sprintf(msg, "new message %d", cnt);
-    
-    //Se publica el mensaje en el tópico que se pasa por parámetro
-    if((rc = myClient.publish("topic2", msg, strlen(msg), 1, false)) != 0){
-      Serial.println("Publish failed!");
-      Serial.println(rc);
-    }
+    sprintf(msg, "{\"state\":{\"reported\":{\"Temp\":%d, \"Light\":%d}}}", tempValue, lightValue);
 
-    Serial.println(F("Mensaje a publicar:"));
-    Serial.println(msg);
+    //Se actualiza la shadow
+    print_log("shadow update", myClient.shadow_update(AWS_IOT_MY_THING_NAME, msg, strlen(msg), NULL, 5));
 
-    // Get a chance to run a callback
-    if((rc = myClient.yield()) != 0) {
-      Serial.println("Yield failed!");
-      Serial.println(rc);
-    }
-  
-    //Se termina la iteración si se ha conectado bien, publicando a través del serial qué se ha hecho
-    sprintf(msg, "loop %d done", cnt++);
-    Serial.println(msg);
-  
+    print_log("yield", myClient.yield());
+
     delay(1000);
+
+    if (error_counter >= 10) {
+      Serial.println(F("Too many failures: reset connection"));
+      success_connect = false;
+      //TODO de momento no hago el disconnect porque no funciona, en todo caso si él por las pruebas parece que no va mal la nueva conexión, lo que no se es si se estará acumulando algo que no deba
+      //print_log("disconnect", myClient.disconnect());
+      conectTOAWSIoT();
+    }
+  }
+}
+
+void conectTOAWSIoT() {
+  while (!success_connect) {
+    //Configura el cliente
+    if (print_log("setup", myClient.setup(AWS_IOT_CLIENT_ID))) {
+      //Se carga la configuración de usuario que está especificada en el archivo aws_iot_config.h
+      if ((print_log("config", myClient.config(AWS_IOT_MQTT_HOST, AWS_IOT_MQTT_PORT, AWS_IOT_ROOT_CA_PATH, AWS_IOT_PRIVATE_KEY_PATH, AWS_IOT_CERTIFICATE_PATH)))) {
+        //Se intenta conectar con la configuración redeterminada: 60 segundos
+        if (print_log("connect", myClient.connect())) {
+          success_connect = true;
+          error_counter = 0;
+          // Mediante la conexión, se inicializa el shadow y se registra la delta function
+          print_log("shadow init", myClient.shadow_init(AWS_IOT_MY_THING_NAME));
+          // De momento no se utiliza la parte de actuzlización desde un sitio externo, por eso se deja comentada esta parte
+          //print_log("register thing shadow delta function", myClient.shadow_register_delta_func(AWS_IOT_MY_THING_NAME, msg_callback_delta));
+        }
+      }
+    }
   }
 }

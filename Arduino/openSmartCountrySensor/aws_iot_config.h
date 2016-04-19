@@ -17,7 +17,6 @@
 #define config_usr_h
 
 // Copy and paste your configuration into this file
-// Copy and paste your configuration into this file
 //===============================================================
 #define AWS_IOT_MQTT_HOST "A3C3AEH4X2A6BT.iot.eu-west-1.amazonaws.com"   // your endpoint
 #define AWS_IOT_MQTT_PORT 8883                  // your port
