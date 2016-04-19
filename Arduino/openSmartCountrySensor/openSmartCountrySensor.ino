@@ -7,9 +7,29 @@ char msg[32]; //bufer de lectura y escritura para el mensaje a enviar TODO pasar
 int rc = -100; //valor devuelto por la librería al realizar las peticiones
 bool success_connect = false; //indicador para saber si está o no conectado
 
+// Función de log
+bool print_log(char* src, int code) {
+  bool ret = true;
+  if(code == 0){
+    Serial.print("[INFO] command: ");
+    Serial.print(src);
+    Serial.println(" completed.");
+    ret = true;
+  }
+  else {
+    Serial.print("[ERROR] command: ");
+    Serial.print(src);
+    Serial.println(" code: ");
+    Serial.print(code);
+    ret = false;
+  }
+  return ret;
+}
+
+
 // Función para sacar por el serial el mensaje
 void msg_callback(char* src, int len) {
-  Serial.println("CALLBACK:");
+  Serial.println("CALLBACK :");
   int i;
   for(i=0; i<len; i++){
     Serial.print(src[i]);
@@ -43,33 +63,18 @@ void setup() {
   while(!success_connect){
     //Configura el cliente
     //En todo momento se va guardando en la variable rc el resultado de la llamada a la librería para poder saber por qué falla
-    if((rc =myClient.setup(AWS_IOT_CLIENT_ID)) == 0) {
+    if(print_log("setup", myClient.setup(AWS_IOT_CLIENT_ID))){
       //Se carga la configuración de usuario que está especificada en el archivo aws_iot_config.h
-      if((rc=myClient.config(AWS_IOT_MQTT_HOST, AWS_IOT_MQTT_PORT, AWS_IOT_ROOT_CA_PATH, AWS_IOT_PRIVATE_KEY_PATH, AWS_IOT_CERTIFICATE_PATH)) ==0){
+      if((print_log("config", myClient.config(AWS_IOT_MQTT_HOST, AWS_IOT_MQTT_PORT, AWS_IOT_ROOT_CA_PATH, AWS_IOT_PRIVATE_KEY_PATH, AWS_IOT_CERTIFICATE_PATH)))) {
         //Se intenta conectar con la configuración redeterminada: 60 segundos
-        if((rc = myClient.connect()) == 0) {
+        if(print_log("connect", myClient.connect())) {
           success_connect = true;
           // Mediante la conexión, se suscribe al tópico que se le pasa por parámetros
-          if((rc=myClient.subscribe(topic, 1, msg_callback)) != 0) {
-            Serial.println(F("Subscribe failed!"));
-            Serial.print(rc);
-          }
-        }
-        else {
-          Serial.println(F("Connect failed!"));
-          Serial.println(rc);
+          print_log("subscribe",myClient.subscribe(topic, 1, msg_callback));
         }
       }
-      else {
-        Serial.println(F("Config failed!"));
-        Serial.print(rc);
-      }
     }
-    else {
-      Serial.println(F("Setup failed!"));
-      Serial.println(rc);
-    }
-    //Delay para asegurar que SUBACK está recibido, puede variar de acuerdo al servidor
+    //Delay para asegurar que "subscription acknowledgement" está recibido, puede variar de acuerdo al servidor
     delay(2000);
   }
 }
@@ -87,19 +92,13 @@ void loop() {
     sprintf(msg, "{\"temp\": \"%d\",\"light\": \"%d\"}", tempValue,lightValue);
         
     //Se publica el mensaje en el tópico que se pasa por parámetro
-    if((rc = myClient.publish(topic, msg, strlen(msg), 1, false)) != 0){
-      Serial.println("Publish failed!");
-      Serial.println(rc);
-    }
+    print_log("publish",myClient.publish(topic, msg, strlen(msg), 1, false));
 
     Serial.println(F("Mensaje a publicar:"));
     Serial.println(msg);
 
     // Get a chance to run a callback
-    if((rc = myClient.yield()) != 0) {
-      Serial.println("Yield failed!");
-      Serial.println(rc);
-    }
+    print_log("yield",myClient.yield());
   
     delay(1000);
   }
