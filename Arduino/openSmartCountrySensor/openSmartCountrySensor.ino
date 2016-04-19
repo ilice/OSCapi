@@ -4,7 +4,6 @@
 
 aws_iot_mqtt_client myClient; //inicio el cliente mqtt
 char msg[100]; //bufer de lectura y escritura para el mensaje a enviar TODO pasarlo a un mensaje por cada sensor
-int rc = -100; //valor devuelto por la librería al realizar las peticiones
 bool success_connect = false; //indicador para saber si está o no conectado
 
 // Función de log
@@ -26,20 +25,19 @@ bool print_log(char* src, int code) {
   return ret;
 }
 
-
-
 //Constantes que fijan los pines en los que están conectados los sensores
 const int lightSensor = A0;
 const int tempSensor = A1;
 
 //Variables para guardar el valor del sensor en cada intervalo de medida
 int lightValue = 0;
+int desiredLight = 0;
 float tempValue = 0.0;
-float desiredTemp = 70.0;
+float desiredTemp = 0.0;
 char float_buf[5];
 
 
-// Función para sacar el dato de temperatura del mensaje
+// Función para sacar el dato de temperatura, sirve como delta para controlar los cambios entre el valor que tiene la sombra y el que se envía (¿Seguro?)
 void msg_callback_delta(char* src, int len) {
   String data = String(src);
 
@@ -48,12 +46,15 @@ void msg_callback_delta(char* src, int len) {
   String delta = data.substring(st, ed);
 
   st = delta.indexOf("\"Temp\":") + strlen("\"Temp\":");
-  ed = delta.indexOf("}");
-  String delta_data = delta.substring(st, ed);
-  desiredTemp = delta_data.toFloat();
-}
+  ed = delta.indexOf("\"Light\":");
+  String delta_temp_data = delta.substring(st, ed);
+  desiredTemp = delta_temp_data.toFloat();
 
-char topic[80];
+  st = delta.indexOf("\"Light\":") + strlen("\"Light\":");
+  ed = delta.indexOf("}");
+  String delta_light_data = delta.substring(st, ed);
+  desiredLight = delta_light_data.toInt();
+}
 
 void setup() {
   // Inicializa el Serial para la salida y espera hasta que está activo
@@ -65,12 +66,8 @@ void setup() {
   sprintf(curr_version, "AWS IoT SDK Version(dev) %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
   Serial.println(curr_version);
 
-  //Construye el nombre del topic en el que se va a publicar la información
-  sprintf(topic, "%s/%s", AWS_IOT_CLIENT_ID, AWS_IOT_MY_THING_NAME);
-
   while (!success_connect) {
     //Configura el cliente
-    //En todo momento se va guardando en la variable rc el resultado de la llamada a la librería para poder saber por qué falla
     if (print_log("setup", myClient.setup(AWS_IOT_CLIENT_ID))) {
       //Se carga la configuración de usuario que está especificada en el archivo aws_iot_config.h
       if ((print_log("config", myClient.config(AWS_IOT_MQTT_HOST, AWS_IOT_MQTT_PORT, AWS_IOT_ROOT_CA_PATH, AWS_IOT_PRIVATE_KEY_PATH, AWS_IOT_CERTIFICATE_PATH)))) {
@@ -99,7 +96,7 @@ void loop() {
     float_buf[4] = '\0';
 
     //Se construye el mensaje en formato JSON con los valores de temperatura y luz
-    sprintf(msg, "{\"state\":{\"reported\":{\"Temp\":%s}}}", float_buf);
+    sprintf(msg, "{\"state\":{\"reported\":{\"Temp\":%s, \"Light\":%d}}}", float_buf, lightValue);
 
     //Se publica el mensaje en el tópico que se pasa por parámetro
     print_log("shadow update", myClient.shadow_update(AWS_IOT_MY_THING_NAME, msg, strlen(msg), NULL, 5));
