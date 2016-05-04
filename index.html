@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Opensmartcountry by teanocrata</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Opensmartcountry</h1>
+      <h2 class="project-tagline">Open Smart Country - Campo Inteligente Abierto</h2>
+      <a href="https://github.com/teanocrata/OpenSmartCountry" class="btn">View on GitHub</a>
+      <a href="https://github.com/teanocrata/OpenSmartCountry/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/teanocrata/OpenSmartCountry/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="opensmartcountry" class="anchor" href="#opensmartcountry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>OpenSmartCountry</h1>
+
+<p>Open Smart Country - Campo Inteligente Abierto
+<a href="http://opensmartcountry.com/">http://opensmartcountry.com/</a></p>
+
+<h2>
+<a id="sim800l" class="anchor" href="#sim800l" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SIM800L</h2>
+
+<p>Para el envío de datos desde el campo será necesario establecer una comunicación móvil, no habrá WiFi, para ello lo más barao que he encontrado es el módulo SIM800L y de momento lo he constado con el Arduino UNO</p>
+
+<h3>
+<a id="hardware-necesario" class="anchor" href="#hardware-necesario" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hardware necesario:</h3>
+
+<ul>
+<li>Arduino UNO</li>
+<li>Batería de 3.7 a 4.2 V, de momento estoy utilizando una de un móvil viejo</li>
+<li>Módulo SIM800L </li>
+<li>Protoboard y algunos cables</li>
+<li>Una tarjeta SIM, estoy utilizando una 4G de Pepephone y de momento funciona perfectamente</li>
+<li>Soldador y estaño, la SIM800L me llegó sin los pines ni la antena soldados, además para la corriente de la batería tambien he soldado los cables para evitar problemas</li>
+</ul>
+
+<h3>
+<a id="entorno" class="anchor" href="#entorno" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Entorno</h3>
+
+<p>Ide de Arduino</p>
+
+<h3>
+<a id="configuración" class="anchor" href="#configuraci%C3%B3n" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuración</h3>
+
+<p>En el código de ejemplo BasicSIM800L.ino está descrito el esquema que he usado, es muy simple</p>
+
+<p><img src="https://github.com/teanocrata/OpenSmartCountry/blob/master/Arduino/SIM800L/BasicSIM800L/IMG_20160504_201456.jpg" alt="Arduino UNO and SIM800L Basic connection "></p>
+
+<h3>
+<a id="referencias-interesantes" class="anchor" href="#referencias-interesantes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Referencias interesantes</h3>
+
+<p>Están también en el código pero de momento simplemente uso:</p>
+
+<ul>
+<li>SoftwareSerial.h de Arduino: <a href="https://www.arduino.cc/en/Reference/SoftwareSerial">https://www.arduino.cc/en/Reference/SoftwareSerial</a>
+</li>
+<li>Guía de comandos AT de la página del chip: <a href="http://simcomm2m.com/UploadFile/TechnicalFile/SIM800%20Series_AT%20Command%20Manual_V1.09.pdf">http://simcomm2m.com/UploadFile/TechnicalFile/SIM800%20Series_AT%20Command%20Manual_V1.09.pdf</a> Es necesario estar registrado para descargarla pero no hay ningún requisito más</li>
+</ul>
+
+<h2>
+<a id="opensmartcountrysensor" class="anchor" href="#opensmartcountrysensor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>openSmartCountrySensor</h2>
+
+<p>El proyecto consiste en dos sensores que envían los valores de temperatura y nivel de luz mediante MQTT a AWS IoT, una regla hace que los valores que se envían se guarden en una tabla en una base de datos DynamoBD</p>
+
+<h3>
+<a id="hardware-necesario-1" class="anchor" href="#hardware-necesario-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hardware necesario:</h3>
+
+<ul>
+<li>Arduino Yun</li>
+<li>Sensor de temperatura TMP36</li>
+<li>Fotoresistencia</li>
+<li>Resistencia de 10 kiloohmnios</li>
+<li>Protoboard</li>
+<li>Cables de puente</li>
+</ul>
+
+<h3>
+<a id="entorno-1" class="anchor" href="#entorno-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Entorno</h3>
+
+<ul>
+<li>IDE Arduino: Fundamental, no instalarlo, descomprimirlo</li>
+<li>MQTT.fx para las pruebas</li>
+<li>Cuenta en AWS</li>
+</ul>
+
+<h3>
+<a id="configuración-1" class="anchor" href="#configuraci%C3%B3n-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuración</h3>
+
+<ul>
+<li>Para configurar la placa Arduino Yun <a href="https://www.arduino.cc/en/Guide/ArduinoYun">https://www.arduino.cc/en/Guide/ArduinoYun</a>
+</li>
+<li>Para los esquemas de los sensores se pueden ver los ejemplos 3 y 4 del Libro de Proyectos Arduino</li>
+<li>Para el entorno en AWS seguir la guia <a href="http://docs.aws.amazon.com/es_es/iot/latest/developerguide/what-is-aws-iot.html">http://docs.aws.amazon.com/es_es/iot/latest/developerguide/what-is-aws-iot.html</a>
+</li>
+<li>Para el SDK de AWS IoT para Arduino seguir la guia <a href="https://github.com/aws/aws-iot-device-sdk-arduino-yun">https://github.com/aws/aws-iot-device-sdk-arduino-yun</a>
+</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/teanocrata/OpenSmartCountry">Opensmartcountry</a> is maintained by <a href="https://github.com/teanocrata">teanocrata</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
