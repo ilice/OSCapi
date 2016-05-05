@@ -18,6 +18,8 @@ Ide de Arduino
 ### Configuración
 En el código de ejemplo BasicSIM800L.ino está descrito el esquema que he usado, es muy simple
 
+![Conexión básica entre Arduino UNO y SIM800L](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/SIM800L/BasicSIM800L/IMG_20160504_201456.jpg "Conexión básica entre Arduino UNO y SIM800L")
+
 ### Referencias interesantes
 Están también en el código pero de momento simplemente uso:
 * SoftwareSerial.h de Arduino: https://www.arduino.cc/en/Reference/SoftwareSerial
@@ -45,3 +47,4 @@ El proyecto consiste en dos sensores que envían los valores de temperatura y ni
 * Para los esquemas de los sensores se pueden ver los ejemplos 3 y 4 del Libro de Proyectos Arduino
 * Para el entorno en AWS seguir la guia http://docs.aws.amazon.com/es_es/iot/latest/developerguide/what-is-aws-iot.html
 * Para el SDK de AWS IoT para Arduino seguir la guia https://github.com/aws/aws-iot-device-sdk-arduino-yun
+
