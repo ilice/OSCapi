@@ -23,7 +23,7 @@ En el código de ejemplo [BasicSIM800L.ino](https://github.com/teanocrata/OpenSm
 ### Referencias interesantes
 Están también en el código pero de momento simplemente uso:
 * SoftwareSerial.h de Arduino: https://www.arduino.cc/en/Reference/SoftwareSerial
-* Guía de comandos AT de la página del chip: http://simcomm2m.com/UploadFile/TechnicalFile/SIM800%20Series_AT%20Command%20Manual_V1.09.pdf Es necesario estar registrado para descargarla pero no hay ningún requisito más. También está subida en [OpenSmartCountry/Arduino/SIM800L/BasicSIM800L/BasicSIM800L.ino](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/SIM800L/BasicSIM800L/BasicSIM800L.ino)
+* Guía de comandos AT de la página del chip: http://simcomm2m.com/UploadFile/TechnicalFile/SIM800%20Series_AT%20Command%20Manual_V1.09.pdf Es necesario estar registrado para descargarla pero no hay ningún requisito más y actualmente no funciona ni la visualización ni la descarga desde el Chrome, desde Firefox unciona todo correctamente, incluso con el enlace anterior no hace falta estar registrado. Es interesante entrar en la página y registrarse ya que hay bastante información más. También está subida en [OpenSmartCountry/Arduino/SIM800L/BasicSIM800L/BasicSIM800L.ino](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/SIM800L/BasicSIM800L/BasicSIM800L.ino)
 
 
 ## openSmartCountrySensor
