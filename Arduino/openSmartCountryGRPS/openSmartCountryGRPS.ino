@@ -22,12 +22,12 @@ boolean expectReply(const __FlashStringHelper * reply, uint16_t timeout = 10000)
 boolean sendParseReply(const __FlashStringHelper * tosend, const __FlashStringHelper * toreply, uint16_t *v, char divider, uint8_t index = 0);
 boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divider  = ',', uint8_t index = 0);
 char replybuffer[255];
-char imei[15] = {0}; // MUST use a 16 character buffer for IMEI!
+char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
 const __FlashStringHelper * ok_reply;
 float latitude, longitude;
 
 const int SIM800LresetPin =  12;      // the number of the LED pin
-uint8_t sensorType = 1;
+uint8_t sensorType = 0;
 int sensorValue = 0;
 
 
@@ -120,8 +120,10 @@ void setup()
 
 void loop()
 {
-  sensorType = 1;
-  sensorValue = 15;
+  sensorType += 1;
+  sensorValue += 2;
+
+  sendMeasure();
 
   delay(10000);
 
@@ -281,7 +283,7 @@ uint8_t getIMEI(char *imei) {
 
   // up to 15 chars
   strncpy(imei, replybuffer, 15);
-  imei[15] = 0;
+  imei[15] = '\0';
 
   readline(); // eat 'OK'
 
@@ -538,11 +540,6 @@ boolean HTTP_GET_start(char *url, uint16_t *status, uint16_t *datalen) {
   return true;
 }
 
-boolean sendMeasure(uint16_t *status, uint16_t *datalen) {
-  
-
-  return true;
-}
 
 boolean HTTP_setup(char *url) {
   // Handle any pending
@@ -721,13 +718,33 @@ bool sendMeasure() {
   }
 
   miPuertoDeSerieVirtual.print(F("AT+HTTPPARA=\"URL\",\""));
+  Serial.print(F("AT+HTTPPARA=\"URL\",\""));
   miPuertoDeSerieVirtual.print(F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI="));
+  Serial.print(F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI="));
   miPuertoDeSerieVirtual.print(imei);
+  Serial.print(imei);
   miPuertoDeSerieVirtual.print(F("&Sensor="));
-  miPuertoDeSerieVirtual.print(sensorType);
-  miPuertoDeSerieVirtual.print(F("&Value="));
+  Serial.print(F("&Sensor="));
+  switch(sensorType){
+    case 1:
+      miPuertoDeSerieVirtual.print(F("Luz"));
+      Serial.print(F("Luz"));
+      break;
+    case 2:
+      miPuertoDeSerieVirtual.print(F("Humedad"));
+      Serial.print(F("Humedad"));
+      break;
+    default:
+      miPuertoDeSerieVirtual.print(F("Lluvia"));
+      Serial.print(F("Lluvia"));
+      break;
+  }
+  miPuertoDeSerieVirtual.print(F("&Valor="));
+  Serial.print(F("&Valor="));
   miPuertoDeSerieVirtual.print(sensorValue);
+  Serial.print(sensorValue);
   miPuertoDeSerieVirtual.println('"');
+  Serial.println('"');
 
   readline(10000);
 
