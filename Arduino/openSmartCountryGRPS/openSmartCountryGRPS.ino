@@ -1,244 +1,809 @@
-// En el Pin marcado como NET (antena) en la SIM800L tiene que estar soldada la antena
-// En el Pin marcado como VCC (alimentación) tiene que estar conectado el + de una batería de entre 3.7 y 4.2 V
-// El Pin marcado como RST (reset) en la SIM800L tiene que estar conectado con el RESET del Arduino UNO
-// El Pin marcado como RXD (recepción) en la SIM800L va al PIN11 del Arduino UNO
-// El Pin marcado como TXD (transmisión) en la SIM800L va al PIN1p del Arduino UNO
-// El Pin marcado como GND (tierra) tiene que estar conectado con el - de una batería de entre 3.7 y 4.2 V y con el GND del Arduino UNO
-// En este ejemplo no utilizamos los PIN marcados como RING, DTR, MICP, MICN, SPKP, SPKN de la SIM800L
-
-// Para probar que la SIM800L funciona correctamente enviaremos comandos AT mediante el monitor
-// La información de los comandos AT s epuede descargar de la página de SIMCom
-// en http://simcomm2m.com/UploadFile/TechnicalFile/SIM800%20Series_AT%20Command%20Manual_V1.09.pdf
-// Escribiento AT y pulsando Send debe devolver un OK si todo está bien
-// Para ver la cobertura AT+CSQ y pulsando Send debe devolver un +CSQ seguido de unos numeritos, el
-// primero un valor de 0 a 99 seún los dBm, un 99 es que no se sabe o no se detecta, el segundo
-// en % con un 99 si no es detectable (ver la documentación específica)
-// Para ver la carga de la batería  AT+CBC pulsando Send debe devolver un +CBC con unos numeritos,
-// el primero dice si está cargando o no o si está terminada de cargar, el segundo el % de carga
-// y el tercero el voltaje
-// Se puede hacer una llamada con ATD<n>[<msgm>][;] donde n es el número de teléfono al que llamar
-// y msgm en I si quieres que no se muestre el número desde el que llamas o i si quieres que si se muestre
-// es decir, por ejemplo ATD666555444i; llamará al número 666555444 sin ocultar la identidad
-// Es interesante que la tarjeta que se use no tenga el PIN para no tener que pasarlo, si no, se hace con AT+CPIN=<pin>
-
-// https://www.arduino.cc/en/Reference/SoftwareSerial
 #include <SoftwareSerial.h>
-#include "conf.h"
 
-//SoftwareSerial(rxPin, txPin, inverse_logic)
-//Creamos una instancia del objeto SoftwareSerial para conectarnos con el SIM800L,
-// en este caso usaremos el PIN10 como rxPin que será el que reciba los datos del
-// SIM800L, es decir, el que estatá conectado al TXD en la SIM800L y el PIN11 como
-// txPin que será el que transmita los datos, es decir, el que estatá conectado al
-// que está marcado como RXD en la SIM800L, inverse_logic es opcional y por defecto
-// está a false, si se pone a true, invierte el sentido de los bits de entrada
-// tomando LOW en el rxPin como 1-bit y HIGH como 0-bit
-SoftwareSerial moduloSIM800L(10, 11);
+#define PIN  "8651"
+#define apn  F("ac.vodafone.es")
+#define apnusername F("vodafone")
+#define apnpassword F("vodafone")
+#define apnpassword F("vodafone")
+#define HTTP_GET 0
+#define httpsredirect false
+#define https true
 
-String origen;
 
-bool conexionSIMCorrecta = false;
-bool conexionGPRSCorrecta = false;
+SoftwareSerial miPuertoDeSerieVirtual(10, 11);
 
+boolean sendCheckReply(const __FlashStringHelper *send, const char *reply, uint16_t timeout = 500);
+boolean sendCheckReply(const __FlashStringHelper * send, const __FlashStringHelper * reply, uint16_t timeout = 500);
+boolean sendCheckReply(char* send, const __FlashStringHelper *reply, uint16_t timeout = 500);
+boolean sendCheckReply(const __FlashStringHelper * prefix, int32_t suffix, const __FlashStringHelper * reply, uint16_t timeout = 500);
+uint8_t readline(uint16_t timeout = 500, boolean multiline = false);
+uint8_t getReply(const __FlashStringHelper *send,  uint16_t timeout = 500);
+boolean expectReply(const __FlashStringHelper * reply, uint16_t timeout = 10000);
+boolean sendParseReply(const __FlashStringHelper * tosend, const __FlashStringHelper * toreply, uint16_t *v, char divider, uint8_t index = 0);
+boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divider  = ',', uint8_t index = 0);
 char replybuffer[255];
-uint8_t readline(uint16_t timeout = 1000, boolean multiline = false);
-uint8_t getReply(char *send, uint16_t timeout = 1000);
-bool ejecutaComandoYEsperaRespuesta(char *comando, char *respuestaEsperada, int timeout = 1000);
-bool print_log(char *src, int code = -1);
+char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
+const __FlashStringHelper * ok_reply;
+float latitude, longitude;
+
+const int SIM800LresetPin =  12;      // the number of the LED pin
+uint8_t sensorType = 0;
+int sensorValue = 0;
+
 
 void setup()
 {
-  // Abre el puerto de comunicación entre el Arduino y el ordenador para poder
-  //comunicarnos con él a través del monitor (Ctrl+Mayús+M), la velocidad será
-  // 9600 bits por segundo, al abrir el monitor es importante que tenga esa
-  //velocidad seleccionada
   Serial.begin(9600);
+  miPuertoDeSerieVirtual.begin(9600);
   while (!Serial);
-  Serial.println(F("Comunicación por USB con ARDUINO iniciada"));
-  delay(1000);
 
-  //Especificamos la velocidad de la comunicación entre el Arduino UNO y la SIM800L
-  moduloSIM800L.begin(9600);
-  Serial.println(F("Comunicación por serie con SIM800L"));
-  //Esperamos 10 segundos a que el módulo de SIM se active completamente
-  delay(1000);
+  resetSIM800L();
 
-  //Configuración básica del módulo con la SIM
-  while (!conexionSIMCorrecta) {
-    print_log("Comprueba conexión con SIM800L", ejecutaComandoYEsperaRespuesta("AT", "OK", 4000) ? CORRECTO : AT_ERROR);
-    print_log("Reinicio con funcionalidad del módulo SIM800L completa", ejecutaComandoYEsperaRespuesta("AT+CFUN=1,1", "OK", 10000) ? CORRECTO : AT_ERROR);
-    while (readline(10000, true));
-    if (String(replybuffer).indexOf("+CPIN: SIM PIN") < 0) {
-      char sendbuff[14] = "AT+CPIN=";
-      sendbuff[8] = SIM_PIN[0];
-      sendbuff[9] = SIM_PIN[1];
-      sendbuff[10] = SIM_PIN[2];
-      sendbuff[11] = SIM_PIN[3];
-      sendbuff[12] = '\0';
-      print_log("Código PIN", ejecutaComandoYEsperaRespuesta(sendbuff, "OK") ? CORRECTO : PIN_ERROR);
-      while (readline(10000, true));
-      if (String(replybuffer).indexOf("+CPIN: READY") < 0)
-        conexionSIMCorrecta = true;
+  ok_reply = F("OK");
+
+  // run the memory test function and print the results to the serial port
+  int result = memoryTest();
+  Serial.print(F("Memory test results: "));
+  Serial.print(result, DEC);
+  Serial.println(F(" bytes free"));
+
+  //This setting determines whether or not the TA echoes characters received from TE during Command state.
+  if (!sendCheckReply(F("AT"), ok_reply)) {
+    Serial.println("Ha respondido TA, hay que especificar ATE0");
+    sendCheckReply(F("ATE0"), F("ATE0"));
+  } else {
+    Serial.println("Ha respondido OK, todo bien!");
+  }
+
+  getIMEI(imei);
+
+  if (!sendCheckReply(F("AT+CPIN?"), F("+CPIN: READY"))) {
+    Serial.print(F("Unlocking SIM card: "));
+    if (! unlockSIM(PIN)) {
+      Serial.println(F("Failed"));
+    } else {
+      Serial.println(F("OK!"));
+    }
+    delay(10000);//TODO: esto tengo que cambiarlo por esperar a que esté conectado bien en lugar de una espera arbitraria
+  }
+
+
+  if (!sendCheckReply(F("AT+CGATT?"), F("+CGATT: READY"))) {
+    if (!enableGPRS(true)) {
+      Serial.println(F("Failed to turn on"));
+    } else {
+      Serial.println(F("Turn on"));
     }
   }
 
-  //Configuración de la conexión a internet
-  while (!conexionGPRSCorrecta) {
-    print_log("Modo GPRS", ejecutaComandoYEsperaRespuesta("AT+SAPBR=3,1,\"Contype\",\"GPRS\"", "OK") ? CORRECTO : AT_ERROR);
-    print_log("APN", ejecutaComandoYEsperaRespuesta("AT+SAPBR=3,1,\"APN\",\"ac.vodafone.es\"", "OK") ? CORRECTO : AT_ERROR);
-    print_log("APN user", ejecutaComandoYEsperaRespuesta("AT+SAPBR=3,1,\"USER\",\"vodafone\"", "OK") ? CORRECTO : AT_ERROR);
-    print_log("APN pasword", ejecutaComandoYEsperaRespuesta("AT+SAPBR=3,1,\"PWD\",\"vodafone\"", "OK") ? CORRECTO : AT_ERROR);
-    print_log("Activación GPRS", ejecutaComandoYEsperaRespuesta("AT+SAPBR=1,1", "OK") ? CORRECTO : AT_ERROR);
+  if (getNetworkStatus() == 1) {
+    // network & GPRS? Great! Print out the GSM location to compare
+    boolean gsmloc_success = getGSMLoc(&latitude, &longitude);
 
-    //Comprueba con una petición HTTP
-    conexionGPRSCorrecta = peticionURL("www.google.es");
+    if (gsmloc_success) {
+      Serial.print("GSMLoc lat:");
+      Serial.println(latitude, 6);
+      Serial.print("GSMLoc long:");
+      Serial.println(longitude, 6);
+    } else {
+      Serial.println("GSM location failed...");
+      Serial.println(F("Disabling GPRS"));
+      enableGPRS(false);
+      Serial.println(F("Enabling GPRS"));
+      if (!enableGPRS(true)) {
+        Serial.println(F("Failed to turn GPRS on"));
+      }
+    }
   }
 
-  //  peticionURL("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?Temperatura=0,5&HumedadAtmosférica=3,2&Luz=10&HumedadSuelo=45&Origen=325612" + origen);
 
 
-  Serial.println(F("---------------Configuración concluida--------------"));
+  char url[134] = "script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI=867273028585185&Sensor=Humedad&Valor=3\0";
+  httpGet(url);
+
+
+
+  //  if (!enableGPRS(false)) {
+  //    Serial.println(F("Failed to turn off"));
+  //  } else {
+  //    Serial.println(F("Turn off"));
+  //  }
+
+
+  // run the memory test function and print the results to the serial port
+  result = memoryTest();
+  Serial.print(F("Memory test results: "));
+  Serial.print(result, DEC);
+  Serial.println(F(" bytes free"));
+
 }
 
 void loop()
 {
-  //Verificamos que hay bytes disponibles para leer en el puerto de serie virtual,
-  // es decir, que el SIM800L ha enviado algo y escribimos lo que ha enviado en el
-  //monitor
-  if (moduloSIM800L.available() > 0)
-    Serial.write(moduloSIM800L.read());
+  sensorType += 1;
+  sensorValue += 2;
 
-  // Verificamos si en el monitor hay bytes disponibles, es decir, si hemos escrito algo y pulsado "Send",
-  // mientras haya algo, se lo enviamos al SIM800L seguido de "Enter" o nueva línea
-  if (Serial.available() > 0)
-  {
-    while (Serial.available() > 0)
-    {
-      moduloSIM800L.write(Serial.read());
-    }
-    moduloSIM800L.println();
-  }
+  sendMeasure();
+
+  delay(10000);
+
+
+  // run the memory test function and print the results to the serial port
+  Serial.print(F("Memory test results: "));
+  Serial.print(memoryTest(), DEC);
+  Serial.println(F(" bytes free"));
+  //
+  //  if (miPuertoDeSerieVirtual.available() > 0)
+  //    Serial.write(miPuertoDeSerieVirtual.read());
+  //
+  //  if (Serial.available() > 0)
+  //  {
+  //    while (Serial.available() > 0)
+  //    {
+  //      miPuertoDeSerieVirtual.write(Serial.read());
+  //    }
+  //    miPuertoDeSerieVirtual.println();
+  // }
+
+}
+
+boolean sendCheckReply(const char *send, const char *reply, uint16_t timeout) {
+  //Serial.println(F("Entrando en: 78-sendCheckReply"));
+  if (! getReply(send, timeout) )
+    return false;
+
+  //  for (uint8_t i = 0; i < strlen(replybuffer); i++) {
+  //    Serial.print(replybuffer[i], HEX); Serial.print(" ");
+  //  }
+  //  Serial.println();
+  //  for (uint8_t i = 0; i < strlen(reply); i++) {
+  //    Serial.print(reply[i], HEX); Serial.print(" ");
+  //  }
+  //  Serial.println();
+
+  return (strcmp(replybuffer, reply) == 0);
+}
+
+uint8_t getReply(const char *send, uint16_t timeout) {
+  //Serial.println(F("Entrando en: 95-getReply"));
+  flushInput();
+
+
+  //Serial.print(F("\t---> ")); Serial.println(send);
+
+
+  miPuertoDeSerieVirtual.println(send);
+
+  uint8_t l = readline(timeout);
+
+  //Serial.print(F("\t<--- ")); Serial.println(replybuffer);
+
+  return l;
 }
 
 
-bool ejecutaComandoYEsperaRespuesta(char *comando, char *respuestaEsperada, int timeout) {
-  getReply(comando, timeout);
-  uint8_t r = readline(timeout);
-  return (strcmp(replybuffer, respuestaEsperada) == 0);
+uint8_t getReply(const __FlashStringHelper *send, uint16_t timeout) {
+  //Serial.println(F("Entrando en: 113-getReply"));
+  flushInput();
+
+
+  //Serial.print(F("\t---> ")); Serial.println(send);
+
+
+  miPuertoDeSerieVirtual.println(send);
+
+  uint8_t l = readline(timeout);
+
+  //Serial.print (F("\t<--- ")); Serial.println(replybuffer);
+
+  return l;
 }
 
-// Función de log
-bool print_log(char *src, int code) {
-  bool ret = true;
-  if (DEBUG_MODE) {
-    if (code == 0) {
-      Serial.print(F("[INFO] command: "));
-      Serial.print(src);
-      Serial.println(F(" completado."));
-      ret = true;
-    } else if (code < 0) {
-      Serial.print(F("[INFO] "));
-      Serial.println(src);
-      ret = true;
-    } else {
-      Serial.print(F("[ERROR] command: "));
-      Serial.print(src);
-      Serial.print(F(" código: "));
-      Serial.println(code);
-      ret = false;
-    }
-  }
-  return ret;
+boolean sendCheckReply(const __FlashStringHelper *send, const __FlashStringHelper *reply, uint16_t timeout) {
+  //Serial.println(F("Entrando en: 130-sendCheckReply"));
+  if (! getReply(send, timeout) )
+    return false;
+
+  //  for (uint8_t i = 0; i < strlen(replybuffer); i++) {
+  //    Serial.print(replybuffer[i], HEX); Serial.print(" ");
+  //  }
+  //  Serial.println();
+  //  Serial.print(reply); Serial.println(".");
+
+  return (strcmp_P((replybuffer), (char PROGMEM *)reply) == 0);
 }
 
-bool peticionURL(String url) {
+boolean sendCheckReply(char* send, const __FlashStringHelper *reply, uint16_t timeout) {
+  //Serial.println(F("Entrando en: 145-sendCheckReply"));
+  if (! getReply(send, timeout) )
+    return false;
+  //
+  //  for (uint8_t i = 0; i < strlen(replybuffer); i++) {
+  //    Serial.print(replybuffer[i], HEX); Serial.print(" ");
+  //  }
+  //  Serial.println();
+  //  Serial.println(reply);
 
-  bool peticionURLCorrecta = false;
-
-  print_log("Inicialización del servicio HTTP", ejecutaComandoYEsperaRespuesta("AT+HTTPINIT", "OK") ? CORRECTO : AT_ERROR);
-  print_log("CID de la sesión HTTP", ejecutaComandoYEsperaRespuesta("AT+HTTPPARA=\"CID\",1", "OK") ? CORRECTO : AT_ERROR);
-  url = "AT+HTTPPARA=\"URL\",\"" + url + "\"";
-  char charBufferURL[url.length()+1];
-  url.toCharArray(charBufferURL, url.length()+1);
-  print_log("URL de la sesión HTTP", ejecutaComandoYEsperaRespuesta(charBufferURL, "OK") ? CORRECTO : AT_ERROR);
-  print_log("Activación de la función HTTPS", ejecutaComandoYEsperaRespuesta("AT+HTTPSSL=1", "OK") ? CORRECTO : AT_ERROR);
-  print_log("Ejecución de la petición HTTPS", ejecutaComandoYEsperaRespuesta("AT+HTTPACTION=0", "OK") ? CORRECTO : AT_ERROR);
-  while (readline(20000, true));
-  if (String(replybuffer).indexOf("+HTTPACTION: 0,200,") < 0)
-    peticionURLCorrecta = true;
-  print_log("Termina el servicio HTTPS", ejecutaComandoYEsperaRespuesta("AT+HTTPTERM", "OK") ? CORRECTO : AT_ERROR);
-
-  return peticionURLCorrecta;
-
+  return (strcmp_P((replybuffer), (char PROGMEM *)reply) == 0);
 }
 
 uint8_t readline(uint16_t timeout, boolean multiline) {
+  //Serial.println(F("Entrando en: 158-readline"));
   uint16_t replyidx = 0;
 
   while (timeout--) {
-
     if (replyidx >= 254) {
-      //DEBUG_PRINTLN(F("SPACE"));
-      //Serial.println(F("SPACE"));
+      //Serial.print(F("SPACE"));
       break;
     }
 
-    while (moduloSIM800L.available()) {
-      char c =  moduloSIM800L.read();
+    while (miPuertoDeSerieVirtual.available()) {
+      char c =  miPuertoDeSerieVirtual.read();
       if (c == '\r') continue;
       if (c == 0xA) {
         if (replyidx == 0)   // the first 0x0A is ignored
           continue;
 
         if (!multiline) {
-          timeout = 0;   // the second 0x0A is the end of the line
-          //Serial.println(F("the second 0x0A is the end of the line"));
+          timeout = 0;         // the second 0x0A is the end of the line
           break;
         }
       }
       replybuffer[replyidx] = c;
-      //DEBUG_PRINT(c, HEX); DEBUG_PRINT("#"); DEBUG_PRINTLN(c);
-      //      Serial.print(c, HEX);
-      //      Serial.print(F("#"));
-      //      Serial.println(c);
+      //Serial.print(c, HEX); Serial.print("#"); Serial.println(c);
       replyidx++;
     }
 
     if (timeout == 0) {
-      //DEBUG_PRINTLN(F("TIMEOUT"));
       //Serial.println(F("TIMEOUT"));
       break;
     }
     delay(1);
   }
   replybuffer[replyidx] = 0;  // null term
-  //Serial.print(F("Replybuffer:"));
-  //Serial.println(replybuffer);
   return replyidx;
 }
 
+void flushInput() {
+  //Serial.println(F("Entrando en: 195-flushInput"));
+  // Read all available serial input to flush pending data.
+  uint16_t timeoutloop = 0;
+  while (timeoutloop++ < 40) {
+    while (miPuertoDeSerieVirtual.available()) {
+      miPuertoDeSerieVirtual.read();
+      timeoutloop = 0;  // If char was received reset the timer
+    }
+    delay(1);
+  }
+}
 
-uint8_t getReply(char *send, uint16_t timeout) {
-  //flushInput();
+uint8_t getIMEI(char *imei) {
+  //Serial.println(F("Entrando en: 208-getIMEI"));
+  getReply(F("AT+GSN"));
+
+  // up to 15 chars
+  strncpy(imei, replybuffer, 15);
+  imei[15] = '\0';
+
+  readline(); // eat 'OK'
+
+  return strlen(imei);
+}
 
 
-  //DEBUG_PRINT(F("\t---> ")); DEBUG_PRINTLN(send);
-  //Serial.print(F("\t---> "));
-  //Serial.println(send);
+uint8_t unlockSIM(const char *pin) {
+  //Serial.println(F("Entrando en: 222-unlockSIM"));
+  char sendbuff[14] = "AT+CPIN=";
+  sendbuff[8] = pin[0];
+  sendbuff[9] = pin[1];
+  sendbuff[10] = pin[2];
+  sendbuff[11] = pin[3];
+  sendbuff[12] = '\0';
+
+  return sendCheckReply(sendbuff, F("OK"));
+}
+
+// this function will return the number of bytes currently free in RAM
+int memoryTest() {
+  //Serial.println(F("Entrando en: 235-memoryTest"));
+  int byteCounter = 0; // initialize a counter
+  byte *byteArray; // create a pointer to a byte array
+  // More on pointers here: http://en.wikipedia.org/wiki/Pointer#C_pointers
+
+  // use the malloc function to repeatedly attempt allocating a certain number of bytes to memory
+  // More on malloc here: http://en.wikipedia.org/wiki/Malloc
+  while ( (byteArray = (byte*) malloc (byteCounter * sizeof(byte))) != NULL ) {
+    byteCounter++; // if allocation was successful, then up the count for the next try
+    free(byteArray); // free memory after allocating it
+  }
+
+  free(byteArray); // also free memory after the function finishes
+  return byteCounter; // send back the highest number of bytes successfully allocated
+}
+
+boolean enableGPRS(boolean onoff) {
+
+  if (onoff) {
+    // disconnect all sockets
+    sendCheckReply(F("AT+CIPSHUT"), F("SHUT OK"), 20000);
+
+    if (! sendCheckReply(F("AT+CGATT=1"), ok_reply, 10000))
+      return false;
+
+    // set bearer profile! connection type GPRS
+    if (! sendCheckReply(F("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\""),
+                         ok_reply, 10000))
+      return false;
+
+    // set bearer profile access point name
+    if (apn) {
+      // Send command AT+SAPBR=3,1,"APN","<apn value>" where <apn value> is the configured APN value.
+      if (! sendCheckReplyQuoted(F("AT+SAPBR=3,1,\"APN\","), apn, ok_reply, 10000))
+        return false;
+
+      // send AT+CSTT,"apn","user","pass"
+      flushInput();
+
+      miPuertoDeSerieVirtual.print(F("AT+CSTT=\""));
+      miPuertoDeSerieVirtual.print(apn);
+      if (apnusername) {
+        miPuertoDeSerieVirtual.print("\",\"");
+        miPuertoDeSerieVirtual.print(apnusername);
+      }
+      if (apnpassword) {
+        miPuertoDeSerieVirtual.print("\",\"");
+        miPuertoDeSerieVirtual.print(apnpassword);
+      }
+      miPuertoDeSerieVirtual.println("\"");
+
+      Serial.print(F("\t---> ")); Serial.print(F("AT+CSTT=\""));
+      Serial.print(apn);
+
+      if (apnusername) {
+        Serial.print("\",\"");
+        Serial.print(apnusername);
+      }
+      if (apnpassword) {
+        Serial.print("\",\"");
+        Serial.print(apnpassword);
+      }
+      Serial.println("\"");
+
+      if (! expectReply(ok_reply)) return false;
+
+      // set username/password
+      if (apnusername) {
+        // Send command AT+SAPBR=3,1,"USER","<user>" where <user> is the configured APN username.
+        if (! sendCheckReplyQuoted(F("AT+SAPBR=3,1,\"USER\","), apnusername, ok_reply, 10000))
+          return false;
+      }
+      if (apnpassword) {
+        // Send command AT+SAPBR=3,1,"PWD","<password>" where <password> is the configured APN password.
+        if (! sendCheckReplyQuoted(F("AT+SAPBR=3,1,\"PWD\","), apnpassword, ok_reply, 10000))
+          return false;
+      }
+    }
+
+    // open GPRS context
+    if (! sendCheckReply(F("AT+SAPBR=1,1"), ok_reply, 30000))
+      return false;
+
+    // bring up wireless connection
+    if (! sendCheckReply(F("AT+CIICR"), ok_reply, 10000))
+      return false;
+
+  } else {
+    // disconnect all sockets
+    if (! sendCheckReply(F("AT+CIPSHUT"), F("SHUT OK"), 20000))
+      return false;
+
+    // close GPRS context
+    if (! sendCheckReply(F("AT+SAPBR=0,1"), ok_reply, 10000))
+      return false;
+
+    if (! sendCheckReply(F("AT+CGATT=0"), ok_reply, 10000))
+      return false;
+
+  }
+  return true;
+}
+
+boolean expectReply(const __FlashStringHelper * reply, uint16_t timeout) {
+  readline(timeout);
+
+  Serial.print(F("\t<--- ")); Serial.println(replybuffer);
+
+  return (strcmp_P((replybuffer), (char PROGMEM *)reply) == 0);
+}
+
+boolean sendCheckReplyQuoted(const __FlashStringHelper * prefix, const __FlashStringHelper * suffix, const __FlashStringHelper * reply, uint16_t timeout) {
+  getReplyQuoted(prefix, suffix, timeout);
+  return (strcmp_P((replybuffer), (char PROGMEM *)reply) == 0);
+}
+
+// Send prefix, ", suffix, ", and newline. Return response (and also set replybuffer with response).
+uint8_t getReplyQuoted(const __FlashStringHelper * prefix, const __FlashStringHelper * suffix, uint16_t timeout) {
+  flushInput();
 
 
-  moduloSIM800L.println(send);
+  Serial.print(F("\t---> ")); Serial.print(prefix);
+  Serial.print('"'); Serial.print(suffix); Serial.println('"');
 
-  //Cada vez que realizamos una petición, devuelve la petición realizada
-  //y luego la respuesta, es decir, cuando enviamos un comando AT, la
-  //respuesta es una línea con el comando AT y al menos otra con la respuesta,
-  //por eso, cada vez que enviamos un comando leemos lo primero la línea del
-  //comando que hemos enviado
+
+  miPuertoDeSerieVirtual.print(prefix);
+  miPuertoDeSerieVirtual.print('"');
+  miPuertoDeSerieVirtual.print(suffix);
+  miPuertoDeSerieVirtual.println('"');
+
   uint8_t l = readline(timeout);
 
-  //DEBUG_PRINT (F("\t<--- ")); DEBUG_PRINTLN(replybuffer);
-  //Serial.print(F("\t<--- "));
-  //Serial.println(replybuffer);
+  Serial.print (F("\t<--- ")); Serial.println(replybuffer);
 
   return l;
+}
+
+uint8_t getNetworkStatus(void) {
+  uint16_t status;
+
+  if (! sendParseReply(F("AT+CREG?"), F("+CREG: "), &status, ',', 1)) return 0;
+
+  return status;
+}
+
+boolean sendParseReply(const __FlashStringHelper * tosend, const __FlashStringHelper * toreply, uint16_t *v, char divider, uint8_t index) {
+  getReply(tosend);
+
+  if (! parseReply(toreply, v, divider, index)) return false;
+
+  readline(); // eat 'OK'
+
+  return true;
+}
+
+boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divider, uint8_t index) {
+  char *p = strstr_P(replybuffer, (char PROGMEM *)toreply);  // get the pointer to the voltage
+  if (p == 0) return false;
+  p += strlen_P((char PROGMEM *)toreply);
+  //DEBUG_PRINTLN(p);
+  for (uint8_t i = 0; i < index; i++) {
+    // increment dividers
+    p = strchr(p, divider);
+    if (!p) return false;
+    p++;
+    //DEBUG_PRINTLN(p);
+
+  }
+  *v = atoi(p);
+
+  return true;
+}
+
+boolean getGSMLoc(float *lat, float *lon) {
+
+  uint16_t returncode;
+  char gpsbuffer[120];
+
+  // make sure we could get a response
+  if (! getGSMLoc(&returncode, gpsbuffer, 120))
+    return false;
+
+  // make sure we have a valid return code
+  if (returncode != 0)
+    return false;
+
+  // +CIPGSMLOC: 0,-74.007729,40.730160,2015/10/15,19:24:55
+  // tokenize the gps buffer to locate the lat & long
+  char *longp = strtok(gpsbuffer, ",");
+  if (! longp) return false;
+
+  char *latp = strtok(NULL, ",");
+  if (! latp) return false;
+
+  *lat = atof(latp);
+  *lon = atof(longp);
+
+  return true;
+
+}
+
+boolean getGSMLoc(uint16_t *errorcode, char *buff, uint16_t maxlen) {
+
+  getReply(F("AT+CIPGSMLOC=1,1"), (uint16_t)10000);
+
+  if (! parseReply(F("+CIPGSMLOC: "), errorcode))
+    return false;
+
+  char *p = replybuffer + 14;
+  uint16_t lentocopy = min(maxlen - 1, strlen(p));
+  strncpy(buff, p, lentocopy + 1);
+
+  readline(); // eat OK
+
+  return true;
+}
+
+boolean HTTP_GET_start(char *url, uint16_t *status, uint16_t *datalen) {
+  if (! HTTP_setup(url))
+    return false;
+
+  // HTTP GET
+  if (! HTTP_action(HTTP_GET, status, datalen, 30000))
+    return false;
+
+  Serial.print(F("Status: ")); Serial.println(*status);
+  Serial.print(F("Len: ")); Serial.println(*datalen);
+
+  // HTTP response data
+  if (! HTTP_readall(datalen))
+    return false;
+
+  return true;
+}
+
+
+boolean HTTP_setup(char *url) {
+  // Handle any pending
+  HTTP_term();
+
+  // Initialize and set parameters
+  if (! HTTP_init())
+    return false;
+  if (! HTTP_para(F("CID"), 1))
+    return false;
+  if (! HTTP_para(F("URL"), url))
+    return false;
+
+  // HTTPS redirect
+  if (httpsredirect) {
+    if (! HTTP_para(F("REDIR"), 1))
+      return false;
+
+    if (! HTTP_ssl(true))
+      return false;
+  }
+
+  // HTTPS
+  if (https) {
+    if (! HTTP_ssl(true))
+      return false;
+  }
+
+  return true;
+}
+
+
+boolean HTTP_init() {
+  return sendCheckReply(F("AT+HTTPINIT"), ok_reply);
+}
+
+boolean HTTP_term() {
+  return sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+}
+
+void HTTP_para_start(const __FlashStringHelper * parameter, boolean quoted) {
+  flushInput();
+
+
+  Serial.print(F("\t---> "));
+  Serial.print(F("AT+HTTPPARA=\""));
+  Serial.print(parameter);
+  Serial.println('"');
+
+
+  miPuertoDeSerieVirtual.print(F("AT+HTTPPARA=\""));
+  miPuertoDeSerieVirtual.print(parameter);
+  if (quoted)
+    miPuertoDeSerieVirtual.print(F("\",\""));
+  else
+    miPuertoDeSerieVirtual.print(F("\","));
+}
+
+boolean HTTP_para(const __FlashStringHelper * parameter, int32_t value) {
+  HTTP_para_start(parameter, false);
+  miPuertoDeSerieVirtual.print(value);
+  return HTTP_para_end(false);
+}
+
+void flushSerial() {
+  while (Serial.available())
+    Serial.read();
+}
+
+boolean HTTP_action(uint8_t method, uint16_t *status, uint16_t *datalen, int32_t timeout) {
+  // Send request.
+  if (! sendCheckReply(F("AT+HTTPACTION="), method, ok_reply))
+    return false;
+
+  // Parse response status and size.
+  readline(timeout);
+  if (! parseReply(F("+HTTPACTION:"), status, ',', 1))
+    return false;
+  if (! parseReply(F("+HTTPACTION:"), datalen, ',', 2))
+    return false;
+
+  return true;
+}
+
+boolean HTTP_readall(uint16_t *datalen) {
+  getReply(F("AT+HTTPREAD"));
+  if (! parseReply(F("+HTTPREAD:"), datalen, ',', 0))
+    return false;
+
+  return true;
+}
+
+boolean HTTP_para(const __FlashStringHelper * parameter, const char *value) {
+  HTTP_para_start(parameter, true);
+  miPuertoDeSerieVirtual.print(value);
+  return HTTP_para_end(true);
+}
+
+boolean HTTP_para_end(boolean quoted) {
+  if (quoted)
+    miPuertoDeSerieVirtual.println('"');
+  else
+    miPuertoDeSerieVirtual.println();
+
+  return expectReply(ok_reply);
+}
+
+boolean HTTP_ssl(boolean onoff) {
+  return sendCheckReply(F("AT+HTTPSSL="), onoff ? 1 : 0, ok_reply);
+}
+
+boolean sendCheckReply(const __FlashStringHelper * prefix, int32_t suffix, const __FlashStringHelper * reply, uint16_t timeout) {
+  getReply(prefix, suffix, timeout);
+  return (strcmp_P((replybuffer), (char PROGMEM *)reply) == 0);
+}
+
+uint8_t getReply(const __FlashStringHelper * prefix, int32_t suffix, uint16_t timeout) {
+  flushInput();
+
+
+  Serial.print(F("\t---> ")); Serial.print(prefix); Serial.println(suffix, DEC);
+
+
+  miPuertoDeSerieVirtual.print(prefix);
+  miPuertoDeSerieVirtual.println(suffix, DEC);
+
+  uint8_t l = readline(timeout);
+
+  Serial.print (F("\t<--- ")); Serial.println(replybuffer);
+
+  return l;
+}
+
+void httpGet(char* url) {
+  uint16_t statuscode;
+  int16_t datalength;
+
+  flushSerial();
+
+  Serial.println(F("****"));
+  Serial.print(F("http://")); //readline(url, 79);
+  Serial.println(url);
+  if (!HTTP_GET_start(url, &statuscode, (uint16_t *)&datalength)) {
+    Serial.println("Failed!");
+  }
+  while (datalength > 0) {
+    while (miPuertoDeSerieVirtual.available()) {
+      char c = miPuertoDeSerieVirtual.read();
+      Serial.write(c);
+      datalength--;
+      if (! datalength) break;
+    }
+  }
+  Serial.println(F("\n****"));
+  HTTP_term();
+}
+
+bool sendMeasure() {
+  uint16_t statuscode;
+  int16_t length;
+
+  flushSerial();
+
+  // Handle any pending
+  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+
+  // Initialize and set parameters
+  if (!sendCheckReply(F("AT+HTTPINIT"), ok_reply)) {
+    Serial.println(F("ERROR HTTP INIT"));
+    return false;
+  }
+
+  if (!sendCheckReply(F("AT+HTTPPARA=\"CID\",1"), ok_reply)) {
+    Serial.println(F("ERROR HTTP CID PARAM"));
+    return false;
+  }
+
+  miPuertoDeSerieVirtual.print(F("AT+HTTPPARA=\"URL\",\""));
+  Serial.print(F("AT+HTTPPARA=\"URL\",\""));
+  miPuertoDeSerieVirtual.print(F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI="));
+  Serial.print(F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI="));
+  miPuertoDeSerieVirtual.print(imei);
+  Serial.print(imei);
+  miPuertoDeSerieVirtual.print(F("&Sensor="));
+  Serial.print(F("&Sensor="));
+  switch(sensorType){
+    case 1:
+      miPuertoDeSerieVirtual.print(F("Luz"));
+      Serial.print(F("Luz"));
+      break;
+    case 2:
+      miPuertoDeSerieVirtual.print(F("Humedad"));
+      Serial.print(F("Humedad"));
+      break;
+    default:
+      miPuertoDeSerieVirtual.print(F("Lluvia"));
+      Serial.print(F("Lluvia"));
+      break;
+  }
+  miPuertoDeSerieVirtual.print(F("&Valor="));
+  Serial.print(F("&Valor="));
+  miPuertoDeSerieVirtual.print(sensorValue);
+  Serial.print(sensorValue);
+  miPuertoDeSerieVirtual.println('"');
+  Serial.println('"');
+
+  readline(10000);
+
+  Serial.print(F("\t<--- "));
+  Serial.println(replybuffer);
+
+  // HTTPS
+  if (!sendCheckReply(F("AT+HTTPSSL=1"), ok_reply)) {
+    Serial.println(F("ERROR HTTP SSL"));
+    return false;
+  }
+
+  if (! sendCheckReply(F("AT+HTTPACTION="), HTTP_GET, ok_reply))
+  {
+    Serial.println(F("ERROR HTTP GET EXECUTION"));
+    return false;
+  }
+    
+
+  // Parse response status and size.
+  readline(30000);
+  if (! parseReply(F("+HTTPACTION:"), &statuscode, ',', 1))
+    return false;
+  if (! parseReply(F("+HTTPACTION:"), (uint16_t *)&length, ',', 2))
+    return false;
+
+  //Serial.print(F("Status: ")); Serial.println(*statuscode);
+  //Serial.print(F("Len: ")); Serial.println(*datalength);
+
+  // HTTP response data
+  flushInput();
+  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+  uint8_t l = readline(500);
+  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)){
+    Serial.println(F("ERROR HTTP READ RESPONSE"));
+    return false;
+  }
+  while (length > 0) {
+    while (miPuertoDeSerieVirtual.available()) {
+      char c = miPuertoDeSerieVirtual.read();
+      Serial.write(c);
+      length--;
+      if (! length) break;
+    }
+  }
+  Serial.println(F("\n****"));
+  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+  return true;
+}
+
+void resetSIM800L() {
+  Serial.print(F("Reiniciando la SIM800L ."));
+  pinMode(SIM800LresetPin, OUTPUT);
+  digitalWrite(SIM800LresetPin, LOW);
+  delay(1000);
+  digitalWrite(SIM800LresetPin, HIGH);
+  for (int i = 0; i < 19; i++) {
+    Serial.print(F("."));
+    delay(1000); //TODO: esto tengo que cambiarlo por esperar a que esté conectado bien en lugar de una espera arbitraria
+  }
+  Serial.println(F("  Done!"));
 }
