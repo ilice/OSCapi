@@ -9,6 +9,7 @@
 #define httpsredirect false
 #define https true
 
+
 SoftwareSerial miPuertoDeSerieVirtual(10, 11);
 
 boolean sendCheckReply(const __FlashStringHelper *send, const char *reply, uint16_t timeout = 500);
@@ -26,6 +27,8 @@ const __FlashStringHelper * ok_reply;
 float latitude, longitude;
 
 const int SIM800LresetPin =  12;      // the number of the LED pin
+uint8_t sensorType = 1;
+int sensorValue = 0;
 
 
 void setup()
@@ -58,17 +61,12 @@ void setup()
     Serial.print(F("Unlocking SIM card: "));
     if (! unlockSIM(PIN)) {
       Serial.println(F("Failed"));
-      delay(20000);
     } else {
       Serial.println(F("OK!"));
-      delay(20000);
     }
-    //TODO: esto tengo que cambiarlo por esperar a que esté conectado bien en lugar de una espera arbitraria
+    delay(10000);//TODO: esto tengo que cambiarlo por esperar a que esté conectado bien en lugar de una espera arbitraria
   }
 
-  if (!sendCheckReply(F("AT+CPIN?"), F("+CPIN: READY"))) {
-    Serial.println("Esto está mal");
-  }
 
   if (!sendCheckReply(F("AT+CGATT?"), F("+CGATT: READY"))) {
     if (!enableGPRS(true)) {
@@ -101,7 +99,7 @@ void setup()
 
 
   char url[134] = "script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI=867273028585185&Sensor=Humedad&Valor=3\0";
-  httpTest(url);
+  httpGet(url);
 
 
 
@@ -122,44 +120,29 @@ void setup()
 
 void loop()
 {
+  sensorType = 1;
+  sensorValue = 15;
 
-    char url[134] = "script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI=867273028585185&Sensor=Humedad&Valor=3\0";
-    url[94] = '8';
-    url[95] = '6';
-    url[96] = '7';
-    url[97] = '2';
-    url[98] = '7';
-    url[99] = '3';
-    url[100] = '0';
-    url[101] = '2';
-    url[102] = '8';
-    url[103] = '5';
-    url[104] = '8';
-    url[105] = '5';
-    url[106] = '1';
-    url[107] = '8';
-    url[108] = '5';
-    httpTest(url);
-  
-    delay(10000);
-  
-  
-    // run the memory test function and print the results to the serial port
-    Serial.print(F("Memory test results: "));
-    Serial.print(memoryTest(), DEC);
-    Serial.println(F(" bytes free"));
-//
-//  if (miPuertoDeSerieVirtual.available() > 0)
-//    Serial.write(miPuertoDeSerieVirtual.read());
-//
-//  if (Serial.available() > 0)
-//  {
-//    while (Serial.available() > 0)
-//    {
-//      miPuertoDeSerieVirtual.write(Serial.read());
-//    }
-//    miPuertoDeSerieVirtual.println();
-  }
+  delay(10000);
+
+
+  // run the memory test function and print the results to the serial port
+  Serial.print(F("Memory test results: "));
+  Serial.print(memoryTest(), DEC);
+  Serial.println(F(" bytes free"));
+  //
+  //  if (miPuertoDeSerieVirtual.available() > 0)
+  //    Serial.write(miPuertoDeSerieVirtual.read());
+  //
+  //  if (Serial.available() > 0)
+  //  {
+  //    while (Serial.available() > 0)
+  //    {
+  //      miPuertoDeSerieVirtual.write(Serial.read());
+  //    }
+  //    miPuertoDeSerieVirtual.println();
+  // }
+
 }
 
 boolean sendCheckReply(const char *send, const char *reply, uint16_t timeout) {
@@ -555,6 +538,12 @@ boolean HTTP_GET_start(char *url, uint16_t *status, uint16_t *datalen) {
   return true;
 }
 
+boolean sendMeasure(uint16_t *status, uint16_t *datalen) {
+  
+
+  return true;
+}
+
 boolean HTTP_setup(char *url) {
   // Handle any pending
   HTTP_term();
@@ -584,6 +573,7 @@ boolean HTTP_setup(char *url) {
 
   return true;
 }
+
 
 boolean HTTP_init() {
   return sendCheckReply(F("AT+HTTPINIT"), ok_reply);
@@ -686,17 +676,94 @@ uint8_t getReply(const __FlashStringHelper * prefix, int32_t suffix, uint16_t ti
   return l;
 }
 
-void httpTest(char* url) {
+void httpGet(char* url) {
   uint16_t statuscode;
-  int16_t length;
+  int16_t datalength;
 
   flushSerial();
 
   Serial.println(F("****"));
   Serial.print(F("http://")); //readline(url, 79);
   Serial.println(url);
-  if (!HTTP_GET_start(url, &statuscode, (uint16_t *)&length)) {
+  if (!HTTP_GET_start(url, &statuscode, (uint16_t *)&datalength)) {
     Serial.println("Failed!");
+  }
+  while (datalength > 0) {
+    while (miPuertoDeSerieVirtual.available()) {
+      char c = miPuertoDeSerieVirtual.read();
+      Serial.write(c);
+      datalength--;
+      if (! datalength) break;
+    }
+  }
+  Serial.println(F("\n****"));
+  HTTP_term();
+}
+
+bool sendMeasure() {
+  uint16_t statuscode;
+  int16_t length;
+
+  flushSerial();
+
+  // Handle any pending
+  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+
+  // Initialize and set parameters
+  if (!sendCheckReply(F("AT+HTTPINIT"), ok_reply)) {
+    Serial.println(F("ERROR HTTP INIT"));
+    return false;
+  }
+
+  if (!sendCheckReply(F("AT+HTTPPARA=\"CID\",1"), ok_reply)) {
+    Serial.println(F("ERROR HTTP CID PARAM"));
+    return false;
+  }
+
+  miPuertoDeSerieVirtual.print(F("AT+HTTPPARA=\"URL\",\""));
+  miPuertoDeSerieVirtual.print(F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?IMEI="));
+  miPuertoDeSerieVirtual.print(imei);
+  miPuertoDeSerieVirtual.print(F("&Sensor="));
+  miPuertoDeSerieVirtual.print(sensorType);
+  miPuertoDeSerieVirtual.print(F("&Value="));
+  miPuertoDeSerieVirtual.print(sensorValue);
+  miPuertoDeSerieVirtual.println('"');
+
+  readline(10000);
+
+  Serial.print(F("\t<--- "));
+  Serial.println(replybuffer);
+
+  // HTTPS
+  if (!sendCheckReply(F("AT+HTTPSSL=1"), ok_reply)) {
+    Serial.println(F("ERROR HTTP SSL"));
+    return false;
+  }
+
+  if (! sendCheckReply(F("AT+HTTPACTION="), HTTP_GET, ok_reply))
+  {
+    Serial.println(F("ERROR HTTP GET EXECUTION"));
+    return false;
+  }
+    
+
+  // Parse response status and size.
+  readline(30000);
+  if (! parseReply(F("+HTTPACTION:"), &statuscode, ',', 1))
+    return false;
+  if (! parseReply(F("+HTTPACTION:"), (uint16_t *)&length, ',', 2))
+    return false;
+
+  //Serial.print(F("Status: ")); Serial.println(*statuscode);
+  //Serial.print(F("Len: ")); Serial.println(*datalength);
+
+  // HTTP response data
+  flushInput();
+  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+  uint8_t l = readline(500);
+  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)){
+    Serial.println(F("ERROR HTTP READ RESPONSE"));
+    return false;
   }
   while (length > 0) {
     while (miPuertoDeSerieVirtual.available()) {
@@ -707,7 +774,8 @@ void httpTest(char* url) {
     }
   }
   Serial.println(F("\n****"));
-  HTTP_term();
+  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+  return true;
 }
 
 void resetSIM800L() {
