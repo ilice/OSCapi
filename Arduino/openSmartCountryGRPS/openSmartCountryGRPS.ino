@@ -6,6 +6,12 @@
 #define apnpassword F("vodafone")
 #define apnpassword F("vodafone")
 #define restURL F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?")
+#define ON 255
+#define LATITUD 1
+#define LONGITUD 2
+#define HUMEDADSUELO 3
+
+
 
 SoftwareSerial miPuertoDeSerieVirtual(10, 11);
 
@@ -24,6 +30,8 @@ const int SIM800LresetPin =  12;
 uint8_t sensorType = 0;
 char sensorValue[12] = {0};
 
+int moistureSensorPin = A0;
+int moistureSensorPower = 9;
 
 void setup()
 {
@@ -52,9 +60,12 @@ void setup()
 
 void loop()
 {
+  sensorType = HUMEDADSUELO;
+  updateSensorValue(moistureSensorMeasure());
+  sendMeasure(); 
+  
   sensorType += 1;
   updateSensorValue(sensorType);
-  
   sendMeasure();
 
   delay(10000);
@@ -486,17 +497,17 @@ bool sendMeasure() {
   miPuertoDeSerieVirtual.print(F("&Sensor="));
   Serial.print(F("&Sensor="));
   switch (sensorType) {
-    case 1:
+    case LATITUD:
       miPuertoDeSerieVirtual.print(F("Latitud"));
-      Serial.print(F("Luz"));
+      Serial.print(F("Latitud"));
       break;
-    case 2:
+    case LONGITUD:
       miPuertoDeSerieVirtual.print(F("Longitud"));
-      Serial.print(F("Humedad"));
+      Serial.print(F("Longitud"));
       break;
-    case 3:
-      miPuertoDeSerieVirtual.print(F("Humedad"));
-      Serial.print(F("Humedad"));
+    case HUMEDADSUELO:
+      miPuertoDeSerieVirtual.print(F("HumedadSuelo"));
+      Serial.print(F("HumedadSuelo"));
       break;
     case 4:
       miPuertoDeSerieVirtual.print(F("Luz"));
@@ -615,10 +626,10 @@ void printGSMLoc() {
     boolean gsmloc_success = getGSMLoc(&latitude, &longitude);
 
     if (gsmloc_success) {
-      sensorType = 1;
+      sensorType = LATITUD;
       updateSensorValue(latitude);
       sendMeasure();
-      sensorType = 2;
+      sensorType = LONGITUD;
       updateSensorValue(longitude);
   
       sendMeasure();
@@ -641,4 +652,15 @@ void printGSMLoc() {
 void updateSensorValue (float value){
   dtostrf(value, 11, 8, sensorValue);
   sensorValue[11] = '\0';
+}
+
+float moistureSensorMeasure(){
+  float moistureSensorMeasure = 0;
+  
+  analogWrite(moistureSensorPower, ON);
+  delay(500);
+  moistureSensorMeasure = (analogRead(A0)/671.0)*100.0;
+  digitalWrite(moistureSensorPower, LOW);
+
+  return moistureSensorMeasure;
 }
