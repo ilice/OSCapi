@@ -1,5 +1,8 @@
 #include <SoftwareSerial.h>
 
+#include "DHT.h"
+#define DHTTYPE DHT11   // DHT 11
+
 #define PIN  "8651"
 #define apn  F("ac.vodafone.es")
 #define apnusername F("vodafone")
@@ -10,6 +13,10 @@
 #define LATITUD 1
 #define LONGITUD 2
 #define HUMEDADSUELO 3
+#define TEMPERATURA 4
+#define HUMEDAD 5
+#define LLUVIA 6
+#define CANTIDADLLUVIA 7
 
 
 
@@ -32,12 +39,36 @@ char sensorValue[12] = {0};
 
 int moistureSensorPin = A0;
 int moistureSensorPower = 9;
+int moistureMaxValue = 0;
+
+int tempAndHumiditySensorPin = 2;
+int tempAndHumiditySensorPower = 3;
+
+int rainSensorPin = 4;
+int rainSensorPower = 5;
+int rainLevelSensorPin = A1;
+
+DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
 void setup()
 {
   Serial.begin(9600);
   miPuertoDeSerieVirtual.begin(9600);
   //while (!Serial);
+
+  pinMode(moistureSensorPower, OUTPUT);
+  digitalWrite(moistureSensorPower, LOW);
+
+  pinMode(tempAndHumiditySensorPower, OUTPUT);
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  pinMode(rainSensorPower, OUTPUT);
+  digitalWrite(rainSensorPower, LOW);
+
+  calibrateMoistureSensor();
+
+
+  dht.begin();
 
   resetSIM800L();
 
@@ -62,10 +93,22 @@ void loop()
 {
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
-  sendMeasure(); 
-  
-  sensorType += 1;
-  updateSensorValue(sensorType);
+  sendMeasure();
+
+  sensorType = TEMPERATURA;
+  updateSensorValue(tempSensorMeasure());
+  sendMeasure();
+
+  sensorType = HUMEDAD;
+  updateSensorValue(humiditySensorMeasure());
+  sendMeasure();
+
+  sensorType = LLUVIA;
+  updateSensorValue(rainSensorMeasure());
+  sendMeasure();
+
+  sensorType = CANTIDADLLUVIA;
+  updateSensorValue(rainLevelSensorMeasure());
   sendMeasure();
 
   delay(10000);
@@ -509,13 +552,25 @@ bool sendMeasure() {
       miPuertoDeSerieVirtual.print(F("HumedadSuelo"));
       Serial.print(F("HumedadSuelo"));
       break;
-    case 4:
-      miPuertoDeSerieVirtual.print(F("Luz"));
+    case TEMPERATURA:
+      miPuertoDeSerieVirtual.print(F("Temperatura"));
+      Serial.print(F("Temperatura"));
+      break;
+    case HUMEDAD:
+      miPuertoDeSerieVirtual.print(F("Humedad"));
       Serial.print(F("Humedad"));
       break;
-    default:
+    case LLUVIA:
       miPuertoDeSerieVirtual.print(F("Lluvia"));
       Serial.print(F("Lluvia"));
+      break;
+    case CANTIDADLLUVIA:
+      miPuertoDeSerieVirtual.print(F("CantidadLluvia"));
+      Serial.print(F("CantidadLluvia"));
+      break;
+    default:
+      miPuertoDeSerieVirtual.print(F("NoConf"));
+      Serial.print(F("Medida para sensor no configurado"));
       break;
   }
   miPuertoDeSerieVirtual.print(F("&Valor="));
@@ -631,7 +686,7 @@ void printGSMLoc() {
       sendMeasure();
       sensorType = LONGITUD;
       updateSensorValue(longitude);
-  
+
       sendMeasure();
       Serial.print("GSMLoc lat:");
       Serial.println(latitude, 6);
@@ -649,18 +704,134 @@ void printGSMLoc() {
   }
 }
 
-void updateSensorValue (float value){
+void updateSensorValue (float value) {
   dtostrf(value, 11, 8, sensorValue);
   sensorValue[11] = '\0';
 }
 
-float moistureSensorMeasure(){
+void updateSensorValue (double value) {
+  dtostrf(value, 11, 2, sensorValue);
+  sensorValue[11] = '\0';
+}
+
+void updateSensorValue (bool value) {
+
+  if (value) {
+    sensorValue[0] = '1';
+  } else {
+    sensorValue[0] = '0';
+  }
+  sensorValue[1] = '\0';
+}
+
+void updateSensorValue (int value) {
+  dtostrf(value, 11, 0, sensorValue);
+  sensorValue[11] = '\0';
+}
+
+float moistureSensorMeasure() {
   float moistureSensorMeasure = 0;
-  
+
   analogWrite(moistureSensorPower, ON);
   delay(500);
-  moistureSensorMeasure = (analogRead(A0)/671.0)*100.0;
+  moistureSensorMeasure = (analogRead(A0) * 100.0) / (float)moistureMaxValue;
   digitalWrite(moistureSensorPower, LOW);
 
   return moistureSensorMeasure;
+}
+
+float tempSensorMeasure() {
+
+  analogWrite(tempAndHumiditySensorPower, ON);
+  delay(2000);
+
+  float t = dht.readTemperature();
+
+  if (isnan(t)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  return t;
+}
+
+float humiditySensorMeasure() {
+
+  analogWrite(tempAndHumiditySensorPower, ON);
+
+  delay(2000);
+
+  float h = dht.readHumidity();
+
+  if (isnan(h)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  return h;
+}
+
+void calibrateMoistureSensor() {
+  Serial.println(F("Calibrate moisture sensor"));
+  int moistureSensorValue = 0;
+  for ( int i = 0; i < 10; i++) {
+
+    analogWrite(moistureSensorPower, ON);
+    delay(500);
+    moistureSensorValue = analogRead(A0);
+    if (moistureMaxValue < moistureSensorValue)
+      moistureMaxValue = moistureSensorValue;
+
+    Serial.println(moistureMaxValue);
+
+    digitalWrite(moistureSensorPower, LOW);
+
+    delay(2000);
+
+  }
+  Serial.println(F("Done."));
+
+}
+
+double rainLevelSensorMeasure() {
+
+  analogWrite(rainSensorPower, ON);
+
+  delay(2000);
+
+  float h = analogRead(rainLevelSensorPin);
+
+  if (isnan(h)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  Serial.print(F("Rainlevel: "));
+  Serial.println(h);
+
+  digitalWrite(rainSensorPower, LOW);
+
+  return h;
+}
+
+
+bool rainSensorMeasure() {
+
+  analogWrite(rainSensorPower, ON);
+
+  delay(2000);
+
+  bool lluvia = digitalRead(rainSensorPin);
+
+  Serial.print(F("Rain: "));
+  Serial.println(lluvia);
+
+  if (isnan(lluvia)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(rainSensorPower, LOW);
+
+  return lluvia;
 }
