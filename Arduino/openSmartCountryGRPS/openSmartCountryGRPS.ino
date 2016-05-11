@@ -39,7 +39,7 @@ char sensorValue[12] = {0};
 
 int moistureSensorPin = A0;
 int moistureSensorPower = 9;
-int moistureMaxValue = 0;
+int moistureMaxValue = 400;
 
 int tempAndHumiditySensorPin = 2;
 int tempAndHumiditySensorPower = 3;
