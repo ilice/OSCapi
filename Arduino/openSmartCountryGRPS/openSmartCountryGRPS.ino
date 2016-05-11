@@ -19,11 +19,10 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
 char replybuffer[255];
 char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
 const __FlashStringHelper * ok_reply;
-float latitude, longitude;
 const int SIM800LresetPin =  12;
 
 uint8_t sensorType = 0;
-int sensorValue = 0;
+char sensorValue[12] = {0};
 
 
 void setup()
@@ -54,8 +53,8 @@ void setup()
 void loop()
 {
   sensorType += 1;
-  sensorValue += 2;
-
+  updateSensorValue(sensorType);
+  
   sendMeasure();
 
   delay(10000);
@@ -477,43 +476,43 @@ bool sendMeasure() {
   }
 
   miPuertoDeSerieVirtual.print(F("AT+HTTPPARA=\"URL\",\""));
-  //Serial.print(F("AT+HTTPPARA=\"URL\",\""));
+  Serial.print(F("AT+HTTPPARA=\"URL\",\""));
   miPuertoDeSerieVirtual.print(restURL);
-  //Serial.print(restURL);
+  Serial.print(restURL);
   miPuertoDeSerieVirtual.print(F("IMEI="));
-  //Serial.print(F("IMEI="));
+  Serial.print(F("IMEI="));
   miPuertoDeSerieVirtual.print(imei);
-  //Serial.print(imei);
+  Serial.print(imei);
   miPuertoDeSerieVirtual.print(F("&Sensor="));
-  //Serial.print(F("&Sensor="));
+  Serial.print(F("&Sensor="));
   switch (sensorType) {
     case 1:
       miPuertoDeSerieVirtual.print(F("Latitud"));
-      //Serial.print(F("Luz"));
+      Serial.print(F("Luz"));
       break;
     case 2:
       miPuertoDeSerieVirtual.print(F("Longitud"));
-      //Serial.print(F("Humedad"));
+      Serial.print(F("Humedad"));
       break;
     case 3:
       miPuertoDeSerieVirtual.print(F("Humedad"));
-      //Serial.print(F("Humedad"));
+      Serial.print(F("Humedad"));
       break;
     case 4:
       miPuertoDeSerieVirtual.print(F("Luz"));
-      //Serial.print(F("Humedad"));
+      Serial.print(F("Humedad"));
       break;
     default:
       miPuertoDeSerieVirtual.print(F("Lluvia"));
-      //Serial.print(F("Lluvia"));
+      Serial.print(F("Lluvia"));
       break;
   }
   miPuertoDeSerieVirtual.print(F("&Valor="));
-  //Serial.print(F("&Valor="));
+  Serial.print(F("&Valor="));
   miPuertoDeSerieVirtual.print(sensorValue);
-  //Serial.print(sensorValue);
+  Serial.print(sensorValue);
   miPuertoDeSerieVirtual.println('"');
-  //Serial.println('"');
+  Serial.println('"');
 
   readline(10000);
 
@@ -610,16 +609,18 @@ void enableGPRS() {
 }
 
 void printGSMLoc() {
+  float latitude, longitude;
   if (getNetworkStatus() == 1) {
     // network & GPRS? Great! Print out the GSM location to compare
     boolean gsmloc_success = getGSMLoc(&latitude, &longitude);
 
     if (gsmloc_success) {
       sensorType = 1;
-      sensorValue = latitude*1000;
+      updateSensorValue(latitude);
       sendMeasure();
       sensorType = 2;
-      sensorValue = longitude*1000;
+      updateSensorValue(longitude);
+  
       sendMeasure();
       Serial.print("GSMLoc lat:");
       Serial.println(latitude, 6);
@@ -635,4 +636,9 @@ void printGSMLoc() {
       }
     }
   }
+}
+
+void updateSensorValue (float value){
+  dtostrf(value, 11, 8, sensorValue);
+  sensorValue[11] = '\0';
 }
