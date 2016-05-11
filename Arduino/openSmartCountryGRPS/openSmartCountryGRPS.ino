@@ -17,6 +17,7 @@
 #define HUMEDAD 5
 #define LLUVIA 6
 #define CANTIDADLLUVIA 7
+#define LUZ 8
 
 
 
@@ -48,6 +49,9 @@ int rainSensorPin = 4;
 int rainSensorPower = 5;
 int rainLevelSensorPin = A1;
 
+int lightSensorPin = A2;
+int lightSensorPower = 6;
+
 DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
 void setup()
@@ -64,6 +68,9 @@ void setup()
 
   pinMode(rainSensorPower, OUTPUT);
   digitalWrite(rainSensorPower, LOW);
+
+  pinMode(lightSensorPower, OUTPUT);
+  digitalWrite(lightSensorPower, LOW);
 
   calibrateMoistureSensor();
 
@@ -109,6 +116,10 @@ void loop()
 
   sensorType = CANTIDADLLUVIA;
   updateSensorValue(rainLevelSensorMeasure());
+  sendMeasure();
+
+  sensorType = LUZ;
+  updateSensorValue(lightSensorMeasure());
   sendMeasure();
 
   delay(10000);
@@ -568,6 +579,10 @@ bool sendMeasure() {
       miPuertoDeSerieVirtual.print(F("CantidadLluvia"));
       Serial.print(F("CantidadLluvia"));
       break;
+    case LUZ:
+      miPuertoDeSerieVirtual.print(F("CantidadLluvia"));
+      Serial.print(F("CantidadLluvia"));
+      break;
     default:
       miPuertoDeSerieVirtual.print(F("NoConf"));
       Serial.print(F("Medida para sensor no configurado"));
@@ -737,6 +752,9 @@ float moistureSensorMeasure() {
   moistureSensorMeasure = (analogRead(A0) * 100.0) / (float)moistureMaxValue;
   digitalWrite(moistureSensorPower, LOW);
 
+  Serial.print(F("Moisture: "));
+  Serial.println(moistureSensorMeasure);
+  
   return moistureSensorMeasure;
 }
 
@@ -745,15 +763,18 @@ float tempSensorMeasure() {
   analogWrite(tempAndHumiditySensorPower, ON);
   delay(2000);
 
-  float t = dht.readTemperature();
+  float temp = dht.readTemperature();
 
-  if (isnan(t)) {
+  if (isnan(temp)) {
     Serial.println(F("Failed to read from DHT sensor!"));
   }
 
   digitalWrite(tempAndHumiditySensorPower, LOW);
 
-  return t;
+  Serial.print(F("Temp: "));
+  Serial.println(temp);
+
+  return temp;
 }
 
 float humiditySensorMeasure() {
@@ -762,15 +783,18 @@ float humiditySensorMeasure() {
 
   delay(2000);
 
-  float h = dht.readHumidity();
+  float humidity = dht.readHumidity();
 
-  if (isnan(h)) {
+  if (isnan(humidity)) {
     Serial.println(F("Failed to read from DHT sensor!"));
   }
 
   digitalWrite(tempAndHumiditySensorPower, LOW);
 
-  return h;
+  Serial.print(F("Humidity: "));
+  Serial.println(humidity);
+
+  return humidity;
 }
 
 void calibrateMoistureSensor() {
@@ -834,4 +858,24 @@ bool rainSensorMeasure() {
   digitalWrite(rainSensorPower, LOW);
 
   return lluvia;
+}
+
+int lightSensorMeasure() {
+
+  analogWrite(lightSensorPower, ON);
+
+  delay(2000);
+
+  int light = digitalRead(lightSensorPin);
+
+  Serial.print(F("Light: "));
+  Serial.println(light);
+
+  if (isnan(light)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(lightSensorPower, LOW);
+
+  return light;
 }
