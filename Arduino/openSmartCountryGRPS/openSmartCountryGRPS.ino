@@ -459,11 +459,13 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
   char *p = strstr_P(replybuffer, (char PROGMEM *)toreply);  // get the pointer to the voltage
   if (p == 0) return false;
   p += strlen_P((char PROGMEM *)toreply);
+  //Serial.println(p);
   for (uint8_t i = 0; i < index; i++) {
     // increment dividers
     p = strchr(p, divider);
     if (!p) return false;
     p++;
+    //Serial.println(p);
 
   }
   *v = atoi(p);
