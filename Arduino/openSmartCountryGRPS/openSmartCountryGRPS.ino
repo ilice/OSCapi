@@ -10,14 +10,16 @@
 #define apnpassword F("vodafone")
 #define restURL F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?")
 #define ON 255
-#define LATITUD 1
-#define LONGITUD 2
-#define HUMEDADSUELO 3
-#define TEMPERATURA 4
-#define HUMEDAD 5
-#define LLUVIA 6
-#define CANTIDADLLUVIA 7
-#define LUZ 8
+#define LATITUD 0
+#define LONGITUD 1
+#define HUMEDADSUELO 2
+#define TEMPERATURA 3
+#define HUMEDAD 4
+#define LLUVIA 5
+#define CANTIDADLLUVIA 6
+#define LUZ 7
+#define BATERIA 8
+#define VOLTAJEBATERIA 9
 
 
 
@@ -120,6 +122,14 @@ void loop()
 
   sensorType = LUZ;
   updateSensorValue(lightSensorMeasure());
+  sendMeasure();
+
+  sensorType = BATERIA;
+  updateSensorValue(baterySensorMeasure());
+  sendMeasure();
+
+  sensorType = VOLTAJEBATERIA;
+  updateSensorValue(bateryVoltageSensorMeasure());
   sendMeasure();
 
   delay(10000);
@@ -449,13 +459,11 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
   char *p = strstr_P(replybuffer, (char PROGMEM *)toreply);  // get the pointer to the voltage
   if (p == 0) return false;
   p += strlen_P((char PROGMEM *)toreply);
-  //DEBUG_PRINTLN(p);
   for (uint8_t i = 0; i < index; i++) {
     // increment dividers
     p = strchr(p, divider);
     if (!p) return false;
     p++;
-    //DEBUG_PRINTLN(p);
 
   }
   *v = atoi(p);
@@ -580,8 +588,16 @@ bool sendMeasure() {
       Serial.print(F("CantidadLluvia"));
       break;
     case LUZ:
-      miPuertoDeSerieVirtual.print(F("CantidadLluvia"));
-      Serial.print(F("CantidadLluvia"));
+      miPuertoDeSerieVirtual.print(F("Luz"));
+      Serial.print(F("Luz"));
+      break;
+    case BATERIA:
+      miPuertoDeSerieVirtual.print(F("Bateria"));
+      Serial.print(F("Bateria"));
+      break;
+    case VOLTAJEBATERIA:
+      miPuertoDeSerieVirtual.print(F("VoltajeBateria"));
+      Serial.print(F("VoltajeBateria"));
       break;
     default:
       miPuertoDeSerieVirtual.print(F("NoConf"));
@@ -699,10 +715,11 @@ void printGSMLoc() {
       sensorType = LATITUD;
       updateSensorValue(latitude);
       sendMeasure();
+
       sensorType = LONGITUD;
       updateSensorValue(longitude);
-
       sendMeasure();
+
       Serial.print("GSMLoc lat:");
       Serial.println(latitude, 6);
       Serial.print("GSMLoc long:");
@@ -754,7 +771,7 @@ float moistureSensorMeasure() {
 
   Serial.print(F("Moisture: "));
   Serial.println(moistureSensorMeasure);
-  
+
   return moistureSensorMeasure;
 }
 
@@ -878,4 +895,24 @@ int lightSensorMeasure() {
   digitalWrite(lightSensorPower, LOW);
 
   return light;
+}
+
+int baterySensorMeasure() {
+
+  uint16_t statuscode;
+
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &statuscode, ',', 1);
+
+  return statuscode;
+
+}
+
+int bateryVoltageSensorMeasure() {
+
+  uint16_t statuscode;
+
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &statuscode, ',', 2);
+
+  return statuscode;
+
 }
