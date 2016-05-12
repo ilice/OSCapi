@@ -866,7 +866,7 @@ int lightSensorMeasure() {
 
   delay(2000);
 
-  int light = digitalRead(lightSensorPin);
+  int light = analogRead(lightSensorPin);
 
   Serial.print(F("Light: "));
   Serial.println(light);
