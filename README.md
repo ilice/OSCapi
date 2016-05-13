@@ -84,5 +84,6 @@ La aplicación Web se ha realizado publicando un Web App desde el App Scripst de
  
 
 El código está muy cogido con pinzas, iré limpiándolo y mejorándolo bastante, de momento simplemente funciona ;)
+Tal cual está, con todos los cables y sin fuente de alimentación alternativa, no se puede utilizar. En eso trabajaré en el futuro más inmediato.
 
 
