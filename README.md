@@ -56,6 +56,8 @@ Para ello se utiliza un Arduino Uno con una SIM800L para conectarse a internet (
 
 La aplicación Web se ha realizado publicando un Web App desde el App Scripst de Google https://developers.google.com/apps-script/guides/web y siguiendo el [siguiente tutorial y sus enlaces](https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example/) de [Martin Hawksey (Google Developer Expert (Apps Script) and Open Education advocate)](https://plus.google.com/+MartinHawksey)
 
+![Conexióna entre Arduino UNO, SIM800L y los distintos sensores](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/openSmartCountryGRPS/IMG_20160513_084707.jpg)
+
 ### Hardware necesario
 * [Arduino Uno](https://www.arduino.cc/en/Main/ArduinoBoardUno) El original cuesta alrededor de 20€, los chinos desde 3,80, no los he probado, el mio es original.
 * [Módulo SIM800L montado](http://www.ebay.es/itm/SIM800L-GPRS-GSM-Module-PCB-Antenna-SIM-Board-Quad-band-for-MCU-Arduino-/182101355688?) Entre 7 y 13 euros, este es chino directamente, también hay opciones en Adafruit por ejemplo, algo más desarrollados y bastante más caros. Yo compré el del enlace porque lo enviaban desde España y me llegaba muy rápido (la impaciencia me puede).
@@ -75,9 +77,10 @@ La aplicación Web se ha realizado publicando un Web App desde el App Scripst de
 
 ### Configuración
 * Para la configuración de la hoja de cálculo en la que se insertarán los datos se puede seguir el tutorial en https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example y la información de la página de Google Developers al respecto https://developers.google.com/apps-script/guides/web
-* Para las conexiones se pueden seguir las fotos y diagramas, he intentado mantener los colores de los cables en las fotos y en los diagramas para que sea más sencillo seguirlos y la colocación es similar. Como algunas piezas no existían he utilizado piezas genéricas en su lugar. Para abrir el archivo fzz se necesita el programa Fitzing que es open source.
+* Para las conexiones se pueden seguir las fotos y diagramas de la carpeta https://github.com/teanocrata/OpenSmartCountry/tree/master/Arduino/openSmartCountryGRPS, he intentado mantener los colores de los cables en las fotos y en los diagramas para que sea más sencillo seguirlos y la colocación es similar. Como algunas piezas no existían he utilizado piezas genéricas en su lugar. Para abrir el archivo fzz se necesita el programa Fitzing que es open source.
 * Es necesario modificar en el archivo openSmartCountry.ino la línea del pin de la tarjeta SIM que uses (línea 6) y la url del Web App que despliegues en la hoja de google (línea 11), así como los valores del apn si no es de vodafone (repito, la uso porque la tengo, no quiero dar publicidad ni nada por el estilo ;P).
 * Se sube al arduino y en unos istandes debería ponerse a enviar los datos cada 10 minutos
+* Mi hoja con los datos se puede ver en [Hoja Google Sheets](https://docs.google.com/spreadsheets/d/16x3sa6vjrsbSCxvWsbqzeB8cXcGHCy72oyrKOePZ0hI/edit?usp=sharing)
  
 
 El código está muy cogido con pinzas, iré limpiándolo y mejorándolo bastante, de momento simplemente funciona ;)
