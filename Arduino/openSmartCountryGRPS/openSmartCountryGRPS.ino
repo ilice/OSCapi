@@ -1,5 +1,8 @@
 #include <SoftwareSerial.h>
 
+#include "DHT.h"
+#define DHTTYPE DHT11   // DHT 11
+
 #define PIN  "8651"
 #define apn  F("ac.vodafone.es")
 #define apnusername F("vodafone")
@@ -7,9 +10,20 @@
 #define apnpassword F("vodafone")
 #define restURL F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?")
 #define ON 255
-#define LATITUD 1
-#define LONGITUD 2
-#define HUMEDADSUELO 3
+#define LATITUD 0
+#define LONGITUD 1
+#define HUMEDADSUELO 2
+#define TEMPERATURA 3
+#define HUMEDAD 4
+#define LLUVIA 5
+#define CANTIDADLLUVIA 6
+#define LUZ 7
+#define BATERIA 8
+#define VOLTAJEBATERIA 9
+
+#define MEASUREINTERVAL 600000
+
+
 
 
 
@@ -25,19 +39,50 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
 char replybuffer[255];
 char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
 const __FlashStringHelper * ok_reply;
+
 const int SIM800LresetPin =  12;
 
 uint8_t sensorType = 0;
 char sensorValue[12] = {0};
 
-int moistureSensorPin = A0;
-int moistureSensorPower = 9;
+int moistureSensorPin = A2;
+int moistureSensorPower = 5;
+int moistureMaxValue = 400;
+
+int tempAndHumiditySensorPin = 4;
+int tempAndHumiditySensorPower = 3;
+
+int rainSensorPin = 7;
+int rainSensorPower = 6;
+int rainLevelSensorPin = A1;
+
+int lightSensorPin = A0;
+int lightSensorPower = 9;
+
+DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
 void setup()
 {
   Serial.begin(9600);
   miPuertoDeSerieVirtual.begin(9600);
   //while (!Serial);
+
+  pinMode(moistureSensorPower, OUTPUT);
+  digitalWrite(moistureSensorPower, LOW);
+
+  pinMode(tempAndHumiditySensorPower, OUTPUT);
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  pinMode(rainSensorPower, OUTPUT);
+  digitalWrite(rainSensorPower, LOW);
+
+  pinMode(lightSensorPower, OUTPUT);
+  digitalWrite(lightSensorPower, LOW);
+
+  calibrateMoistureSensor();
+
+
+  dht.begin();
 
   resetSIM800L();
 
@@ -55,20 +100,50 @@ void setup()
 
   printGSMLoc();
 
+  disableGPRS();
+
   memoryTest();
 }
 
 void loop()
 {
+  enableGPRS();
+  
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
-  sendMeasure(); 
-  
-  sensorType += 1;
-  updateSensorValue(sensorType);
   sendMeasure();
 
-  delay(10000);
+  sensorType = TEMPERATURA;
+  updateSensorValue(tempSensorMeasure());
+  sendMeasure();
+
+  sensorType = HUMEDAD;
+  updateSensorValue(humiditySensorMeasure());
+  sendMeasure();
+
+  sensorType = LLUVIA;
+  updateSensorValue(rainSensorMeasure());
+  sendMeasure();
+
+  sensorType = CANTIDADLLUVIA;
+  updateSensorValue(rainLevelSensorMeasure());
+  sendMeasure();
+
+  sensorType = LUZ;
+  updateSensorValue(lightSensorMeasure());
+  sendMeasure();
+
+  sensorType = BATERIA;
+  updateSensorValue(batterySensorMeasure());
+  sendMeasure();
+
+  sensorType = VOLTAJEBATERIA;
+  updateSensorValue(batteryVoltageSensorMeasure());
+  sendMeasure();
+
+  disableGPRS();
+
+  delay(MEASUREINTERVAL);
 
   memoryTest();
 }
@@ -395,13 +470,13 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
   char *p = strstr_P(replybuffer, (char PROGMEM *)toreply);  // get the pointer to the voltage
   if (p == 0) return false;
   p += strlen_P((char PROGMEM *)toreply);
-  //DEBUG_PRINTLN(p);
+  //Serial.println(p);
   for (uint8_t i = 0; i < index; i++) {
     // increment dividers
     p = strchr(p, divider);
     if (!p) return false;
     p++;
-    //DEBUG_PRINTLN(p);
+    //Serial.println(p);
 
   }
   *v = atoi(p);
@@ -509,13 +584,37 @@ bool sendMeasure() {
       miPuertoDeSerieVirtual.print(F("HumedadSuelo"));
       Serial.print(F("HumedadSuelo"));
       break;
-    case 4:
-      miPuertoDeSerieVirtual.print(F("Luz"));
+    case TEMPERATURA:
+      miPuertoDeSerieVirtual.print(F("Temperatura"));
+      Serial.print(F("Temperatura"));
+      break;
+    case HUMEDAD:
+      miPuertoDeSerieVirtual.print(F("Humedad"));
       Serial.print(F("Humedad"));
       break;
-    default:
+    case LLUVIA:
       miPuertoDeSerieVirtual.print(F("Lluvia"));
       Serial.print(F("Lluvia"));
+      break;
+    case CANTIDADLLUVIA:
+      miPuertoDeSerieVirtual.print(F("CantidadLluvia"));
+      Serial.print(F("CantidadLluvia"));
+      break;
+    case LUZ:
+      miPuertoDeSerieVirtual.print(F("Luz"));
+      Serial.print(F("Luz"));
+      break;
+    case BATERIA:
+      miPuertoDeSerieVirtual.print(F("Bateria"));
+      Serial.print(F("Bateria"));
+      break;
+    case VOLTAJEBATERIA:
+      miPuertoDeSerieVirtual.print(F("VoltajeBateria"));
+      Serial.print(F("VoltajeBateria"));
+      break;
+    default:
+      miPuertoDeSerieVirtual.print(F("NoConf"));
+      Serial.print(F("Medida para sensor no configurado"));
       break;
   }
   miPuertoDeSerieVirtual.print(F("&Valor="));
@@ -550,27 +649,32 @@ bool sendMeasure() {
   if (! parseReply(F("+HTTPACTION:"), (uint16_t *)&length, ',', 2))
     return false;
 
+  //De momento lo que se es que cuando devuelve la redirección funciona bien, así que capturo esto
+  if (statuscode !=  302)
+    Serial.println(F("ERROR AL ENVIAR LA MEDIDA A GOOGLE SHEETS"));
+
   //Serial.print(F("Status: ")); Serial.println(*statuscode);
   //Serial.print(F("Len: ")); Serial.println(*datalength);
 
-  // HTTP response data
-  flushInput();
-  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
-  uint8_t l = readline(500);
-  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
-    //Serial.println(F("ERROR HTTP READ RESPONSE"));
-    return false;
-  }
-  while (length > 0) {
-    while (miPuertoDeSerieVirtual.available()) {
-      char c = miPuertoDeSerieVirtual.read();
-      Serial.write(c);
-      length--;
-      if (! length) break;
-    }
-  }
-  Serial.println(F("\n****"));
-  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+//  // HTTP response data
+//  flushInput();
+//  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+//  uint8_t l = readline(500);
+//  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
+//    //Serial.println(F("ERROR HTTP READ RESPONSE"));
+//    return false;
+//  }
+//  while (length > 0) {
+//    while (miPuertoDeSerieVirtual.available()) {
+//      char c = miPuertoDeSerieVirtual.read();
+//      Serial.write(c);
+//      length--;
+//      if (! length) break;
+//    }
+//  }
+//  Serial.println(F("\n****"));
+  if (! sendCheckReply(F("AT+HTTPTERM"), ok_reply))
+    Serial.println(F("ERROR HTTP TERM"));
   return true;
 }
 
@@ -619,6 +723,16 @@ void enableGPRS() {
   }
 }
 
+void disableGPRS() {
+  if (!sendCheckReply(F("AT+CGATT?"), F("+CGATT: READY"))) {
+    if (!enableGPRS(false)) {
+      Serial.println(F("Failed to turn off"));
+    } else {
+      Serial.println(F("Turn off"));
+    }
+  }
+}
+
 void printGSMLoc() {
   float latitude, longitude;
   if (getNetworkStatus() == 1) {
@@ -629,10 +743,11 @@ void printGSMLoc() {
       sensorType = LATITUD;
       updateSensorValue(latitude);
       sendMeasure();
+
       sensorType = LONGITUD;
       updateSensorValue(longitude);
-  
       sendMeasure();
+
       Serial.print("GSMLoc lat:");
       Serial.println(latitude, 6);
       Serial.print("GSMLoc long:");
@@ -649,18 +764,189 @@ void printGSMLoc() {
   }
 }
 
-void updateSensorValue (float value){
+void updateSensorValue (float value) {
   dtostrf(value, 11, 8, sensorValue);
   sensorValue[11] = '\0';
 }
 
-float moistureSensorMeasure(){
+void updateSensorValue (double value) {
+  dtostrf(value, 11, 2, sensorValue);
+  sensorValue[11] = '\0';
+}
+
+void updateSensorValue (bool value) {
+
+  if (value) {
+    sensorValue[0] = '1';
+  } else {
+    sensorValue[0] = '0';
+  }
+  sensorValue[1] = '\0';
+}
+
+void updateSensorValue (int value) {
+  dtostrf(value, 11, 0, sensorValue);
+  sensorValue[11] = '\0';
+}
+
+float moistureSensorMeasure() {
   float moistureSensorMeasure = 0;
-  
+
   analogWrite(moistureSensorPower, ON);
   delay(500);
-  moistureSensorMeasure = (analogRead(A0)/671.0)*100.0;
+  moistureSensorMeasure = (analogRead(A0) * 100.0) / (float)moistureMaxValue;
   digitalWrite(moistureSensorPower, LOW);
 
+  Serial.print(F("Moisture: "));
+  Serial.println(moistureSensorMeasure);
+
   return moistureSensorMeasure;
+}
+
+float tempSensorMeasure() {
+
+  analogWrite(tempAndHumiditySensorPower, ON);
+  delay(2000);
+
+  float temp = dht.readTemperature();
+
+  if (isnan(temp)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  Serial.print(F("Temp: "));
+  Serial.println(temp);
+
+  return temp;
+}
+
+float humiditySensorMeasure() {
+
+  analogWrite(tempAndHumiditySensorPower, ON);
+
+  delay(2000);
+
+  float humidity = dht.readHumidity();
+
+  if (isnan(humidity)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(tempAndHumiditySensorPower, LOW);
+
+  Serial.print(F("Humidity: "));
+  Serial.println(humidity);
+
+  return humidity;
+}
+
+void calibrateMoistureSensor() {
+  Serial.println(F("Calibrate moisture sensor"));
+  int moistureSensorValue = 0;
+  for ( int i = 0; i < 10; i++) {
+
+    analogWrite(moistureSensorPower, ON);
+    delay(500);
+    moistureSensorValue = analogRead(A0);
+    if (moistureMaxValue < moistureSensorValue)
+      moistureMaxValue = moistureSensorValue;
+
+    Serial.println(moistureMaxValue);
+
+    digitalWrite(moistureSensorPower, LOW);
+
+    delay(2000);
+
+  }
+  Serial.println(F("Done."));
+
+}
+
+double rainLevelSensorMeasure() {
+
+  analogWrite(rainSensorPower, ON);
+
+  delay(2000);
+
+  float h = analogRead(rainLevelSensorPin);
+
+  if (isnan(h)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  Serial.print(F("Rainlevel: "));
+  Serial.println(h);
+
+  digitalWrite(rainSensorPower, LOW);
+
+  return h;
+}
+
+
+bool rainSensorMeasure() {
+
+  analogWrite(rainSensorPower, ON);
+
+  delay(2000);
+
+  bool lluvia = digitalRead(rainSensorPin);
+
+  Serial.print(F("Rain: "));
+  Serial.println(lluvia);
+
+  if (isnan(lluvia)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(rainSensorPower, LOW);
+
+  return lluvia;
+}
+
+int lightSensorMeasure() {
+
+  analogWrite(lightSensorPower, ON);
+
+  delay(2000);
+
+  int light = analogRead(lightSensorPin);
+
+  Serial.print(F("Light: "));
+  Serial.println(light);
+
+  if (isnan(light)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+  }
+
+  digitalWrite(lightSensorPower, LOW);
+
+  return light;
+}
+
+int batterySensorMeasure() {
+
+  uint16_t batt;
+
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &batt, ',', 1);
+
+  Serial.print(F("Batt: "));
+  Serial.println(batt);
+
+  return batt;
+
+}
+
+int batteryVoltageSensorMeasure() {
+
+  uint16_t battvolt;
+
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &battvolt, ',', 2);
+
+  Serial.print(F("Batt Voltage: "));
+  Serial.println(battvolt);
+
+  return battvolt;
+
 }
