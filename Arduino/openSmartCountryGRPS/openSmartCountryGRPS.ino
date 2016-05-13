@@ -21,6 +21,10 @@
 #define BATERIA 8
 #define VOLTAJEBATERIA 9
 
+#define MEASUREINTERVAL 600000
+
+
+
 
 
 SoftwareSerial miPuertoDeSerieVirtual(10, 11);
@@ -35,24 +39,25 @@ boolean parseReply(const __FlashStringHelper * toreply, uint16_t *v, char divide
 char replybuffer[255];
 char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
 const __FlashStringHelper * ok_reply;
+
 const int SIM800LresetPin =  12;
 
 uint8_t sensorType = 0;
 char sensorValue[12] = {0};
 
-int moistureSensorPin = A0;
-int moistureSensorPower = 9;
+int moistureSensorPin = A2;
+int moistureSensorPower = 5;
 int moistureMaxValue = 400;
 
-int tempAndHumiditySensorPin = 2;
+int tempAndHumiditySensorPin = 4;
 int tempAndHumiditySensorPower = 3;
 
-int rainSensorPin = 4;
-int rainSensorPower = 5;
+int rainSensorPin = 7;
+int rainSensorPower = 6;
 int rainLevelSensorPin = A1;
 
-int lightSensorPin = A2;
-int lightSensorPower = 6;
+int lightSensorPin = A0;
+int lightSensorPower = 9;
 
 DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
@@ -95,11 +100,15 @@ void setup()
 
   printGSMLoc();
 
+  disableGPRS();
+
   memoryTest();
 }
 
 void loop()
 {
+  enableGPRS();
+  
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
   sendMeasure();
@@ -125,14 +134,16 @@ void loop()
   sendMeasure();
 
   sensorType = BATERIA;
-  updateSensorValue(baterySensorMeasure());
+  updateSensorValue(batterySensorMeasure());
   sendMeasure();
 
   sensorType = VOLTAJEBATERIA;
-  updateSensorValue(bateryVoltageSensorMeasure());
+  updateSensorValue(batteryVoltageSensorMeasure());
   sendMeasure();
 
-  delay(10000);
+  disableGPRS();
+
+  delay(MEASUREINTERVAL);
 
   memoryTest();
 }
@@ -638,27 +649,32 @@ bool sendMeasure() {
   if (! parseReply(F("+HTTPACTION:"), (uint16_t *)&length, ',', 2))
     return false;
 
+  //De momento lo que se es que cuando devuelve la redirección funciona bien, así que capturo esto
+  if (statuscode !=  302)
+    Serial.println(F("ERROR AL ENVIAR LA MEDIDA A GOOGLE SHEETS"));
+
   //Serial.print(F("Status: ")); Serial.println(*statuscode);
   //Serial.print(F("Len: ")); Serial.println(*datalength);
 
-  // HTTP response data
-  flushInput();
-  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
-  uint8_t l = readline(500);
-  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
-    //Serial.println(F("ERROR HTTP READ RESPONSE"));
-    return false;
-  }
-  while (length > 0) {
-    while (miPuertoDeSerieVirtual.available()) {
-      char c = miPuertoDeSerieVirtual.read();
-      Serial.write(c);
-      length--;
-      if (! length) break;
-    }
-  }
-  Serial.println(F("\n****"));
-  sendCheckReply(F("AT+HTTPTERM"), ok_reply);
+//  // HTTP response data
+//  flushInput();
+//  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+//  uint8_t l = readline(500);
+//  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
+//    //Serial.println(F("ERROR HTTP READ RESPONSE"));
+//    return false;
+//  }
+//  while (length > 0) {
+//    while (miPuertoDeSerieVirtual.available()) {
+//      char c = miPuertoDeSerieVirtual.read();
+//      Serial.write(c);
+//      length--;
+//      if (! length) break;
+//    }
+//  }
+//  Serial.println(F("\n****"));
+  if (! sendCheckReply(F("AT+HTTPTERM"), ok_reply))
+    Serial.println(F("ERROR HTTP TERM"));
   return true;
 }
 
@@ -703,6 +719,16 @@ void enableGPRS() {
       Serial.println(F("Failed to turn on"));
     } else {
       Serial.println(F("Turn on"));
+    }
+  }
+}
+
+void disableGPRS() {
+  if (!sendCheckReply(F("AT+CGATT?"), F("+CGATT: READY"))) {
+    if (!enableGPRS(false)) {
+      Serial.println(F("Failed to turn off"));
+    } else {
+      Serial.println(F("Turn off"));
     }
   }
 }
@@ -899,22 +925,28 @@ int lightSensorMeasure() {
   return light;
 }
 
-int baterySensorMeasure() {
+int batterySensorMeasure() {
 
-  uint16_t statuscode;
+  uint16_t batt;
 
-  sendParseReply(F("AT+CBC"), F("+CBC:"), &statuscode, ',', 1);
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &batt, ',', 1);
 
-  return statuscode;
+  Serial.print(F("Batt: "));
+  Serial.println(batt);
+
+  return batt;
 
 }
 
-int bateryVoltageSensorMeasure() {
+int batteryVoltageSensorMeasure() {
 
-  uint16_t statuscode;
+  uint16_t battvolt;
 
-  sendParseReply(F("AT+CBC"), F("+CBC:"), &statuscode, ',', 2);
+  sendParseReply(F("AT+CBC"), F("+CBC:"), &battvolt, ',', 2);
 
-  return statuscode;
+  Serial.print(F("Batt Voltage: "));
+  Serial.println(battvolt);
+
+  return battvolt;
 
 }
