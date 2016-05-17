@@ -45,19 +45,19 @@ const int SIM800LresetPin =  12;
 uint8_t sensorType = 0;
 char sensorValue[12] = {0};
 
-int moistureSensorPin = A2;
-int moistureSensorPower = 5;
-int moistureMaxValue = 400;
+int moistureSensorPin = A1;
+int moistureSensorPower = 9;
+int moistureMaxValue = 10;
 
-int tempAndHumiditySensorPin = 4;
+int tempAndHumiditySensorPin = 2;
 int tempAndHumiditySensorPower = 3;
 
-int rainSensorPin = 7;
+int rainSensorPin = 4;
 int rainSensorPower = 6;
-int rainLevelSensorPin = A1;
+int rainLevelSensorPin = A0;
 
-int lightSensorPin = A0;
-int lightSensorPower = 9;
+int lightSensorPin = A2;
+int lightSensorPower = 5;
 
 DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
@@ -794,7 +794,7 @@ float moistureSensorMeasure() {
 
   analogWrite(moistureSensorPower, ON);
   delay(500);
-  moistureSensorMeasure = (analogRead(A0) * 100.0) / (float)moistureMaxValue;
+  moistureSensorMeasure = (analogRead(moistureSensorPin) * 100.0) / (float)moistureMaxValue;
   digitalWrite(moistureSensorPower, LOW);
 
   Serial.print(F("Moisture: "));
@@ -849,7 +849,7 @@ void calibrateMoistureSensor() {
 
     analogWrite(moistureSensorPower, ON);
     delay(500);
-    moistureSensorValue = analogRead(A0);
+    moistureSensorValue = analogRead(moistureSensorPin);
     if (moistureMaxValue < moistureSensorValue)
       moistureMaxValue = moistureSensorValue;
 
