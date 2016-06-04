@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include "LowPower.h"
 
 #include "DHT.h"
 #define DHTTYPE DHT11   // DHT 11
@@ -59,6 +60,8 @@ int rainLevelSensorPin = A0;
 int lightSensorPin = A2;
 int lightSensorPower = 5;
 
+uint8_t sleepCounter = 0;
+
 DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
 void setup()
@@ -108,7 +111,7 @@ void setup()
 void loop()
 {
   enableGPRS();
-  
+
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
   sendMeasure();
@@ -143,8 +146,18 @@ void loop()
 
   disableGPRS();
 
-  delay(MEASUREINTERVAL);
-
+  //Serial.println(F("Power down"));
+  //Dejo 1 segundo para que todo termine correctamente antes de "apagar" temporalmente el Arguino
+  delay(1000);
+  sleepCounter = 0;
+  while (sleepCounter < 100) {
+    // do something 10 times
+    sleepCounter++;
+    // put the processor to sleep for 8 seconds
+    LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+  }
+  //delay(MEASUREINTERVAL);
+  //Serial.println(F("Power up"));
   memoryTest();
 }
 
@@ -656,23 +669,23 @@ bool sendMeasure() {
   //Serial.print(F("Status: ")); Serial.println(*statuscode);
   //Serial.print(F("Len: ")); Serial.println(*datalength);
 
-//  // HTTP response data
-//  flushInput();
-//  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
-//  uint8_t l = readline(500);
-//  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
-//    //Serial.println(F("ERROR HTTP READ RESPONSE"));
-//    return false;
-//  }
-//  while (length > 0) {
-//    while (miPuertoDeSerieVirtual.available()) {
-//      char c = miPuertoDeSerieVirtual.read();
-//      Serial.write(c);
-//      length--;
-//      if (! length) break;
-//    }
-//  }
-//  Serial.println(F("\n****"));
+  //  // HTTP response data
+  //  flushInput();
+  //  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+  //  uint8_t l = readline(500);
+  //  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
+  //    //Serial.println(F("ERROR HTTP READ RESPONSE"));
+  //    return false;
+  //  }
+  //  while (length > 0) {
+  //    while (miPuertoDeSerieVirtual.available()) {
+  //      char c = miPuertoDeSerieVirtual.read();
+  //      Serial.write(c);
+  //      length--;
+  //      if (! length) break;
+  //    }
+  //  }
+  //  Serial.println(F("\n****"));
   if (! sendCheckReply(F("AT+HTTPTERM"), ok_reply))
     Serial.println(F("ERROR HTTP TERM"));
   return true;
