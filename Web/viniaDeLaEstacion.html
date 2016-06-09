@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Open Smart Country</title>
+		<link href="css/estilo.css" rel="stylesheet" type="text/css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script src="js/codigo.js"  type="text/javascript"></script>
+	</head>
+	<body>
+		<p>De momento estos datos son los de la estación meteorológica más cercana, y por las características del terreno es probable que no sean del todo significativos.</p>
+		<p>Están disponibles como datos abiertos en <a href="http://www.inforiego.org/">http://www.inforiego.org/</a>, dispone de un API REST de acceso a los mismos.</p>
+
+		<table>
+
+			<tr>
+				<td rowspan="5" >
+					<iframe id="lluvia" width="707.5" height="437.1507462338126" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=69688959&amp;format=interactive">
+						<p>Your browser does not support iframes.</p>
+					</iframe>
+				</td>
+				<td>
+					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ"/>
+				</td>
+
+			</tr>
+			<tr>
+				<th>Días de lluvia 2016</th>
+			</tr>
+			<tr>
+				<td id="diasDeLluvia"/>
+			</tr>
+			<tr>
+				<th>Acumulado 2016</th>
+			</tr>
+			<tr>
+				<td id="pecipitacionacumulada"/>
+			</tr>
+		</table>
+
+		<table>
+			<tr>
+				<td>
+					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
+				</td>
+				<td rowspan="7">
+					<iframe id="temperatura" width="706" height="436.3058705560218" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=94930844&amp;format=interactive">
+						<p>Your browser does not support iframes.</p>
+					</iframe>
+				</td>
+			</tr>
+			<tr>
+				<th>Máxima diurna 2016</th>
+			</tr>
+			<tr>
+				<td id="maximaTemperaturaDiurna"/>
+			</tr>
+			<tr>
+				<th>Mínima diurna 2016</th>
+			</tr>
+			<tr>
+				<td id="minimaTemperaturaDiurna"/>
+			</tr>
+			<tr>
+				<th>Media diurna 2016</th>
+			</tr>
+			<tr>
+				<td id ="mediaTemperaturaDiurna"/>
+			</tr>
+		</table>
+
+
+
+
+		<table>
+			<tr>
+				<td rowspan="7">
+					<iframe id="sol" width="707.8333333333335" height="437.68083333333334" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=414991917&amp;format=interactive">
+						<p>Your browser does not support iframes.</p>
+					</iframe>
+				</td>
+				<td>
+					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU"/>
+				</td>
+
+			</tr>
+			<tr>
+				<th>Horas diarias de sol 2016 (en media)</th>
+			</tr>
+			<tr>
+				<td id = "mediaHorasSolDiarias">
+			</tr>
+			<tr>
+				<th>Horas máximas de sol 2016</th>
+			</tr>
+			<tr>
+				<td id = "maximasHorasSolDiarias">
+			</tr>
+			<tr>
+				<th>Horas acumuladas de sol 2016</th>
+			</tr>
+			<tr>
+				<td id = "horasSolAcumuladas">
+			</tr>
+		</table>
+
+
+
+		<table>
+			<tr>
+				<td>
+					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
+				</td>
+				<td rowspan="7">
+					<iframe = id="radiacion" width="706" height="436.71073989596493" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=603138959&amp;format=interactive">
+						<p>Your browser does not support iframes.</p>
+					</iframe>
+				</td>
+			</tr>
+			<tr>
+				<th>Radiación máxima neta diaria 2016</th>
+			</tr>
+			<tr>
+				<td id="maximoRadiacionNetaDiaria"/>
+			</tr>
+			<tr>
+				<th>Radiación media neta diaria 2016</th>
+			</tr>
+			<tr>
+				<td id="mediaRadiacionNetaDiaria"/>
+			</tr>
+			<tr>
+				<th>Radiación acumulada neta 2016</th>
+			</tr>
+			<tr>
+				<td id="acumuladoRadiacionNetaDiaria"/>
+			</tr>
+		</table>
+
+
+
+	</body>
+</html>
+
