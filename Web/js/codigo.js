@@ -112,12 +112,13 @@ function obtenEstacion(){
 
 		var opciones = {
           chart: {
-            title: 'Precipitaciones mensuales',
+            title: 'Precipitaciones mensuales en mm',
             subtitle: 'Comparativa acumulado mensual últimos años',
           },
           bars: 'vertical',
           colors: [ '#94E8B4' ,'#72BDA3', '#5E8C61',  '#426A4D', '#4E6151', '#3B322C','#7246F2' ],
-		  hAxis: { ticks: [1,2,3,4,5,6,7,8,9,10,11,12] , title: 'Mes'}
+		  hAxis: { ticks: [1,2,3,4,5,6,7,8,9,10,11,12] , title: 'Mes'},
+		  vAxis: { title: 'Precipitación en mm'}
 		};
 		
       var datos = respuesta.getDataTable();
@@ -153,6 +154,7 @@ function obtenEstacion(){
 		  explorer: {},
           colors: ['#7F0D0B', '#BF1411','#400706' ],
 		  hAxis: {title: 'Día del año', gridlines:{count: 12} },
+		  vAxis: { title: 'Temperatura en ºC'},
 		  series: {
 			  0: {
 				
@@ -205,6 +207,7 @@ function obtenEstacion(){
 		  explorer: {},
           colors: ['#BFA71F', '#7F6F15','#FFDF2A' ],
 		  hAxis: {title: 'Día del año', gridlines:{count: 12} },
+		  vAxis: { title: 'Horas de Sol (h)'},
 		  series: {
 			  0: {
 				
@@ -311,6 +314,7 @@ function obtenEstacion(){
 		  explorer: {},
           colors: ['#BF480A', '#FF600D','#E5570C' ],
 		  hAxis: {title: 'Día del año', gridlines:{count: 12} },
+		  vAxis: {title: 'Radiación neta diaria en MJ/m²'},
 		  series: {
 			  0: {
 				
