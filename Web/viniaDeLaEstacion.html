@@ -5,19 +5,28 @@
 		<title>Open Smart Country</title>
 		<link href="css/estilo.css" rel="stylesheet" type="text/css"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script src="js/codigo.js"  type="text/javascript"></script>
 	</head>
-	<body>
+	<body onload="cargaDatos()">
 		<p>De momento estos datos son los de la estación meteorológica más cercana, y por las características del terreno es probable que no sean del todo significativos.</p>
 		<p>Están disponibles como datos abiertos en <a href="http://www.inforiego.org/">http://www.inforiego.org/</a>, dispone de un API REST de acceso a los mismos.</p>
+		<img src="img/viniaDeLaEstacionMap.png" alt="Mapa de la Viña de la Estación"/>
+		<table><tr>
+		<th>Coordenadas</th>
+		<td id="latitud">40.440005</td>
+		<td id="longitud">-5.737003</td>
+		<th>Estación más cercana</th>
+		<td id="estacion"></td>
+		</tr></table>
+		<!--Div that will hold the pie chart-->
+		
 
 		<table>
 
 			<tr>
 				<td rowspan="5" >
-					<iframe id="lluvia" width="707.5" height="437.1507462338126" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=69688959&amp;format=interactive">
-						<p>Your browser does not support iframes.</p>
-					</iframe>
+					<div id="graficoPrecipitacionPorMesYAnio" style="width: 707.5px; height: 437.1507462338126px"></div>
 				</td>
 				<td>
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ"/>
@@ -44,9 +53,7 @@
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
 				</td>
 				<td rowspan="7">
-					<iframe id="temperatura" width="706" height="436.3058705560218" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=94930844&amp;format=interactive">
-						<p>Your browser does not support iframes.</p>
-					</iframe>
+					<div id = "graficoTemperaturaMediaDiurna" style="width: 707.5px; height: 437.1507462338126px"></div>
 				</td>
 			</tr>
 			<tr>
@@ -75,9 +82,7 @@
 		<table>
 			<tr>
 				<td rowspan="7">
-					<iframe id="sol" width="707.8333333333335" height="437.68083333333334" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=414991917&amp;format=interactive">
-						<p>Your browser does not support iframes.</p>
-					</iframe>
+					<div id="graficoHorasDeSolDiarias" style="width: 707.5px; height: 437.1507462338126px"></div>
 				</td>
 				<td>
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU"/>
@@ -112,9 +117,7 @@
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
 				</td>
 				<td rowspan="7">
-					<iframe = id="radiacion" width="706" height="436.71073989596493" seamless frameborder="0" scrolling="yes" src="https://docs.google.com/spreadsheets/d/1eC1tySSc5HOn1qcBJE7nqnZIpXQ5z900CKEbJuQyhS0/pubchart?oid=603138959&amp;format=interactive">
-						<p>Your browser does not support iframes.</p>
-					</iframe>
+					<div id="graficoRadiacionNetaDiaria" style="width: 707.5px; height: 437.1507462338126px"></div>
 				</td>
 			</tr>
 			<tr>
