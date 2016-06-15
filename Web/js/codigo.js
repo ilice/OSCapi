@@ -128,11 +128,79 @@ function obtenDatosCatastro(){
 		var rc = coord[0].getElementsByTagName("pc")[0].getElementsByTagName("pc1") [0].childNodes[0].nodeValue+coord[0].getElementsByTagName("pc")[0].getElementsByTagName("pc2")[0].childNodes[0].nodeValue;
 		document.getElementById("rc").innerHTML = rc;
 		document.getElementById("direccion").innerHTML = coord[0].getElementsByTagName("ldt")[0].childNodes[0].nodeValue;
-	
-		obtenDatosPorReferenciaCatastral(rc, "Salamanca", "Sanchotello");
+		var provincia = "";
+		var municipio = "";
+		//Curiosamente me obliga a pasar provincia y municipio pero se lo puedo pasar en blanco y funciona igual XD
+		obtenDatosPorReferenciaCatastral(rc, provincia, municipio);
 	});
 	
 	
+	
+}
+
+function obtenProvincia(rc){
+	
+	var codigoProvincia = rc.substr(0,2);
+	
+	var url = "http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/ConsultaProvincia";
+	
+	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + url + '"') + '&format=xml&callback=?';
+	
+	var xml;
+
+	// Request that YSQL string, and run a callback function.
+	// Pass a defined function to prevent cache-busting.
+	$.getJSON(yql, function(data){
+		xml = data.results[0];
+		console.log(xml);
+
+		var xmlDoc = jQuery.parseXML(xml);
+		var provs = xmlDoc.getElementsByTagName("provinciero")[0].getElementsByTagName["prov"];
+		
+		for(var i=0; i< provs.length; i++){
+			var prov = provs[i].getElementsByTagName("cpine")[0].childNodes[0].nodeValue;
+			if (prov == codigoProvincia){
+				return  provs[i].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+			}
+		}
+		
+		
+	});
+	
+	return "";
+	
+}
+
+function obtenMunicipio(rc){
+	
+	var codigoMunicipio = rc.substr(2,3);
+	
+	var url = "http://ovc.catastro.meh.es//ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/ConsultaMunicipio?Provincia=" + obtenProvincia(rc);
+	
+	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + url + '"') + '&format=xml&callback=?';
+	
+	var xml;
+
+	// Request that YSQL string, and run a callback function.
+	// Pass a defined function to prevent cache-busting.
+	$.getJSON(yql, function(data){
+		xml = data.results[0];
+		console.log(xml);
+
+		var xmlDoc = jQuery.parseXML(xml);
+		var munis = xmlDoc.getElementsByTagName("municipiero")[0].getElementsByTagName["muni"];
+		
+		for(var i=0; i< munis.length; i++){
+			var muni = munis[i].getElementsByTagName("locat")[0].getElementsByTagName("cmc")[0].childNodes[0].nodeValue;
+			if (muni == codigoMunicipio){
+				return  munis[i].getElementsByTagName("nm")[0].nodeValue;
+			}
+		}
+		
+		
+	});
+	
+	return "";
 	
 }
 
