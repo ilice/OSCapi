@@ -33,10 +33,11 @@ function actualiza() {
 
 function cargaDatos(){
 
+		obtenDatosCatastro();
 		obtenEstacion();
 		actualiza();
 		//obten(2016);
-		google.charts.load('current', {'packages': ['table', 'bar', 'corechart']});
+		google.charts.load('current', {'packages': ['table', 'bar', 'corechart', 'geochart']});
 		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 		google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 		google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
@@ -54,30 +55,37 @@ function cargaDatos(){
 		google.charts.setOnLoadCallback(cargaMedidaMediaRadiacionDiaria);
 		google.charts.setOnLoadCallback(cargaMedidaAcumuladoRadiacionDiaria);
 		
+		google.charts.setOnLoadCallback(drawRegionsMap); 
+		
 
 }
 
 
+function drawRegionsMap() {
 
-		//document.getElementById("diasDeLluvia").innerHTML = response["precipitacionDiaria"]["numeroDeElementosMayoresQueCero"].value.toFixed(2);
-		//document.getElementById("pecipitacionacumulada").innerHTML = response["precipitacionDiaria"]["acumulado"].value.toFixed(2);
-		// document.getElementById("maximaTemperaturaDiurna").innerHTML = response["temperaturaMediaDiurna"]["maximo"].value.toFixed(2);
-		// document.getElementById("minimaTemperaturaDiurna").innerHTML = response["temperaturaMediaDiurna"]["minimo"].value.toFixed(2);
-		// document.getElementById("mediaTemperaturaDiurna").innerHTML = response["temperaturaMediaDiurna"]["media"].value.toFixed(2);
-		// document.getElementById("mediaHorasSolDiarias").innerHTML = response["horasDeSolDiarias"]["media"].value.toFixed(2);
-		// document.getElementById("maximasHorasSolDiarias").innerHTML = response["horasDeSolDiarias"]["maximo"].value.toFixed(2);
-		// document.getElementById("horasSolAcumuladas").innerHTML = response["horasDeSolDiarias"]["acumulado"].value.toFixed(2);
-		// document.getElementById("maximoRadiacionNetaDiaria").innerHTML = response["radiacionNeta"]["maximo"].value.toFixed(2);
-		// document.getElementById("mediaRadiacionNetaDiaria").innerHTML = response["radiacionNeta"]["media"].value.toFixed(2);
-		// document.getElementById("acumuladoRadiacionNetaDiaria").innerHTML = response["radiacionNeta"]["acumulado"].value.toFixed(2);
+	var data = google.visualization.arrayToDataTable([
+	  ['latitude', 'longitude', 'temperatura'],
+	  [40.440005, -5.737003, 25]
+	]);
 
+	var options = {
+		region: 'ES',
+		displayMode: 'markers',
+		colorAxis: {colors: ['blue']},
+		resolution: 'provinces'
+	};
+
+	var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+	chart.draw(data, options);
+ }
 
 function obtenEstacion(){
 	
-	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud=40.440005&longitud=-5.737003";
+	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud"+document.getElementById("latitud").innerHTML+"&longitud="+document.getElementById("longitud").innerHTML;
 	
 	
-	var request = jQuery.ajax({
+ 	var request = jQuery.ajax({
 			crossDomain : true,
 			url : url,
 			method : "GET",
@@ -88,8 +96,107 @@ function obtenEstacion(){
 	request.done(function (response, textStatus, jqXHR) {
 		document.getElementById("estacion").innerHTML = response["ESTACION"];
 
-	});
+	}); 
 }
+
+//Code Starts
+
+
+//Code Ends
+
+
+function obtenDatosCatastro(){
+	
+	//devuelve un xml y no se puede obtener por cross domain, aquí para resolverlo se utiliza un proxy de yahoo que en realidad da más posibilidades para cruzar datos pero está limitado en número de peticiones diarias
+	
+	var url = "https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCoordenadas.asmx/Consulta_RCCOOR?SRS=EPSG:4326&Coordenada_X="+document.getElementById("longitud").innerHTML+ "&Coordenada_Y="+document.getElementById("latitud").innerHTML;
+	
+	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + url + '"') + '&format=xml&callback=?';
+	
+	var xml;
+
+	// Request that YSQL string, and run a callback function.
+	// Pass a defined function to prevent cache-busting.
+	$.getJSON(yql, function(data){
+		xml = data.results[0];
+		console.log(xml);
+
+		var xmlDoc = jQuery.parseXML(xml);
+		var coordenadas = xmlDoc.getElementsByTagName("coordenadas");
+		var coord = coordenadas[0].getElementsByTagName("coord");
+		
+		var rc = coord[0].getElementsByTagName("pc")[0].getElementsByTagName("pc1") [0].childNodes[0].nodeValue+coord[0].getElementsByTagName("pc")[0].getElementsByTagName("pc2")[0].childNodes[0].nodeValue;
+		document.getElementById("rc").innerHTML = rc;
+		document.getElementById("direccion").innerHTML = coord[0].getElementsByTagName("ldt")[0].childNodes[0].nodeValue;
+	
+		obtenDatosPorReferenciaCatastral(rc, "Salamanca", "Sanchotello");
+	});
+	
+	
+	
+}
+
+function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
+	
+	//devuelve un xml y no se puede obtener por cross domain, aquí para resolverlo se utiliza un proxy de yahoo que en realidad da más posibilidades para cruzar datos pero está limitado en número de peticiones diarias
+	
+	var url = "https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC?RC="+rc + "&Provincia=" + provincia + "&Municipio=" + municipio;
+	
+	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from xml where url="' + url + '"') + '&format=xml&callback=?';
+	
+	var xml;
+
+	// Request that YSQL string, and run a callback function.
+	// Pass a defined function to prevent cache-busting.
+	$.getJSON(yql, function(data){
+		xml = data.results[0];
+		console.log(xml);
+
+		var xmlDoc = jQuery.parseXML(xml);
+		
+		var xmlDoc = jQuery.parseXML(xml);
+		var bi = xmlDoc.getElementsByTagName("bico")[0].getElementsByTagName("bi");
+		var cn = bi[0].getElementsByTagName("idbi")[0].getElementsByTagName("cn")[0].childNodes[0].nodeValue;
+		
+		switch (cn){
+			case "RU":
+				document.getElementById("cn").innerHTML = "rústico";
+				break;
+			default:
+				
+		}
+		
+		var control = xmlDoc.getElementsByTagName("control");
+		var cucons = control[0].getElementsByTagName("cucons");
+		if(cucons.length > 0){
+			document.getElementById("cucons").innerHTML = cucons[0].childNodes[0].nodeValue;
+		}else{
+			document.getElementById("cucons").innerHTML = 0;
+		}
+		
+		var cucul = control[0].getElementsByTagName("cucul");
+		if(cucul.length > 0){
+			document.getElementById("cucul").innerHTML = cucul[0].childNodes[0].nodeValue;
+		}else{
+			document.getElementById("cucul").innerHTML = 0;
+		}
+		
+		npa = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("locs")[0].getElementsByTagName("lors")[0].getElementsByTagName("lorus")[0].getElementsByTagName("npa")[0].childNodes[0].nodeValue;
+		
+		document.getElementById("npa").innerHTML = npa;
+		document.getElementById("nm").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
+		document.getElementById("np").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+		var dspr = xmlDoc.getElementsByTagName("bico")[0].getElementsByTagName("lspr")[0].getElementsByTagName("spr")[0].getElementsByTagName("dspr");
+		document.getElementById("ccc").innerHTML = dspr[0].getElementsByTagName("ccc")[0].childNodes[0].nodeValue + dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue ;
+		document.getElementById("ip").innerHTML = dspr[0].getElementsByTagName("ip")[0].childNodes[0].nodeValue;
+		document.getElementById("ssp").innerHTML = dspr[0].getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
+		
+	});
+	
+	
+	
+}
+
 
 
 

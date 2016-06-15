@@ -6,22 +6,32 @@
 		<link href="css/estilo.css" rel="stylesheet" type="text/css"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script src="js/codigo.js"  type="text/javascript"></script>
 	</head>
 	<body onload="cargaDatos()">
 		<p>De momento estos datos son los de la estación meteorológica más cercana, y por las características del terreno es probable que no sean del todo significativos.</p>
 		<p>Están disponibles como datos abiertos en <a href="http://www.inforiego.org/">http://www.inforiego.org/</a>, dispone de un API REST de acceso a los mismos.</p>
 		<img src="img/viniaDeLaEstacionMap.PNG" alt="Mapa de la Viña de la Estación"/>
-		<table><tr>
-		<th>Coordenadas</th>
-		<td id="latitud">40.440005</td>
-		<td id="longitud">-5.737003</td>
-		<th>Estación más cercana</th>
-		<td id="estacion"></td>
-		</tr></table>
-		<!--Div that will hold the pie chart-->
-		
-
+		<table>
+			<tr>
+				<th>Coordenadas</th>
+				<td id="latitud">40.439983</td>
+				<td id="longitud">-5.737026</td>
+				<th>Estación más cercana</th>
+				<td id="estacion"></td>
+				<td id="altitud"></td>
+				<th>Referencia catastral</th>
+				<td id="rc"></td>
+				<th>Dirección</th>
+				<td id="direccion"></td>
+			</tr>
+		</table>
+		<p>Se trata de un bien inmueble de tipo <span id="cn"></span> con <span id = "cucons"></span> unidades constructivas y <span id="cucul"></span> subparcelas o cultivos.</p>
+		<p>El paraje en el que se encuentra se llama <span id="npa"></span> en <span id="nm"></span> ( <span id="np"></span>).</p>
+		<p>La calificación catastral  según la clase de cultivo es <span id="ccc"></span> y una intensidad productiva de <span id="ip"></span>.</p>
+		<p>La superficie de la parcela son <span id="ssp"> </span> metros cuadrados.</p>
+		<div id="regions_div" style="width: 900px; height: 500px;"></div>
 		<table>
 
 			<tr>
