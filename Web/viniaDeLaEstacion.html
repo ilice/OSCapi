@@ -38,7 +38,7 @@
   <hr>
   <div class="w3-container">
     <h5>Panel de navegación</h5>
-  </div>
+    </div>
   <a href="#" class="w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
   <a href="#" class="w3-padding w3-blue"><i class="fa fa fa-television fa-fw"></i>  General</a>
   <a href="#catastro" class="w3-padding"><i class="fa fa-institution fa-fw"></i>  Catastro</a>
@@ -48,10 +48,10 @@
   <a href="#sol" class="w3-padding"><i class="fa fa-certificate fa-fw"></i>  Sol</a>
   <a href="#radiacion" class="w3-padding"><i class="fa fa-rss fa-fw"></i>  Radiacion</a>
   <a href="#informacion" class="w3-padding"><i class="fa fa-info fa-fw"></i>  Información</a>
-  
-  
-			<div id="regions_div" style="z-index:3;width:300px;"></div>
-	
+
+  <div class="w3-container w3-center">
+		<div id="regions_div" style="width: 100%; height: 100%;"></div>
+	</div>
 </nav>
 <!-- Overlay effect when opening sidenav on small screens -->
 <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu"></div>
@@ -63,7 +63,7 @@
     <h5><b><i class="fa fa-dashboard"></i> La viña de la estación</b></h5>
   </header>	
   
-  
+  	
   <div class="w3-row-padding w3-margin-bottom">
   <a href="#precipitacion">
     <div class="w3-quarter ">
@@ -170,30 +170,32 @@
 		</section>
 		</div>
 		
-		<section>
-		<table>
+<div class="w3-container w3-section">
+	<table class="w3-table w3-striped w3-bordered w3-card-4">
+		<thead>
 			<tr>
-				<th>Coordenadas</th>
-				<td id="latitud">40.439983</td>
-				<td id="longitud">-5.737026</td>
+				<th>Latitud</th>
+				<th>Longitud</th>
 				<th>Estación más cercana</th>
-				<td id="estacion"></td>
-				<td id="altitud"></td>
 				<th>Referencia catastral</th>
-				<td id="rc"></td>
 				<th>Dirección</th>
-				<td id="direccion"></td>
 			</tr>
-		</table>
-		</section>
+		</thead>
+		<tr>
+			<td id="latitud">40.439983</td>
+			<td id="longitud">-5.737026</td>
+			<td id="estacion"/>
+			<td id="rc"/>
+			<td id="direccion"/>
+		</tr>
+	</tr>
+</table>
+</div>
 		
-		<section class="w3-card-8">
-			<div id="regions_div"></div>
-		</section>
+		<div id="precipitacion" class="w3-container w3-section">
 		
-		<section id="precipitacion" class="w3-card-8, w3-margin" >
 		
-		<table>
+		<table class="w3-card-8">
 			<tr>
 				<td rowspan="5" >
 					<div class="grafica" id="graficoPrecipitacionPorMesYAnio"></div>
@@ -216,9 +218,9 @@
 			</tr>
 		</table>
 		
-		</section>
-		<section id="temperatura" class="w3-card-8, w3-margin">
-		<table>
+		</div>
+		<div id="temperatura" class="w3-container w3-section">
+		<table class="w3-card-8">
 			<tr>
 				<td>
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
@@ -246,9 +248,9 @@
 				<td id ="mediaTemperaturaDiurna"/>
 			</tr>
 		</table>
-</section>
-<section id="sol" class="w3-card-8">
-		<table>
+</div>
+<div id="sol" class="w3-container w3-section">
+		<table class="w3-card-8">
 			<tr>
 				<td rowspan="7">
 					<div class="grafica" id="graficoHorasDeSolDiarias" ></div>
@@ -276,9 +278,9 @@
 				<td id = "horasSolAcumuladas">
 			</tr>
 		</table>
-</section>
-<section id="radiacion" class="w3-card-8">
-		<table>
+</div>
+<div id="radiacion" class="w3-container w3-section">
+		<table class="w3-card-8">
 			<tr>
 				<td>
 					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
@@ -306,9 +308,10 @@
 				<td id="acumuladoRadiacionNetaDiaria"/>
 			</tr>
 		</table>
-</section>
+</div>
 
-<div class="w3-card-12 w3-margin" style="width:100%;">
+<div class="w3-container w3-section">
+<div class="w3-card-8">
  
 <header class="w3-container w3-blue">
   <h1>Información</h1>
@@ -317,7 +320,7 @@
 <div id="informacion" class="w3-container">
  
  <p>Toda la información que se muestra en esta página se encuentra disponible como datos abiertos. 
- Inicialmente las fuentes de información son Inforiego y la Sede Electrónica del Catastro. Ambos disponen 
+ Inicialmente las fuentes de información son <strong>Inforiego</strong> y la <strong>Sede Electrónica del Catastro</strong>. Ambos disponen 
  de APIs de consulta. En este caso a partir de las coordenadas de la parcela, muestran toda la información que puedes ver.</p>
  <p>Este espacio se irá actualizando com más información disponible como datos abiertos, además de información y enlaces sobre cómo interpretar y utilizar todos estos datos.</p>
  <p>Si encuentras algún error, tienes cualquier duda, sugerencia o simplemtente quieres saber cómo está hecho y qué es lo próximo que se va a hacer, puedes contactar conmigo.</p>
@@ -328,7 +331,7 @@
 </footer>
 
 </div>
-
+</div>
 <footer>
 	Copyleft  Isabel Muñoz
 </footer>
