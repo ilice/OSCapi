@@ -1,5 +1,165 @@
 var query;
 
+var mapa;
+var parcela = {lat: 40.439983, lng: 	-5.737026};
+var informacionPoligono;
+
+function initMap() {
+	var mapOptions = {
+		center: parcela,
+		zoom: 16,
+		mapTypeId: google.maps.MapTypeId.SATELLITE
+	}
+	
+	mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
+	
+	//TODO: con el mapa pequeño este botón queda demasiado grande
+	//Create the DIV to hold the control and call the CenterControl() constructor
+  //passing in this DIV.
+   var centerControlDiv = document.createElement('div');
+  var centerControl = new CenterControl(centerControlDiv, mapa);
+
+   centerControlDiv.index = 1;
+     mapa.controls[google.maps.ControlPosition.LEFT_CENTER].push(centerControlDiv);
+	
+	 var marker = new google.maps.Marker({
+    position: parcela,
+     map: mapa,
+	 animation: google.maps.Animation.DROP,
+     title: 'Parcela'
+   });
+  
+	 var contenidoVentanaInformacion = '<h1>Viña de la Estación</h1>' +
+	 '<p>Se trata de un bien inmueble de tipo <strong><span id="cn"></span></strong> con <span id = "cucons"></span> unidades constructivas y <span id="cucul"></span> subparcelas o cultivos.</p>'+
+		'<p>El paraje en el que se encuentra se llama <em><span id="npa"></span></em> en <em><span id="nm"></span> ( <span id="np"></span>).</em></p>' +
+		'<p>La calificación catastral  según la clase de cultivo es <strong><span id="ccc"></span></strong> y una intensidad productiva de <span id="ip"></span>.</p>' +
+		'<p>La superficie de la parcela son <strong><span id="ssp"> </span> metros cuadrados</strong>.</p>'+
+		'<p>Más información disponible en la <a href="http://www.sedecatastro.gob.es/">Sede Electrónica del Catastro</a></p>';
+
+  var informacionMarcador = new google.maps.InfoWindow({
+    content: contenidoVentanaInformacion
+  });
+  
+  marker.addListener('click', function() {
+    //TODO: hacer que esta información se muestre en otra parte
+	informacionMarcador.open(mapa, marker);
+  });
+  
+  var triangleCoords = [
+    
+{lng: -5.73743277138396, lat: 40.4390893833596},
+{lng: -5.7374292381294,   lat: 40.4390894670862},
+{lng: -5.73739180024054, lat: 40.4390907145335},
+{lng: -5.73725167450709, lat: 40.4391382615966},
+{lng: -5.73724113701022, lat: 40.4391749014607},
+{lng: -5.73721803154044, lat: 40.4392562459453},
+{lng: -5.73718072633477, lat: 40.4393856619662},
+{lng: -5.73714289614587, lat: 40.4394992417711},
+{lng: -5.73709900898761, lat: 40.4395972020055},
+{lng: -5.73705224582516, lat: 40.4397114438101},
+{lng: -5.73699952384232, lat: 40.4398442920897},
+{lng: -5.73695236415262, lat: 40.4399778192313},
+{lng: -5.7370488836958,   lat: 40.440017687337  },
+{lng: -5.73708040409467, lat: 40.4400274792416},
+{lng: -5.73710763776926, lat: 40.4399868408083},
+{lng: -5.73712811791558, lat: 40.4399337519324},
+{lng: -5.73714969089239, lat: 40.4398814478309},
+{lng: -5.7371687868795,   lat: 40.4398291123418},
+{lng: -5.73717846353938, lat: 40.4397915921367},
+{lng: -5.73719421568004, lat: 40.4397383450527},
+{lng: -5.73721632635996, lat: 40.4396963867868},
+{lng: -5.73724294352035, lat: 40.4396492775525},
+{lng: -5.73727487779192, lat: 40.4395821358146},
+{lng: -5.73732973018171, lat: 40.4394203229537},
+{lng: -5.73739206998265, lat: 40.4392658133442},
+{lng: -5.73743630057109, lat: 40.4391501902217},
+{lng: -5.73745579242689, lat: 40.4391018085895},
+{lng: -5.73743277138396, lat: 40.4390893833596},
+{lng: -5.73743277138396, lat: 40.4390893833596}
+];
+
+  
+  var bermudaTriangle = new google.maps.Polygon({
+    paths: triangleCoords,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35
+  });
+  bermudaTriangle.setMap(mapa);
+	
+	// Add a listener for the click event.
+  bermudaTriangle.addListener('click', showArrays);
+
+  informacionPoligono = new google.maps.InfoWindow;
+}
+
+/** @this {google.maps.Polygon} */
+function showArrays(event) {
+  // Since this polygon has only one path, we can call getPath() to return the
+  // MVCArray of LatLngs.
+  var vertices = this.getPath();
+
+  var contentString = '<h3>Viña de la estación</h3>' +
+      '<h4>Localización marcada: </h4>' + event.latLng.lat() + ',' + event.latLng.lng() +
+      '<h6>Conjunto de coordenadas fijadas por el catastro:</h6><ul>';
+
+  // Iterate over the vertices.
+  for (var i =0; i < vertices.getLength(); i++) {
+    var xy = vertices.getAt(i);
+    contentString += '<li>' + xy.lat() + ',' + xy.lng() + '</li>';
+  }
+  
+  contentString += '</ul>';
+
+  // Replace the info window's content and position.
+  informacionPoligono.setContent(contentString);
+  informacionPoligono.setPosition(event.latLng);
+
+  //TODO: hacer que esta información se muestre en otra parte
+  informacionPoligono.open(mapa);
+  
+}
+
+/**
+ * The CenterControl adds a control to the map that recenters the map on Chicago.
+ * This constructor takes the control DIV as an argument.
+ * @constructor
+ */
+function CenterControl(controlDiv, map) {
+
+  // Set CSS for the control border.
+  var controlUI = document.createElement('div');
+  controlUI.style.backgroundColor = '#fff';
+  controlUI.style.border = '2px solid #fff';
+  controlUI.style.borderRadius = '3px';
+  controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+  controlUI.style.cursor = 'pointer';
+  controlUI.style.marginBottom = '22px';
+  controlUI.style.textAlign = 'center';
+  controlUI.title = 'Click para centrar el mapa en la parcela';
+  controlDiv.appendChild(controlUI);
+
+  // Set CSS for the control interior.
+  var controlText = document.createElement('div');
+  controlText.style.color = 'rgb(25,25,25)';
+  controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+  controlText.style.fontSize = '8px';
+  controlText.style.lineHeight = '12px';
+  controlText.style.paddingLeft = '3px';
+  controlText.style.paddingRight = '3px';
+  controlText.innerHTML = 'Centrar';
+  controlUI.appendChild(controlText);
+
+  // Setup the click event listeners: simply set the map to Chicago.
+  controlUI.addEventListener('click', function() {
+    map.setCenter(parcela);
+	map.setZoom(20);
+  });
+
+}
+
 function obten(campo,anio, tipomedida,variable) {
 	
 	var url = "https://script.google.com/macros/s/AKfycbwbli8yqu-YzY5t2O0v98XROuAv1cT5K7mF4slKDCpIdEsGd28/exec?anio=" + anio + "&variable=" + variable +"&tipomedida=" +tipoMedida;
@@ -82,7 +242,7 @@ function drawRegionsMap() {
 
 function obtenEstacion(){
 	
-	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud"+document.getElementById("latitud").innerHTML+"&longitud="+document.getElementById("longitud").innerHTML;
+	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="+document.getElementById("latitud").innerHTML+"&longitud="+document.getElementById("longitud").innerHTML;
 	
 	
  	var request = jQuery.ajax({
@@ -251,9 +411,9 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
 		
 		npa = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("locs")[0].getElementsByTagName("lors")[0].getElementsByTagName("lorus")[0].getElementsByTagName("npa")[0].childNodes[0].nodeValue;
 		
-		document.getElementById("npa").innerHTML = npa;
-		document.getElementById("nm").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
-		document.getElementById("np").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+		//document.getElementById("npa").innerHTML = npa;
+		//document.getElementById("nm").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
+		//document.getElementById("np").innerHTML = bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
 		var dspr = xmlDoc.getElementsByTagName("bico")[0].getElementsByTagName("lspr")[0].getElementsByTagName("spr")[0].getElementsByTagName("dspr");
 		document.getElementById("ccc").innerHTML = dspr[0].getElementsByTagName("ccc")[0].childNodes[0].nodeValue + dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue ;
 		document.getElementById("ip").innerHTML = dspr[0].getElementsByTagName("ip")[0].childNodes[0].nodeValue;
@@ -554,7 +714,8 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
 		
       var datos = respuesta.getDataTable();
 	  
-	  document.getElementById('pecipitacionacumulada').innerHTML = datos.getValue(0,0).toFixed(2);;
+	  document.getElementById('pecipitacionacumulada').innerHTML = datos.getValue(0,0).toFixed(2);
+	  document.getElementById('precipitacion-widget').innerHTML = datos.getValue(0,0).toFixed(2);
     }
 
 	function cargaMedidaMaximaTemperaturaDiurna() {
@@ -612,6 +773,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
       var datos = respuesta.getDataTable();
 	  
 	  document.getElementById('mediaTemperaturaDiurna').innerHTML = datos.getValue(0,0).toFixed(2);
+	  document.getElementById('temperatura-widget').innerHTML = datos.getValue(0,0).toFixed(2);
 	}
 	
 	function cargaMedidaMediaHorasSolDiarias() {
@@ -669,6 +831,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
       var datos = respuesta.getDataTable();
 	  
 	  document.getElementById('horasSolAcumuladas').innerHTML = datos.getValue(0,0).toFixed(2);
+	  document.getElementById('horasSol-widget').innerHTML = datos.getValue(0,0).toFixed(2);
 	}
 	
 	function cargaMedidaMaximoRadiacionDiaria() {
@@ -707,6 +870,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
       var datos = respuesta.getDataTable();
 	  
 	  document.getElementById('mediaRadiacionNetaDiaria').innerHTML = datos.getValue(0,0).toFixed(2);
+	  document.getElementById('radiacion-widget').innerHTML = datos.getValue(0,0).toFixed(2);
 	}
 	
 	function cargaMedidaAcumuladoRadiacionDiaria() {
@@ -727,3 +891,14 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
 	  
 	  document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = datos.getValue(0,0).toFixed(2);
 	}
+	
+	// Script to open and close sidenav
+function w3_open() {
+    document.getElementsByClassName("w3-sidenav")[0].style.display = "block";
+    document.getElementsByClassName("w3-overlay")[0].style.display = "block";
+}
+ 
+function w3_close() {
+    document.getElementsByClassName("w3-sidenav")[0].style.display = "none";
+    document.getElementsByClassName("w3-overlay")[0].style.display = "none";
+}
