@@ -18,26 +18,11 @@ Es un objetivo muy alto pero creo que podemos conseguirlo y para ello, como dir�
 
 ¿Te apetece participar? ¿Quieres saber cómo vamos avanzando? Puedes ponerte en contacto con nosotros o subscribirte a nuestra lista de correos para estar informado (por supuesto, nada de Spam, lo odiamos tanto como tú).
 
-<p>Rellena el siguiente formulario para suscribirte.</p>
-<form enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
-<dl class="zend_form">
- <dt id="groups-label"> </dt>
- <dd id="groups-element">
- <input type="hidden" name="groups[]" value="1"></dd>
- <dt id="email-label">
- <label for="email" class="required">Email</label>
- </dt>
- <dd id="email-element">
- <input type="text" name="email" id="email" value=""></dd>
- <dt id="name-label">
- <label for="name" class="optional">Nombre</label>
- </dt>
- <dd id="name-element">
- <input type="text" name="name" id="name" value=""></dd>
- <dt id="submit-label"> </dt>
- <dd id="submit-element">
- <input type="submit" name="submit" id="submit" value="Suscribir"></dd>
-</dl>
-</form>
-<p> <a href="http://mailrelay.com" target="_blank">mailing gratis</a> by Mailrelay </p>
+<?php
+ob_start();
+@include ('http://opensmartcountry.ip-zone.com/ccm/subscribe?noLayout=true&language=es');
+$content = ob_get_contents();
+ob_end_clean();
+echo $content;
+?>
 
