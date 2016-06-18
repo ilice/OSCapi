@@ -894,6 +894,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio){
 function w3_open() {
     document.getElementsByClassName("w3-sidenav")[0].style.display = "block";
     document.getElementsByClassName("w3-overlay")[0].style.display = "block";
+	google.charts.setOnLoadCallback(drawRegionsMap); 
 }
  
 function w3_close() {
