@@ -216,10 +216,8 @@ function cargaDatos(){
 		google.charts.setOnLoadCallback(cargaMedidaAcumuladoRadiacionDiaria);
 		
 		google.charts.setOnLoadCallback(drawRegionsMap); 
-		
 
 }
-
 
 function drawRegionsMap() {
 
