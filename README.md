@@ -23,7 +23,7 @@ Es un objetivo muy ambicioso pero creo que podemos conseguirlo y para ello, como
 
 ¿Te apetece participar? ¿Quieres saber cómo vamos avanzando? Puedes ponerte en contacto con nosotros o subscribirte a nuestra lista de correos para estar informado (por supuesto, nada de Spam, lo odiamos tanto como tú).
 
-[Suscribirse](http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o)
+:+1: [Suscribirse](http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o)
 
 
 
