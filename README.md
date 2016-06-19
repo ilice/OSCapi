@@ -19,7 +19,7 @@ Creemos que los 7.000.000 de hectáreas que el Ministerio de Agricultura conside
 Con todo esto vamos a crear una plataforma cuyo objetivo es conseguir cambiar las cosas de un modo sostenible y circular, para ello tenemos que poner en contacto a mucha gente muy diversa y hacer que esto sea atractivo y divertido.
 
 ## Apúntate ##
-Es un objetivo muy ambicioso pero creo que podemos conseguirlo y para ello, como diría "El Cholo", paso a paso, partido a partido disfrutando mucho del camino.
+Es un objetivo muy ambicioso pero creo que podemos conseguirlo y para ello, iremos paso a paso disfrutando mucho del camino.
 
 ¿Te apetece participar? ¿Quieres saber cómo vamos avanzando? Puedes ponerte en contacto con nosotros o subscribirte a nuestra lista de correos para estar informado (por supuesto, nada de Spam, lo odiamos tanto como tú).
 
