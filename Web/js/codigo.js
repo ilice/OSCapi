@@ -123,7 +123,7 @@ function showArrays(event) {
 }
 
 /**
- * The CenterControl adds a control to the map that recenters the map on Chicago.
+ * The CenterControl adds a control to the map that recenters the map on La Viña de la Estación.
  * This constructor takes the control DIV as an argument.
  * @constructor
  */
