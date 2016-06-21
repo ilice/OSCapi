@@ -7,7 +7,16 @@
 		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
 		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
-		<link rel="stylesheet" href="css/estilo.css"/>	
+		<link rel="stylesheet" href="css/estilo.css"/>
+		<script>
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			  ga('create', 'UA-74247467-2', 'auto');
+			  ga('send', 'pageview');
+		</script>
 	</head>
 	<body>
 
@@ -30,7 +39,35 @@
 					<span onclick="document.getElementById('suscripcion').style.display='none'" class="w3-closebtn">&times;</span>
 					<p>Si quieres que te avisemos con los avances que realicemos, déjanos tu correo y te informaremos.</p>
 					<p>Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y puedes darte de baja cuando quieras.</p>
-					<button class="w3-btn w3-dark-grey" onclick="location.href='http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o'">Mantenme al tanto</button>
+					<p>Rellene el siguiente formulario para suscribirse.</p>
+					<form class="w3-container" enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
+						<dl class="zend_form">
+							<dt id="groups-label"> </dt>
+							<dd id="groups-element">
+								<input class="w3-input" type="hidden" name="groups[]" value="1"/>
+							</dd>
+
+							<dt id="name-label">
+								<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+							</dt>
+							<dd id="name-element">
+								<input type="text" class="w3-input" name="name" id="name" value=""/>
+							</dd>
+
+							<dt id="email-label">
+								<label for="email" class="required w3-label w3-validate w3-text-grey">Email</label>
+							</dt>
+							<dd id="email-element">
+								<input type="email" class="w3-input" name="email" id="email" value="" required/>
+							</dd>				
+
+							<dt id="submit-label"> </dt>
+							<dd id="submit-element">
+								<button type="submit" name="submit" id="submit" class="w3-btn w3-dark-grey w3-margin-top" onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme al tanto</button>
+							</dd>
+
+						</dl>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -89,45 +126,57 @@
 			<div class="w3-row-padding w3-center">
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Alcornoque en desuso. <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag  w3-hide-small">Alcornoque en desuso. <br/>
 							<em>Fuente: <a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">Árboles Equilibrio de la Vida</a></em>
 						</span>
 						<a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">
 							<img src="img/IMG_7866.JPG" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Alcornoque en desuso. <br/>
+							<em>Fuente: <a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">Árboles Equilibrio de la Vida</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Olivar abandonado. <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Olivar abandonado. <br/>
 							<em>Fuente: <a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">Pensando el Territorio: Samuel Galiano Parras</a></em>
 						</span>
 						<a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">
 							<img src="img/HPIM6389.jpg" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Olivar abandonado. <br/>
+							<em>Fuente: <a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">Pensando el Territorio: Samuel Galiano Parras</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Huertas abandonadas en Los Frailes, sobre Barranco Hondo.  <br/>
-							<em>Fuente: <a href="http://es.worldmapz.com/photo/405728_fr.htm">Photo by Bubango</a></em>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag  w3-hide-small">Huertas abandonadas en Los Frailes, sobre Barranco Hondo.  <br/>
+							<em>Fuente: <a href="http://es.worldmapz.com/photo/405728_fr.htm" target="_blank">Photo by Bubango</a></em>
 						</span>
 						<a href="http://es.worldmapz.com/photo/405728_fr.htm">
 							<img src="img/67119830.jpg" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Huertas abandonadas en Los Frailes, sobre Barranco Hondo.  <br/>
+							<em>Fuente: <a href="http://es.worldmapz.com/photo/405728_fr.htm" target="_blank">Photo by Bubango</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Viñedo abandonado en La Palma  <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Viñedo abandonado en La Palma  <br/>
 							<em>Fuente: <a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">eldiario.es La Palma Ahora</a></em>
 						</span>
 						<a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">
 							<img src="img/imagen-vinedo-Palma_EDIIMA20150127_0353_13.jpg" style="width:100%" class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Viñedo abandonado en La Palma  <br/>
+							<em>Fuente: <a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">eldiario.es La Palma Ahora</a></em>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -135,47 +184,58 @@
 			<div class="w3-row-padding w3-center w3-section">
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Membrillero abandonado en Olocau.  <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Membrillero abandonado en Olocau.  <br/>
 							<em>Fuente: <a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">Una vida y mil historias. La Senda del Agua.</a></em>
 						</span>
 						<a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">
 							<img src="img/PICT0408.JPG" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
-						<div class="w3-tooltip">
-						</div>
+						<p class="w3-hide-large w3-hide-medium">Membrillero abandonado en Olocau.  <br/>
+							<em>Fuente: <a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">Una vida y mil historias. La Senda del Agua.</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Los Pagos de Overa secos  <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Los Pagos de Overa secos  <br/>
 							<em>Fuente: <a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">Overa Viva. Abandono de los Pagos de Overa</a></em>
 						</span>
 						<a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">
 							<img src="img/RIOYPAGOS20147.jpg" style="width:100%" class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">
+						Los Pagos de Overa secos  <br/>
+							<em>Fuente: <a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">Overa Viva. Abandono de los Pagos de Overa</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Campo de Cerezos abandonados en Cuatro Caminos (Sueras).  <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Campo de Cerezos abandonados en Cuatro Caminos (Sueras).  <br/>
 							<em>Fuente: <a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">Pa_Blog Senderismo - "Más de Mil"</a></em>
 						</span>
 						<a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">
 							<img src="img/Sueras.JPG" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Campo de Cerezos abandonados en Cuatro Caminos (Sueras).  <br/>
+							<em>Fuente: <a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">Pa_Blog Senderismo - "Más de Mil"</a></em>
+						</p>
 					</div>
 				</div>
 
 				<div class="w3-col m3">
 					<div class="w3-tooltip">
-						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag">Naranjos abandonados  <br/>
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag" w3-hide-small>Naranjos abandonados  <br/>
 							<em>Fuente: <a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">Agronatur La Ribera</a></em>
 						</span>
 						<a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">
 							<img src="img/campo-abandonado.jpg" style="width:100%"  class="w3-hover-opacity"/>
 						</a>
+						<p class="w3-hide-large w3-hide-medium">Naranjos abandonados  <br/>
+							<em>Fuente: <a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">Agronatur La Ribera</a></em>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -233,16 +293,16 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="analytics" class="w3-modal">
-  <div class="w3-modal-content">
-    <div class="w3-container">
-      <span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
-      <p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
-      <p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
-    </div>
-  </div>
-</div>
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
+					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
+					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
+				</div>
+			</div>
+		</div>
 
 		<!-- Fourth Parallax Image with Portfolio Text -->
 		<div class="bgimg-4 w3-display-container">
