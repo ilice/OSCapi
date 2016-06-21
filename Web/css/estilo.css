@@ -1,8 +1,83 @@
-
  .grafica {width: 707.5px; height: 437.1507462338126px; }
-  #regions_div{width: 900px; height: 500px;}
 
-  
-html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+
+#map {
+        height: 100%;
+		margin-top: 4%;
+}
+
 td{text-align:center;}
 #mapa { height: 250px; width: 250px}
+
+
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+	margin: 0;
+    padding: 0;
+}
+
+
+
+.lateral-button {
+    position: fixed;
+    z-index: 1;
+    top: 70%;
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3, .bgimg-4 {
+    opacity: 0.7;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+    background-image: url('../img/14469337569_fe1a849240_o.jpg');
+    min-height: 100%;
+}
+
+/* Second image (Abandonadas) */
+.bgimg-2 {
+    background-image: url("../img/IMG_20160501_175931.jpg");
+    min-height: 400px;
+}
+
+/* Third image (¿Cómo?) */
+.bgimg-3 {
+    background-image: url("../img/IMG_20160417_123321.jpg");
+    min-height: 400px;
+}
+
+/* Fourth image (¿Cómo?) */
+.bgimg-4 {
+    background-image: url("../img/junta-electoral-foto-luis-sanchez_ediima20141013_0700_19.jpg");
+    min-height: 400px;
+}
+
+/* Adjust the position of the parallax image text */
+.w3-display-middle {bottom: 45%;}
+
+.w3-wide {letter-spacing: 10px;}
+
+.w3-hover-opacity {cursor: pointer;}
+
+
+.strokeme
+{
+    color: white;
+    text-shadow:
+    -1px -1px 0 #a6a6a6,
+    1px -1px 0 #a6a6a6,
+    -1px 1px 0 #a6a6a6,
+    1px 1px 0 #a6a6a6;  
+}
+

@@ -3,345 +3,369 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title>Open Smart Country</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="css/estilo.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/estilo.css"/>	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M&region=ES&callback=initMap" async defer></script>
 		<script src="js/codigo.js"  type="text/javascript"></script>
 	</head>
-	<body onload="cargaDatos()" class="w3-light-grey">
-	
-	<!-- Top container -->
-		<div class="w3-container w3-top w3-black w3-large w3-padding" style="z-index:4">
-		  <button class="w3-btn w3-hide-large w3-padding-0 w3-hover-text-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
-		  <span class="w3-right">Open Smart Country</span>
+	<body onload="cargaDatos()">
+
+		<!-- Navbar (sit on top) -->
+		<div class="w3-top">
+			<ul class="w3-navbar" id="myNavbar">
+				<li><a id="openNav" href="#" class="w3-padding-large w3-hide-small" onclick="w3_open()">HOME</a></li>
+				<li><a id="openNav" href="#" class="w3-left w3-hide-large w3-hide-medium" onclick="w3_open()">HOME</a></li>
+				<li class="w3-hide-small w3-right">
+					<a href="#" class="w3-padding-large w3-hover-red"><i class="fa fa-search"></i></a>
+				</li>
+			</ul>
 		</div>
-		
+
+
+
 		<!-- Sidenav/menu -->
-<nav class="w3-sidenav w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;"><br>
+		<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left" style="z-index:3;width:300px;display:none">
+			<div class="w3-container  ">
+			<div class="w3-row w3-right">
+			<div class="w3-col w3-right">
+				<a href="index.html" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-home"></i></a>
+				<a href="mapaDeParcelas.html" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-globe"></i></a>
+				<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge" onclick="w3_close()"><i class="fa fa-remove"></i></a>
+			</div>
+			</div>
+			</div>
+			<hr/>
+			
+			<div class="w3-container w3-row w3-padding-16">
+				<div class="w3-col s4">
+					<img src="img/avatar_vinia.PNG" class="w3-circle w3-margin-right" style="width:46px"/>
+				</div>
+				<div class="w3-col s8">
+					<span>Bienvenidos a <strong>La Viña de la Estación</strong></span><br/>
+					<a href="#" class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i class="fa fa-envelope"></i></a>
+					<a href="#" class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i class="fa fa-user"></i></a>
+					<a href="#" class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i class="fa fa-cog"></i></a>
+				</div>
+			</div>
+			<hr/>
 
-  <div class="w3-container w3-row">
-  
-    <div class="w3-col s4">
-      <img src="img/avatar_vinia.PNG" class="w3-circle w3-margin-right" style="width:46px">
-	  
-    </div>
-    <div class="w3-col s8">
+			<div class="w3-container">
+				<h5>Panel de navegación</h5>
+			</div>
 
-      <span>Bienvenidos a <strong>La Viña de la Estación</strong></span><br>
-      <a href="#" class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i class="fa fa-envelope"></i></a>
-      <a href="#" class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i class="fa fa-user"></i></a>
-      <a href="#" class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i class="fa fa-cog"></i></a>
-    </div>
-  </div>
-  <hr>
-  
-  <div class="w3-container">
-    <h5>Panel de navegación</h5>
-    </div>
-  <a href="#" class="w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
-  <a href="#" class="w3-padding w3-blue"><i class="fa fa fa-television fa-fw"></i>  General</a>
-  <a href="#catastro" class="w3-padding"><i class="fa fa-institution fa-fw"></i>  Catastro</a>
-  <a href="#mapa" class="w3-padding"><i class="fa fa-map fa-fw"></i>  Mapa</a>
-  <a href="#precipitacion" class="w3-padding"><i class="fa fa-tint fa-fw"></i>  Precipitaciones</a>
-  <a href="#temperatura" class="w3-padding"><i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a>
-  <a href="#sol" class="w3-padding"><i class="fa fa-certificate fa-fw"></i>  Sol</a>
-  <a href="#radiacion" class="w3-padding"><i class="fa fa-rss fa-fw"></i>  Radiacion</a>
-  <a href="#informacion" class="w3-padding"><i class="fa fa-info fa-fw"></i>  Información</a>
+			<a href="#" class="w3-padding w3-blue" onclick="w3_close()"><i class="fa fa fa-television fa-fw"></i>  General</a>
+			<a href="#catastro" class="w3-padding" onclick="w3_close()"><i class="fa fa-institution fa-fw"></i>  Catastro</a>
+			<a href="#mapa" class="w3-padding" onclick="w3_close()"><i class="fa fa-map fa-fw"></i>  Mapa</a>
+			<a href="#precipitacion" class="w3-padding" onclick="w3_close()"><i class="fa fa-tint fa-fw"></i>  Precipitaciones</a>
+			<a href="#temperatura" class="w3-padding" onclick="w3_close()"><i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a>
+			<a href="#sol" class="w3-padding" onclick="w3_close()"><i class="fa fa-certificate fa-fw"></i>  Sol</a>
+			<a href="#radiacion" class="w3-padding" onclick="w3_close()"><i class="fa fa-rss fa-fw"></i>  Radiacion</a>
+			<a href="#informacion" class="w3-padding" onclick="w3_close()"><i class="fa fa-info fa-fw"></i>  Información</a>
 
-  <div  id="regions_div"  style="width: 100%; height: auto;" ></div>
-	
-</nav>
-<!-- Overlay effect when opening sidenav on small screens -->
-<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu"></div>
+			<div  id="regions_div"  style="width: 100%; height: auto;" ></div>
+
+			
+		</nav>
+		<!-- Overlay effect when opening sidenav on small screens -->
+
+
+		<!-- Overlay effect when opening sidenav on small screens -->
+		<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
 		<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+		<div id="main">
+			<div class="w3-main" >
 
-  <!-- Header -->
-  <header class="w3-container" style="padding-top:22px">
-    <h5><b><i class="fa fa-dashboard"></i> La viña de la estación</b></h5>
-  </header>	
-  
-    
-	
-  <div class="w3-row-padding w3-margin-bottom">
-  <a href="#precipitacion">
-    <div class="w3-quarter ">
-      <div class="w3-container w3-blue w3-padding-16 w3-margin">
-        <div class="w3-left"><i class="fa fa-tint w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><span id="precipitacion-widget"></span> mm</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Precipitación</h4>
-      </div>
-    </div>
-	</a>
-	<a href="#temperatura">
-    <div class="w3-quarter">
-      <div class="w3-container  w3-red w3-padding-16 w3-margin">
-        <div class="w3-left"><i class="fa fa-eyedropper w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><span id="temperatura-widget"></span> ºC</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Temperatura</h4>
-      </div>
-    </div>
-	</a>
-	<a href="#sol">
-    <div class="w3-quarter">
-      <div class="w3-container w3-yellow w3-padding-16 w3-margin">
-        <div class="w3-left"><i class="fa fa-certificate w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><span id="horasSol-widget"></span> h</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Sol</h4>
-      </div>
-    </div>
-	</a>
-	<a href="#radiacion">
-    <div class="w3-quarter">
-      <div class="w3-container w3-orange w3-text-white w3-padding-16 w3-margin">
-        <div class="w3-left"><i class="fa fa-rss w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3><span id="radiacion-widget"></span> <sup>MJ</sup>&frasl;<sub>m&#178</sub></h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Radiación</h4>
-      </div>
-    </div>
-  </div>
-  </a>
-  
- 
-  <div class="w3-container w3-section">
-    <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-third">
-        <h5>Localización</h5>
-        <div id="mapa"></div>
-      </div>
-      <div id="catastro" class="w3-twothird  w3-card-8">
-        <h5>Información del catastro</h5>
-        <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-          <tr>
-            <td><i class="fa fa-home w3-blue w3-padding-tiny"></i></td>
-            <td>Tipo de bien inmueble</td>
-            <td><i><span id="cn"></i></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-object-group w3-red w3-padding-tiny"></i></td>
-            <td>Unidades constructivas</td>
-            <td><i><span id = "cucons"></span> unidades</i></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-object-ungroup w3-orange w3-text-white w3-padding-tiny"></i></td>
-            <td>Subparcelas o cultivos</td>
-            <td><i><span id="cucul"></span></i></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-leaf w3-green w3-padding-tiny"></i></td>
-            <td>Clase de cultivo</td>
-            <td><i><span id="ccc"></span></i></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-battery-empty w3-light-blue w3-padding-tiny"></i></td>
-            <td>Intensidad productiva</td>
-            <td><i><span id="ip"></span></i></td>
-          </tr>
-          <tr>
-            <td><i class="fa fa-gavel w3-brown w3-padding-tiny"></i></td>
-            <td>Superficie de la parcela</td>
-            <td><i><span id="ssp"> </span> m&#178</i></td>
-          </tr>
-        </table><br>
-		<a class="w3-btn w3-margin-bottom" href="http://www1.sedecatastro.gob.es/">Más información  <i class="fa fa-arrow-right"></i></a>
-      </div>
-    </div>
-  </div>
-  
-		<div class="w3-container w3-section w3-orange">
-<span onclick="this.parentElement.style.display='none'" class="w3-closebtn">&times;</span>
-  <h3>Obsevación</h3>
-		<p>De momento estos datos son los de la estación meteorológica más cercana, y por las características del terreno es probable que no sean del todo significativos.</p>
-		<p>Están disponibles como datos abiertos en <a href="http://www.inforiego.org/">http://www.inforiego.org/</a>, dispone de un API REST de acceso a los mismos.</p>
-		<p>Del mismo modo los datos sobre la parcela son datos abiertos catastrales y se pueden obtener a través de servicios WEB en <a href="http://www.catastro.meh.es/ayuda/lang/castellano/servicios_web.htm">la Sede Electrónica del Catastro</a></p>
-		</section>
-		</div>
-		
-<div class="w3-container w3-section">
-	<table class="w3-table w3-striped w3-bordered w3-card-4">
-		<thead>
-			<tr>
-				<th>Latitud</th>
-				<th>Longitud</th>
-				<th>Estación más cercana</th>
-				<th>Referencia catastral</th>
-				<th>Dirección</th>
-			</tr>
-		</thead>
-		<tr>
-			<td id="latitud">40.439983</td>
-			<td id="longitud">-5.737026</td>
-			<td id="estacion"/>
-			<td id="rc"/>
-			<td id="direccion"/>
-		</tr>
-	</tr>
-</table>
-</div>
-		
-		<div id="precipitacion" class="w3-container w3-section">
-		
-		
-		<table class="w3-card-8">
-			<tr>
-				<td rowspan="5" >
-					<div class="grafica" id="graficoPrecipitacionPorMesYAnio"></div>
-				</td>
-				<td>
-					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ"/>
-				</td>
-			</tr>
-			<tr>
-				<th>Días de lluvia 2016</th>
-			</tr>
-			<tr>
-				<td id="diasDeLluvia"/>
-			</tr>
-			<tr>
-				<th>Acumulado 2016</th>
-			</tr>
-			<tr>
-				<td id="pecipitacionacumulada"/>
-			</tr>
-		</table>
-		
-		</div>
-		<div id="temperatura" class="w3-container w3-section">
-		<table class="w3-card-8">
-			<tr>
-				<td>
-					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
-				</td>
-				<td rowspan="7">
-					<div  class="grafica" id = "graficoTemperaturaMediaDiurna"></div>
-				</td>
-			</tr>
-			<tr>
-				<th>Máxima diurna 2016</th>
-			</tr>
-			<tr>
-				<td id="maximaTemperaturaDiurna"/>
-			</tr>
-			<tr>
-				<th>Mínima diurna 2016</th>
-			</tr>
-			<tr>
-				<td id="minimaTemperaturaDiurna"/>
-			</tr>
-			<tr>
-				<th>Media diurna 2016</th>
-			</tr>
-			<tr>
-				<td id ="mediaTemperaturaDiurna"/>
-			</tr>
-		</table>
-</div>
-<div id="sol" class="w3-container w3-section">
-		<table class="w3-card-8">
-			<tr>
-				<td rowspan="7">
-					<div class="grafica" id="graficoHorasDeSolDiarias" ></div>
-				</td>
-				<td>
-					<img  src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU"/>
-				</td>
-			</tr>
-			<tr>
-				<th>Horas diarias de sol 2016 (en media)</th>
-			</tr>
-			<tr>
-				<td id = "mediaHorasSolDiarias">
-			</tr>
-			<tr>
-				<th>Horas máximas de sol 2016</th>
-			</tr>
-			<tr>
-				<td id = "maximasHorasSolDiarias">
-			</tr>
-			<tr>
-				<th>Horas acumuladas de sol 2016</th>
-			</tr>
-			<tr>
-				<td id = "horasSolAcumuladas">
-			</tr>
-		</table>
-</div>
-<div id="radiacion" class="w3-container w3-section">
-		<table class="w3-card-8">
-			<tr>
-				<td>
-					<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
-				</td>
-				<td rowspan="7">
-					<div class="grafica" id="graficoRadiacionNetaDiaria" ></div>
-				</td>
-			</tr>
-			<tr>
-				<th>Radiación máxima neta diaria 2016</th>
-			</tr>
-			<tr>
-				<td id="maximoRadiacionNetaDiaria"/>
-			</tr>
-			<tr>
-				<th>Radiación media neta diaria 2016</th>
-			</tr>
-			<tr>
-				<td id="mediaRadiacionNetaDiaria"/>
-			</tr>
-			<tr>
-				<th>Radiación acumulada neta 2016</th>
-			</tr>
-			<tr>
-				<td id="acumuladoRadiacionNetaDiaria"/>
-			</tr>
-		</table>
-</div>
 
-<div class="w3-container w3-section">
-<div class="w3-card-8">
- 
-<header class="w3-container w3-blue">
-  <h1>Información</h1>
-</header>
 
-<div id="informacion" class="w3-container">
- 
- <p>Toda la información que se muestra en esta página se encuentra disponible como datos abiertos. 
+				<!-- Header -->
+				<header class="w3-container" style="padding-top:65px">
+					<h5><i class="fa fa-dashboard"></i> La viña de la estación</h5>
+				</header>	
+
+
+
+				<div class="w3-row-padding w3-margin-bottom">
+					<a href="#precipitacion">
+						<div class="w3-quarter ">
+							<div class="w3-container w3-blue w3-padding-16 w3-margin">
+								<div class="w3-left"><i class="fa fa-tint w3-xxxlarge"></i></div>
+								<div class="w3-right">
+									<h3><span id="precipitacion-widget"></span> mm</h3>
+								</div>
+								<div class="w3-clear"></div>
+								<h4>Precipitación</h4>
+							</div>
+						</div>
+					</a>
+					<a href="#temperatura">
+						<div class="w3-quarter">
+							<div class="w3-container  w3-red w3-padding-16 w3-margin">
+								<div class="w3-left"><i class="fa fa-eyedropper w3-xxxlarge"></i></div>
+								<div class="w3-right">
+									<h3><span id="temperatura-widget"></span> ºC</h3>
+								</div>
+								<div class="w3-clear"></div>
+								<h4>Temperatura</h4>
+							</div>
+						</div>
+					</a>
+					<a href="#sol">
+						<div class="w3-quarter">
+							<div class="w3-container w3-yellow w3-padding-16 w3-margin">
+								<div class="w3-left"><i class="fa fa-certificate w3-xxxlarge"></i></div>
+								<div class="w3-right">
+									<h3><span id="horasSol-widget"></span> h</h3>
+								</div>
+								<div class="w3-clear"></div>
+								<h4>Sol</h4>
+							</div>
+						</div>
+					</a>
+					<a href="#radiacion">
+						<div class="w3-quarter">
+							<div class="w3-container w3-orange w3-text-white w3-padding-16 w3-margin">
+								<div class="w3-left"><i class="fa fa-rss w3-xxxlarge"></i></div>
+								<div class="w3-right">
+									<h3><span id="radiacion-widget"></span> <sup>MJ</sup>&frasl;<sub>m&#178</sub></h3>
+								</div>
+								<div class="w3-clear"></div>
+								<h4>Radiación</h4>
+							</div>
+						</div>
+					</div>
+				</a>
+
+
+				<div class="w3-container w3-section">
+					<div class="w3-row-padding" style="margin:0 -16px">
+						<div class="w3-third">
+							<h5>Localización</h5>
+							<div id="mapa"></div>
+						</div>
+						<div id="catastro" class="w3-twothird  w3-card-8">
+							<h5>Información del catastro</h5>
+							<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey">
+								<tr>
+									<td><i class="fa fa-home w3-blue w3-padding-tiny"></i></td>
+									<td>Tipo de bien inmueble</td>
+									<td><i><span id="cn"></i></td>
+									</tr>
+									<tr>
+										<td><i class="fa fa-object-group w3-red w3-padding-tiny"></i></td>
+										<td>Unidades constructivas</td>
+										<td><i><span id = "cucons"></span> unidades</i></td>
+									</tr>
+									<tr>
+										<td><i class="fa fa-object-ungroup w3-orange w3-text-white w3-padding-tiny"></i></td>
+										<td>Subparcelas o cultivos</td>
+										<td><i><span id="cucul"></span></i></td>
+									</tr>
+									<tr>
+										<td><i class="fa fa-leaf w3-green w3-padding-tiny"></i></td>
+										<td>Clase de cultivo</td>
+										<td><i><span id="ccc"></span></i></td>
+									</tr>
+									<tr>
+										<td><i class="fa fa-battery-empty w3-light-blue w3-padding-tiny"></i></td>
+										<td>Intensidad productiva</td>
+										<td><i><span id="ip"></span></i></td>
+									</tr>
+									<tr>
+										<td><i class="fa fa-gavel w3-brown w3-padding-tiny"></i></td>
+										<td>Superficie de la parcela</td>
+										<td><i><span id="ssp"> </span> m&#178</i></td>
+									</tr>
+								</table><br>
+									<a class="w3-btn w3-margin-bottom w3-dark-grey" href="http://www1.sedecatastro.gob.es/">Más información  <i class="fa fa-arrow-right"></i></a>
+								</div>
+							</div>
+						</div>
+
+						<div class="w3-container w3-section w3-orange w3-text-dark-grey">
+							<span onclick="this.parentElement.style.display='none'" class="w3-closebtn">&times;</span>
+							<h3>Observación</h3>
+							<p>De momento estos datos son los de la estación meteorológica más cercana, y por las características del terreno es probable que no sean del todo significativos.</p>
+							<p>Están disponibles como datos abiertos en <a href="http://www.inforiego.org/">http://www.inforiego.org/</a>, dispone de un API REST de acceso a los mismos.</p>
+							<p>Del mismo modo los datos sobre la parcela son datos abiertos catastrales y se pueden obtener a través de servicios WEB en <a href="http://www.catastro.meh.es/ayuda/lang/castellano/servicios_web.htm">la Sede Electrónica del Catastro</a></p>
+						</section>
+					</div>
+
+					<div class="w3-container w3-section">
+						<table class="w3-table w3-striped w3-bordered w3-card-4">
+							<thead>
+								<tr>
+									<th>Latitud</th>
+									<th>Longitud</th>
+									<th>Estación más cercana</th>
+									<th>Referencia catastral</th>
+									<th>Dirección</th>
+								</tr>
+							</thead>
+							<tr>
+								<td id="latitud">40.439983</td>
+								<td id="longitud">-5.737026</td>
+								<td id="estacion"/>
+								<td id="rc"/>
+								<td id="direccion"/>
+							</tr>
+						</tr>
+					</table>
+				</div>
+
+				<div id="precipitacion" class="w3-container w3-section">
+
+
+					<table class="w3-card-8">
+						<tr>
+							<td rowspan="5" >
+								<div class="grafica" id="graficoPrecipitacionPorMesYAnio"></div>
+							</td>
+							<td>
+								<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ"/>
+							</td>
+						</tr>
+						<tr>
+							<th>Días de lluvia 2016</th>
+						</tr>
+						<tr>
+							<td id="diasDeLluvia"/>
+						</tr>
+						<tr>
+							<th>Acumulado 2016</th>
+						</tr>
+						<tr>
+							<td id="pecipitacionacumulada"/>
+						</tr>
+					</table>
+
+				</div>
+				<div id="temperatura" class="w3-container w3-section">
+					<table class="w3-card-8">
+						<tr>
+							<td>
+								<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
+							</td>
+							<td rowspan="7">
+								<div  class="grafica" id = "graficoTemperaturaMediaDiurna"></div>
+							</td>
+						</tr>
+						<tr>
+							<th>Máxima diurna 2016</th>
+						</tr>
+						<tr>
+							<td id="maximaTemperaturaDiurna"/>
+						</tr>
+						<tr>
+							<th>Mínima diurna 2016</th>
+						</tr>
+						<tr>
+							<td id="minimaTemperaturaDiurna"/>
+						</tr>
+						<tr>
+							<th>Media diurna 2016</th>
+						</tr>
+						<tr>
+							<td id ="mediaTemperaturaDiurna"/>
+						</tr>
+					</table>
+				</div>
+				<div id="sol" class="w3-container w3-section">
+					<table class="w3-card-8">
+						<tr>
+							<td rowspan="7">
+								<div class="grafica" id="graficoHorasDeSolDiarias" ></div>
+							</td>
+							<td>
+								<img  src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU"/>
+							</td>
+						</tr>
+						<tr>
+							<th>Horas diarias de sol 2016 (en media)</th>
+						</tr>
+						<tr>
+							<td id = "mediaHorasSolDiarias">
+							</tr>
+							<tr>
+								<th>Horas máximas de sol 2016</th>
+							</tr>
+							<tr>
+								<td id = "maximasHorasSolDiarias">
+								</tr>
+								<tr>
+									<th>Horas acumuladas de sol 2016</th>
+								</tr>
+								<tr>
+									<td id = "horasSolAcumuladas">
+									</tr>
+								</table>
+							</div>
+							<div id="radiacion" class="w3-container w3-section">
+								<table class="w3-card-8">
+									<tr>
+										<td>
+											<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
+										</td>
+										<td rowspan="7">
+											<div class="grafica" id="graficoRadiacionNetaDiaria" ></div>
+										</td>
+									</tr>
+									<tr>
+										<th>Radiación máxima neta diaria 2016</th>
+									</tr>
+									<tr>
+										<td id="maximoRadiacionNetaDiaria"/>
+									</tr>
+									<tr>
+										<th>Radiación media neta diaria 2016</th>
+									</tr>
+									<tr>
+										<td id="mediaRadiacionNetaDiaria"/>
+									</tr>
+									<tr>
+										<th>Radiación acumulada neta 2016</th>
+									</tr>
+									<tr>
+										<td id="acumuladoRadiacionNetaDiaria"/>
+									</tr>
+								</table>
+							</div>
+
+							<div class="w3-container w3-section">
+								<div class="w3-card-8">
+
+									<header class="w3-container w3-blue">
+										<h1>Información</h1>
+									</header>
+
+									<div id="informacion" class="w3-container">
+
+										<p>Toda la información que se muestra en esta página se encuentra disponible como datos abiertos. 
  Inicialmente las fuentes de información son <strong>Inforiego</strong> y la <strong>Sede Electrónica del Catastro</strong>. Ambos disponen 
  de APIs de consulta. En este caso a partir de las coordenadas de la parcela, muestran toda la información que puedes ver.</p>
- <p>Este espacio se irá actualizando com más información disponible como datos abiertos, además de información y enlaces sobre cómo interpretar y utilizar todos estos datos.</p>
- <p>Si encuentras algún error, tienes cualquier duda, sugerencia o simplemtente quieres saber cómo está hecho y qué es lo próximo que se va a hacer, puedes contactar conmigo.</p>
-</div>
+										<p>Este espacio se irá actualizando com más información disponible como datos abiertos, además de información y enlaces sobre cómo interpretar y utilizar todos estos datos.</p>
+										<p>Si encuentras algún error, tienes cualquier duda, sugerencia o simplemtente quieres saber cómo está hecho y qué es lo próximo que se va a hacer, puedes contactar conmigo.</p>
+									</div>
 
-<footer class="w3-container w3-blue">
-  <h5>Isabel Muñoz</h5>
-</footer>
+									<footer class="w3-container w3-blue">
+										<h5>Isabel Muñoz</h5>
+									</footer>
 
-</div>
-</div>
-<footer>
+								</div>
+							</div>
+							<footer>
 	Copyleft  Isabel Muñoz
-</footer>
-<!-- End page content -->
-</div>
-	</body>
-</html>
+							</footer>
+							<!-- End page content -->
+						</div>
+					</div>
+				</body>
+			</html>
 
+			

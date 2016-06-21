@@ -1,49 +1,31 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Open Smart Country: Mapa de Parcelas</title>
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-#floating-panel {
-  position: absolute;
-  top: 10px;
-  left: 25%;
-  z-index: 5;
-  background-color: #fff;
-  padding: 5px;
-  border: 1px solid #999;
-  text-align: center;
-  font-family: 'Roboto','sans-serif';
-  line-height: 30px;
-  padding-left: 10px;
-}
+	<head>
+		<title>Open Smart Country: Mapa de Parcelas</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/estilo.css"/>	
+		<script src="js/codigoMapaDeParcelas.js" type="text/javascript"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M&signed_in=true&callback=initMap"></script>
+	</head>
+	<body onload="drop()">
 
-      #floating-panel {
-        margin-left: -52px;
-      }
-    </style>
-  </head>
-  <body>
-  
-  
-    <div id="floating-panel">
-      <button id="drop" onclick="drop()">Localiza parcelas</button>
-     </div>
-    <div id="map"></div>
-    <script src="js/codigoMapaDeParcelas.js" type="text/javascript">
-
-
-    </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M&signed_in=true&callback=initMap"></script>
-  </body>
+		<!-- Navbar (sit on top) -->
+		<div class="w3-top">
+			<ul class="w3-navbar" id="myNavbar">
+				<li><a href="index.html" class="w3-padding-large">HOME</a></li>
+				<li class="w3-hide-small w3-right">
+					<a href="#" class="w3-padding-large w3-hover-red"><i class="fa fa-search"></i></a>
+				</li>
+			</ul>
+		</div>
+			
+		<div id="map"></div>
+			
+	
+	</body>
 </html>
 
