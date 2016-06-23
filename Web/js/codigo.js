@@ -16,9 +16,6 @@ function initMap() {
 
 	mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
 
-	//TODO: con el mapa pequeño este botón queda demasiado grande
-	//Create the DIV to hold the control and call the CenterControl() constructor
-	//passing in this DIV.
 	var centerControlDiv = document.createElement('div');
 	var centerControl = new CenterControl(centerControlDiv, mapa);
 
@@ -45,7 +42,7 @@ function initMap() {
 
 	marker.addListener('click', function () {
 		//TODO: hacer que esta información se muestre en otra parte
-		informacionMarcador.open(mapa, marker);
+		//informacionMarcador.open(mapa, marker);
 	});
 
 	var triangleCoords = [
@@ -178,7 +175,9 @@ function showArrays(event) {
 	informacionPoligono.setPosition(event.latLng);
 
 	//TODO: hacer que esta información se muestre en otra parte
-	informacionPoligono.open(mapa);
+	document.getElementById('coordenadasLinde').innerHTML=contentString;
+	document.getElementById('coordenadasLindeModal').style.display='block';
+	//informacionPoligono.open(mapa);
 
 }
 
@@ -197,6 +196,7 @@ function CenterControl(controlDiv, map) {
 	controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
 	controlUI.style.cursor = 'pointer';
 	controlUI.style.marginBottom = '22px';
+	controlUI.style.marginLeft = '10px';
 	controlUI.style.textAlign = 'center';
 	controlUI.title = 'Click para centrar el mapa en la parcela';
 	controlDiv.appendChild(controlUI);
@@ -318,7 +318,10 @@ function obtenEstacion() {
 		});
 
 	request.done(function (response, textStatus, jqXHR) {
-		document.getElementById("estacion").innerHTML = response["ESTACION"];
+		document.getElementById("estacionLluvia").innerHTML = response["ESTACION"];
+		document.getElementById("estacionTemperatura").innerHTML = response["ESTACION"];
+		document.getElementById("estacionSol").innerHTML = response["ESTACION"];
+		document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
 
 	});
 }
