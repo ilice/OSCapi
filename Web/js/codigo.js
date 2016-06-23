@@ -765,7 +765,7 @@ function trataUltimoValorHumedadSuelo(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 0).toLocaleString(); 
 	document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 1).toFixed(2); 
 }
 
@@ -785,7 +785,7 @@ function trataUltimoValorTemperatura(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaTemperatura').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaTemperatura').innerHTML = datos.getValue(0, 0).toLocaleString();  
 	document.getElementById('ultimaMedidaTemperatura').innerHTML = datos.getValue(0, 1).toFixed(2); 
 }
 
@@ -805,7 +805,7 @@ function trataUltimoValorHumedad(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaHumedad').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaHumedad').innerHTML = datos.getValue(0, 0).toLocaleString(); 
 	document.getElementById('ultimaMedidaHumedad').innerHTML = datos.getValue(0, 1); 
 }
 
@@ -825,7 +825,7 @@ function trataUltimoValorLluvia(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaLluvia').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaLluvia').innerHTML = datos.getValue(0, 0).toLocaleString(); 
 	document.getElementById('ultimaMedidaLluvia').innerHTML = datos.getValue(0, 1); 
 }
 
@@ -845,7 +845,7 @@ function trataUltimoValorLuz(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaLuz').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaLuz').innerHTML = datos.getValue(0, 0).toLocaleString(); 
 	document.getElementById('ultimaMedidaLuz').innerHTML = datos.getValue(0, 1); 
 }
 
@@ -865,7 +865,7 @@ function trataUltimoValorBateria(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaBateria').innerHTML = datos.getValue(0, 0); 
+	document.getElementById('horaUltimaMedidaBateria').innerHTML = datos.getValue(0, 0).toLocaleString(); 
 	document.getElementById('ultimaMedidaBateria').innerHTML = datos.getValue(0, 1); 
 }
 
