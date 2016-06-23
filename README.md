@@ -2,6 +2,8 @@
 Open Smart Country - Campo Inteligente Abierto
 http://opensmartcountry.com/
 
+![Primer prototipo completo funcionando](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/cacharrito.png "Primer prototipo completo funcionando")
+
 ## Qué es ##
 [Open Smart Country](http://opensmartcountry.com/) nace con la idea de aplicar las nuevas tecnologías para aprovechar de manera sostenible todas las tierras en desuso. 
 Para ello utilizamos distintas tecnologías y tendencias que actualmente tienen mucho eco: IoT, Open Data, Big Data, Analytics, Diseño Web, Amazon, Google for Developers y esperamos que un largo etc.
