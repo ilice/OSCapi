@@ -7,6 +7,15 @@ var parcela = {
 };
 var informacionPoligono;
 
+/* Los Google Charts no son responsive por lo que es necesario pintarlos
+ de nuevo cuado se produce un cambio de tamaño de la pantalla */
+$(window).resize(function(){
+  graficoPrecipitacionPorMesYAnio();
+  graficoTemperaturasMediasDiurnas();
+  graficoRadiacionNetaDiaria();
+  graficoHorasDeSolDiarias();
+});
+
 function initMap() {
 	var mapOptions = {
 		center : parcela,

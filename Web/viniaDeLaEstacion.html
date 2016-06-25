@@ -11,7 +11,7 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
 		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
 		<link rel="stylesheet" href="css/estilo.css"/>	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M&region=ES&callback=initMap" async defer></script>
@@ -54,7 +54,7 @@
 
 			<div class="w3-container w3-row w3-padding-16">
 				<div class="w3-col s4">
-					<img src="img/avatar_vinia.PNG" class="w3-circle w3-margin-right" style="width:46px"/>
+					<img src="img/avatar_vinia.PNG" class="w3-circle w3-margin-right" style="width:46px" alt="Avatar Viña de la Estación"/>
 				</div>
 				<div class="w3-col s8">
 					<span>Bienvenidos a <strong>La Viña de la Estación</strong></span><br/>
@@ -230,7 +230,7 @@
 					<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-row-padding w3-card-8">
 						<div class="w3-twothird">
-							<p>El <strong>"Cacharrito"</strong> está puesto en la parcela e informa de su posición por si alguien <em>"en un despiste"</em> lo mueve.</p>
+							<p><strong>"OSC&alpha;r"</strong> está puesto en la parcela e informa de su posición por si alguien <em>"en un despiste"</em> lo mueve.</p>
 							<p>Su trabajo es recoger y enviar los datos que obtiene de sus sensores: humedad del suelo, luz, lluvia, temperatura, humedad relativa del aire... y los sensores que le vayamos añadiendo.</p>
 							<p>Además nos informa de cómo va de batería, por la noche va a tirar de ella así que durante el día debe estar bien cargado. </p>							
 							<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey w3-margin-bottom">
@@ -271,10 +271,10 @@
 									<td><i><span id = "ultimaMedidaBateria"></span> %<span class="w3-badge w3-right w3-small w3-orange">!</span></i></td>
 								</tr>
 							</table>
+
 						</div>
 						<div class="w3-third">
-							<h5>El cacharrito</h5>
-							<div class="w3-center"><img src="img/cacharrito.png"></img></div>
+							<div class="w3-center"><a href="oscar.html"><img src="img/cacharrito.png" alt="Foto del prototipo de sensores"></a></img></div>
 							<table class="w3-table w3-bordered w3-border w3-hoverable w3-white w3-text-grey w3-margin-bottom">
 								<tr>
 									<th>Latitud: <span id="ultimaPosicionLatitud"></span></th>
@@ -282,6 +282,7 @@
 								</tr>
 							</table>
 						</div>
+
 					</div>
 				</div>
 
@@ -298,138 +299,155 @@
 
 		<div id="precipitacion" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-			<div class="w3-row-padding w3-card-8">
-				<table>
-					<tr>
-						<td rowspan="5" >
-							<div class="grafica" id="graficoPrecipitacionPorMesYAnio"></div>
-						</td>
-						<td>
-							<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ"/>
-						</td>
-					</tr>
-					<tr>
-						<th>Días de lluvia 2016</th>
-					</tr>
-					<tr>
-						<td id="diasDeLluvia"/>
-					</tr>
-					<tr>
-						<th>Acumulado 2016</th>
-					</tr>
-					<tr>
-						<td id="pecipitacionacumulada"/>
-					</tr>
-				</table>
-				<p><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionLluvia"> </span></em></p>
+			<div class="w3-card-8">
+				<p class="w3-padding"><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionLluvia"> </span></em></p>
+				<div class="w3-row-padding">
+					<div class="w3-twothird grafica" id="graficoPrecipitacionPorMesYAnio"></div>
+					<div class="w3-third w3-center">
+						<table>
+							<tr>
+								<td>
+									<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KQlJWMXZXUnVaRjQ" alt="Nube"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Días de lluvia 2016</th>
+							</tr>
+							<tr>
+								<td id="diasDeLluvia"/>
+							</tr>
+							<tr>
+								<th>Acumulado 2016</th>
+							</tr>
+							<tr>
+								<td id="pecipitacionacumulada"/>
+							</tr>
+						</table>
+					</div>	
+				</div>
 			</div>
 		</div>
 
 		<div id="temperatura" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-			<div class="w3-row-padding w3-card-8">
-				<table>
-					<tr>
-						<td>
-							<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc"/>
-						</td>
-						<td rowspan="7">
-							<div  class="grafica" id = "graficoTemperaturaMediaDiurna"></div>
-						</td>
-					</tr>
-					<tr>
-						<th>Máxima diurna 2016</th>
-					</tr>
-					<tr>
-						<td id="maximaTemperaturaDiurna"/>
-					</tr>
-					<tr>
-						<th>Mínima diurna 2016</th>
-					</tr>
-					<tr>
-						<td id="minimaTemperaturaDiurna"/>
-					</tr>
-					<tr>
-						<th>Media diurna 2016</th>
-					</tr>
-					<tr>
-						<td id ="mediaTemperaturaDiurna"/>
-					</tr>
-				</table>
-				<p><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionTemperatura"> </span></em></p>
+			<div class="w3-card-8">
+				<p class="w3-padding"><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionTemperatura"> </span></em></p>
+				<div class="w3-row-padding">
+					<div class="w3-third w3-center">
+						<table>
+							<tr>
+								<td>
+									<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KaktmemdWR0swaHc" alt="Termómetro"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Máxima diurna 2016</th>
+							</tr>
+							<tr>
+								<td id="maximaTemperaturaDiurna"/>
+							</tr>
+							<tr>
+								<th>Mínima diurna 2016</th>
+							</tr>
+							<tr>
+								<td id="minimaTemperaturaDiurna"/>
+							</tr>
+							<tr>
+								<th>Media diurna 2016</th>
+							</tr>
+							<tr>
+								<td id ="mediaTemperaturaDiurna"/>
+							</tr>
+						</table>
+					</div>
+					<div class="w3-twothird grafica" id="graficoTemperaturaMediaDiurna"></div>
+				</div>
 			</div>
 		</div>
 
 		<div id="sol" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-			<div class="w3-row-padding w3-card-8">
-				<table>
-					<tr>
-						<td rowspan="7">
-							<div class="grafica" id="graficoHorasDeSolDiarias" ></div>
-						</td>
-						<td>
-							<img  src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU"/>
-						</td>
-					</tr>
-					<tr>
-						<th>Horas diarias de sol 2016 (en media)</th>
-					</tr>
-					<tr>
-						<td id = "mediaHorasSolDiarias"/>
-					</tr>
-					<tr>
-						<th>Horas máximas de sol 2016</th>
-					</tr>
-					<tr>
-						<td id = "maximasHorasSolDiarias"/>
-					</tr>
-					<tr>
-						<th>Horas acumuladas de sol 2016</th>
-					</tr>
-					<tr>
-						<td id = "horasSolAcumuladas"/>
-					</tr>
-				</table>
-				<p><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionSol"> </span></em></p>
+			<div  class="w3-card-8">
+				<p class="w3-padding"><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionSol"> </span></em></p>
+				<div class="w3-row-padding">
+					<div class="w3-twothird grafica" id="graficoHorasDeSolDiarias"></div>
+					<div class="w3-third w3-center">
+						<table>
+							<tr>
+								<td>
+									<img  src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KY3dwcUR5dGVkSVU" alt="Sol con horas"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Horas diarias de sol 2016 (en media)</th>
+							</tr>
+							<tr>
+								<td id = "mediaHorasSolDiarias"/>
+							</tr>
+							<tr>
+								<th>Horas máximas de sol 2016</th>
+							</tr>
+							<tr>
+								<td id = "maximasHorasSolDiarias"/>
+							</tr>
+							<tr>
+								<th>Horas acumuladas de sol 2016</th>
+							</tr>
+							<tr>
+								<td id = "horasSolAcumuladas"/>
+							</tr>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 
 
 		<div id="radiacion" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-			<div class="w3-row-padding w3-card-8">
-				<table>
-					<tr>
-						<td>
-							<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU"/>
-						</td>
-						<td rowspan="7">
-							<div class="grafica" id="graficoRadiacionNetaDiaria" ></div>
-						</td>
-					</tr>
-					<tr>
-						<th>Radiación máxima neta diaria 2016</th>
-					</tr>
-					<tr>
-						<td id="maximoRadiacionNetaDiaria"/>
-					</tr>
-					<tr>
-						<th>Radiación media neta diaria 2016</th>
-					</tr>
-					<tr>
-						<td id="mediaRadiacionNetaDiaria"/>
-					</tr>
-					<tr>
-						<th>Radiación acumulada neta 2016</th>
-					</tr>
-					<tr>
-						<td id="acumuladoRadiacionNetaDiaria"/>
-					</tr>
-				</table>
-				<p><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionRadiacion"> </span></em></p>
+			<div  class="w3-card-8">
+				<p class="w3-padding"><em>*Los datos que se muestran son los de la estación meteorológica más cercana: <span id="estacionRadiacion"> </span></em></p>
+				<div class="w3-row-padding">
+					<div class="w3-third w3-center">
+						<table>
+							<tr>
+								<td>
+									<img src="http://drive.google.com/uc?export=view&id=0BwBkl30bqN8KV21icHlia3psWUU" alt="Sol con flechas de radiación"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Radiación máxima neta diaria 2016</th>
+							</tr>
+							<tr>
+								<td id="maximoRadiacionNetaDiaria"/>
+							</tr>
+							<tr>
+								<th>Radiación media neta diaria 2016</th>
+							</tr>
+							<tr>
+								<td id="mediaRadiacionNetaDiaria"/>
+							</tr>
+							<tr>
+								<th>Radiación acumulada neta 2016</th>
+							</tr>
+							<tr>
+								<td id="acumuladoRadiacionNetaDiaria"/>
+							</tr>
+						</table>
+					</div>
+					<div class="w3-twothird grafica" id="graficoRadiacionNetaDiaria"></div>
+				</div>
 			</div>
 		</div>
+
+
+
+
+
+
+
+
+
 
 		<div class="w3-container w3-section" id="informacion">
 			<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
