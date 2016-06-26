@@ -11,6 +11,13 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
 		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
 		<link rel="stylesheet" href="css/estilo.css"/>
+		<link rel="stylesheet" type="text/css" href="css/joyride-2.1.css"/>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.joyride-2.1.js"></script>   
+		<script type="text/javascript" src="js/codigo.js"></script>   
+
+
 		<script>
 			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -32,16 +39,15 @@
 				<a href="#" class="w3-padding-large w3-hover-red"><i class="fa fa-search"></i></a>
 			</li>
 		</ul>
-		
-		<!--Botón de suscripción -->
-		<button class="w3-btn-floating-large w3-dark-grey lateral-button" onclick="document.getElementById('siguiente').style.display='block'"><i class="fa fa-plus"></i></button>
+
+		<button class="w3-btn-floating-large w3-dark-grey lateral-button" onclick="document.getElementById('siguiente').style.display='block'" id="botonMas"><i class="fa fa-plus"></i></button>
 
 		<div id="siguiente" class="w3-modal w3-animate-zoom">
 			<div class="w3-modal-content w3-card-8 ">
 				<div class="w3-container w3-center">
-				<header class="w3-container">
-					<span onclick="document.getElementById('siguiente').style.display='none'" class="w3-closebtn">&times;</span>
-					<h2>¿Qué puedo hacer?</h2>
+					<header class="w3-container">
+						<span onclick="document.getElementById('siguiente').style.display='none'" class="w3-closebtn">&times;</span>
+						<h2>¿Qué puedo hacer?</h2>
 					</header>
 					<p>Ahora mismo estoy funcionando, recogiendo algunos datos y enviándolos a través de una conexión 2G con una SIM que tengo en mi interior.</p>
 					<p>Mi corazón de Arduino controla un módulo que gracias a la SIM se conecta a internet y envía los datos para que los puedas ver.</p>
@@ -49,27 +55,28 @@
 				</div>
 			</div>
 		</div>
-		
+
 
 		<div class="w3-container w3-light-grey w3-center" >
 			<br/><br/>
-			<img class="" src="img/IMG_20160622_181711_400x610.png" alt="OSC&alpha;r" usemap="#cacharritoMap"/>
-			<map name="#cacharritoMap">
-				<area shape="poly" coords="125,0,387,22,321,117,0,81" onclick="document.getElementById('datosPlacaSolar').style.display='block'" alt="Placa Solar" title="Placa solar" id="placaSolar"/>
-				<area shape="poly" coords="116,262,206,282,157,347,53,320" onclick="document.getElementById('datosSensorDeLluvia').style.display='block'" title="Sensor lluvia" id="sensorLluvia"/>
-				<area shape="poly" coords="149,469,189,490,137,600,124,609,124,591,155,527,152,515,141,518,108,586,96,596,94,580" onclick="document.getElementById('datosSensorHumetadSuelo').style.display='block'" alt="Sensor humedad suelo" title="Sensor humedad suelo" id="sensorHumedadSuelo"/>
-			</map>
+			<img class="" src="img/IMG_20160622_181711_400x610.png" alt="OSC&alpha;r" usemap="#cacharritoMap" id="oscar">
+				<map name="cacharritoMap">
+					<area shape="poly" coords="125,0,387,22,321,117,0,81" onclick="document.getElementById('datosPlacaSolar').style.display='block'" alt="Placa Solar" title="Placa solar" id="placaSolar"/>
+					<area shape="poly" coords="116,262,206,282,157,347,53,320" onclick="document.getElementById('datosSensorDeLluvia').style.display='block'" title="Sensor lluvia" id="sensorLluvia"/>
+					<area shape="poly" coords="149,469,189,490,137,600,124,609,124,591,155,527,152,515,141,518,108,586,96,596,94,580" onclick="document.getElementById('datosSensorHumetadSuelo').style.display='block'" alt="Sensor humedad suelo" title="Sensor humedad suelo" id="sensorHumedadSuelo"/>
+				</map>
+			</img>
 			<p><em>*Pulsa sobre los aparatitos que tengo para saber qué son</em></p>
 			<p><em>**Pulsa sobre el botón '+' para ver qué puedo hacer</em></p>
 		</div>
 
-		
+
 		<div id="datosPlacaSolar" class="w3-modal w3-animate-zoom">
 			<div class="w3-modal-content w3-card-8 ">
 				<div class="w3-container w3-center">
-				<header class="w3-container">
-					<span onclick="document.getElementById('datosPlacaSolar').style.display='none'" class="w3-closebtn">&times;</span>
-					<h2>Placa Solar</h2>
+					<header class="w3-container">
+						<span onclick="document.getElementById('datosPlacaSolar').style.display='none'" class="w3-closebtn">&times;</span>
+						<h2>Placa Solar</h2>
 					</header>
 					<p>Esta es mi placa solar, la utilizo para conseguir captar energía durante el día.</p>
 					<p>La que puedes ver es de <strong>6V 2W 330mA</strong>.</p>
@@ -77,13 +84,13 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="datosSensorDeLluvia" class="w3-modal w3-animate-zoom">
 			<div class="w3-modal-content w3-card-8 ">
 				<div class="w3-container w3-center">
-				<header class="w3-container">
-					<span onclick="document.getElementById('datosSensorDeLluvia').style.display='none'" class="w3-closebtn">&times;</span>
-					<h2>Sensor de Lluvia</h2>
+					<header class="w3-container">
+						<span onclick="document.getElementById('datosSensorDeLluvia').style.display='none'" class="w3-closebtn">&times;</span>
+						<h2>Sensor de Lluvia</h2>
 					</header>
 					<p>Este es mi sensor de lluvia, es muy sencillo y barato. En realidad detecta cuándo empieza a llover.</p>
 					<p>Tiene doble cara y en cuanto una gota cae encima la detecta enviando una señal digital.</p>
@@ -93,13 +100,13 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="datosSensorHumetadSuelo" class="w3-modal w3-animate-zoom">
 			<div class="w3-modal-content w3-card-8 ">
 				<div class="w3-container w3-center">
-				<header class="w3-container">
-					<span onclick="document.getElementById('datosSensorHumetadSuelo').style.display='none'" class="w3-closebtn">&times;</span>
-					<h2>Sensor de Humedad del Suelo</h2>
+					<header class="w3-container">
+						<span onclick="document.getElementById('datosSensorHumetadSuelo').style.display='none'" class="w3-closebtn">&times;</span>
+						<h2>Sensor de Humedad del Suelo</h2>
 					</header>
 					<p>Este es mi sensor de humedad del suelo, simplemente se pincha en el suelo a la profundidad que se desee medir.</p>
 					<p>Igual que el de lluvia se puede utilizar con un potenciómetro aunque en mi caso lo uso directamente aunque regulo el nivel al arrancar.</p>
@@ -109,9 +116,6 @@
 				</div>
 			</div>
 		</div>
-		
-		
-
 
 
 
@@ -121,11 +125,41 @@
 				<a href="https://www.facebook.com/isabelmunozordonez" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-facebook-official"></i></a>
 				<a href="https://twitter.com/teanocrata" class="w3-hover-text-light-blue w3-show-inline-block"><i class="fa fa-twitter"></i></a>
 				<a href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-linkedin"></i></a>
+				<a href="https://github.com/teanocrata/OpenSmartCountry" class="w3-hover-text-indigo w3-show-inline-block" id="gihublink"><i  class="fa fa-github"></i></a>
 			</div>
 			<a class="w3-right w3-padding-medium" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
 				<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
 			</a>
 		</footer>
+
+
+		<!-- Tour guiado por la página -->
+		<ol id="chooseID" class="w3-hide">
+			<li data-button="Siguiente" class="custom">
+				<h2>¿Me llamo OSC&alpha;r!</h2>
+				<p>Estoy aquí para explicarte cómo funciono.</p>
+				<p>Sigue el tour para conocer mis secretos.</p>
+			</li>
+			<li data-button="Siguiente" class="custom" data-options="tipLocation:right;tipAnimation:fade">
+				<h2>Componentes</h2>
+				<p>Estoy compuesto por varios componentes que se pueden compar fácilmente a través de internet</p>
+				<p>Pulsando sobre cada uno de ellos puedes ver una descripción, cómo lo utilizo y cuanto cuesta aproximadamente.</p>
+			</li>
+			<li data-id="botonMas" data-button="Siguiente" class="custom" data-options="tipLocation:top">
+				<h2>Más cosas</h2>
+				<p>Pulsando sobre este botón puedes ver otras opciones, ahora mismo te explico un poco qué hago con los datos y te enseño cómo los puedes ver en una parcela en la que estoy.</p>
+			</li>
+			<li data-id="gihublink" data-button="Siguiente" class="custom" data-options="tipLocation:top">
+				<h2>Open Source</h2>
+				<p>Para funcionar necesito un poco de código, puedes ver qué código uso y más información sobre cómo montarme en el repositorio de GitHub simplemente pulsando este botón.</p>
+			</li>
+			<li data-button="Fin" class="custom">
+				<h2>Se acabó el tour</h2>
+				<p>Pulsa sobre mis componentes para más información.</p>
+			</li>
+		</ol>
+
+
 
 	</body>
 </html>
