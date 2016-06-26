@@ -8,12 +8,25 @@ var parcela = {
 var informacionPoligono;
 
 /* Los Google Charts no son responsive por lo que es necesario pintarlos
- de nuevo cuado se produce un cambio de tamaño de la pantalla */
-$(window).resize(function(){
-  graficoPrecipitacionPorMesYAnio();
-  graficoTemperaturasMediasDiurnas();
-  graficoRadiacionNetaDiaria();
-  graficoHorasDeSolDiarias();
+de nuevo cuado se produce un cambio de tamaño de la pantalla */
+$(window).resize(function () {
+	graficoPrecipitacionPorMesYAnio();
+	graficoTemperaturasMediasDiurnas();
+	graficoRadiacionNetaDiaria();
+	graficoHorasDeSolDiarias();
+});
+
+$(window).load(function () {
+	$('#chooseID').joyride({
+		autoStart : true,
+		postStepCallback : function (index, tip) {
+			if (index == 15) {
+				$(this).joyride('set_li', false, 1);
+			}
+		},
+		modal : true,
+		expose : true
+	});
 });
 
 function initMap() {
@@ -54,8 +67,7 @@ function initMap() {
 		//informacionMarcador.open(mapa, marker);
 	});
 
-	var triangleCoords = [
-		{
+	var triangleCoords = [{
 			lng : -5.73743277138396,
 			lat : 40.4390893833596
 		}, {
@@ -184,8 +196,8 @@ function showArrays(event) {
 	informacionPoligono.setPosition(event.latLng);
 
 	//TODO: hacer que esta información se muestre en otra parte
-	document.getElementById('coordenadasLinde').innerHTML=contentString;
-	document.getElementById('coordenadasLindeModal').style.display='block';
+	document.getElementById('coordenadasLinde').innerHTML = contentString;
+	document.getElementById('coordenadasLindeModal').style.display = 'block';
 	//informacionPoligono.open(mapa);
 
 }
@@ -265,7 +277,7 @@ function cargaDatos() {
 	google.charts.load('current', {
 		'packages' : ['table', 'bar', 'corechart', 'geochart']
 	});
-	
+
 	google.charts.setOnLoadCallback(cargaUltimoValorHumedadSuelo);
 	google.charts.setOnLoadCallback(cargaUltimoValorTemperatura);
 	google.charts.setOnLoadCallback(cargaUltimoValorHumedad);
@@ -274,7 +286,7 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(cargaUltimoValorBateria);
 	google.charts.setOnLoadCallback(cargaUltimaLatitudCacharrito);
 	google.charts.setOnLoadCallback(cargaUltimaLongitudCacharrito);
-	
+
 	google.charts.setOnLoadCallback(cargaMedidaDiasDeLluvia);
 	google.charts.setOnLoadCallback(cargaMedidaPrecipitacionAcumulada);
 	google.charts.setOnLoadCallback(cargaMedidaMaximaTemperaturaDiurna);
@@ -286,7 +298,7 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(cargaMedidaMaximoRadiacionDiaria);
 	google.charts.setOnLoadCallback(cargaMedidaMediaRadiacionDiaria);
 	google.charts.setOnLoadCallback(cargaMedidaAcumuladoRadiacionDiaria);
-	
+
 	google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
@@ -774,8 +786,8 @@ function trataUltimoValorHumedadSuelo(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 0).toLocaleString(); 
-	document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 1).toFixed(2); 
+	document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = datos.getValue(0, 1).toFixed(2);
 }
 
 function cargaUltimoValorTemperatura() {
@@ -794,8 +806,8 @@ function trataUltimoValorTemperatura(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaTemperatura').innerHTML = datos.getValue(0, 0).toLocaleString();  
-	document.getElementById('ultimaMedidaTemperatura').innerHTML = datos.getValue(0, 1).toFixed(2); 
+	document.getElementById('horaUltimaMedidaTemperatura').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaTemperatura').innerHTML = datos.getValue(0, 1).toFixed(2);
 }
 
 function cargaUltimoValorHumedad() {
@@ -814,8 +826,8 @@ function trataUltimoValorHumedad(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaHumedad').innerHTML = datos.getValue(0, 0).toLocaleString(); 
-	document.getElementById('ultimaMedidaHumedad').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('horaUltimaMedidaHumedad').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaHumedad').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaUltimoValorLluvia() {
@@ -834,8 +846,8 @@ function trataUltimoValorLluvia(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaLluvia').innerHTML = datos.getValue(0, 0).toLocaleString(); 
-	document.getElementById('ultimaMedidaLluvia').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('horaUltimaMedidaLluvia').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaLluvia').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaUltimoValorLuz() {
@@ -854,8 +866,8 @@ function trataUltimoValorLuz(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaLuz').innerHTML = datos.getValue(0, 0).toLocaleString(); 
-	document.getElementById('ultimaMedidaLuz').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('horaUltimaMedidaLuz').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaLuz').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaUltimoValorBateria() {
@@ -874,8 +886,8 @@ function trataUltimoValorBateria(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('horaUltimaMedidaBateria').innerHTML = datos.getValue(0, 0).toLocaleString(); 
-	document.getElementById('ultimaMedidaBateria').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('horaUltimaMedidaBateria').innerHTML = datos.getValue(0, 0).toLocaleString();
+	document.getElementById('ultimaMedidaBateria').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaUltimaLatitudCacharrito() {
@@ -894,7 +906,7 @@ function trataUltimaLatitudCacharrito(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('ultimaPosicionLatitud').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('ultimaPosicionLatitud').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaUltimaLongitudCacharrito() {
@@ -913,7 +925,7 @@ function trataUltimaLongitudCacharrito(respuesta) {
 
 	var datos = respuesta.getDataTable();
 
-	document.getElementById('ultimaPosicionLongitud').innerHTML = datos.getValue(0, 1); 
+	document.getElementById('ultimaPosicionLongitud').innerHTML = datos.getValue(0, 1);
 }
 
 function cargaMedidaDiasDeLluvia() {
@@ -1132,11 +1144,11 @@ function trataRespuestaAcumuladoRadiacionDiaria(respuesta) {
 // Script to open and close sidenav
 function w3_open() {
 	document.getElementById("mySidenav").style.display = "block";
-    document.getElementById("myOverlay").style.display = "block";
+	document.getElementById("myOverlay").style.display = "block";
 	google.charts.setOnLoadCallback(drawRegionsMap);
 }
 
 function w3_close() {
 	document.getElementById("mySidenav").style.display = "none";
-    document.getElementById("myOverlay").style.display = "none";
+	document.getElementById("myOverlay").style.display = "none";
 }
