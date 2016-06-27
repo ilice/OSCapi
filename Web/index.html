@@ -13,6 +13,7 @@
 		<link rel="stylesheet" href="css/estilo.css"/>
 		<link href="OpenSmartCountry_logo_192x192.png" rel="icon" sizes="192x192" />
 		<link href="OpenSmartCountry_logo_128x128.png" rel="icon" sizes="128x128" />	
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 		<script>
 			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -34,9 +35,6 @@
 				</li>
 			</ul>
 		</div>
-
-		<!--Botón de suscripción -->
-		<button class="w3-btn-floating-large w3-dark-grey lateral-button" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-plus"></i></button>
 
 		<div id="suscripcion" class="w3-modal">
 			<div class="w3-modal-content">
@@ -302,15 +300,7 @@
 			</div>
 		</div>
 
-		<div id="analytics" class="w3-modal">
-			<div class="w3-modal-content">
-				<div class="w3-container">
-					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
-					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
-					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
-				</div>
-			</div>
-		</div>
+		
 
 		<!-- Fourth Parallax Image with Portfolio Text -->
 		<div class="bgimg-4 w3-display-container">
@@ -354,6 +344,69 @@
 				<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
 			</a>
 		</footer>
+		
+		<!-- Botón FAB al estilo material design-->
+		<div class="contenedor w3-container">
+			<ul class="w3-ul w3-center" >
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='oscar.html'"><i class="fa fa-wifi"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='viniaDeLaEstacion.html'"><i class="fa fa-unlock-alt"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
+				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
+			</ul>
+		</div>
+		<script src="js\codigoFAB.js"></script>
+		<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
+		<div id="analytics" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
+					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
+					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
+				</div>
+			</div>
+		</div>
+		<!--Ventana de suscripción -->
+		<div id="suscripcion" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container w3-padding w3-center">
+					<span onclick="document.getElementById('suscripcion').style.display='none'" class="w3-closebtn">&times;</span>
+					<p>Si quieres que te avisemos con los avances que realicemos, déjanos tu correo y te informaremos.</p>
+					<p>Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y puedes darte de baja cuando quieras.</p>
+					<p>Rellene el siguiente formulario para suscribirse.</p>
+					<form class="w3-container" enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
+						<dl class="zend_form">
+							<dt id="groups-label"> </dt>
+							<dd id="groups-element">
+								<input class="w3-input" type="hidden" name="groups[]" value="1"/>
+							</dd>
+
+							<dt id="name-label">
+								<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+							</dt>
+							<dd id="name-element">
+								<input type="text" class="w3-input" name="name" id="name" value=""/>
+							</dd>
+
+							<dt id="email-label">
+								<label for="email" class="required w3-label w3-validate w3-text-grey">Email</label>
+							</dt>
+							<dd id="email-element">
+								<input type="email" class="w3-input" name="email" id="email" value="" required/>
+							</dd>				
+
+							<dt id="submit-label"> </dt>
+							<dd id="submit-element">
+								<button type="submit" name="submit" id="submit" class="w3-btn w3-dark-grey w3-margin-top" onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme al tanto</button>
+							</dd>
+
+						</dl>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- Fin bloque botón FAB al estilo material design-->
 
 	</body>
 </html>

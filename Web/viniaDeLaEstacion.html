@@ -85,7 +85,7 @@
 
 
 		</nav>
-		<!-- Overlay effect when opening sidenav on small screens -->
+		
 
 
 		<!-- Overlay effect when opening sidenav on small screens -->
@@ -461,16 +461,27 @@
 					<p>Si encuentras algún error, tienes cualquier duda, sugerencia o simplemtente quieres saber cómo está hecho y qué es lo próximo que se va a hacer, puedes contactar conmigo.</p>
 				</div>
 
-				<footer class="w3-container w3-blue">
-					<h5>Isabel Muñoz</h5>
-				</footer>
+		
 
 			</div>
 		</div>
-		<footer>
-	Copyleft  Isabel Muñoz
+		
+			</div>
+</div>
+
+		
+		<!-- Footer -->
+		<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
+			<div class="w3-xlarge w3-padding-32">
+				<a href="https://www.facebook.com/isabelmunozordonez" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-facebook-official"></i></a>
+				<a href="https://twitter.com/teanocrata" class="w3-hover-text-light-blue w3-show-inline-block"><i class="fa fa-twitter"></i></a>
+				<a href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-linkedin"></i></a>
+				<a href="https://github.com/teanocrata/OpenSmartCountry" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-github"></i></a>
+			</div>
+			<a class="w3-right w3-padding-medium" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+				<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+			</a>
 		</footer>
-		<!-- End page content -->
 
 		<!-- Tour guiado por la página -->
 		<ol id="chooseID" class="w3-hide">
@@ -559,11 +570,34 @@
 			</li>
 		</ol>
 		
-		<!--Botón de suscripción -->
-		<button class="w3-btn-floating-large w3-dark-grey lateral-button" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-plus"></i></button>
+		
 
 		
 		
+
+		<!-- Botón FAB al estilo material design-->
+		<div class="contenedor w3-container">
+			<ul class="w3-ul w3-center" >
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='oscar.html'"><i class="fa fa-wifi"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='viniaDeLaEstacion.html'"><i class="fa fa-unlock-alt"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
+				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
+			</ul>
+		</div>
+		<script src="js\codigoFAB.js"></script>
+		<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
+		<div id="analytics" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
+					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
+					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
+				</div>
+			</div>
+		</div>
+		<!--Ventana de suscripción -->
 		<div id="suscripcion" class="w3-modal">
 			<div class="w3-modal-content">
 				<div class="w3-container w3-padding w3-center">
@@ -602,9 +636,8 @@
 				</div>
 			</div>
 		</div>
-
-	</div>
-</div>
+		<!-- Fin bloque botón FAB al estilo material design-->
+		
 </body>
 </html>
 

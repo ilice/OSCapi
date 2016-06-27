@@ -20,16 +20,44 @@ body, html {
     padding: 0;
 }
 
-
-
-.lateral-button {
-    position: fixed;
-    z-index: 1;
-    top: 70%;
-    left: 0;
-    overflow-x: hidden;
-    transition: 0.5s;
+.sinBorde{
+	border-bottom: none !important;
 }
+
+.contenedor{
+  position:fixed;
+  right:1%;
+  bottom:3%;
+  
+}
+.botonF1{
+    z-index: 1;
+    transition: 0.5s;
+	transition:.3s;  
+}
+span{
+  transition:.5s;  
+}
+
+.btn{
+  transform:scale(0);
+}
+.botonF2{
+  transition:0.5s;
+}
+.botonF3{
+  transition:0.7s;
+}
+.botonF4{
+  transition:0.9s;
+}
+.botonF5{
+  transition:0.99s;
+}
+.animacionVer{
+  transform:scale(1);
+}
+
 
 /* Create a Parallax Effect */
 .bgimg-1, .bgimg-2, .bgimg-3, .bgimg-4 {
