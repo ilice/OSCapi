@@ -1,8 +1,4 @@
-// If you're adding a number of markers, you may want to drop them on the map
-// consecutively rather than all at once. This example shows how to use
-// window.setTimeout() to space your markers' animation.
-
-var neighborhoods = [{
+var parcelas = [{
 		lat : 40.416616,
 		lng : -3.703801,
 		foto : "img/IMG_20160501_175931.jpg",
@@ -16,7 +12,7 @@ var neighborhoods = [{
 		lat : 40.489864,
 		lng : -3.639706,
 		foto : "img/IMG_20160501_175931.jpg",
-		url : "viniaDeLaEstacion.html"		
+		url : "viniaDeLaEstacion.html"
 	}, {
 		lat : 40.384769,
 		lng : -5.762048,
@@ -25,62 +21,70 @@ var neighborhoods = [{
 	}
 ];
 
-var markers = [];
-var map;
+var marcadores = [];
+var mapa;
 
-function initMap() {
+function inicializaMapa() {
 
-	var myLatlng = {
+	var kilometroCero = {
 		lat : 40.416616,
 		lng : -3.703801
 	};
 
-	var mapOptions = {
+	var configuracionMapa = {
 		zoom : 7,
-		center : myLatlng,
+		center : kilometroCero,
 		mapTypeId : google.maps.MapTypeId.SATELLITE
 	};
 
-	map = new google.maps.Map(document.getElementById("map"),
-			mapOptions);
+	mapa = new google.maps.Map(document.getElementById("mapa"), configuracionMapa);
 
 }
 
-function drop() {
-	clearMarkers();
-	for (var i = 0; i < neighborhoods.length; i++) {
-		//addMarkerWithTimeout(neighborhoods[i], i * 200);
+function dibujaMarcadores() {
+	limpiaMarcadores();
+	for (var i = 0; i < parcelas.length; i++) {
+		aniadeMarcadorConTimeout(parcelas[i], i * 200);
+	}
+}
 
-		var marker = new google.maps.Marker({
-				position : neighborhoods[i],
-				map : map,
+function aniadeMarcadorConTimeout(posicion, timeout) {
+
+	window.setTimeout(function() {
+		var unaCosa = 'uno';
+		
+		
+		var marcador = new google.maps.Marker({
+				position : posicion,
+				map : mapa,
 				animation : google.maps.Animation.DROP
-
 			});
 
-		var contentString = '<div id="content">' +
+		var contenidoVentana = '<div id="content">' +
 			'<h1>Parcela</h1>' +
-			'<img src="' + neighborhoods[i].foto + '" height="400""/>' +
+			'<img src="' + posicion.foto + '" height="400""/>' +
 			'<div>' +
-			'<ul><li>Latitud: ' + neighborhoods[i].lat + '</li>' +
-			'<li>Longitud: ' + neighborhoods[i].lng + '</li></ul>' +
+			'<ul><li>Latitud: ' + posicion.lat + '</li>' +
+			'<li>Longitud: ' + posicion.lng + '</li></ul>' +
 			'</div>' +
-			'</div><button type="button" onclick="location.href=\''+ neighborhoods[i].url + '\'">Más detalles</button>';
+			'</div><button type="button" onclick="location.href=\'' + posicion.url + '\'">Más detalles</button>';
 
-		var infowindow = new google.maps.InfoWindow({
-				content : contentString
+		var ventanaInformacion = new google.maps.InfoWindow({
+				content : contenidoVentana
 			});
 
-		marker.addListener('click', function () {
-			infowindow.open(map, marker);
+		marcador.addListener('click', function () {
+			ventanaInformacion.open(mapa, marcador);
 		});
 
-	}
+		marcadores.push(marcador);
+	}, timeout);
+
 }
 
-function clearMarkers() {
-	for (var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
+function limpiaMarcadores() {
+	for (var i = 0; i < marcadores.length; i++) {
+		marcadores[i].setmap(null);
 	}
-	markers = [];
+	marcadores = [];
 }
