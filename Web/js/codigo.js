@@ -17,16 +17,19 @@ $(window).resize(function () {
 });
 
 $(window).load(function () {
-	$('#chooseID').joyride({
-		autoStart : true,
-		postStepCallback : function (index, tip) {
-			if (index == 15) {
-				$(this).joyride('set_li', false, 1);
-			}
-		},
-		modal : true,
-		expose : true
-	});
+	//Si voy a un sitio determinado de la página, no cargo el tour, por ejemplo cuando voy directamente al cacharrito
+	if (!location.hash) {
+		$('#chooseID').joyride({
+			autoStart : true,
+			postStepCallback : function (index, tip) {
+				if (index == 15) {
+					$(this).joyride('set_li', false, 1);
+				}
+			},
+			modal : true,
+			expose : true
+		});
+	}
 });
 
 function initMap() {
