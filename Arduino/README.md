@@ -18,7 +18,10 @@ Este proyecto consiste en el envío a internet de datos de nivel de humedad, tem
 Es el que realmente tiene el código que tengo ahora mismo en la estación. La aplicación Web se ha realizado publicando un Web App desde el App Scripst de Google https://developers.google.com/apps-script/guides/web y siguiendo el [siguiente tutorial y sus enlaces](https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example/) de [Martin Hawksey (Google Developer Expert (Apps Script) and Open Education advocate)](https://plus.google.com/+MartinHawksey)
 
 ## openSmartCountryMoistureSensor
-Proyecto básico con el sensor de humerad, simplemente saca por consola los valores que este sensor recoge.
+Proyecto básico con el sensor de humedad, simplemente saca por consola los valores que este sensor recoge.
+
+## openSmartCountryWIFI
+Hace prácticamente lo mismo que openSmartCountryGPRS (salvo enviar la locacización y el nivel de batería), pero conectándose por WIFI, es decir, si tienes una red WIFI cercana esta puede ser la mejor opción. El prototipo funciona ahora mismo conectado a la corriente eléctrica doméstica.
 
 El código está muy cogido con pinzas, iré limpiándolo y mejorándolo bastante, de momento simplemente funciona ;)
 Tal cual está, con todos los cables y sin fuente de alimentación alternativa, no se puede utilizar. En eso trabajaré en el futuro más inmediato.
