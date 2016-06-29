@@ -4,13 +4,13 @@ http://opensmartcountry.com/
 
 
 ## openSmartCountryWIFI
-Este proyecto consiste en el envío a internet de datos de nivel de humedad, temperatura, nivel de luz, nivel de humedad del suelo, existencia de precipitaciones y nivel de precipitación mediante una conexión gprs. Ahora mismo la alimentación es con una batería y enchufado a la red, pero la idea es hacerlo completamente autónomo.
+Este proyecto consiste en el envío a internet de datos de nivel de humedad, temperatura, nivel de luz, nivel de humedad del suelo, existencia de precipitaciones y nivel de precipitación a Internet para su posterios utilización.
 
 Para ello se utiliza un Arduino Yun conectado a una red WIFI, tiene varios sensores que recogen la información y cada 10 minutos se envían las medidas tomadas a una excel del Google Docs. La forma de que la información llegue es invocando a una aplicación web que hace de servicio REST para la hoja y mediante una llamada GET los datos se insertan.
 
 La aplicación Web se ha realizado publicando un Web App desde el App Scripst de Google https://developers.google.com/apps-script/guides/web y siguiendo el [siguiente tutorial y sus enlaces](https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example/) de [Martin Hawksey (Google Developer Expert (Apps Script) and Open Education advocate)](https://plus.google.com/+MartinHawksey)
 
-![Conexión entre Arduino UNO, SIM800L y los distintos sensores](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/openSmartCountryGRPS/IMG_20160513_084707.jpg)
+![Prototipo con Arduino Yun funcionando](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Arduino/openSmartCountryWIFI/IMG_20160629_151332.jpg)
 
 ### Hardware necesario
 * [Arduino Yun](https://www.arduino.cc/en/Main/ArduinoBoardYun) El original cuesta alrededor de 75€ en España, compatibles alrededor de 25€ (no los he probado).
