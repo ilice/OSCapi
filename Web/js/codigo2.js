@@ -290,7 +290,7 @@ function drawRegionsMap() {
 
 	var data = google.visualization.arrayToDataTable([
 				['latitude', 'longitude', 'temperatura'],
-				[40.440005, -5.737003, 25]
+				[41.080364, -4.588973, 25]
 			]);
 
 	var options = {
