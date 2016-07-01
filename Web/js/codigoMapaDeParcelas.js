@@ -18,6 +18,12 @@ var parcelas = [{
 		lng : -5.762048,
 		foto : "img/IMG_20160501_175931.jpg",
 		url : "viniaDeLaEstacion.html"
+	},
+	{
+		lat : 41.080364,
+		lng : -4.588973,
+		foto : "img/IMG_0882.jpg",
+		url : "laNueva.html"
 	}
 ];
 
