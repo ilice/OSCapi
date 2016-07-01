@@ -6,9 +6,12 @@ http://opensmartcountry.com/
 
 ![Primer prototipo completo funcionando](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/cacharrito.png "Primer prototipo completo funcionando")
 
-## Qué es ##
-[Open Smart Country](http://opensmartcountry.com/) nace con la idea de aplicar las nuevas tecnologías para aprovechar de manera sostenible todas las tierras en desuso. 
-Para ello utilizamos distintas tecnologías y tendencias que actualmente tienen mucho eco: IoT, Open Data, Big Data, Analytics, Diseño Web, Amazon, Google for Developers y esperamos que un largo etc.
+## La oportunidad ##
+La revolución industrial aceleró en la segunda mitad del sigo XX la emigración del campo a la ciudad. Hoy en día el proceso continua, las ciudades son poderosamente atractivas, hay más diversidad de empleo y de servicios y en ciudades más pequeñas o pueblos nos formamos precisamente para un tipo de empleo y de vida que estos centros más pequeños no nos pueden dar.
+Esta emigración además está dejando atrás muchas tierras que seguro que nuestros abuelos aprovechaban, pero que nosotros ya no: no sabemos cómo hacerlo, no lo vemos como una oportunidad.
+Pero si miramos los datos que nos da el ministerio de agricultura, hay 7 millones de hectáreas catalogadas como Pastizales con un 0% de aprovechamiento, ¿en serio que no te parece una oportunidad? 
+A nosotros si, y por esto nace [Open Smart Country](http://opensmartcountry.com/), vamos a utilizar los que conocemos (nuevas tecnologías) y a aprender lo que sea necesario para demostrar que lo que tenemos es una oportunidad para todos.
+
 
 ## Cómo ##
 La idea inicial es muy sencilla:
