@@ -1,4 +1,6 @@
 # OpenSmartCountry
+
+[![Join the chat at https://gitter.im/teanocrata/OpenSmartCountry](https://badges.gitter.im/teanocrata/OpenSmartCountry.svg)](https://gitter.im/teanocrata/OpenSmartCountry?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Open Smart Country - Campo Inteligente Abierto
 http://opensmartcountry.com/
 
