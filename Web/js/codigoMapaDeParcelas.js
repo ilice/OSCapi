@@ -22,7 +22,7 @@ var parcelas = [{
 	{
 		lat : 41.080364,
 		lng : -4.588973,
-		foto : "img/IMG_0882.jpg",
+		foto : "img/IMG_0882.JPG",
 		url : "laNueva.html"
 	}
 ];
