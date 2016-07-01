@@ -208,3 +208,32 @@ function creaLibro(nombreLibro){
   return libro;
 }
 
+function actualizaTodasEstaciones(){
+  var resultado = {};
+  
+  var url = 'http://www.inforiego.org/opencms/rest/estacion?username='+username
+  +'&password='+password;
+    
+  var data = JSON.parse(UrlFetchApp.fetch(url).getContentText());
+  
+    for(var i=0; i<data.length; i++)
+    {
+      var estacion = data[i];
+      
+      var libro = obtenPrimerLibro(estacion);
+      
+      resultado = actualizaDatosClima(libro, estacion);
+    }
+    
+    if(data.length = 0){
+      throw "no se encuentran datos de estaciones"
+    } 
+    
+  
+  
+  return resultado;
+  
+  
+  
+}
+

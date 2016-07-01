@@ -1,4 +1,4 @@
-OpenSmartCountryWebServicevar username = "mariamunoz";
+var username = "mariamunoz";
 var password = "39y67h";
 
 function doGet(parametros) {
@@ -7,7 +7,7 @@ function doGet(parametros) {
   if(parametros == null){
     parametros={};
     parametros.parameter = {};
-    parametros.parameter.accion = "actualiza";
+    parametros.parameter.accion = "actualizaTodasEstaciones";
     parametros.parameter.anio = "2016";
     parametros.parameter.latitud = 40.996163;
     parametros.parameter.longitud =  -4.764504;
@@ -34,6 +34,8 @@ function doGet(parametros) {
     case "obtenEstacion":
       resultado = obtenEstacion(latitud, longitud);
       break;
+    case "actualizaTodasEstaciones":
+      resultado = actualizaTodasEstaciones();
     default:
       throw "Accion no implementada";
   }
