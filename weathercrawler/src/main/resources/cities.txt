@@ -1,0 +1,263 @@
+Madrid
+Barcelona
+Alicante
+Calviá
+Valencia
+Málaga
+Alcobendas
+Oviedo
+Barberá del Vallés
+Palma de Mallorca
+Benidorm
+Arona
+Salou
+Playa de San Juan
+Albacete
+Sevilla
+Sedaví
+Toledo
+Santa Cruz de Tenerife
+Badalona
+Puerto de la Cruz
+Majadahonda
+Basauri
+La Laguna
+Alcalá de Henares
+Sabadell
+Puerto de Santa María
+Xirivella
+Las Palmas de Gran Canaria
+Marratxí
+Puertollano
+Alcorcón
+Zamora
+Gerona
+Córdoba
+Cornellá de Llobregat
+Valladolid
+Getafe
+Mijas
+Gavá
+Sestao
+Reus
+Tarrasa
+Telde
+Cádiz
+Tomares
+Burgos
+Zaragoza
+Torrejón de Ardoz
+Castellón de la Plana
+Salamanca
+La Coruña
+Huelva
+Almería
+Arenys de Mar
+Playa de Aro
+Marbella
+Sant Cugat del Vallés
+Vigo
+Tres Cantos
+Granollers
+Chiclana
+Cambrils
+Torrevieja
+Ibiza
+L'Eliana
+Fuenlabrada
+Aldaya
+Irún
+Jerez de la Frontera
+Mogán
+San Sebastián
+Sant Boi de Llobregat
+Ceuta
+San Juan de Alicante
+Jaén
+Tarragona
+Maliaño - Camargo
+El Prat de Llobregat
+Las Rozas
+Lugones
+Cabrera de Mar
+Lejona
+Dos Hermanas
+San Sebastián de los Reyes
+Denia
+Calafell
+Badajoz
+San Pedro de Alcántara
+Petrer
+Leganés
+Getxo
+Montcada i Reixach
+Los Barrios
+Pinto
+Andújar
+La Línea de la Concepción
+Gibraltar
+Alzira
+Finestrat
+L'Hospitalet de Llobregat
+Murcia
+Camas
+Vitoria
+Cordovilla
+Santa Susana
+Almuñécar
+Corvera
+El Ejido
+Pozuelo de Alarcón
+Masnou
+Ciudad Real
+Avilés
+Granada
+Gijón
+León
+Candelaria
+Manresa
+Jávea
+Santa Lucia de Tirajana
+Calahonda - Mijas
+Mataró
+Vinaroz
+Mislata
+Ávila
+Cáceres
+Armilla
+Playa del Inglés
+Lérida
+Usurbil
+Santa Marta de Tormes
+Alfaz del Pí
+Xátiva
+Figueras
+Martorell
+Mairena de Aljarafe
+Blanes
+Santander
+Sieros
+Santa Ponça
+Torrente
+Calella
+Sanlúcar de Barrameda
+Inca
+Magalluf
+Benalmádena Costa
+Pamplona
+Torremolinos
+Adeje
+Ponferrada
+Cuenca
+Cullera
+Tías
+Viladecans
+Talavera de la Reina
+Roquetas de Mar
+Santiago de Compostela
+Zaratán
+Orense
+San Fernando
+Ronda
+Bormujos
+Gandía
+Sant Vicenç dels Horts
+Ferrol
+Vilafranca del Penedés
+Vilanova i la Geltrú
+Sagunto
+Ripollet
+Alpedrete
+Plasencia
+Linares
+Villagarcía de Arousa
+Mérida
+Huesca
+Paterna
+San Vicente de Baracaldo
+Rivas Vaciamadrid
+La Orotava
+Elche
+Alfafar
+Logroño
+Vic
+Santa Pola
+Arroyomolinos
+Molina de Segura
+Estepona
+Antigua
+San Miguel de Abona
+Boadilla del Monte
+Bilbao
+Castelldefels
+Motril
+Salt
+Playa de Gandía
+Alcalá de Guadaíra
+Lugo
+Cabezo de Torres
+Churra
+Cartagena
+Torrelodones
+San Javier
+Torrelavega
+Colmenar Viejo
+Guadalajara
+Ondara
+Igualada
+Massalfassar
+Parla
+Rubí
+Huércal de Almería
+Barakaldo
+Sangonera La Seca
+Alcoy
+Roda de Bara
+San Juan de Aznalfarache
+Lloret de Mar
+Orihuela Costa
+Tortosa
+Vilobí d'Onyar
+Móstoles
+Berrioplano
+Algeciras
+Utrera
+Lorca
+Palencia
+Parets del Vallés
+Lucena
+Vélez
+Tudela
+Arganda del Rey
+Esplugues de Llobregat
+Burjassot
+Villarreal
+Coslada
+Antequera
+Golmayo
+San Fernando de Henares
+Aranjuez
+Villanueva de la Serena
+Sant Just Desvern
+Valdemoro
+Perillo
+ROTA
+Torredembarra
+Santa Cruz de la Palma
+San Adriá del Besós
+Arroyo de la Encomienda
+Collado Villalba
+Pontevedra
+Mairena del Alcor
+Gines
+Jaca
+Arrecife
+Segovia
+Abadiño
+Teruel
+Ayamonte
+Úbeda
+La Roca del Vallés
+Calpe
+Aranda de Duero
+Andorra La Vella

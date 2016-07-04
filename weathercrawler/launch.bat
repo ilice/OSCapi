@@ -1,0 +1,1 @@
+"C:\Program Files\Java\jdk1.8.0_20\bin\java" -classpath "target/crawler-0.0.1-SNAPSHOT.jar;target/lib/json4s-ast_2.11-3.2.11.jar;target/lib/json4s-core_2.11-3.2.11.jar;target/lib/json4s-native_2.11-3.2.11.jar;target/lib/scala-library-2.11.0.jar" decide.crawler.Saver src/main/resources data
