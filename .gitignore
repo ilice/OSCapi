@@ -45,3 +45,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+DataAnalysis/data
+DataAnalysys/python/tmp
+*.pyc
