@@ -4,8 +4,7 @@
 
 ¡Hola! ¡Bienvenid@ a Open Smart Country! Soy OSC&#945;r, te voy a contar qué estoy haciendo y por qué.
 
-
-<img style="float: right;" src="https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/cacharrito.png">
+![Primer prototipo completo funcionando](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/cacharrito.png "Primer prototipo completo funcionando")
 
 ## La oportunidad ##
 La revolución industrial aceleró en la segunda mitad del sigo XX la **emigración del campo a la ciudad**. Hoy en día el proceso continúa, las ciudades son muy atractivas, hay más diversidad de empleo y de servicios y en ciudades más pequeñas o pueblos **nos formamos precisamente para un tipo de empleo y de vida que en ciudades pequeñas o pueblos no nos pueden dar**.
@@ -70,8 +69,7 @@ Aquí van algunas de las tecnologías que usamos:
 ¿Te gustan? ¿Quieres **aprender**? ¿Quieres **participar**? ¿Nos quieres **enseñar** de lo que eres capaz? 
 Tienes todo el código disponible, hazte un Fork, échale un vistazo o contacta directamente con nosotros, dinos qué te apetece hacer.
 
-<a class="github-button" href="https://github.com/teanocrata/OpenSmartCountry/fork" data-icon="octicon-repo-forked" aria-label="Fork teanocrata/OpenSmartCountry on GitHub">Fork</a>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
+[![Fork](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/Fork%20button.JPG)](https://github.com/teanocrata/OpenSmartCountry/fork)
 
 ### Hardware ###
 Tenemos un par de **prototipos con Arduino**, están funcionando aunque les queda muuuuucho por mejorar.
@@ -79,7 +77,7 @@ Tenemos un par de **prototipos con Arduino**, están funcionando aunque les qued
 El código y la forma de construirlos está en GitHub, en [OSC&#945;r](http://www.opensmartcountry.com/oscar.html) puedes ver qué es lo que tenemos ya.
 ¿Conoces Arduino? ¿Te apetece **aprender**? ¿Quieres **enseñanos** lo que tienes hecho? ¿Tienes alguna **nueva idea** de lo que podemos hacer?
 
-<a class="github-button" href="https://github.com/teanocrata/OpenSmartCountry/fork" data-icon="octicon-repo-forked" aria-label="Fork teanocrata/OpenSmartCountry on GitHub">Fork</a>
+[![Fork](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/Fork%20button.JPG)](https://github.com/teanocrata/OpenSmartCountry/fork)
 
 ### Contenidos ###
 Estamos **leyendo, leyendo mucho**, últimamente sobre **permacultura** aunque estamos abiertos a todo lo que nos pueda ayudar. Necesitamos tener **contenidos interesantes** que ayuden a la gente que quiera empezar, aprender más o conocer qué es lo que se está haciendo en distintos sitios.
@@ -101,29 +99,26 @@ Creemos que la mejor forma es generar estos contenidos para que **todo el mundo 
 
 ¿Quieres **escribir un artículo**? ¿Quieres **enseñarnos lo que has hecho**? ¿**Compartir algo** que leiste o viste que te pareció interesante? Este es el lugar.
 
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.6";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-<div class="fb-like" data-href="https://www.facebook.com/OpnSC/" data-layout="standard" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+[![Me gusta](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/master/Web/img/FB-LikeButton-online-144.png)](https://www.facebook.com/OpnSC/)
 
 ### Difusión ###
 ¿Ahora mismo no puedes participar pero te interesa lo que estamos haciendo? **Compártelo**, seguro que conoces a más gente que nos puede ayudar, un amigo, un amigo de un amigo, el hijo del portero de la amiga de tu tía, nunca se sabe.
 
 Ayúdanos a que esto llegue a toda la gente posible, a **ilusionar a más personas**, a que lo que estamos haciendo llegue a todo el mundo que pueda llegar.
 
+[![Twitter](https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/e27fa0f662cc9de5fef4014842e65123c1527e85/Web/img/twitter_opnsc.JPG)](https://twitter.com/OpnSC)
+
 ### Red de contactos ###
+
 ¿Sabes de alguien en particular que nos pueda ayudar?, ¿**puedes ponernos en contacto**?
 
 ### Ideas ###
 ¿Al ver lo que estamos haciendo se te ha ocurrido **algo nuevo**? ¿Una forma **distinta** de hacerlo? ¿**Otra forma** de aprovechar lo que estamos haciendo?
 
 Cuéntanoslo, **queremos conocer lo que se te ha ocurrido**, quizá sea justo lo que nos hace falta o quizá no lo sea pero te podamos ayudar o conozcamos a alguien para el que si que es interesante.
+
+[![Correo](
+https://raw.githubusercontent.com/teanocrata/OpenSmartCountry/265c05d87badb45882884f9df57fa1a6e0684a90/Web/img/ic_mail_black_24dp_2x.png)](mailto:isabel@opensmartcountry.com)
 
 
 ## Apúntate ##
