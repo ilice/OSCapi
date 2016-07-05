@@ -19,6 +19,7 @@ object Saver {
   val calendar = Calendar.getInstance
 
   def saveResults(rootDir: String, forecast: (City, String)) {
+    try{
     val (city, json) = forecast
 
     val parsed = JsonMethods.parse(json)
@@ -34,6 +35,9 @@ object Saver {
     val pw = new PrintWriter(file)
     pw.print(json)
     pw.close();
+    }catch{
+      case e: Exception => Console.println("ERROR: " + e)
+    }
   }
 
   def main(args: Array[String]) {
@@ -50,11 +54,15 @@ object Saver {
       Console.println("WARNING: It was not possible to obtain data from the following cities: " + absent)
     
     while (true) { 
-      Console.println("30 min Loop")
-      
-      val forecast = Fetcher.Fetch(cities)
-
-      forecast.foreach(saveResults(resultsDir, _))
+      try{
+        Console.println("30 min Loop")
+        
+        val forecast = Fetcher.Fetch(cities)
+  
+        forecast.foreach(saveResults(resultsDir, _))
+      }catch {
+        case e: Exception => Console.println("ERROR: " + e)
+      }
     
       Thread sleep 1800000 
     }
