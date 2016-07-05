@@ -6,6 +6,10 @@ import java.nio.file.Files
 import java.io.PrintWriter
 import java.io.File
 import java.text.SimpleDateFormat
+import org.json4s.native.JsonMethods
+import org.json4s._
+import org.json4s.native.JsonMethods._
+
 
 /**
  * @author jlafuente
@@ -17,7 +21,11 @@ object Saver {
   def saveResults(rootDir: String, forecast: (City, String)) {
     val (city, json) = forecast
 
-    val fileName = rootDir + "/" + city.name + "/" + calendar.get(Calendar.YEAR) + "/" + new SimpleDateFormat("dd-MMM").format(calendar.getTime) + "/" + city.name + "_" + calendar.get(Calendar.HOUR_OF_DAY) + ".json"
+    val parsed = JsonMethods.parse(json)
+    val dt = compact(render(parsed \ "dt"))
+    calendar.setTimeInMillis(dt.toLong*1000)
+    
+    val fileName = rootDir + "/" + city.name + "/" + calendar.get(Calendar.YEAR) + "/" + new SimpleDateFormat("dd-MMM").format(calendar.getTime) + "/" + city.name + "_" + calendar.get(Calendar.HOUR_OF_DAY)+ "_" + + calendar.get(Calendar.MINUTE) + ".json"
 
     val file = new File(fileName)
     file.getParentFile.mkdirs()
@@ -41,8 +49,14 @@ object Saver {
     if ( absent != Nil )
       Console.println("WARNING: It was not possible to obtain data from the following cities: " + absent)
     
-    val forecast = Fetcher.Fetch(cities)
+    while (true) { 
+      Console.println("30 min Loop")
+      
+      val forecast = Fetcher.Fetch(cities)
 
-    forecast.foreach(saveResults(resultsDir, _))
+      forecast.foreach(saveResults(resultsDir, _))
+    
+      Thread sleep 1800000 
+    }
   }
 }
