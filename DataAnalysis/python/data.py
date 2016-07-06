@@ -30,8 +30,22 @@ def getInfoRiegoPath(datadir, year = None):
         
     return path
 
-def getSIGPACPath(datadir):
-    return os.path.join(datadir, 'SIGPAC')
+def getSIGPACPath(datadir, zipCode = None):
+    path = os.path.join(datadir, 'SIGPAC')
+
+    if zipCode != None:
+        path = os.path.join(path, 'zip_' + str(zipCode)[0:2])
+        path = os.path.join(path, 'zip_' + str(zipCode))
+        
+    return path
+
+def getSIGPACCSVPath(datadir, zipCode = None):
+    path = os.path.join(datadir, 'SIGPAC')
+    path = os.path.join(path, 'csv')
+    
+    if zipCode != None:
+        path = os.path.join(path, 'zip_' + zipCode + '.csv')
+    
 
 def unzipFile(zipFilePath,
               toPath,
@@ -51,7 +65,7 @@ def unzipFile(zipFilePath,
             logger.debug("... extracted")
                      
 
-def downloadShapeFileFromSIGPAC(zipCode,
+def downloadSIGPACShapeFile(zipCode,
                                 url, 
                                 root_dir, 
                                 suffix,
@@ -61,6 +75,8 @@ def downloadShapeFileFromSIGPAC(zipCode,
     if not forceDownload and os.path.exists(workingDir):
         return
         
+    print "Downloading shapeFile for zipCode: " + str(zipCode)
+
     ftp =  ftplib.FTP(url, user = 'anonymous', passwd='')
     ftp.cwd(root_dir)
 
@@ -97,20 +113,22 @@ def downloadShapeFileFromSIGPAC(zipCode,
                  lambda x: suffix in x.filename)
     #remove the file             
     #os.remove(compressedShapeFilePath)
+    print "... finished downloading zipfile: " + str(zipCode)
                  
     ftp.close()
 
-def getShapeFileFromSIGPAC(zipCode,
+def getSIGPACShapeFile(zipCode,
                            url = 'ftp.itacyl.es', 
                            root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios', 
                            suffix = 'RECFE', 
                            datadir = '../data', 
                            tmpDir = './tmp',
                            forceDownload = False):
-    workingDir = datadir + '/SIGPAC/zip_' + zipCode
+    print "Getting shapeFile for zipCode: " + str(zipCode)
+    workingDir = getSIGPACPath(datadir, zipCode=zipCode)
 
     if forceDownload or not os.path.exists(workingDir):
-        downloadShapeFileFromSIGPAC(zipCode=zipCode, 
+        downloadSIGPACShapeFile(zipCode=zipCode, 
                                     url=url,
                                     root_dir=root_dir,
                                     suffix=suffix,
@@ -120,10 +138,15 @@ def getShapeFileFromSIGPAC(zipCode,
                                     
     shapeFileName = os.path.join(workingDir, zipCode + '_' + suffix)
 
-    return shapefile.Reader(shapeFileName)
+    shapeFile = shapefile.Reader(shapeFileName)
+    
+    print "... finished getting zipfile: " + str(zipCode)
+    
+    return shapeFile
+
     
 
-def downloadShapeFilesFromSIGPAC(zipCodes,
+def downloadSIGPACShapeFiles(zipCodes,
                                  url = 'ftp.itacyl.es', 
                                  root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios', 
                                  suffix = 'RECFE', 
@@ -131,8 +154,8 @@ def downloadShapeFilesFromSIGPAC(zipCodes,
                                  tmpDir = './tmp',
                                  forceDownload = False):
     for zipCode in zipCodes:
-        workingDir = os.path.join(getSIGPACPath(datadir), 'zip_' + zipCode)
-        downloadShapeFileFromSIGPAC(zipCode=zipCode,
+        workingDir = getSIGPACPath(datadir, zipCode=zipCode)
+        downloadSIGPACShapeFile(zipCode=zipCode,
                                     url=url,
                                     root_dir=root_dir,
                                     suffix=suffix,
@@ -140,21 +163,91 @@ def downloadShapeFilesFromSIGPAC(zipCodes,
                                     tmpDir=tmpDir,
                                     forceDownload=forceDownload)                                     
 
-def getShapeFilesFromSIGPAC(zipCodes,
+def getSIGPACShapeFiles(zipCodes,
                             url = 'ftp.itacyl.es', 
                             root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios', 
                             suffix = 'RECFE', 
                             datadir = '../data', 
                             tmpDir = './tmp',
                             forceDownload = False):
-    return [getShapeFileFromSIGPAC(zipCode=zc,
+    return [getSIGPACShapeFile(zipCode=zc,
                                    url=url,
                                    root_dir=root_dir,
                                    suffix=suffix,
                                    datadir=datadir,
+                                   tmpDir = tmpDir,
                                    forceDownload=forceDownload) for zc in zipCodes]
-                                        
-def getAllZipCodesFromSIGPAC(url = 'ftp.itacyl.es', 
+
+def computeCenter(bbox):
+    xcenter = bbox[0] + ((bbox[2] - bbox[0]) / 2)
+    ycenter = bbox[1] + ((bbox[3] - bbox[1]) / 2)
+    
+    return (xcenter, ycenter)
+
+def getDataFrameFromSIGPACShapeFile(shapeFile):
+    # First add the center of the bounding box
+    bbcenters = [computeCenter(shape.bbox) for shape in shapeFile.shapes()]
+    
+    fieldsDict = {'xcenter' : [x for (x, y) in bbcenters],
+                  'ycenter' : [y for (x, y) in bbcenters]}
+    
+    for i in range(1, len(shapeFile.fields)):
+        fieldName = shapeFile.fields[i][0]
+        fieldValues = [record[i-1] for record in shapeFile.records()]
+        
+        fieldsDict[fieldName] = fieldValues
+        
+    return pd.DataFrame(fieldsDict)
+    
+def writeCSVFromSIGPACShapeFile(zipCode,
+                                url = 'ftp.itacyl.es', 
+                                root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios', 
+                                suffix = 'RECFE', 
+                                datadir = '../data', 
+                                tmpDir = './tmp',
+                                forceDownload = False):
+                                    
+    shapeFile = getSIGPACShapeFile(zipCode=zipCode,
+                                   url=url,
+                                   root_dir=root_dir,
+                                   suffix=suffix,
+                                   datadir=datadir,
+                                   tmpDir=tmpDir,
+                                   forceDownload=forceDownload)
+        
+    dataFrame = getDataFrameFromSIGPACShapeFile(shapeFile)
+
+    #create directory if it does not exist
+    if not os.path.exists(getSIGPACCSVPath(datadir=datadir)):
+        os.makedirs(getSIGPACCSVPath(datadir=datadir))
+
+    csv_path = getSIGPACCSVPath(datadir=datadir, zipCode=zipCode)
+    
+    dataFrame.to_csv(csv_path, sep=';')
+    
+ 
+def getSIGPACDataFrame(zipCodes,
+                        url = 'ftp.itacyl.es', 
+                        root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios', 
+                        suffix = 'RECFE', 
+                        datadir = '../data', 
+                        tmpDir = './tmp',
+                        forceDownload = False):
+    csv_path = getSIGPACCSVPath
+    shapeFiles = getSIGPACShapeFiles(zipCodes=zipCodes,
+                                     url=url,
+                                     root_dir = root_dir,
+                                     suffix=suffix,
+                                     datadir=datadir,
+                                     tmpDir=tmpDir,
+                                     forceDownload=forceDownload)
+                                     
+    dataFrames = [getDataFrameFromSIGPACShapeFile(sf) for sf in shapeFiles]
+    
+    return pd.concat(dataFrames)    
+
+                                       
+def getSIGPACAllZipCodes(url = 'ftp.itacyl.es', 
                             root_dir = '/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios'):
     allZipCodes = []
     ftp = ftplib.FTP(url, user = 'anonymous', passwd='')
@@ -249,9 +342,22 @@ def getInfoRiegoDataFrame(years,
     dataFrames = []
     for csvPath in csvPaths:
         print "Reading data frame " + csvPath
-        dataFrames.append(pd.read_csv(csvPath, sep=';', encoding=encoding))
+        dataFrames.append(pd.read_csv(csvPath, 
+                                      dtype = {u'Hora (HHMM)' : str, 
+                                               u'Fecha (AAAA-MM-DD)' : str}, 
+                                      sep=';', 
+                                      encoding=encoding))
     
     dataFrame = pd.concat(dataFrames)
+    
+    #Filter registers with incorrect date
+    dataFrame = dataFrame[(dataFrame[u'Fecha (AAAA-MM-DD)'].str.len() == 10) & (dataFrame[u'Hora (HHMM)'].str.len() == 4)]
+    
+    dataFrame['FECHA'] = pd.to_datetime(dataFrame[u'Fecha (AAAA-MM-DD)'] + ' ' + dataFrame[u'Hora (HHMM)'].replace('2400', '0000'), format = '%Y-%m-%d %H%M')
+    
+    dataFrame = dataFrame.drop([u'Fecha (AAAA-MM-DD)', u'Hora (HHMM)'], axis = 1)
+    
+    dataFrame.index = dataFrame['FECHA']
     
     return dataFrame
     

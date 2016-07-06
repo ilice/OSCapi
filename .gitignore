@@ -48,3 +48,7 @@ Temporary Items
 DataAnalysis/data
 DataAnalysys/python/tmp
 *.pyc
+workspace-scala-ide
+weathercrawler/.cache-main
+weathercrawler/.classpath
+weathercrawler/.project
