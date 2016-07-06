@@ -53,10 +53,6 @@ weathercrawler/.cache-main
 *.classpath
 weathercrawler/.project
 *.prefs
-weathercrawler/target/classes.timestamp
-weathercrawler/target/classes/cities.txt
-weathercrawler/target/classes/city.list.json
-weathercrawler/target/classes/city.list.little.json
+weathercrawler/target/
 *.class
-weathercrawler/target/maven-archiver/pom.properties
-weathercrawler/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+weathercrawler/data/

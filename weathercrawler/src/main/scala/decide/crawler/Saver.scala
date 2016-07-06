@@ -20,21 +20,23 @@ object Saver {
 
   def saveResults(rootDir: String, forecast: (City, String)) {
     try{
-    val (city, json) = forecast
-
-    val parsed = JsonMethods.parse(json)
-    val dt = compact(render(parsed \ "dt"))
-    calendar.setTimeInMillis(dt.toLong*1000)
-    
-    val fileName = rootDir + "/" + city.name + "/" + calendar.get(Calendar.YEAR) + "/" + new SimpleDateFormat("dd-MMM").format(calendar.getTime) + "/" + city.name + "_" + calendar.get(Calendar.HOUR_OF_DAY)+ "_" + + calendar.get(Calendar.MINUTE) + ".json"
-
-    val file = new File(fileName)
-    file.getParentFile.mkdirs()
-    file.createNewFile()
-
-    val pw = new PrintWriter(file)
-    pw.print(json)
-    pw.close();
+      
+      val (city, json) = forecast
+      Console.println("Saving results for " + city.name)
+      
+      val parsed = JsonMethods.parse(json)
+      val dt = compact(render(parsed \ "dt"))
+      calendar.setTimeInMillis(dt.toLong*1000)
+      
+      val fileName = rootDir + "/" + city.name + "/" + calendar.get(Calendar.YEAR) + "/" + new SimpleDateFormat("dd-MMM").format(calendar.getTime) + "/" + city.name + "_" + calendar.get(Calendar.HOUR_OF_DAY)+ "_" + + calendar.get(Calendar.MINUTE) + ".json"
+  
+      val file = new File(fileName)
+      file.getParentFile.mkdirs()
+      file.createNewFile()
+  
+      val pw = new PrintWriter(file)
+      pw.print(json)
+      pw.close();
     }catch{
       case e: Exception => Console.println("ERROR: " + e)
     }
@@ -62,9 +64,10 @@ object Saver {
         forecast.foreach(saveResults(resultsDir, _))
       }catch {
         case e: Exception => Console.println("ERROR: " + e)
+      }finally{
+        Console.println("Sleeping " + 30 + " minutes")
+        Thread sleep 30 * 60 * 1000
       }
-    
-      Thread sleep 1800000 
     }
   }
 }
