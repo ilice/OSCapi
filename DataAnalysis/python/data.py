@@ -184,12 +184,9 @@ def computeCenter(bbox):
     
     return (xcenter, ycenter)
 
-def getDataFrameFromSIGPACShapeFile(shapeFile):
-    # First add the center of the bounding box
-    bbcenters = [computeCenter(shape.bbox) for shape in shapeFile.shapes()]
-    
-    fieldsDict = {'xcenter' : [x for (x, y) in bbcenters],
-                  'ycenter' : [y for (x, y) in bbcenters]}
+def getDataFrameFromSIGPACShapeFile(shapeFile):    
+    fieldsDict = {'bbox'    : [shape.bbox for shape in shapeFile.shapes()],
+                  'points'  : [shape.points for shape in shapeFile.shapes()]}
     
     for i in range(1, len(shapeFile.fields)):
         fieldName = shapeFile.fields[i][0]

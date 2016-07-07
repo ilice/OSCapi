@@ -9,9 +9,9 @@ import data
 
                                        
 data.downloadSIGPACShapeFiles(data.getSIGPACAllZipCodes(), 
-                                   datadir='d:/OpenSmartCountry/data', 
-                                   tmpDir='d:/OpenSmartCountry/tmp',
-                                  forceDownload=False)
+                              datadir='d:/OpenSmartCountry/data', 
+                              tmpDir='d:/OpenSmartCountry/tmp',
+                              forceDownload=False)
                                        
 """
 dataFrame = data.getInfoRiegoDataFrame(['2015'], 

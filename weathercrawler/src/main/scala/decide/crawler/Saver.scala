@@ -55,19 +55,8 @@ object Saver {
     if ( absent != Nil )
       Console.println("WARNING: It was not possible to obtain data from the following cities: " + absent)
     
-    while (true) { 
-      try{
-        Console.println("30 min Loop")
-        
-        val forecast = Fetcher.Fetch(cities)
-  
-        forecast.foreach(saveResults(resultsDir, _))
-      }catch {
-        case e: Exception => Console.println("ERROR: " + e)
-      }finally{
-        Console.println("Sleeping " + 30 + " minutes")
-        Thread sleep 30 * 60 * 1000
-      }
-    }
+    val forecast = Fetcher.Fetch(cities)
+
+    forecast.foreach(saveResults(resultsDir, _))
   }
 }
