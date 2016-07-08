@@ -11,7 +11,7 @@ La revolución industrial aceleró la **emigración del campo a la ciudad** en l
 
 Esta emigración además está **dejando atrás muchas tierras** que seguro que nuestros abuelos aprovechaban, pero que nosotros ya no: no sabemos cómo hacerlo, **no lo vemos como una oportunidad**.
 
-Pero si miramos los datos que nos da el ministerio de agricultura, hay **7 millones de hectáreas catalogadas como Pastizales** con un 0% de aprovechamiento, **¿en serio que no te parece una oportunidad?**
+Pero si miramos los datos que nos da el ministerio de agricultura a [través del INE](http://www.ine.es/jaxi/Datos.htm?path=/t01/p044/a2013/ccaa00/l0/&file=0201.px), de los 30 millones de hectáreas de explotaciones agrarias un 22% están en desuso, casi 7 millones de hectáreas**. En el caso de explotaciones de menos de una hectárea de extensión el porcentaje sube al 48%, esto supone que hay **30.000 propietarios de parcelas de menos de una hectárea** que no están usándolas para nada, y estos son sólo los de parcelas pequeñas, ¿en serio que no te parece una oportunidad?**
 
 A nosotros si, y por esto nace [Open Smart Country](http://opensmartcountry.com/), vamos a utilizar lo que conocemos (nuevas tecnologías) y a aprender lo que sea necesario para **demostrar que lo que tenemos es una oportunidad para todos**.
 
@@ -35,7 +35,7 @@ Pero esto no es suficiente, ¿**te gusta el campo**? ¿te has formado en ello? �
 Esto va de **ser una comunidad, una tribu, en la que todos aportamos lo que conocemos**. Queremos aprender y que lo que hacemos sirva para dejar las cosas un poquito mejor.
 
 ## Por qué ##
-Creemos que los 7.000.000 de hectáreas que el Ministerio de Agricultura considera **Pastizales** realmente se pueden utilizar de forma que podamos ayudar a cambiar el modelo productivo y que todos esos pueblos que se están abandonando dejen de estarlo.
+Creemos que los 7.000.000 de hectáreas que el Ministerio de Agricultura identifica como no utilizados, realmente se pueden utilizar de forma que podamos ayudar a cambiar el modelo productivo y que todos esos pueblos que se están abandonando dejen de estarlo.
 
 Con todo estamos creando una plataforma cuyo objetivo es **conseguir cambiar las cosas de un modo sostenible y circular**, para ello tenemos que poner en contacto a mucha gente muy diversa y hacer que esto sea **atractivo y divertido**.
 
