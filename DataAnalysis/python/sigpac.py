@@ -15,7 +15,7 @@ import pandas as pd
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
-logger = logging.Logger("OpenSmartCountry -- data-import")
+logger = logging.Logger(__name__)
 
 
 def path(data_dir, zip_code=None):

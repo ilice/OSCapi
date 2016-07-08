@@ -13,7 +13,7 @@ import util
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
-logger = logging.Logger("OSC - info_riego")
+logger = logging.Logger(__name__)
 
 
 def as_list(param):
