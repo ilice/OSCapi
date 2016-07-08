@@ -4,17 +4,16 @@ Created on Mon Jul 04 17:16:53 2016
 
 @author: jlafuente
 """
-import pandas as pd
-import data
+import sigpac
 
                                        
-data.downloadSIGPACShapeFiles(data.getSIGPACAllZipCodes(), 
-                              datadir='d:/OpenSmartCountry/data', 
-                              tmpDir='d:/OpenSmartCountry/tmp',
-                              forceDownload=False)
+sigpac.download_shapefiles(sigpac.all_zipcodes(),
+                           data_dir='d:/OpenSmartCountry/data',
+                           tmp_dir='d:/OpenSmartCountry/tmp',
+                           force_download=False)
                                        
 """
-dataFrame = data.getInfoRiegoDataFrame(['2015'], 
+dataFrame = data.get_dataframe(['2015'],
                                        datadir='d:/OpenSmartCountry/data', 
                                        tmpDir='d:/OpenSmartCountry/tmp')
 
@@ -24,7 +23,7 @@ dataFrame = pd.read_csv(os.path.join('d:/OpenSmartCountry/data/InfoRiego/2001',
             sep=';')
 
 
-data.downloadInfoRiegoDailyFiles(['2001', '2002', '2003', '2004', '2005', 
+data.download_daily_files(['2001', '2002', '2003', '2004', '2005',
                                   '2006', '2007', '2008', '2009', '2010', 
                                   '2011', '2012', '2013', '2014'], 
                                  datadir='d:/OpenSmartCountry/data', 
