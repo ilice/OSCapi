@@ -28,12 +28,17 @@ def path(data_dir, zip_code=None):
     return res_path
 
 
-def csv_path(data_dir, zip_code=None):
+def csv_path(data_dir, zip_code):
     res_path = os.path.join(data_dir, 'SIGPAC')
     res_path = os.path.join(res_path, 'csv')
+    res_path = os.path.join(res_path, 'mun_' + zip_code[0:2])
 
-    if zip_code is not None:
-        res_path = os.path.join(res_path, 'zip_' + zip_code + '.csv')
+    return res_path
+
+
+def csv_file(data_dir, zip_code):
+    res_path = csv_path(data_dir=data_dir, zip_code=zip_code)
+    res_path = os.path.join(res_path, 'zip_' + zip_code + '.csv')
 
     return res_path
 
@@ -165,54 +170,56 @@ def get_dataframe_from_shapefile(sf):
     return pd.DataFrame(fields_dict)
 
 
-def write_csv(zip_code,
+def write_csv(zip_codes,
               url='ftp.itacyl.es',
               root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
               suffix='RECFE',
               data_dir='../data',
               tmp_dir='./tmp',
               force_download=False):
-    sf = get_shapefile(zip_code=zip_code,
-                       url=url,
-                       root_dir=root_dir,
-                       suffix=suffix,
-                       data_dir=data_dir,
-                       tmp_dir=tmp_dir,
-                       force_download=force_download)
 
-    df = get_dataframe_from_shapefile(sf)
+    for zip_code in filter(lambda x: not os.path.exists(csv_file(data_dir, x)), util.as_list(zip_codes)):
+        sf = get_shapefile(zip_code=zip_code,
+                           url=url,
+                           root_dir=root_dir,
+                           suffix=suffix,
+                           data_dir=data_dir,
+                           tmp_dir=tmp_dir,
+                           force_download=force_download)
 
-    # create directory if it does not exist
-    if not os.path.exists(csv_path(data_dir=data_dir)):
-        os.makedirs(csv_path(data_dir=data_dir))
+        df = get_dataframe_from_shapefile(sf)
 
-    csv = csv_path(data_dir=data_dir, zip_code=zip_code)
+        # create directory if it does not exist
+        if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
+            os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
 
-    df.to_csv(csv, sep=';')
+        csv = csv_file(data_dir=data_dir, zip_code=zip_code)
+
+        df.to_csv(csv, sep=';')
 
 
 def get_dataframe(zip_codes,
+                  usecols=None,
                   url='ftp.itacyl.es',
                   root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                   suffix='RECFE',
                   data_dir='../data',
                   tmp_dir='./tmp',
                   force_download=False):
-    sf = get_shapefiles(zip_codes=zip_codes,
-                        url=url,
-                        root_dir=root_dir,
-                        suffix=suffix,
-                        data_dir=data_dir,
-                        tmp_dir=tmp_dir,
-                        force_download=force_download)
+    write_csv(zip_codes,
+              url=url,
+              root_dir=root_dir,
+              suffix=suffix,
+              data_dir=data_dir,
+              tmp_dir=tmp_dir,
+              force_download=force_download)
 
-    dataframes = [get_dataframe_from_shapefile(sf) for sf in sf]
-
-    return pd.concat(dataframes)
+    return pd.concat([pd.read_csv(csv_file(data_dir, zip_code), sep=';', usecols=usecols) for zip_code in util.as_list(zip_codes)])
 
 
 def all_zipcodes(url='ftp.itacyl.es',
-                 root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios'):
+                 root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
+                 starting_with=None):
     zip_codes = []
     ftp = ftplib.FTP(url, user='anonymous', passwd='')
     ftp.cwd(root_dir)
@@ -224,5 +231,8 @@ def all_zipcodes(url='ftp.itacyl.es',
         zip_codes = zip_codes + [re.split('_|\.', x)[0] for x in ftp.nlst()]
 
     ftp.close()
+
+    if starting_with is not None:
+        zip_codes = filter(lambda x: x.startswith(starting_with), zip_codes)
 
     return zip_codes
