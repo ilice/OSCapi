@@ -179,23 +179,26 @@ def write_csv(zip_codes,
               force_download=False):
 
     for zip_code in filter(lambda x: not os.path.exists(csv_file(data_dir, x)), util.as_list(zip_codes)):
-        sf = get_shapefile(zip_code=zip_code,
-                           url=url,
-                           root_dir=root_dir,
-                           suffix=suffix,
-                           data_dir=data_dir,
-                           tmp_dir=tmp_dir,
-                           force_download=force_download)
+        try:
+            sf = get_shapefile(zip_code=zip_code,
+                               url=url,
+                               root_dir=root_dir,
+                               suffix=suffix,
+                               data_dir=data_dir,
+                               tmp_dir=tmp_dir,
+                               force_download=force_download)
 
-        df = get_dataframe_from_shapefile(sf)
+            df = get_dataframe_from_shapefile(sf)
 
-        # create directory if it does not exist
-        if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
-            os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
+            # create directory if it does not exist
+            if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
+                os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
 
-        csv = csv_file(data_dir=data_dir, zip_code=zip_code)
+            csv = csv_file(data_dir=data_dir, zip_code=zip_code)
 
-        df.to_csv(csv, sep=';')
+            df.to_csv(csv, sep=';')
+        except:
+            logger.error("Unable to write csv file: " + zip_code)
 
 
 def get_dataframe(zip_codes,
@@ -214,7 +217,15 @@ def get_dataframe(zip_codes,
               tmp_dir=tmp_dir,
               force_download=force_download)
 
-    return pd.concat([pd.read_csv(csv_file(data_dir, zip_code), sep=';', usecols=usecols) for zip_code in util.as_list(zip_codes)])
+
+    dataFrames = []
+    for zip_code in util.as_list(zip_codes):
+        try:
+            dataFrames.append(pd.read_csv(csv_file(data_dir, zip_code), sep=';', usecols=usecols))
+        except:
+            logger.error('Unable to get dataFrame: ' + zip_code)
+
+    return pd.concat(dataFrames)
 
 
 def all_zipcodes(url='ftp.itacyl.es',

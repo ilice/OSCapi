@@ -28,9 +28,9 @@ def unzip_file(zipfile_path,
 
         for info in infos:
             logger.debug("Extracting " + info.filename + " to " + to_path)
-	    try:
-            	file.extract(info, path=to_path)
-            	logger.debug("... extracted")
-	    except zipfile.BadZipFile:
-		logger.error("Error unzipping file: " + info.filename)
 
+            try:
+                file.extract(info, path=to_path)
+                logger.debug("... extracted")
+            except:
+                logger.error("Error unzipping file: " + info.filename)
