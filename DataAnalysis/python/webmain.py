@@ -9,7 +9,7 @@ import science
 
 dataFrame = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with='0500'),
                                  usecols=['FACTOR_PE0', 'FACTOR_SU0', 'FACTOR_VE0', 'FECHA_CAM0', 'MUNICIPIO',
-                                          'PARCELA	PEND_MED', 'PERIMETRO', 'POLIGONO', 'PROVINCIA', 'RECINTO',
+                                          'PARCELA', 'PEND_MED', 'PERIMETRO', 'POLIGONO', 'PROVINCIA', 'RECINTO',
                                           'SUPERFICIE', 'USO_SIGPAC', 'ZONA', 'bbox'],
                                  data_dir='d:/OpenSmartCountry/data',
                                  tmp_dir='d:/OpenSmartCountry/tmp',
