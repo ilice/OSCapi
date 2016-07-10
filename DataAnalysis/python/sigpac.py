@@ -235,4 +235,4 @@ def all_zipcodes(url='ftp.itacyl.es',
     if starting_with is not None:
         zip_codes = filter(lambda x: x.startswith(starting_with), zip_codes)
 
-    return zip_codes
+    return filter(lambda x: len(x) == 5, zip_codes)
