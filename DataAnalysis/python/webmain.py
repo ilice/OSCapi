@@ -7,6 +7,11 @@ Created on Mon Jul 04 17:16:53 2016
 import sigpac
 import science
 
+sigpac.download_shapefiles(sigpac.all_zipcodes(),
+                           data_dir='d:/OpenSmartCountry/data',
+                           tmp_dir='d:/OpenSmartCountry/tmp',
+                           force_download=False)
+"""
 dataFrame = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with='0500'),
                                  usecols=['FACTOR_PE0', 'FACTOR_SU0', 'FACTOR_VE0', 'FECHA_CAM0', 'MUNICIPIO',
                                           'PARCELA	PEND_MED', 'PERIMETRO', 'POLIGONO', 'PROVINCIA', 'RECINTO',
@@ -35,7 +40,7 @@ nearest_1000 = science.get_nearest(point=[341947, 4546986],
                                    data=dataFrame,
                                    dimensions=['bbcenter_x', 'bbcenter_y'])
 
-"""
+
 sigpac.download_shapefiles(sigpac.all_zipcodes(),
                            data_dir='d:/OpenSmartCountry/data',
                            tmp_dir='d:/OpenSmartCountry/tmp',
