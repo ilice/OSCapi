@@ -5,13 +5,15 @@ Created on Sat Jul 02 18:27:40 2016
 @author: jlafuente
 """
 
-import shapefile
 import ftplib
-import util
-import os
 import logging
+import os
 import re
+
 import pandas as pd
+import shapefile
+
+from osc import util
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)

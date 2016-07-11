@@ -4,8 +4,9 @@ Created on Mon Jul 04 17:16:53 2016
 
 @author: jlafuente
 """
-import sigpac
 import os
+
+from osc.importer import sigpac
 
 data_dir = os.path.join(os.getenv('OSC_HOME', '../data'), 'data')
 tmp_dir = os.path.join(os.getenv('OSC_HOME', '../tmp'), 'tmp')
