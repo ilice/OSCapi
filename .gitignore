@@ -46,7 +46,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 DataAnalysis/data
-DataAnalysys/python/tmp
+DataAnalysis/python/tmp
+DataAnalysis/python/.idea
 *.pyc
 workspace-scala-ide
 weathercrawler/.cache-main

@@ -130,22 +130,23 @@ def get_dataframe(years,
     # Filter registers with incorrect date
     dataframe = dataframe[(dataframe[u'Fecha (AAAA-MM-DD)'].str.len() == 10) &
                           (dataframe[u'Hora (HHMM)'].str.len() == 4)]
-    
-    dataframe['FECHA'] = pd.to_datetime(dataframe[u'Fecha (AAAA-MM-DD)'] +
-                                        ' ' +
-                                        dataframe[u'Hora (HHMM)'].replace('2400', '0000'),
-                                        format='%Y-%m-%d %H%M')
-    
-    dataframe = dataframe.drop([u'Fecha (AAAA-MM-DD)', u'Hora (HHMM)'], axis=1)
-    
-    dataframe.index = dataframe['FECHA']
-    
+
+    # rename the columns so they are more clear
+    dataframe.columns = ['code', 'location', 'day', 'hour', 'rain', 'temperature',
+                         'rel_humidity', 'radiation', 'wind_speed', 'wind_direction']
+
+    dataframe['date'] = pd.to_datetime(dataframe['day'] + ' ' +
+                                       dataframe['hour'].replace('2400', '0000'),
+                                       format='%Y-%m-%d %H%M')
+
+    dataframe = dataframe.drop(['day', 'hour'], axis=1)
+
+    dataframe.index = dataframe['date']
+
     return dataframe
 
+
 # Elastic Search
-
-
-
 class InfoRiegoRecord(dsl.DocType):
     code = dsl.String()
     location = dsl.String()
@@ -170,29 +171,25 @@ class InfoRiegoRecord(dsl.DocType):
         index = 'inforiego'
 
 
-def build_record(row, locations):
+def build_record(row):
     # just in case it was not initted
     InfoRiegoRecord.init()
 
-    record = None
-
     print "Row = " + str(row)
-    if len(row['day']) == 10 and len(row['hour']) == 4:
-        record = InfoRiegoRecord(code=row['code'], location=row['location'], rain=row['rain'],
-                                 temperature=row['temperature'], rel_humidity = row['rel_humidity'],
-                                 radiation=row['radiation'], wind_speed=row['wind_speed'],
-                                 wind_direction=row['wind_direction'])
 
-        record.date = datetime.datetime.strptime(row['day'] + ' ' +
-                                                 row['hour'].replace('2400', '0000'), '%Y-%m-%d %H%M')
-
-        if row['code'] in locations:
-            location = locations[row['code']]
-            record.station_latitude = location['latitude']
-            record.station_longitude = location['longitude']
-            record.station_height = location['height']
-            record.station_xutm = location['xutm']
-            record.station_yutm = location['yutm']
+    record = InfoRiegoRecord(code=row.code,
+                             location=row.location,
+                             rain=float(row.rain),
+                             temperature=float(row.temperature),
+                             rel_humidity = float(row.rel_humidity),
+                             radiation=float(row.radiation),
+                             wind_speed=float(row.wind_speed),
+                             wind_direction=float(row.wind_direction),
+                             station_latitude=row.latitude,
+                             station_longitude=row.longitude,
+                             station_height=int(row.height),
+                             station_xutm=int(row.xutm),
+                             station_yutm=int(row.yutm))
 
     return record
 
@@ -200,15 +197,11 @@ def build_record(row, locations):
 def read_locations(data_dir='../data'):
     csv_path = os.path.join(path(data_dir), 'UbicacionEstacionesITACyL 2009.csv')
 
-    locations = {}
-    with open(csv_path) as csvfile:
-        reader = csv.DictReader(csv_path, fieldnames=['province', 'station', 'code', 'name', 'longitude',
-                                                      'latitude', 'height', 'xutm', 'yutm'],
-                                delimiter = ';')
-        header = reader.next()
-        for row in reader:
-            locations[row['code']] = row
-
+    locations = pd.read_csv(csv_path,
+                            sep=';',
+                            encoding='mbcs')
+    locations.columns = ['province', 'station', 'code', 'name', 'longitude',
+                         'latitude', 'height', 'xutm', 'yutm']
     return locations
 
 
@@ -216,29 +209,24 @@ def save2elasticsearch(years,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False,
+                       encoding='mbcs',
                        data_dir='../data',
                        tmp_dir='./tmp'):
     # download if necessary
-    download_daily_files(years=years,
-                         url=url,
-                         root_dir=root_dir,
-                         data_dir=data_dir,
-                         force_download=force_download,
-                         tmp_dir=tmp_dir)
-
-    csv_paths = [os.path.join(path(data_dir, year), fileName)
-                 for year in as_list(years)
-                 for fileName in os.listdir(path(data_dir, year))]
-    # first read the SIGPAC locations in a dictionary
+    dataframe = get_dataframe(years=years,
+                              url=url,
+                              root_dir=root_dir,
+                              force_download=force_download,
+                              encoding=encoding,
+                              data_dir=data_dir,
+                              tmp_dir=tmp_dir)
     locations = read_locations(data_dir)
 
-    for csvPath in csv_paths:
-        with open(csvPath) as csvfile:
-            reader = csv.DictReader(csvfile, fieldnames=['code', 'location', 'day', 'hour', 'rain', 'temperature',
-                                                         'rel_humidity', 'radiation', 'wind_speed', 'wind_direction'],
-                                    delimiter = ';')
-            header = reader.next()
-            for row in reader:
-                record = build_record(row, locations)
-                if record is not None:
-                    record.save()
+    dataframe = pd.merge(dataframe, locations, on='code', how='outer')
+
+    for t in dataframe.itertuples():
+        record = build_record(t)
+        record.save()
+
+
+
