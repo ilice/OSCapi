@@ -100,7 +100,7 @@ def get_dataframe(years,
                   root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                   data_dir='../data',
                   force_download=False,
-                  encoding='mbcs',
+                  encoding=None,
                   tmp_dir='./tmp'):
     # download if necessary
     download_daily_files(years=years,
@@ -197,7 +197,7 @@ def read_locations(data_dir='../data'):
 
     locations = pd.read_csv(csv_path,
                             sep=';',
-                            encoding='mbcs')
+                            encoding=None)
     locations.columns = ['province', 'station', 'code', 'name', 'longitude',
                          'latitude', 'height', 'xutm', 'yutm']
     return locations
@@ -207,7 +207,7 @@ def save2elasticsearch(years,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False,
-                       encoding='mbcs',
+                       encoding=None,
                        data_dir='../data',
                        tmp_dir='./tmp'):
     # download if necessary
