@@ -164,7 +164,7 @@ class InfoRiegoRecord(dsl.DocType):
     station_yutm = dsl.Integer()
 
     def save(self, ** kwargs):
-        return super.save(** kwargs)
+        return super(InfoRiegoRecord, self).save(** kwargs)
 
     class Meta:
         index = 'inforiego'
@@ -176,6 +176,7 @@ def build_record(row, locations):
 
     record = None
 
+    print "Row = " + str(row)
     if len(row['day']) == 10 and len(row['hour']) == 4:
         record = InfoRiegoRecord(code=row['code'], location=row['location'], rain=row['rain'],
                                  temperature=row['temperature'], rel_humidity = row['rel_humidity'],
@@ -183,7 +184,7 @@ def build_record(row, locations):
                                  wind_direction=row['wind_direction'])
 
         record.date = datetime.datetime.strptime(row['day'] + ' ' +
-                                                 row['hour'].replace('2400', '0000'), format='%Y/%m/%d %H%M')
+                                                 row['hour'].replace('2400', '0000'), '%Y-%m-%d %H%M')
 
         if row['code'] in locations:
             location = locations[row['code']]
@@ -202,7 +203,9 @@ def read_locations(data_dir='../data'):
     locations = {}
     with open(csv_path) as csvfile:
         reader = csv.DictReader(csv_path, fieldnames=['province', 'station', 'code', 'name', 'longitude',
-                                                      'latitude', 'height', 'xutm', 'yutm'])
+                                                      'latitude', 'height', 'xutm', 'yutm'],
+                                delimiter = ';')
+        header = reader.next()
         for row in reader:
             locations[row['code']] = row
 
@@ -227,12 +230,15 @@ def save2elasticsearch(years,
                  for year in as_list(years)
                  for fileName in os.listdir(path(data_dir, year))]
     # first read the SIGPAC locations in a dictionary
+    locations = read_locations(data_dir)
 
     for csvPath in csv_paths:
         with open(csvPath) as csvfile:
             reader = csv.DictReader(csvfile, fieldnames=['code', 'location', 'day', 'hour', 'rain', 'temperature',
-                                                         'rel_humidity', 'radiation', 'wind_speed', 'wind_direction'])
+                                                         'rel_humidity', 'radiation', 'wind_speed', 'wind_direction'],
+                                    delimiter = ';')
+            header = reader.next()
             for row in reader:
-                record = build_record(row)
+                record = build_record(row, locations)
                 if record is not None:
                     record.save()
