@@ -175,8 +175,6 @@ def build_record(row):
     # just in case it was not initted
     InfoRiegoRecord.init()
 
-    print "Row = " + str(row)
-
     record = InfoRiegoRecord(code=row.code,
                              location=row.location,
                              rain=float(row.rain),
