@@ -15,6 +15,8 @@ import pandas as pd
 
 from osc import util
 
+import utm
+
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
@@ -167,11 +169,8 @@ class InfoRiegoRecord(dsl.DocType):
     wind_speed = dsl.Float()
     wind_direction = dsl.Float()
 
-    station_longitude = dsl.String()
-    station_latitude = dsl.String()
+    lat_lon = dsl.GeoPoint(lat_lon=True)
     station_height = dsl.Integer()
-    station_xutm = dsl.Integer()
-    station_yutm = dsl.Integer()
 
     def save(self, ** kwargs):
         return super(InfoRiegoRecord, self).save(** kwargs)
@@ -194,11 +193,10 @@ def build_record(row):
                              radiation=float(row.radiation),
                              wind_speed=float(row.wind_speed),
                              wind_direction=float(row.wind_direction),
-                             station_latitude=row.latitude,
-                             station_longitude=row.longitude,
-                             station_height=int(row.height),
-                             station_xutm=int(row.xutm),
-                             station_yutm=int(row.yutm))
+                             station_height=int(row.height))
+
+    lat, lon = utm.to_latlon(row.xutm, row.yutm, 30, northern=True)
+    record.lat_lon = {'lat': lat, 'lon': lon}
 
     return record
 
