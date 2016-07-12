@@ -9,8 +9,7 @@ import ftplib
 import logging
 import os
 import elasticsearch_dsl as dsl
-import csv
-import datetime
+import elasticsearch as es
 
 import pandas as pd
 
@@ -20,6 +19,16 @@ FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
 
+error_handler = None
+
+
+def handle_error(reg_id, desc=None):
+    error_handler.handle(__name__, reg_id, desc)
+
+
+def set_error_handler(handler):
+    global error_handler
+    error_handler = handler
 
 def as_list(param):
     if type(param) is list:
@@ -175,8 +184,10 @@ def build_record(row):
     # just in case it was not initted
     InfoRiegoRecord.init()
 
-    record = InfoRiegoRecord(code=row.code,
+    record = InfoRiegoRecord(meta={'id': row.code + ' - ' + str(row.date)},
+                             code=row.code,
                              location=row.location,
+                             date=row.date,
                              rain=float(row.rain),
                              temperature=float(row.temperature),
                              rel_humidity = float(row.rel_humidity),
@@ -224,7 +235,10 @@ def save2elasticsearch(years,
 
     for t in dataframe.itertuples():
         record = build_record(t)
-        record.save()
+        try:
+            record.save()
+        except es.exceptions.RequestError as e:
+            handle_error(record.code + '_' + record.date.strftime(format='%Y%m%d%H%M'), str(e))
 
 
 
