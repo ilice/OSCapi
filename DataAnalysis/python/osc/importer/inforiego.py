@@ -134,7 +134,8 @@ def get_dataframe(years,
                                       dtype={u'Hora (HHMM)': str,
                                              u'Fecha (AAAA-MM-DD)': str},
                                       sep=';', 
-                                      encoding=encoding))
+                                      encoding=encoding,
+                                      error_bad_lines=False))
     
     dataframe = pd.concat(dataframes)
     
