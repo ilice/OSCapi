@@ -8,8 +8,8 @@ connections.create_connection('default', hosts=['81.61.197.16:9200'], timeout=20
 data_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'data')
 err_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'errors')
 tmp_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'tmp')
-encoding = 'mbcs'
-# encoding = 'iso-8859-1'
+# encoding = 'mbcs'
+encoding = 'iso-8859-1'
 
 inforiego.set_error_handler(util.ErrorHandler(err_dir))
 
