@@ -53,3 +53,4 @@ workspace-scala-ide
 weathercrawler/.cache-main
 weathercrawler/.classpath
 weathercrawler/.project
+weathercrawler/data
