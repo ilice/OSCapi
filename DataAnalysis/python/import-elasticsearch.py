@@ -3,6 +3,7 @@ from elasticsearch_dsl.connections import connections
 import osc.importer.inforiego as inforiego
 import sys
 
+"""
 connections.create_connection('default', hosts=[
     {'host': 'search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com',
      'port': 9200}],
@@ -12,7 +13,6 @@ connections.create_connection('default', hosts=[
 connections.create_connection('default', hosts=[{'host': 'search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com',
                                                  'port': None}],
                               timeout=20)
-"""
 
 data_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'data')
 err_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'errors')
