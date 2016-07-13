@@ -3,9 +3,10 @@ from slacker import Slacker
 
 class ErrorHandler:
 
-    slack = Slacker('xoxb-59407964018-PTKtbvx19biu6CMasQSlxjZu')
+    slack = None
 
-    def __init__(self):
+    def __init__(self, token):
+        self.slack = Slacker(token)
         pass
 
     def error(self, module_name, function_name, message):
