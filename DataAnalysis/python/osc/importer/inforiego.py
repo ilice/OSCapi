@@ -239,7 +239,7 @@ def save2elasticsearch(years,
         record = build_record(t)
         try:
             record.save()
-        except es.exceptions.RequestError as e:
+        except Exception as e:
             conf.error_handler.error(__name__,
                                      'save2elasticsearch',
                                      record.code + '_' + record.date.strftime(format='%Y%m%d%H%M') + ':' + str(e))
