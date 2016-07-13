@@ -10,27 +10,15 @@ import logging
 import os
 import elasticsearch_dsl as dsl
 import elasticsearch as es
-
 import pandas as pd
+import osc.config as conf
 
 from osc import util
 
 import utm
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
 
-error_handler = None
-
-
-def handle_error(reg_id, desc=None):
-    error_handler.handle(__name__, reg_id, desc)
-
-
-def set_error_handler(handler):
-    global error_handler
-    error_handler = handler
 
 def as_list(param):
     if type(param) is list:
@@ -50,13 +38,17 @@ def path(data_dir, year=None):
 def get_daily_files_list(year,
                          url='ftp.itacyl.es',
                          root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios'):
-    ftp = ftplib.FTP(url, user='anonymous', passwd='')
-    ftp.cwd(root_dir + '/' + year)
-    
-    files = ftp.nlst()
-    ftp.close()
-    
-    return files
+    try:
+        ftp = ftplib.FTP(url, user='anonymous', passwd='')
+        ftp.cwd(root_dir + '/' + year)
+
+        files = ftp.nlst()
+        ftp.close()
+
+        return files
+    except Exception as e:
+        conf.error_handler.error(__name__, "get_daily_files_list", year + ': ' + str(e))
+        return []
 
 
 def download_daily_files(years,
@@ -76,34 +68,37 @@ def download_daily_files(years,
             continue
 
         print "Downloading " + working_dir
-        
-        ftp = ftplib.FTP(url, user='anonymous', passwd='')
-        ftp.cwd(root_dir + '/' + year)
-    
-        # Check the files in the directory
-        files = ftp.nlst()
-        
-        if len(files) == 0:
-            raise NameError(year)
-    
-        if not os.path.exists(tmp_dir):
-            os.makedirs(tmp_dir)
-    
-        for zipFile in files:
-            zipfile_path = tmp_dir + '/' + zipFile
-            
-            with open(zipfile_path, 'wb') as f:
-                logger.info("Downloading " + zipfile_path)
-                ftp.retrbinary('RETR ' + zipFile, f.write)
-                logger.info("... downloaded.")
-                    
-            # uncompress the zipfile
-            util.unzip_file(zipfile_path,
-                            working_dir)
-                      
-            # remove the file
-            # os.remove(compressedShapeFilePath)
-        ftp.close()                 
+
+        try:
+            ftp = ftplib.FTP(url, user='anonymous', passwd='')
+            ftp.cwd(root_dir + '/' + year)
+
+            # Check the files in the directory
+            files = ftp.nlst()
+
+            if len(files) == 0:
+                raise NameError(year)
+
+            if not os.path.exists(tmp_dir):
+                os.makedirs(tmp_dir)
+
+            for zipFile in files:
+                zipfile_path = tmp_dir + '/' + zipFile
+
+                with open(zipfile_path, 'wb') as f:
+                    logger.info("Downloading " + zipfile_path)
+                    ftp.retrbinary('RETR ' + zipFile, f.write)
+                    logger.info("... downloaded.")
+
+                # uncompress the zipfile
+                util.unzip_file(zipfile_path,
+                                working_dir)
+
+                # remove the file
+                # os.remove(compressedShapeFilePath)
+            ftp.close()
+        except Exception as e:
+            conf.error_handler.error(__name__, "download_daily_files", year + ': ' + str(e))
 
 
 def get_dataframe(years,
@@ -129,13 +124,17 @@ def get_dataframe(years,
 
     dataframes = []
     for csvPath in csv_paths:
-        print "Reading data frame " + csvPath
-        dataframes.append(pd.read_csv(csvPath,
-                                      dtype={u'Hora (HHMM)': str,
-                                             u'Fecha (AAAA-MM-DD)': str},
-                                      sep=';', 
-                                      encoding=encoding,
-                                      error_bad_lines=False))
+        try:
+            print "Reading data frame " + csvPath
+            dataframes.append(pd.read_csv(csvPath,
+                                          dtype={u'Hora (HHMM)': str,
+                                                 u'Fecha (AAAA-MM-DD)': str},
+                                          sep=';',
+                                          encoding=encoding,
+                                          error_bad_lines=False))
+        except Exception as e:
+            conf.error_handler.error(__name__, "get_dataframe", csvPath + ': ' + str(e))
+
     
     dataframe = pd.concat(dataframes)
     
@@ -182,7 +181,11 @@ class InfoRiegoRecord(dsl.DocType):
 
 def build_record(row):
     # just in case it was not initted
-    InfoRiegoRecord.init()
+    try:
+        InfoRiegoRecord.init()
+    except Exception as e:
+        conf.error_handler.error(__name__, "build_record", str(e))
+        raise
 
     record = InfoRiegoRecord(meta={'id': row.code + ' - ' + str(row.date)},
                              code=row.code,
@@ -237,7 +240,9 @@ def save2elasticsearch(years,
         try:
             record.save()
         except es.exceptions.RequestError as e:
-            handle_error(record.code + '_' + record.date.strftime(format='%Y%m%d%H%M'), str(e))
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     record.code + '_' + record.date.strftime(format='%Y%m%d%H%M') + ':' + str(e))
 
 
 

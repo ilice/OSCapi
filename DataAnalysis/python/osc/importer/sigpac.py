@@ -15,8 +15,8 @@ import shapefile
 
 from osc import util
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(format=FORMAT)
+import osc.config as conf
+
 logger = logging.Logger(__name__)
 
 
@@ -57,44 +57,47 @@ def download_shapefile(zip_code,
 
     print "Downloading shapeFile for zipCode: " + str(zip_code)
 
-    ftp = ftplib.FTP(url, user='anonymous', passwd='')
-    ftp.cwd(root_dir)
+    try:
+        ftp = ftplib.FTP(url, user='anonymous', passwd='')
+        ftp.cwd(root_dir)
 
-    # Now we are at a province level. Check the first two digits so that they
-    # are equal to the first two ones in the postal code
-    files = filter(lambda x: x.startswith(zip_code[0:2]), ftp.nlst())
-    if len(files) != 1:
-        raise NameError(zip_code)
+        # Now we are at a province level. Check the first two digits so that they
+        # are equal to the first two ones in the postal code
+        files = filter(lambda x: x.startswith(zip_code[0:2]), ftp.nlst())
+        if len(files) != 1:
+            raise NameError(zip_code)
 
-    # Change directory to the province one
-    ftp.cwd(files[0])
+        # Change directory to the province one
+        ftp.cwd(files[0])
 
-    files = filter(lambda x: x.startswith(zip_code), ftp.nlst())
-    if len(files) != 1:
-        raise NameError(zip_code)
+        files = filter(lambda x: x.startswith(zip_code), ftp.nlst())
+        if len(files) != 1:
+            raise NameError(zip_code)
 
-    # now we have a zip file, which we have to download and decompress
-    zipped_shapefile = files[0]
+        # now we have a zip file, which we have to download and decompress
+        zipped_shapefile = files[0]
 
-    if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir)
+        if not os.path.exists(tmp_dir):
+            os.makedirs(tmp_dir)
 
-    zipped_shapefile_path = os.path.join(tmp_dir, zipped_shapefile)
+        zipped_shapefile_path = os.path.join(tmp_dir, zipped_shapefile)
 
-    with open(zipped_shapefile_path, 'wb') as f:
-        logger.info("Downloading " + zipped_shapefile)
-        ftp.retrbinary('RETR ' + zipped_shapefile, f.write)
-        logger.info("... downloaded.")
+        with open(zipped_shapefile_path, 'wb') as f:
+            logger.info("Downloading " + zipped_shapefile)
+            ftp.retrbinary('RETR ' + zipped_shapefile, f.write)
+            logger.info("... downloaded.")
 
-    # uncompress the zipfile
-    util.unzip_file(zipped_shapefile_path,
-                    working_dir,
-                    lambda x: suffix in x.filename)
-    # remove the file
-    # os.remove(compressedShapeFilePath)
-    print "... finished downloading zipfile: " + str(zip_code)
+        # uncompress the zipfile
+        util.unzip_file(zipped_shapefile_path,
+                        working_dir,
+                        lambda x: suffix in x.filename)
+        # remove the file
+        # os.remove(compressedShapeFilePath)
+        print "... finished downloading zipfile: " + str(zip_code)
 
-    ftp.close()
+        ftp.close()
+    except Exception as e:
+        conf.error_handler.error(__name__, 'download_shapefile', zip_code + ': ' + str(e))
 
 
 def get_shapefile(zip_code,
@@ -118,11 +121,15 @@ def get_shapefile(zip_code,
 
     shapefile_name = os.path.join(working_dir, zip_code + '_' + suffix)
 
-    sp = shapefile.Reader(shapefile_name)
+    try:
+        sp = shapefile.Reader(shapefile_name)
 
-    print "... finished getting zipfile: " + str(zip_code)
+        print "... finished getting zipfile: " + str(zip_code)
 
-    return sp
+        return sp
+    except Exception as e:
+        conf.error_handler.error(__name__, "get_shapefile", zip_code + ': ' + str(e))
+        return None
 
 
 def download_shapefiles(zip_codes,
@@ -150,13 +157,14 @@ def get_shapefiles(zip_codes,
                    data_dir='../data',
                    tmp_dir='./tmp',
                    force_download=False):
-    return [get_shapefile(zip_code=zc,
-                          url=url,
-                          root_dir=root_dir,
-                          suffix=suffix,
-                          data_dir=data_dir,
-                          tmp_dir=tmp_dir,
-                          force_download=force_download) for zc in zip_codes]
+    return filter(lambda x: x is not None,
+                  [get_shapefile(zip_code=zc,
+                                 url=url,
+                                 root_dir=root_dir,
+                                 suffix=suffix,
+                                 data_dir=data_dir,
+                                 tmp_dir=tmp_dir,
+                                 force_download=force_download) for zc in zip_codes])
 
 
 def get_dataframe_from_shapefile(sf):
@@ -169,7 +177,11 @@ def get_dataframe_from_shapefile(sf):
 
         fields_dict[field_name] = field_values
 
-    return pd.DataFrame(fields_dict)
+    try:
+        return pd.DataFrame(fields_dict)
+    except Exception as e:
+        conf.error_handler.error(__name__, "get_dataframe_from_shapefile", str(e))
+        return None
 
 
 def write_csv(zip_codes,
@@ -181,26 +193,28 @@ def write_csv(zip_codes,
               force_download=False):
 
     for zip_code in filter(lambda x: not os.path.exists(csv_file(data_dir, x)), util.as_list(zip_codes)):
-        try:
-            sf = get_shapefile(zip_code=zip_code,
-                               url=url,
-                               root_dir=root_dir,
-                               suffix=suffix,
-                               data_dir=data_dir,
-                               tmp_dir=tmp_dir,
-                               force_download=force_download)
+        sf = get_shapefile(zip_code=zip_code,
+                           url=url,
+                           root_dir=root_dir,
+                           suffix=suffix,
+                           data_dir=data_dir,
+                           tmp_dir=tmp_dir,
+                           force_download=force_download)
 
+        if sf is not None:
             df = get_dataframe_from_shapefile(sf)
 
-            # create directory if it does not exist
-            if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
-                os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
+            if df is not None:
+                try:
+                    # create directory if it does not exist
+                    if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
+                        os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
 
-            csv = csv_file(data_dir=data_dir, zip_code=zip_code)
+                    csv = csv_file(data_dir=data_dir, zip_code=zip_code)
 
-            df.to_csv(csv, sep=';')
-        except:
-            logger.error("Unable to write csv file: " + zip_code)
+                    df.to_csv(csv, sep=';')
+                except Exception as e:
+                    conf.error_handler.error(__name__, "write_csv", zip_code + ': ' + str(e))
 
 
 def get_dataframe(zip_codes,
@@ -219,13 +233,12 @@ def get_dataframe(zip_codes,
               tmp_dir=tmp_dir,
               force_download=force_download)
 
-
     dataFrames = []
     for zip_code in util.as_list(zip_codes):
         try:
             dataFrames.append(pd.read_csv(csv_file(data_dir, zip_code), sep=';', usecols=usecols))
-        except:
-            logger.error('Unable to get dataFrame: ' + zip_code)
+        except Exception as e:
+            conf.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
 
     return pd.concat(dataFrames)
 
