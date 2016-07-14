@@ -68,11 +68,16 @@ class ErrorHandler:
 
         self.slack.files.upload(tmp_file_path, title='Error List', channels=['#errors'])
 
+        self.error_buffer['error'] = []
+        self.error_buffer['warning'] = []
+
     def error(self, module_name, function_name, message):
         self.error_buffer['error'].append({'date': datetime.datetime.now(),
                                            'module_name': module_name,
                                            'function_name': function_name,
                                            'message': message})
+
+        self.try_flush()
 
     def warning(self, module_name, function_name, message):
         self.error_buffer['warning'].append({'date': datetime.datetime.now(),
@@ -80,6 +85,11 @@ class ErrorHandler:
                                              'function_name': function_name,
                                              'message': message})
 
+        self.try_flush()
+
+    def try_flush(self):
+        if len(self.error_buffer['error']) + len(self.error_buffer['warning']) >= self.flush_bucket:
+            self.flush()
 
 if __name__ == '__main__':
     error_handler = ErrorHandler()
