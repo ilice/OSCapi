@@ -82,6 +82,7 @@
 
 		</nav>
 
+		
 
 
 		<!-- Overlay effect when opening sidenav on small screens -->
@@ -97,13 +98,20 @@
 					<div class="w3-section w3-bottombar w3-padding-16">
 						<span class="w3-margin-right">Filter:</span>
 						<button class="w3-btn">ALL</button>
-						<button class="w3-btn w3-white"><i class="fa fa fa-bug w3-margin-right"></i>Pastos / Alimento ganado</button>
-						<button class="w3-btn w3-white w3-hide-small"><i class="fa fa-leaf w3-margin-right"></i>Verduras</button>
-						<button class="w3-btn w3-white w3-hide-small"><i class="fa fa-lemon-o w3-margin-right"></i>Frutales</button>
-						<button class="w3-btn w3-white w3-hide-small"><i class="fa fa-tree w3-margin-right"></i>Madera</button>
-						<button class="w3-btn w3-white w3-hide-small"><i class="fa fa-tint w3-margin-right"></i>Regadío</button>
-						<button class="w3-btn w3-white w3-hide-small"><i class="fa fa-magic w3-margin-right"></i>Filtar según parcela</button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa fa-bug w3-margin-right"></i><span class="w3-text w3-tag w3-white">Pastos / Alimento ganado</span></button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa-leaf w3-margin-right"></i><span class="w3-text w3-tag w3-white">Verduras</span></button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa-lemon-o w3-margin-right"></i><span class="w3-text w3-tag w3-white">Frutales</span></button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa-tree w3-margin-right"></i><span class="w3-text w3-tag w3-white">Madera</span></button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa-tint w3-margin-right"></i><span class="w3-text w3-tag w3-white">Regadío</span></button>
+						<button class="w3-btn w3-white w3-tooltip"><i class="fa fa-magic w3-margin-right"></i><span class="w3-text w3-tag w3-white">Filtar según parcela</span></button>
+						<form class="w3-right" method="get" >
+							<input type="search" id="txtSearch" name="search" placeholder="Búsqueda...">
+							<button  type="submit" value="search" class="w3-btn w3-white w3-hide-small "><i class="fa fa-search"></i></button>
+						</form>
 					</div>
+					
+					
+					
 				</header>
 
 				<!-- First Photo Grid-->
@@ -113,13 +121,15 @@
 
 
 				<!-- Pagination -->
-				<div class="w3-center w3-padding-32">
-					<ul class="w3-pagination">
-						<li><a class="w3-hover-black" href="#" onClick="paginaMenos()">-</a></li>
-						<li><a id="pagina"class="w3-black" href="#" onClick="paginaMenos()"></a></li>
-						<li><a class="w3-hover-black" href="#" onClick="paginaMas()">+</a></li>
-					</ul>
-				</div>
+				<div class="w3-center">
+  <ul class="w3-pagination w3-padding-32">
+    <li><a href="javascript:paginaMenos()">«</a></li>
+    <li><a id="pagina" class="w3-theme" href="javascript:void(0)">1</a></li>
+    <li><a href="javascript:paginaMas()">»</a></li>
+  </ul>
+</div>
+				
+				
 
 
 			</div>
