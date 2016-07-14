@@ -9,9 +9,9 @@ import ftplib
 import logging
 import os
 import elasticsearch_dsl as dsl
-import elasticsearch as es
 import pandas as pd
 import osc.config as conf
+import time
 
 from osc import util
 
@@ -179,14 +179,18 @@ class InfoRiegoRecord(dsl.DocType):
         index = 'inforiego'
 
 
-def build_record(row):
-    # just in case it was not initted
+initted = False
+while not initted:
     try:
         InfoRiegoRecord.init()
+        initted = True
     except Exception as e:
         conf.error_handler.error(__name__, "build_record", str(e))
-        raise
+        conf.error_handler.flush()
+        time.sleep(1800)
 
+
+def build_record(row):
     record = InfoRiegoRecord(meta={'id': row.code + ' - ' + str(row.date)},
                              code=row.code,
                              location=row.location,

@@ -3,7 +3,7 @@ import osc.importer.inforiego as inforiego
 import sys
 
 data_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'data')
-err_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'errors')
+err_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'handlers')
 tmp_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'tmp')
 # encoding = 'mbcs'
 encoding = 'iso-8859-1'
