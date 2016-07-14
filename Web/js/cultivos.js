@@ -13,13 +13,22 @@ function cargaDatos() {
 function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	var textoBusqueda = QueryString.search;
+	var query;
+	var match = textoBusqueda;
+	var _all = textoBusqueda;
 
-	var queryString = (encodeURIComponent(textoBusqueda) == "undefined") ? "" : ("q=" + encodeURIComponent(textoBusqueda) + "&");
+	if (encodeURIComponent(textoBusqueda) == "undefined") {
+		query = {
+			"match_all" : {}
+		};
+	}else{
+		query = { "match": { _all }};
+	}
 
 	var data = {
 		"from" : numeroCultivoInicial,
-		"size" : numeroCultivosACargar
-
+		"size" : numeroCultivosACargar,
+		query
 	};
 
 	var url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/_search";
@@ -83,13 +92,12 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 		ultimoCultivoCargado = numeroCultivoInicial + numeroCultivosACargar;
 		document.getElementById('pagina').innerHTML = (ultimoCultivoCargado / numeroCultivosPorPagina) + " / " + Math.ceil((elementosEncontrados / numeroCultivosPorPagina));
 	});
-	
-	
+
 }
 
 function paginaMas() {
 	cargaCultivos(ultimoCultivoCargado, numeroCultivosPorPagina);
-	
+
 }
 
 function paginaMenos() {
