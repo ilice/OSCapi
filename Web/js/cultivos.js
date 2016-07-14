@@ -21,14 +21,28 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 		query = {
 			"match_all" : {}
 		};
-	}else{
-		query = { "match": { _all }};
+	} else {
+		if(QueryString.queryType == "match"){
+		
+		query = {
+			"match" : {
+				_all
+			}
+		};
+		} else{
+			query = {
+			"match_phrase" : {
+				_all
+			}
+		};
+		}
 	}
 
 	var data = {
 		"from" : numeroCultivoInicial,
 		"size" : numeroCultivosACargar,
 		query
+   
 	};
 
 	var url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/_search";
@@ -109,7 +123,17 @@ var QueryString = function () {
 	// the return value is assigned to QueryString!
 	var query_string = {};
 	var query = window.location.search.substring(1);
-	if (query.length > 0) {
+	if(query.search("%22")>=0){
+		query_string.queryType = "match_phrase";
+		query_string.boolType = "or";
+	}else if(query.search("%26")>=0){
+		query_string.queryType = "match";
+		query_string.boolType = "and";
+	}else{
+		query_string.queryType = "match";
+		query_string.boolType = "or";
+	}
+	if (query.length > 0 && query != "search=") {
 		var vars = query.split("&");
 		for (var i = 0; i < vars.length; i++) {
 			var pair = vars[i].split("=");
