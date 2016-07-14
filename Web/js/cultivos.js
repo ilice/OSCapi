@@ -57,8 +57,13 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	request.done(function (response, textStatus, jqXHR) {
 		var hits = response["hits"]["hits"];
+		var rowIndex = 0;
 		document.getElementById('photoGrid').innerHTML = "";
 		for (var i = 0; i < hits.length; i++) {
+			if((i % 3)==0){
+				document.getElementById('photoGrid').innerHTML += '<div class="w3-row">';
+			}
+				
 			var hit = hits[i];
 			var contenido = '<div onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'" class="w3-third w3-container">' +
 				'<div id="' + hit["_id"] + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
@@ -98,6 +103,11 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 			document.getElementById('photoGrid').innerHTML += contenido;
 			document.getElementById('photoGrid').innerHTML += modal;
+			
+			if(((i+1) % 3)==0 || (i+1) == hits.length){
+				document.getElementById('photoGrid').innerHTML += '</div>';
+			}
+			
 
 		}
 		elementosEncontrados = response["hits"].total;
