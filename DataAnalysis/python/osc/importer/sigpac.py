@@ -8,10 +8,15 @@ Created on Sat Jul 02 18:27:40 2016
 import ftplib
 import logging
 import os
+import time
+import ast
+import utm
 import re
 
 import pandas as pd
 import shapefile
+
+import elasticsearch_dsl as dsl
 
 from osc import util
 
@@ -236,7 +241,12 @@ def get_dataframe(zip_codes,
     dataFrames = []
     for zip_code in util.as_list(zip_codes):
         try:
-            dataFrames.append(pd.read_csv(csv_file(data_dir, zip_code), sep=';', usecols=usecols))
+            dataFrames.append(pd.read_csv(csv_file(data_dir, zip_code),
+                                          sep=';',
+                                          thousands='.',
+                                          dayfirst=True,
+                                          parse_dates=['FECHA_CAM0'],
+                                          usecols=usecols))
         except Exception as e:
             conf.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
 
@@ -262,3 +272,151 @@ def all_zipcodes(url='ftp.itacyl.es',
         zip_codes = filter(lambda x: x.startswith(starting_with), zip_codes)
 
     return filter(lambda x: len(x) == 5, zip_codes)
+
+
+# Elastic Search
+class SIGPACRecord(dsl.DocType):
+    dn_pk = dsl.Long()
+
+    provincia = dsl.Integer()
+    municipio = dsl.Integer()
+    poligono = dsl.Integer()
+    parcela = dsl.Integer()
+    recinto = dsl.Integer()
+    zona = dsl.Integer()
+
+    perimetro = dsl.Long()
+    superficie = dsl.Long()
+    pend_med = dsl.Integer()
+    points = dsl.GeoShape(tree='quadtree', precision='1m')
+    bbox = dsl.GeoShape(tree='quadtree', precision='1m')
+
+    uso_sigpac = dsl.String()
+
+    agregado = dsl.Integer()
+    cap_auto = dsl.Integer()
+    cap_manual = dsl.Integer()
+    coef_regadio = dsl.Float()
+    c_refpar = dsl.Float()
+    c_refpol = dsl.Float()
+    c_refrec = dsl.Float()
+    dn_oid = dsl.Long()
+
+    def save(self, ** kwargs):
+        return super(SIGPACRecord, self).save(** kwargs)
+
+    class Meta:
+        index = 'sigpac'
+
+
+initted = False
+while not initted:
+    try:
+        SIGPACRecord.init()
+        initted = True
+    except Exception as e:
+        conf.error_handler.error(__name__, "build_record", str(e))
+        conf.error_handler.flush()
+        time.sleep(1800)
+
+
+def convert_to_latlong(coords):
+    lat, lon = utm.to_latlon(coords[0], coords[1], 30, northern=True)
+
+    return [lat, lon]
+
+
+def create_geojson_feature(bbox_str, points_str):
+    bbox = []
+
+    bbox_list = ast.literal_eval(bbox_str)
+
+    bbox.append(convert_to_latlong(bbox_list[:2]))
+    bbox.append(convert_to_latlong(bbox_list[2:]))
+
+    points_list = ast.literal_eval(points_str)
+
+    outer_points = [convert_to_latlong(x) for x in points_list]
+
+    points = [outer_points]
+
+    return ({'type': 'envelope',
+            'coordinates': bbox},
+            {'type': 'polygon',
+             'coordinates': points})
+
+
+def build_record(row):
+    record = SIGPACRecord(meta={'id': str(row.DN_PK) +
+                                      ' - ' + str(row.PROVINCIA) +
+                                      ' - ' + str(row.MUNICIPIO) +
+                                      ' - ' + str(row.POLIGONO) +
+                                      ' - ' + str(row.PARCELA) +
+                                      ' - ' + str(row.RECINTO) +
+                                      ' - ' + str(row.ZONA)})
+
+    record.dn_pk = long(row.DN_PK)
+
+    record.provincia = int(row.PROVINCIA)
+    record.municipio = int(row.MUNICIPIO)
+    record.poligono = int(row.POLIGONO)
+    record.parcela = int(row.PARCELA)
+    record.recinto = int(row.RECINTO)
+    record.zona = int(row.ZONA)
+
+    record.perimetro = long(row.PERIMETRO)
+    record.superficie = long(row.SUPERFICIE)
+    record.pend_med = int(row.PEND_MED)
+    record.bbox, record.points = create_geojson_feature(bbox_str=row.bbox, points_str=row.points)
+
+    record.uso_sigpac = row.USO_SIGPAC
+
+    record.agregado = int(row.AGREGADO)
+    record.cap_auto = int(row.CAP_AUTO)
+    record.cap_manual = int(row.CAP_MANU)
+    record.coef_regadio = float(row.COEF_REGA0)
+    record.c_refpar = long(row.C_REFPAR)
+    record.c_refpol = long(row.C_REFPOL)
+    record.c_refrec = long(row.C_REFREC)
+    record.dn_oid = long(row.DN_OID)
+
+    return record
+
+
+def read_codigos(data_dir='../data'):
+    codigos_path = os.path.join(path(data_dir), 'codigos.csv')
+
+    codigos = pd.read_csv(codigos_path,
+                            sep=';',
+                            encoding=None)
+    codigos.columns = ['codigo', 'uso']
+    return codigos
+
+
+def save2elasticsearch(zip_codes,
+                       url='ftp.itacyl.es',
+                       root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
+                       force_download=False,
+                       encoding=None,
+                       data_dir='../data',
+                       tmp_dir='./tmp'):
+    # download if necessary
+    dataframe = get_dataframe(zip_codes=zip_codes,
+                              url=url,
+                              root_dir=root_dir,
+                              force_download=force_download,
+                              encoding=encoding,
+                              data_dir=data_dir,
+                              tmp_dir=tmp_dir)
+    codigos = read_codigos(data_dir)
+
+    dataframe = pd.merge(dataframe, codigos, left_on='USO_SIGPAC', right_on='codigo', how='outer')
+
+    for t in dataframe.itertuples():
+        record = build_record(t)
+        try:
+            record.save()
+        except Exception as e:
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     str(record))

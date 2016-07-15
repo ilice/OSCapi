@@ -7,13 +7,13 @@ class ErrorHandler:
     error_file = None
 
     def __init__(self, error_dir):
-        self.error_file = os.path.join(error_dir, 'errors.log')
+        self.error_file = os.path.join(error_dir, 'errors_' + str(os.getpid()) + '.log')
 
         if not os.path.exists(error_dir):
             os.makedirs(error_dir)
 
     def error(self, module_name, function_name, message):
-        with open(self.error_file, 'w') as f:
+        with open(self.error_file, 'a') as f:
             f.write('\n ++++++++++++++  ERROR  ++++++++++++\n')
             f.write('\t DATE: \t' + str(datetime.datetime.now()) + '\n')
             f.write('\t MODULE_NAME: \t' + module_name + '\n')
@@ -22,7 +22,7 @@ class ErrorHandler:
             f.write(' +++++++++++++++++++++++++++++++++++\n')
 
     def warning(self, module_name, function_name, message):
-        with open(self.error_file, 'w') as f:
+        with open(self.error_file, 'a') as f:
             f.write('\n +++++++++++++  WARNING  +++++++++++\n')
             f.write('\t DATE: \t' + str(datetime.datetime.now()) + '\n')
             f.write('\t MODULE_NAME: \t' + module_name + '\n')

@@ -6,10 +6,8 @@ Created on Mon Jul 04 17:16:53 2016
 """
 from osc.importer import sigpac
 
-sigpac.download_shapefiles(sigpac.all_zipcodes(),
-                           data_dir='d:/OpenSmartCountry/data',
-                           tmp_dir='d:/OpenSmartCountry/tmp',
-                           force_download=False)
+df = sigpac.get_dataframe('05152',
+                     force_download=False)
 """
 dataFrame = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with='0500'),
                                  usecols=['FACTOR_PE0', 'FACTOR_SU0', 'FACTOR_VE0', 'FECHA_CAM0', 'MUNICIPIO',

@@ -1,5 +1,6 @@
 import os
 import osc.importer.inforiego as inforiego
+import osc.importer.sigpac as sigpac
 import sys
 
 data_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'data')
@@ -9,12 +10,26 @@ tmp_dir = os.path.join(os.getenv('OSC_HOME', '..'), 'tmp')
 encoding = 'iso-8859-1'
 
 if __name__ == "__main__":
-    for y in sys.argv[1:]:
-        year = str(y)
+    module = sys.argv[1]
 
-        print 'Importing ' + year
+    if module == 'inforiego':
+        for y in sys.argv[2:]:
+            year = str(y)
 
-        inforiego.save2elasticsearch(years=[year],
-                                     data_dir=data_dir,
-                                     encoding=encoding,
-                                     tmp_dir=tmp_dir)
+            print 'Importing ' + year
+
+            inforiego.save2elasticsearch(years=[year],
+                                         data_dir=data_dir,
+                                         encoding=encoding,
+                                         tmp_dir=tmp_dir)
+    elif module == 'SIGPAC':
+        for zc in sys.argv[2:]:
+            zip_code = str(zip_code)
+
+            print 'Importing ' + zip_code
+
+            sigpac.save2elasticsearch(zip_codes=sigpac.all_zipcodes(starting_with=zip_code),
+                                      data_dir=data_dir,
+                                      encoding=encoding,
+                                      tmp_dir=tmp_dir)
+
