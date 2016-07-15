@@ -13,13 +13,36 @@ function cargaDatos() {
 function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	var textoBusqueda = QueryString.search;
+	var query;
+	var match = textoBusqueda;
+	var _all = textoBusqueda;
 
-	var queryString = (encodeURIComponent(textoBusqueda) == "undefined") ? "" : ("q=" + encodeURIComponent(textoBusqueda) + "&");
+	if (encodeURIComponent(textoBusqueda) == "undefined") {
+		query = {
+			"match_all" : {}
+		};
+	} else {
+		if(QueryString.queryType == "match"){
+		
+		query = {
+			"match" : {
+				_all
+			}
+		};
+		} else{
+			query = {
+			"match_phrase" : {
+				_all
+			}
+		};
+		}
+	}
 
 	var data = {
 		"from" : numeroCultivoInicial,
-		"size" : numeroCultivosACargar
-
+		"size" : numeroCultivosACargar,
+		query
+   
 	};
 
 	var url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/_search";
@@ -34,18 +57,21 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	request.done(function (response, textStatus, jqXHR) {
 		var hits = response["hits"]["hits"];
+		var rowIndex = 0;
 		document.getElementById('photoGrid').innerHTML = "";
 		for (var i = 0; i < hits.length; i++) {
+			if((i % 3)==0){
+				document.getElementById('photoGrid').innerHTML += '<div class="w3-row">';
+			}
+				
 			var hit = hits[i];
-			var contenido = '<div onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'">' +
-				'<div class="w3-third w3-container">' +
+			var contenido = '<div onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'" class="w3-third w3-container">' +
 				'<div id="' + hit["_id"] + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
-				'<img src="img/cultivos/' + hit["_id"] + '.jpg" style="width:100%"/>' +
+				'<img src="img/cultivos/' + hit["_id"] + '.jpg" style="width:99%"/>' +
 				'<div class="w3-container">' +
 				'<h4>' + hit["_source"]["Nombres Comunes"] + "</h4>" +
 				'<h5 align="right"><em>' + hit["_source"]["Nombre Científico"] + '</em></h5>' +
-				'</div></div></div>' +
-				'</div>';
+				'</div></div></div>';
 
 			var modal = '<div id="' + hit["_id"] + '_modal" class="w3-modal">' +
 				' <div class="w3-modal-content">' +
@@ -77,19 +103,23 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 			document.getElementById('photoGrid').innerHTML += contenido;
 			document.getElementById('photoGrid').innerHTML += modal;
+			
+			if(((i+1) % 3)==0 || (i+1) == hits.length){
+				document.getElementById('photoGrid').innerHTML += '</div>';
+			}
+			
 
 		}
 		elementosEncontrados = response["hits"].total;
 		ultimoCultivoCargado = numeroCultivoInicial + numeroCultivosACargar;
 		document.getElementById('pagina').innerHTML = (ultimoCultivoCargado / numeroCultivosPorPagina) + " / " + Math.ceil((elementosEncontrados / numeroCultivosPorPagina));
 	});
-	
-	
+
 }
 
 function paginaMas() {
 	cargaCultivos(ultimoCultivoCargado, numeroCultivosPorPagina);
-	
+
 }
 
 function paginaMenos() {
@@ -101,7 +131,17 @@ var QueryString = function () {
 	// the return value is assigned to QueryString!
 	var query_string = {};
 	var query = window.location.search.substring(1);
-	if (query.length > 0) {
+	if(query.search("%22")>=0){
+		query_string.queryType = "match_phrase";
+		query_string.boolType = "or";
+	}else if(query.search("%26")>=0){
+		query_string.queryType = "match";
+		query_string.boolType = "and";
+	}else{
+		query_string.queryType = "match";
+		query_string.boolType = "or";
+	}
+	if (query.length > 0 && query != "search=") {
 		var vars = query.split("&");
 		for (var i = 0; i < vars.length; i++) {
 			var pair = vars[i].split("=");
