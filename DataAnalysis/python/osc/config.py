@@ -52,7 +52,7 @@ class ErrorHandler:
 
 error_handler = ErrorHandler([slack_handler.ErrorHandler(config.get('slack', 'token'),
                                                          config.getint('slack', 'flush_bucket'),
-                                                         tmp_dir,
+                                                         error_dir,
                                                          url),
                               file_handler.ErrorHandler(config.get('importer', 'tmp_dir'))])
 
