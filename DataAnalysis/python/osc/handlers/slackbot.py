@@ -6,26 +6,30 @@ import os
 class ErrorHandler:
 
     slack = None
-    tmp_dir = None
+    errors_dir = None
+    url = None
 
     error_buffer = {'error': [], 'warning': []}
     flush_bucket = None
 
-    def __init__(self, token, flush_bucket, tmp_dir):
+    def __init__(self, token, flush_bucket, errors_dir, url):
         self.slack = Slacker(token)
-        self.tmp_dir = tmp_dir
+        self.errors_dir = errors_dir
+        self.url = url
         self.flush_bucket = flush_bucket
 
     def flush(self):
         if len(self.error_buffer['error']) == 0 and len(self.error_buffer['warning']) == 0 :
             return
 
-        if not os.path.exists(self.tmp_dir):
-            os.makedirs(self.tmp_dir)
+        if not os.path.exists(self.errors_dir):
+            os.makedirs(self.errors_dir)
 
-        current_time = datetime.datetime.now().time()
+        current_time = datetime.datetime.now()
 
-        tmp_file_path = os.path.join(self.tmp_dir, 'errors_' + current_time.strftime('%Y%m%d%H%M') + '.txt')
+        error_file_name = 'errors_' + current_time.strftime('%Y%m%d%H%M') + '.txt'
+
+        tmp_file_path = os.path.join(self.errors_dir, error_file_name)
 
         with open(tmp_file_path, 'w') as f:
             f.write('================================================\n')
@@ -53,20 +57,14 @@ class ErrorHandler:
                     f.write('\t MESSAGE: \t' + warning['message'] + '\n')
                     f.write(' +++++++++++++++++++++++++++++++++++' + '\n')
 
-        self.slack.chat.post_message('#errors', 'Flushing handlers', attachments=[
+        self.slack.chat.post_message('#errors', 'Errors detected', attachments=[
             {
-                "title": "ERRORS",
-                "text": len(self.error_buffer['error']),
+                "title": "Download the errors list",
+                "title_link": self.url + '/static/' + error_file_name,
+                "text": 'click title to download errors file',
                 "color": "#FF0000"
-            },
-            {
-                "title": "WARNINGS",
-                "text": len(self.error_buffer['warning']),
-                "color": "#FFFF00"
             }
         ], as_user=True)
-
-        self.slack.files.upload(tmp_file_path, title='Error List', channels=['#errors'])
 
         self.error_buffer['error'] = []
         self.error_buffer['warning'] = []

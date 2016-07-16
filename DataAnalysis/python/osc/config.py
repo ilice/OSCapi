@@ -11,7 +11,7 @@ import atexit
 
 config = ConfigParser.ConfigParser(defaults={'data_dir': '../data',
                                              'tmp_dir': '../tmp',
-                                             'errors_dir': '../handlers',
+                                             'errors_dir': '../errors',
                                              'token': '',
                                              'port': None,
                                              'flush_bucket': '1000'})
@@ -25,7 +25,10 @@ logging.basicConfig(format=FORMAT)
 # Directories
 data_dir = config.get('importer', 'data_dir')
 tmp_dir = config.get('importer', 'tmp_dir')
+error_dir = config.get('importer', 'errors_dir')
 
+#web
+url = config.get('web', 'url')
 
 # Error handler
 class ErrorHandler:
@@ -49,7 +52,8 @@ class ErrorHandler:
 
 error_handler = ErrorHandler([slack_handler.ErrorHandler(config.get('slack', 'token'),
                                                          config.getint('slack', 'flush_bucket'),
-                                                         tmp_dir),
+                                                         tmp_dir,
+                                                         url),
                               file_handler.ErrorHandler(config.get('importer', 'tmp_dir'))])
 
 

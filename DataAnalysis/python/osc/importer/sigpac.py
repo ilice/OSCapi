@@ -8,7 +8,6 @@ Created on Sat Jul 02 18:27:40 2016
 import ftplib
 import logging
 import os
-import time
 import ast
 import utm
 import re
@@ -222,6 +221,15 @@ def write_csv(zip_codes,
                     conf.error_handler.error(__name__, "write_csv", zip_code + ': ' + str(e))
 
 
+def compute_bb_center(row, axis=None):
+    bbox = ast.literal_eval(row['bbox'])
+
+    if axis == 0:
+        return bbox[0] + (bbox[2]-bbox[0]) / 2
+    elif axis == 1:
+        return bbox[1] + (bbox[3]-bbox[1]) / 2
+    return bbox[0] + (bbox[2]-bbox[0]) / 2, bbox[1] + (bbox[3]-bbox[1]) / 2
+
 def get_dataframe(zip_codes,
                   usecols=None,
                   url='ftp.itacyl.es',
@@ -229,7 +237,8 @@ def get_dataframe(zip_codes,
                   suffix='RECFE',
                   data_dir='../data',
                   tmp_dir='./tmp',
-                  force_download=False):
+                  force_download=False,
+                  with_bbox_center=False):
     write_csv(zip_codes,
               url=url,
               root_dir=root_dir,
@@ -250,8 +259,13 @@ def get_dataframe(zip_codes,
         except Exception as e:
             conf.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
 
-    return pd.concat(dataFrames)
+    df = pd.concat(dataFrames)
 
+    if with_bbox_center:
+        df['x_bbox_center'] = df.apply(lambda x: compute_bb_center(x, axis=0), axis=1)
+        df['y_bbox_center'] = df.apply(lambda x: compute_bb_center(x, axis=1), axis=1)
+
+    return df
 
 def all_zipcodes(url='ftp.itacyl.es',
                  root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
@@ -297,9 +311,9 @@ class SIGPACRecord(dsl.DocType):
     cap_auto = dsl.Integer()
     cap_manual = dsl.Integer()
     coef_regadio = dsl.Float()
-    c_refpar = dsl.Float()
-    c_refpol = dsl.Float()
-    c_refrec = dsl.Float()
+    c_refpar = dsl.String()
+    c_refpol = dsl.String()
+    c_refrec = dsl.String()
     dn_oid = dsl.Long()
 
     def save(self, ** kwargs):
@@ -307,17 +321,6 @@ class SIGPACRecord(dsl.DocType):
 
     class Meta:
         index = 'sigpac'
-
-
-initted = False
-while not initted:
-    try:
-        SIGPACRecord.init()
-        initted = True
-    except Exception as e:
-        conf.error_handler.error(__name__, "build_record", str(e))
-        conf.error_handler.flush()
-        time.sleep(1800)
 
 
 def convert_to_latlong(coords):
@@ -375,9 +378,9 @@ def build_record(row):
     record.cap_auto = int(row.CAP_AUTO)
     record.cap_manual = int(row.CAP_MANU)
     record.coef_regadio = float(row.COEF_REGA0)
-    record.c_refpar = long(row.C_REFPAR)
-    record.c_refpol = long(row.C_REFPOL)
-    record.c_refrec = long(row.C_REFREC)
+    record.c_refpar = str(row.C_REFPAR)
+    record.c_refpol = str(row.C_REFPOL)
+    record.c_refrec = str(row.C_REFREC)
     record.dn_oid = long(row.DN_OID)
 
     return record
@@ -400,6 +403,13 @@ def save2elasticsearch(zip_codes,
                        encoding=None,
                        data_dir='../data',
                        tmp_dir='./tmp'):
+    try:
+        SIGPACRecord.init()
+    except Exception as e:
+        conf.error_handler.error(__name__, "build_record", str(e))
+        conf.error_handler.flush()
+        raise
+
     # download if necessary
     dataframe = get_dataframe(zip_codes=zip_codes,
                               url=url,

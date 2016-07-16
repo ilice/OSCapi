@@ -178,18 +178,6 @@ class InfoRiegoRecord(dsl.DocType):
     class Meta:
         index = 'inforiego'
 
-
-initted = False
-while not initted:
-    try:
-        InfoRiegoRecord.init()
-        initted = True
-    except Exception as e:
-        conf.error_handler.error(__name__, "build_record", str(e))
-        conf.error_handler.flush()
-        time.sleep(1800)
-
-
 def build_record(row):
     record = InfoRiegoRecord(meta={'id': row.code + ' - ' + str(row.date)},
                              code=row.code,
@@ -227,6 +215,13 @@ def save2elasticsearch(years,
                        encoding=None,
                        data_dir='../data',
                        tmp_dir='./tmp'):
+    try:
+        InfoRiegoRecord.init()
+    except Exception as e:
+        conf.error_handler.error(__name__, "build_record", str(e))
+        conf.error_handler.flush()
+        raise
+
     # download if necessary
     dataframe = get_dataframe(years=years,
                               url=url,
