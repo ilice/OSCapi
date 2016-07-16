@@ -24,8 +24,16 @@ logging.basicConfig(format=FORMAT)
 
 # Directories
 data_dir = config.get('importer', 'data_dir')
+if not os.path.exists(data_dir):
+    os.makedirs(data_dir)
+
 tmp_dir = config.get('importer', 'tmp_dir')
+if not os.path.exists(tmp_dir):
+    os.makedirs(tmp_dir)
+
 error_dir = config.get('importer', 'errors_dir')
+if not os.path.exists(error_dir):
+    os.makedirs(error_dir)
 
 #web
 url = config.get('web', 'url')
