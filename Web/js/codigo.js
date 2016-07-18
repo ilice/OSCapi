@@ -280,6 +280,7 @@ function cargaDatos() {
 	google.charts.load('current', {
 		'packages' : ['table', 'bar', 'corechart', 'geochart']
 	});
+	document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 
 	google.charts.setOnLoadCallback(cargaUltimoValorHumedadSuelo);
 	google.charts.setOnLoadCallback(cargaUltimoValorTemperatura);
@@ -309,27 +310,6 @@ function cargaDatos() {
 
 }
 
-function drawRegionsMap() {
-
-	var data = google.visualization.arrayToDataTable([
-				['latitude', 'longitude', 'temperatura'],
-				[40.440005, -5.737003, 25]
-			]);
-
-	var options = {
-		region : 'ES',
-		displayMode : 'markers',
-		colorAxis : {
-			colors : ['blue']
-		},
-		resolution : 'provinces'
-	};
-
-	var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-
-	chart.draw(data, options);
-}
-
 function obtenEstacion() {
 
 	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud=" + document.getElementById("latitud").innerHTML + "&longitud=" + document.getElementById("longitud").innerHTML;
@@ -349,12 +329,6 @@ function obtenEstacion() {
 
 	});
 }
-
-//Code Starts
-
-
-//Code Ends
-
 
 function obtenDatosCatastro() {
 
@@ -1144,14 +1118,4 @@ function trataRespuestaAcumuladoRadiacionDiaria(respuesta) {
 	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = datos.getValue(0, 0).toFixed(2);
 }
 
-// Script to open and close sidenav
-function w3_open() {
-	document.getElementById("mySidenav").style.display = "block";
-	document.getElementById("myOverlay").style.display = "block";
-	google.charts.setOnLoadCallback(drawRegionsMap);
-}
 
-function w3_close() {
-	document.getElementById("mySidenav").style.display = "none";
-	document.getElementById("myOverlay").style.display = "none";
-}

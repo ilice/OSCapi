@@ -257,6 +257,7 @@ function cargaDatos() {
 	google.charts.load('current', {
 		'packages' : ['table', 'bar', 'corechart', 'geochart']
 	});
+	document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 
 	google.charts.setOnLoadCallback(cargaUltimoValorHumedadSuelo);
 	google.charts.setOnLoadCallback(cargaUltimoValorTemperatura);
@@ -284,27 +285,6 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
 	google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
 
-}
-
-function drawRegionsMap() {
-
-	var data = google.visualization.arrayToDataTable([
-				['latitude', 'longitude', 'temperatura'],
-				[41.080364, -4.588973, 25]
-			]);
-
-	var options = {
-		region : 'ES',
-		displayMode : 'markers',
-		colorAxis : {
-			colors : ['blue']
-		},
-		resolution : 'provinces'
-	};
-
-	var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-
-	chart.draw(data, options);
 }
 
 function obtenEstacion() {
@@ -1119,16 +1099,4 @@ function trataRespuestaAcumuladoRadiacionDiaria(respuesta) {
 	var datos = respuesta.getDataTable();
 
 	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = datos.getValue(0, 0).toFixed(2);
-}
-
-// Script to open and close sidenav
-function w3_open() {
-	document.getElementById("mySidenav").style.display = "block";
-	document.getElementById("myOverlay").style.display = "block";
-	google.charts.setOnLoadCallback(drawRegionsMap);
-}
-
-function w3_close() {
-	document.getElementById("mySidenav").style.display = "none";
-	document.getElementById("myOverlay").style.display = "none";
 }
