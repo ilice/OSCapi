@@ -5,6 +5,7 @@ import web
 import osc.importer.sigpac as sigpac
 import osc.config as cfg
 import os
+import re
 import seaborn as sbs
 
 
@@ -16,6 +17,7 @@ app = web.application(urls, globals())
 
 last_dataframe = None
 
+
 class hello:
     def GET(self, name):
         if not name:
@@ -24,6 +26,31 @@ class hello:
 
 
 class science:
+    digits_regexp = "^([0-9])*$"
+
+    @staticmethod
+    def check_regexp(text, regexp, size=None):
+        ok = True
+
+        if ok and size is not None:
+            ok = (len(text) == size)
+
+        if ok:
+            pattern = re.compile(regexp)
+            ok = pattern.match(text)
+
+        return ok
+
+    @staticmethod
+    def error(message):
+        return '<!DOCTYPE html>' \
+               '<html>' \
+               '<body>' \
+               '<h1> ERROR </h1>' \
+               '<p> ' + message + ' </p>' \
+               '</body>' \
+               '</html>'
+
     def GET(self, name):
         global last_dataframe
 
@@ -32,38 +59,56 @@ class science:
 
         if name == 'maps':
             parameters = web.input()
-            zipcode = parameters['zipcode']
+            provincia = parameters['prov'] if 'prov' in parameters else None
+            municipio = parameters['mun'] if 'mun' in parameters else None
             uso_sigpac = parameters['uso'] if 'uso' in parameters else None
 
-            if last_dataframe is None or last_dataframe[0] != zipcode:
-                df = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with=zipcode),
+            if provincia is None:
+                return self.error("Es necesario introducir un codigo de provincia")
+            elif not self.check_regexp(provincia, self.digits_regexp, 2):
+                return self.error("La provincia introducida es incorrecta: " + provincia)
+
+            if municipio is not None and not self.check_regexp(municipio, self.digits_regexp, 3):
+                return self.error("El municipio introducido es incorrecto: " + municipio)
+
+            if last_dataframe is None or last_dataframe[0] != provincia:
+                df = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with=provincia),
                                           data_dir=cfg.data_dir,
                                           tmp_dir=cfg.tmp_dir,
                                           force_download=False,
                                           with_bbox_center=True)
-                last_dataframe = (zipcode, df)
+                last_dataframe = (provincia, df)
 
-            image = None
-            img_name = None
-
+            img_name = 'map_' + provincia
+            if municipio is not None:
+                img_name += municipio
             if uso_sigpac is not None:
+                img_name += '_' + uso_sigpac
+
+            if not os.path.exists(os.path.join(cfg.error_dir, img_name + '.png')):
                 df = last_dataframe[1]
-                df = df[df['USO_SIGPAC'] == uso_sigpac]
+                df = df[df['PROVINCIA'] == int(provincia)]
+                if municipio is not None:
+                    df = df[df['MUNICIPIO'] == int(municipio)]
+                if uso_sigpac is not None:
+                    df = df[df['USO_SIGPAC'] == uso_sigpac]
 
-                img_name = 'map_' + uso_sigpac + '_' + zipcode
+                if uso_sigpac is not None:
+                    df = df[df['USO_SIGPAC'] == uso_sigpac]
 
-                image = sbs.lmplot(x='x_bbox_center', y='y_bbox_center', fit_reg=False, data=df)
-            else:
-                img_name = 'map_' + zipcode
+                image = sbs.lmplot(x='x_bbox_center', y='y_bbox_center', hue='USO_SIGPAC', fit_reg=False, data=df)
+                image.savefig(os.path.join(cfg.error_dir, img_name))
 
-                image = sbs.lmplot(x='x_bbox_center', y='y_bbox_center', hue='USO_SIGPAC', fit_reg=False, data=last_dataframe[1])
-
-            image.savefig(os.path.join(cfg.error_dir, img_name))
+            msg = 'Aqui esta la imagen de la provincia ' + provincia
+            if municipio is not None:
+                msg += ', municipio ' + municipio
+            if uso_sigpac is not None:
+                msg += ', uso sigpac ' + uso_sigpac
 
             return '<!DOCTYPE html>' \
                    '<html>' \
                    '<body>' \
-                   '<h1> Aqui tienes la imagen de los codigos postales que empiezan por ' + zipcode + ' </h1>' \
+                   '<h1> ' + msg + ' </h1>' \
                    '<p><img src="' + cfg.url + '/static/' + img_name + '.png"></p>' \
                    '</body>' \
                    '</html>'
