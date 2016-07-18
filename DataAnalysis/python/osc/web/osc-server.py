@@ -7,6 +7,7 @@ import osc.config as cfg
 import os
 import re
 import seaborn as sbs
+import threading
 
 
 urls = (
@@ -15,10 +16,11 @@ urls = (
 )
 app = web.application(urls, globals())
 
-last_dataframe = None
-
 
 class hello:
+    def __init__(self):
+        pass
+
     def GET(self, name):
         if not name:
             name = 'World'
@@ -27,6 +29,9 @@ class hello:
 
 class science:
     digits_regexp = "^([0-9])*$"
+
+    lock = threading.Lock()
+    last_dataframe = None
 
     @staticmethod
     def check_regexp(text, regexp, size=None):
@@ -51,8 +56,23 @@ class science:
                '</body>' \
                '</html>'
 
+    def get_dataframe(self, provincia):
+        science.lock.acquire()
+        try:
+            if science.last_dataframe is None or science.last_dataframe[0] != provincia:
+                df = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with=provincia),
+                                          data_dir=cfg.data_dir,
+                                          tmp_dir=cfg.tmp_dir,
+                                          force_download=False,
+                                          with_bbox_center=True)
+                science.last_dataframe = (provincia, df)
+
+            return science.last_dataframe[1]
+        finally:
+            science.lock.release()
+
     def GET(self, name):
-        global last_dataframe
+        science.check_class = 'checked'
 
         if not name:
             return "You should provide service name"
@@ -71,13 +91,7 @@ class science:
             if municipio is not None and not self.check_regexp(municipio, self.digits_regexp, 3):
                 return self.error("El municipio introducido es incorrecto: " + municipio)
 
-            if last_dataframe is None or last_dataframe[0] != provincia:
-                df = sigpac.get_dataframe(sigpac.all_zipcodes(starting_with=provincia),
-                                          data_dir=cfg.data_dir,
-                                          tmp_dir=cfg.tmp_dir,
-                                          force_download=False,
-                                          with_bbox_center=True)
-                last_dataframe = (provincia, df)
+            df = self.get_dataframe(provincia)
 
             img_name = 'map_' + provincia
             if municipio is not None:
@@ -86,7 +100,6 @@ class science:
                 img_name += '_' + uso_sigpac
 
             if not os.path.exists(os.path.join(cfg.error_dir, img_name + '.png')):
-                df = last_dataframe[1]
                 df = df[df['PROVINCIA'] == int(provincia)]
                 if municipio is not None:
                     df = df[df['MUNICIPIO'] == int(municipio)]
