@@ -71,8 +71,14 @@ function drawRegionsMap() {
 // Script to open and close sidenav
 function w3_open() {
 
+	if(document.getElementById("mySidenav").innerHTML == ""){
+		cargaBarraLateral();
+	}
 	document.getElementById("mySidenav").style.display = "block";
 	document.getElementById("myOverlay").style.display = "block";
+	if(document.getElementById("latitud")){
+	
+	
 	if (document.getElementById("isGoogleChartsCorechartLoaded").innerHTML == "false") {
 		google.charts.load('current', {
 			'packages' : ['corechart']
@@ -80,6 +86,8 @@ function w3_open() {
 		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 	}
 	google.charts.setOnLoadCallback(drawRegionsMap);
+	}
+	
 }
 
 function w3_close() {
