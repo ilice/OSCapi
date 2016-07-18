@@ -250,6 +250,7 @@ function actualiza() {
 
 function cargaDatos() {
 
+	cargaBarraLateral();
 	obtenDatosCatastro();
 	obtenEstacion();
 	actualiza();

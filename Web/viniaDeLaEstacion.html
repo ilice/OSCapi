@@ -45,48 +45,7 @@
 		<script src="js\codigoBarraLateral.js"></script>
 		<!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
 		<div id="isGoogleChartsCorechartLoaded" style="display:none">false</div>
-		<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left" style="z-index:3;width:300px;display:none">
-			<div class="w3-container  ">
-				<div class="w3-row w3-right">
-					<div class="w3-col w3-right">
-						<a href="index.html" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-home"></i></a>
-						<a href="mapaDeParcelas.html" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-globe"></i></a>
-						<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge" onclick="w3_close()"><i class="fa fa-remove"></i></a>
-					</div>
-				</div>
-			</div>
-			<hr/>
-
-			<div class="w3-container w3-row w3-padding-16">
-				<div class="w3-col s4">
-					<img src="img/avatar_vinia.PNG" class="w3-circle w3-margin-right" style="width:46px" alt="Avatar Viña de la Estación"/>
-				</div>
-				<div class="w3-col s8">
-					<span>Bienvenidos a <strong>La Viña de la Estación</strong></span><br/>
-					<a href="#" class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i class="fa fa-envelope"></i></a>
-					<a href="#" class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i class="fa fa-user"></i></a>
-					<a href="#" class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i class="fa fa-cog"></i></a>
-				</div>
-			</div>
-			<hr/>
-
-			<div class="w3-container" id="panelNavegacion">
-				<h5>Panel de navegación</h5>
-			</div>
-
-			<a href="#" class="w3-padding w3-blue" onclick="w3_close();"><i class="fa fa fa-television fa-fw"></i>  General</a>
-			<a href="#catastro" class="w3-padding" onclick="document.getElementById('catastro').style.display='block';w3_close();"><i class="fa fa-institution fa-fw"></i>  Catastro</a>
-			<a href="#tarjetaMapa" class="w3-padding" onclick="document.getElementById('tarjetaMapa').style.display='block';w3_close();"><i class="fa fa-map fa-fw"></i>  Mapa</a>
-			<a href="#cacharrito" class="w3-padding" onclick="document.getElementById('cacharrito').style.display='block';w3_close();"><i class="fa fa-map-pin"></i>  Sensores en la parcela</a>
-			<a href="#precipitacion" class="w3-padding" onclick="document.getElementById('precipitacion').style.display='block';w3_close();"><i class="fa fa-tint fa-fw"></i>  Precipitaciones</a>
-			<a href="#temperatura" class="w3-padding" onclick="document.getElementById('temperatura').style.display='block';w3_close();"><i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a>
-			<a href="#sol" class="w3-padding" onclick="document.getElementById('sol').style.display='block';w3_close();"><i class="fa fa-certificate fa-fw"></i>  Sol</a>
-			<a href="#radiacion" class="w3-padding" onclick="document.getElementById('radiacion').style.display='block';w3_close();"><i class="fa fa-rss fa-fw"></i>  Radiacion</a>
-			<a href="#informacion" class="w3-padding" onclick="document.getElementById('informacion').style.display='block';w3_close();"><i class="fa fa-info fa-fw"></i>  Información</a>
-
-			<div  id="regions_div"  style="width: 100%; height: auto;" ></div>
-
-		</nav>
+		<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left" style="z-index:3;width:300px;display:none">	</nav>
 
 
 
@@ -98,7 +57,7 @@
 
 			<!-- Header -->
 			<header class="w3-container" style="padding-top:65px">
-				<h5><i class="fa fa-dashboard"></i> La Viña de la Estación </h5>
+				<h5><i class="fa fa-dashboard"></i> <span id="pagina">La Viña de la Estación</span> </h5>
 				<div class="w3-right"><span id="direccion"/></div>
 			</header>	
 
