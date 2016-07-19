@@ -11,11 +11,8 @@ $input = file_get_contents('php://input');
 
 // retrieve the index and type from the path
 $index = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-error_log("index:$index");
-$requeststring = json_encode($request);
-error_log("request:$requeststring");
 $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-error_log("type:$type",0);
+
 
 $data = json_encode($_POST);
 
