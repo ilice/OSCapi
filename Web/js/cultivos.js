@@ -47,6 +47,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	};
 
+	var url = "../php/api_rest.php/osc";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
