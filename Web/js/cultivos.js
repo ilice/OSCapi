@@ -47,7 +47,6 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	};
 
-	var url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/_search";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
