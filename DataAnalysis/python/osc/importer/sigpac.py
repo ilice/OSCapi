@@ -230,6 +230,7 @@ def compute_bb_center(row, axis=None):
         return bbox[1] + (bbox[3]-bbox[1]) / 2
     return bbox[0] + (bbox[2]-bbox[0]) / 2, bbox[1] + (bbox[3]-bbox[1]) / 2
 
+
 def get_dataframe(zip_codes,
                   usecols=None,
                   url='ftp.itacyl.es',
@@ -370,6 +371,7 @@ def build_record(row):
     record.perimetro = long(row.PERIMETRO)
     record.superficie = long(row.SUPERFICIE)
     record.pend_med = int(row.PEND_MED)
+
     record.bbox, record.points = create_geojson_feature(bbox_str=row.bbox, points_str=row.points)
 
     record.uso_sigpac = row.USO_SIGPAC
@@ -400,7 +402,6 @@ def save2elasticsearch(zip_codes,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False,
-                       encoding=None,
                        data_dir='../data',
                        tmp_dir='./tmp'):
     try:
@@ -415,7 +416,7 @@ def save2elasticsearch(zip_codes,
                               url=url,
                               root_dir=root_dir,
                               force_download=force_download,
-                              encoding=encoding,
+                              with_bbox_center=False,
                               data_dir=data_dir,
                               tmp_dir=tmp_dir)
     codigos = read_codigos(data_dir)
