@@ -430,4 +430,4 @@ def save2elasticsearch(zip_codes,
         except Exception as e:
             conf.error_handler.error(__name__,
                                      'save2elasticsearch',
-                                     str(type(e)) + str(record.dn_pk) + ' ' + str(record))
+                                     str(type(e)) + str(record.dn_pk) + ' ' + str(record.to_dict()))
