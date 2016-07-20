@@ -291,7 +291,7 @@ def all_zipcodes(url='ftp.itacyl.es',
 
 # Elastic Search
 class SIGPACRecord(dsl.DocType):
-    dn_pk = dsl.Long()
+    dn_pk = dsl.String()
 
     provincia = dsl.Integer()
     municipio = dsl.Integer()
@@ -359,7 +359,7 @@ def build_record(row):
                                       ' - ' + str(row.RECINTO) +
                                       ' - ' + str(row.ZONA)})
 
-    record.dn_pk = long(row.DN_PK)
+    record.dn_pk = str(row.DN_PK)
 
     record.provincia = int(row.PROVINCIA)
     record.municipio = int(row.MUNICIPIO)
@@ -430,4 +430,4 @@ def save2elasticsearch(zip_codes,
         except Exception as e:
             conf.error_handler.error(__name__,
                                      'save2elasticsearch',
-                                     record.dn_pk + ' ' + str(record))
+                                     str(record.dn_pk) + ' ' + str(record))
