@@ -9,7 +9,7 @@ class ErrorHandler:
     errors_dir = None
     url = None
 
-    error_buffer = {'error': [], 'warning': []}
+    error_buffer = {'error': [], 'warning': [], 'info': []}
     flush_bucket = None
 
     def __init__(self, token, flush_bucket, errors_dir, url):
