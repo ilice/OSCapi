@@ -30,6 +30,15 @@ class ErrorHandler:
             f.write('\t MESSAGE: \t' + message + '\n')
             f.write(' +++++++++++++++++++++++++++++++++++\n')
 
+    def info(self, module_name, function_name, message):
+        with open(self.error_file, 'a') as f:
+            f.write('\n +++++++++++++  INFO  +++++++++++\n')
+            f.write('\t DATE: \t' + str(datetime.datetime.now()) + '\n')
+            f.write('\t MODULE_NAME: \t' + module_name + '\n')
+            f.write('\t FUNCTION_NAME: \t' + function_name + '\n')
+            f.write('\t MESSAGE: \t' + message + '\n')
+            f.write(' +++++++++++++++++++++++++++++++++++\n')
+
     def flush(self):
         pass
 

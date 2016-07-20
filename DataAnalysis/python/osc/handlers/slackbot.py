@@ -44,20 +44,33 @@ class ErrorHandler:
                 f.write('\t MESSAGE: \t' + error['message'] + '\n')
                 f.write(' +++++++++++++++++++++++++++++++++++' + '\n')
 
-                f.write('\n\n\n\n')
-                f.write('================================================\n')
-                f.write('===============  WARNINGS ======================\n')
-                f.write('================================================\n')
+            f.write('\n\n\n\n')
+            f.write('================================================\n')
+            f.write('===============  WARNINGS ======================\n')
+            f.write('================================================\n')
 
-                for warning in self.error_buffer['warning']:
-                    f.write('\n +++++++++++++++++++++++++++++++++++' + '\n')
-                    f.write('\t DATE: \t' + str(warning['date']) + '\n')
-                    f.write('\t MODULE_NAME: \t' + warning['module_name'] + '\n')
-                    f.write('\t FUNCTION_NAME: \t' + warning['function_name'] + '\n')
-                    f.write('\t MESSAGE: \t' + warning['message'] + '\n')
-                    f.write(' +++++++++++++++++++++++++++++++++++' + '\n')
+            for warning in self.error_buffer['warning']:
+                f.write('\n +++++++++++++++++++++++++++++++++++' + '\n')
+                f.write('\t DATE: \t' + str(warning['date']) + '\n')
+                f.write('\t MODULE_NAME: \t' + warning['module_name'] + '\n')
+                f.write('\t FUNCTION_NAME: \t' + warning['function_name'] + '\n')
+                f.write('\t MESSAGE: \t' + warning['message'] + '\n')
+                f.write(' +++++++++++++++++++++++++++++++++++' + '\n')
 
-        self.slack.chat.post_message('#errors', 'Errors detected', attachments=[
+        f.write('\n\n\n\n')
+        f.write('================================================\n')
+        f.write('===============   INFOS   ======================\n')
+        f.write('================================================\n')
+
+        for info in self.error_buffer['info']:
+            f.write('\n +++++++++++++++++++++++++++++++++++' + '\n')
+            f.write('\t DATE: \t' + str(info['date']) + '\n')
+            f.write('\t MODULE_NAME: \t' + info['module_name'] + '\n')
+            f.write('\t FUNCTION_NAME: \t' + info['function_name'] + '\n')
+            f.write('\t MESSAGE: \t' + info['message'] + '\n')
+            f.write(' +++++++++++++++++++++++++++++++++++' + '\n')
+
+        self.slack.chat.post_message('#errors', 'Messages detected', attachments=[
             {
                 "title": "Download the errors list",
                 "title_link": self.url + '/static/' + error_file_name,
@@ -68,6 +81,7 @@ class ErrorHandler:
 
         self.error_buffer['error'] = []
         self.error_buffer['warning'] = []
+        self.error_buffer['info'] = []
 
     def error(self, module_name, function_name, message):
         self.error_buffer['error'].append({'date': datetime.datetime.now(),
@@ -82,6 +96,14 @@ class ErrorHandler:
                                              'module_name': module_name,
                                              'function_name': function_name,
                                              'message': message})
+
+        self.try_flush()
+
+    def info(self, module_name, function_name, message):
+        self.error_buffer['info'].append({'date': datetime.datetime.now(),
+                                          'module_name': module_name,
+                                          'function_name': function_name,
+                                          'message': message})
 
         self.try_flush()
 
