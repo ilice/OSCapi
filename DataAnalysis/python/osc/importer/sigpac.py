@@ -342,6 +342,13 @@ def create_geojson_feature(bbox_str, points_str):
 
     outer_points = [convert_to_latlong(x) for x in points_list]
 
+    orig = outer_points[0]
+    dest = outer_points[-1]
+
+    # close the circle
+    if orig[0] != dest[0] or orig[1] != dest[1]:
+        outer_points.append(orig)
+
     points = [outer_points]
 
     return ({'type': 'envelope',
