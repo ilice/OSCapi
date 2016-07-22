@@ -75,4 +75,4 @@ atexit.register(flush_handlers)
 connections.create_connection('default', hosts=[
     {'host': config.get('elasticsearch', 'host'),
      'port': config.get('elasticsearch', 'port')}],
-                              timeout=20)
+                              timeout=120)

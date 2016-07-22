@@ -13,9 +13,13 @@ import utm
 import re
 
 import pandas as pd
+import numpy as np
 import shapefile
 
 import elasticsearch_dsl as dsl
+from elasticsearch_dsl.connections import connections
+
+import elasticsearch as es
 
 from osc import util
 
@@ -291,8 +295,6 @@ def all_zipcodes(url='ftp.itacyl.es',
 
 # Elastic Search
 class SIGPACRecord(dsl.DocType):
-    dn_pk = dsl.String()
-
     provincia = dsl.Integer()
     municipio = dsl.Integer()
     poligono = dsl.Integer()
@@ -340,14 +342,17 @@ def create_geojson_feature(bbox_str, points_str):
 
     points_list = ast.literal_eval(points_str)
 
-    outer_points = [convert_to_latlong(x) for x in points_list]
+    points_with_duplicates = [convert_to_latlong(x) for x in points_list]
 
-    orig = outer_points[0]
-    dest = outer_points[-1]
+    points_set=set()
+    outer_points=[]
 
-    # close the circle
-    if orig[0] != dest[0] or orig[1] != dest[1]:
-        outer_points.append(orig)
+    for point in points_with_duplicates:
+        if (point[0], point[1]) not in points_set:
+            points_set.add((point[0], point[1]))
+            outer_points.append(point)
+
+    outer_points.append(outer_points[0])
 
     points = [outer_points]
 
@@ -358,26 +363,18 @@ def create_geojson_feature(bbox_str, points_str):
 
 
 def build_record(row):
-    record = SIGPACRecord(meta={'id': str(row.DN_PK) +
-                                      ' - ' + str(row.PROVINCIA) +
-                                      ' - ' + str(row.MUNICIPIO) +
-                                      ' - ' + str(row.POLIGONO) +
-                                      ' - ' + str(row.PARCELA) +
-                                      ' - ' + str(row.RECINTO) +
-                                      ' - ' + str(row.ZONA)})
+    record = SIGPACRecord(meta={'id': str(row.DN_PK)})
 
-    record.dn_pk = str(row.DN_PK)
+    record.provincia = row.PROVINCIA
+    record.municipio = row.MUNICIPIO
+    record.poligono = row.POLIGONO
+    record.parcela = row.PARCELA
+    record.recinto = row.RECINTO
+    record.zona = row.ZONA
 
-    record.provincia = int(row.PROVINCIA)
-    record.municipio = int(row.MUNICIPIO)
-    record.poligono = int(row.POLIGONO)
-    record.parcela = int(row.PARCELA)
-    record.recinto = int(row.RECINTO)
-    record.zona = int(row.ZONA)
-
-    record.perimetro = long(row.PERIMETRO)
-    record.superficie = long(row.SUPERFICIE)
-    record.pend_med = int(row.PEND_MED)
+    record.perimetro = row.PERIMETRO
+    record.superficie = row.SUPERFICIE
+    record.pend_med = row.PEND_MED
 
     record.bbox, record.points = create_geojson_feature(bbox_str=row.bbox, points_str=row.points)
 
@@ -390,7 +387,7 @@ def build_record(row):
     record.c_refpar = str(row.C_REFPAR)
     record.c_refpol = str(row.C_REFPOL)
     record.c_refrec = str(row.C_REFREC)
-    record.dn_oid = long(row.DN_OID)
+    record.dn_oid = row.DN_OID
 
     return record
 
@@ -410,7 +407,8 @@ def save2elasticsearch(zip_codes,
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False,
                        data_dir='../data',
-                       tmp_dir='./tmp'):
+                       tmp_dir='./tmp',
+                       chunk_size=1):
     try:
         SIGPACRecord.init()
     except Exception as e:
@@ -430,11 +428,31 @@ def save2elasticsearch(zip_codes,
 
     dataframe = pd.merge(dataframe, codigos, left_on='USO_SIGPAC', right_on='codigo', how='outer')
 
+    records_to_save = []
     for t in dataframe.itertuples():
-        record = build_record(t)
+        records_to_save.append(build_record(t))
+        if len(records_to_save) >= chunk_size:
+            try:
+                es.helpers.bulk(connections.get_connection(),
+                                ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                                  '_type': r._doc_type.name,
+                                  '_source': r.to_dict()} for r in records_to_save))
+            except Exception as e:
+                for record in records_to_save:
+                    conf.error_handler.error(__name__,
+                                             'save2elasticsearch',
+                                             str(type(e)) + ': ' + str(record.to_dict()))
+            finally:
+                records_to_save = []
+
+    if len(records_to_save) > 0:
         try:
-            record.save()
+            es.helpers.bulk(conf.elastic,
+                            ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                              '_type': r._doc_type.name,
+                              '_source': r.to_dict()} for r in records_to_save))
         except Exception as e:
-            conf.error_handler.error(__name__,
-                                     'save2elasticsearch',
-                                     str(type(e)) + str(record.dn_pk) + ' ' + str(record.to_dict()))
+            for record in records_to_save:
+                conf.error_handler.error(__name__,
+                                         'save2elasticsearch',
+                                         str(type(e)) + ': ' + str(record.to_dict()))
