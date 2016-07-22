@@ -260,6 +260,20 @@ def get_dataframe(zip_codes,
                                           thousands='.',
                                           dayfirst=True,
                                           parse_dates=['FECHA_CAM0'],
+                                          dtype={'DN_PK': np.int64,
+                                                 'CAP_AUTO': np.int64,
+                                                 'CAP_MANU': np.int64,
+                                                 'DN_OID': np.int64,
+                                                 'DN_PK': np.int64,
+                                                 'MUNICIPIO': np.int32,
+                                                 'PARCELA': np.int32,
+                                                 'PEND_MED': np.int32,
+                                                 'PERIMETRO': np.int64,
+                                                 'POLIGONO': np.int32,
+                                                 'PROVINCIA': np.int32,
+                                                 'RECINTO': np.int32,
+                                                 'SUPERFICIE': np.int64,
+                                                 'ZONA': np.int64},
                                           usecols=usecols))
         except Exception as e:
             conf.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
@@ -363,7 +377,7 @@ def create_geojson_feature(bbox_str, points_str):
 
 
 def build_record(row):
-    record = SIGPACRecord(meta={'id': str(row.DN_PK)})
+    record = SIGPACRecord(meta={'id': str(long(row.DN_PK))})
 
     record.provincia = row.PROVINCIA
     record.municipio = row.MUNICIPIO
@@ -435,6 +449,7 @@ def save2elasticsearch(zip_codes,
             try:
                 es.helpers.bulk(connections.get_connection(),
                                 ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                                  '_id': r.meta['id'],
                                   '_type': r._doc_type.name,
                                   '_source': r.to_dict()} for r in records_to_save))
             except Exception as e:
