@@ -309,6 +309,8 @@ def all_zipcodes(url='ftp.itacyl.es',
 
 # Elastic Search
 class SIGPACRecord(dsl.DocType):
+    dn_pk = dsl.Long()
+
     provincia = dsl.Integer()
     municipio = dsl.Integer()
     poligono = dsl.Integer()
@@ -319,8 +321,8 @@ class SIGPACRecord(dsl.DocType):
     perimetro = dsl.Long()
     superficie = dsl.Long()
     pend_med = dsl.Integer()
-    points = dsl.GeoShape(tree='quadtree', precision='1m')
-    bbox = dsl.GeoShape(tree='quadtree', precision='1m')
+    points = dsl.GeoShape()
+    bbox = dsl.GeoShape()
 
     uso_sigpac = dsl.String()
 
@@ -346,7 +348,27 @@ def convert_to_latlong(coords):
     return [lat, lon]
 
 
-def create_geojson_feature(bbox_str, points_str):
+def make_polygon(points):
+    polygon = []
+    origin = None
+
+    aux = []
+    for point in points:
+        aux.append(point)
+        if origin is None:
+            origin = point
+        elif origin[0] == point[0] and origin[1] == point[1]:
+            origin = None
+            polygon.append(aux)
+            aux = []
+
+    if len(aux) != 0:
+        print "invalid polygon: " + points
+
+    return polygon
+
+
+def create_geojson_envelope(bbox_str):
     bbox = []
 
     bbox_list = ast.literal_eval(bbox_str)
@@ -354,56 +376,63 @@ def create_geojson_feature(bbox_str, points_str):
     bbox.append(convert_to_latlong(bbox_list[:2]))
     bbox.append(convert_to_latlong(bbox_list[2:]))
 
+    return {'type': 'envelope',
+            'coordinates': bbox}
+
+
+def create_geojson_polygon(points_str):
     points_list = ast.literal_eval(points_str)
 
-    points_with_duplicates = [convert_to_latlong(x) for x in points_list]
+    points = [convert_to_latlong(x) for x in points_list]
 
-    points_set=set()
-    outer_points=[]
+    polygon = make_polygon(points)
 
-    for point in points_with_duplicates:
-        if (point[0], point[1]) not in points_set:
-            points_set.add((point[0], point[1]))
-            outer_points.append(point)
-
-    outer_points.append(outer_points[0])
-
-    points = [outer_points]
-
-    return ({'type': 'envelope',
-            'coordinates': bbox},
-            {'type': 'polygon',
-             'coordinates': points})
+    return {'type': 'polygon',
+            'coordinates': polygon}
 
 
 def build_record(row):
-    record = SIGPACRecord(meta={'id': str(long(row.DN_PK))})
+    try:
+        record = SIGPACRecord(meta={'id': str(row.PROVINCIA) + '-' +
+                                          str(row.MUNICIPIO) + '-' +
+                                          str(row.AGREGADO) + '-' +
+                                          str(row.POLIGONO) + '-' +
+                                          str(row.PARCELA) + '-' +
+                                          str(row.RECINTO)})
 
-    record.provincia = row.PROVINCIA
-    record.municipio = row.MUNICIPIO
-    record.poligono = row.POLIGONO
-    record.parcela = row.PARCELA
-    record.recinto = row.RECINTO
-    record.zona = row.ZONA
+        record.dn_pk = row.DN_PK
 
-    record.perimetro = row.PERIMETRO
-    record.superficie = row.SUPERFICIE
-    record.pend_med = row.PEND_MED
+        record.provincia = row.PROVINCIA
+        record.municipio = row.MUNICIPIO
+        record.poligono = row.POLIGONO
+        record.parcela = row.PARCELA
+        record.recinto = row.RECINTO
+        record.zona = row.ZONA
 
-    record.bbox, record.points = create_geojson_feature(bbox_str=row.bbox, points_str=row.points)
+        record.perimetro = row.PERIMETRO
+        record.superficie = row.SUPERFICIE
+        record.pend_med = row.PEND_MED
 
-    record.uso_sigpac = row.USO_SIGPAC
+        record.bbox = create_geojson_envelope(row.bbox)
+        record.points = create_geojson_polygon(row.points)
 
-    record.agregado = int(row.AGREGADO)
-    record.cap_auto = int(row.CAP_AUTO)
-    record.cap_manual = int(row.CAP_MANU)
-    record.coef_regadio = float(row.COEF_REGA0)
-    record.c_refpar = str(row.C_REFPAR)
-    record.c_refpol = str(row.C_REFPOL)
-    record.c_refrec = str(row.C_REFREC)
-    record.dn_oid = row.DN_OID
+        record.uso_sigpac = row.USO_SIGPAC
 
-    return record
+        record.agregado = int(row.AGREGADO)
+        record.cap_auto = int(row.CAP_AUTO)
+        record.cap_manual = int(row.CAP_MANU)
+        record.coef_regadio = float(row.COEF_REGA0)
+        record.c_refpar = str(row.C_REFPAR)
+        record.c_refpol = str(row.C_REFPOL)
+        record.c_refrec = str(row.C_REFREC)
+        record.dn_oid = row.DN_OID
+        return record
+    except Exception as e:
+        conf.error_handler.error(__name__,
+                                 'save2elasticsearch',
+                                 str(e) + ': ' + str(row))
+        return None
+
 
 
 def read_codigos(data_dir='../data'):
@@ -442,32 +471,13 @@ def save2elasticsearch(zip_codes,
 
     dataframe = pd.merge(dataframe, codigos, left_on='USO_SIGPAC', right_on='codigo', how='outer')
 
-    records_to_save = []
     for t in dataframe.itertuples():
-        records_to_save.append(build_record(t))
-        if len(records_to_save) >= chunk_size:
-            try:
-                es.helpers.bulk(connections.get_connection(),
-                                ({'_index': getattr(r.meta, 'index', r._doc_type.index),
-                                  '_id': r.meta['id'],
-                                  '_type': r._doc_type.name,
-                                  '_source': r.to_dict()} for r in records_to_save))
-            except Exception as e:
-                for record in records_to_save:
-                    conf.error_handler.error(__name__,
-                                             'save2elasticsearch',
-                                             str(type(e)) + ': ' + str(record.to_dict()))
-            finally:
-                records_to_save = []
+        record = build_record(t)
 
-    if len(records_to_save) > 0:
         try:
-            es.helpers.bulk(conf.elastic,
-                            ({'_index': getattr(r.meta, 'index', r._doc_type.index),
-                              '_type': r._doc_type.name,
-                              '_source': r.to_dict()} for r in records_to_save))
+            if record is not None:
+                record.save()
         except Exception as e:
-            for record in records_to_save:
-                conf.error_handler.error(__name__,
-                                         'save2elasticsearch',
-                                         str(type(e)) + ': ' + str(record.to_dict()))
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     str(type(e)) + ': ' + str(record.to_dict()))

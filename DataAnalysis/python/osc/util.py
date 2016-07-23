@@ -1,6 +1,7 @@
 import os
 import logging
 import zipfile
+import matplotlib.pyplot as plt
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -34,3 +35,16 @@ def unzip_file(zipfile_path,
                 logger.debug("... extracted")
             except:
                 logger.error("Error unzipping file: " + info.filename)
+
+
+def plot_polygon(polygon):
+    plt.xkcd()
+    plt.figure()
+
+    for inner_pol in polygon:
+        x = [point[0] for point in inner_pol]
+        y = [point[1] for point in inner_pol]
+
+        plt.plot(x, y, '-')
+        plt.plot(x, y, '.')
+    plt.show()

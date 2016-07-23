@@ -8,6 +8,7 @@ import os
 import re
 import seaborn as sbs
 import threading
+import matplotlib.pyplot as plt
 
 
 urls = (
@@ -108,6 +109,8 @@ class science:
 
                 if uso_sigpac is not None:
                     df = df[df['USO_SIGPAC'] == uso_sigpac]
+
+                plt.xkcd()
 
                 image = sbs.lmplot(x='x_bbox_center', y='y_bbox_center', hue='USO_SIGPAC', fit_reg=False, data=df)
                 image.savefig(os.path.join(cfg.error_dir, img_name))
