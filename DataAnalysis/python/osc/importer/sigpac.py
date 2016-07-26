@@ -349,23 +349,28 @@ def convert_to_latlong(coords):
 
 
 def make_polygon(points):
-    polygon = []
-    origin = None
-
-    aux = []
+    main = []
+    others = []
+    pos_in_points = 0
     for point in points:
-        aux.append(point)
-        if origin is None:
-            origin = point
-        elif origin[0] == point[0] and origin[1] == point[1]:
-            origin = None
-            polygon.append(aux)
-            aux = []
+        try:
+            point_idx = main.index(point)
+        except ValueError:
+            point_idx = -1
 
-    if len(aux) != 0:
-        print "invalid polygon: " + points
+        main.append(point)
 
-    return polygon
+        if point_idx != -1:
+            # We are just closing the main polygon
+            if point_idx == 0:
+                return [main] + others + make_polygon(points[pos_in_points+1:])
+            else:
+                others.append(main[point_idx:])
+                main = main[:(point_idx+1)]
+
+        pos_in_points += 1
+
+    return [main] + others if len(main) > 0 else []
 
 
 def create_geojson_envelope(bbox_str):
