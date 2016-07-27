@@ -459,7 +459,7 @@ def save2elasticsearch(zip_codes,
                        force_download=False,
                        data_dir='../data',
                        tmp_dir='./tmp',
-                       chunk_size=100):
+                       chunk_size=1000):
     try:
         SIGPACRecord.init()
     except Exception as e:
