@@ -47,4 +47,5 @@ def plot_polygon(polygon):
 
         plt.plot(x, y, '-')
         plt.plot(x, y, '.')
+        plt.plot([x[0]], [y[0]], 'o')
     plt.show()

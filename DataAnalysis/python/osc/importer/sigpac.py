@@ -323,6 +323,7 @@ class SIGPACRecord(dsl.DocType):
     pend_med = dsl.Integer()
     points = dsl.GeoShape()
     bbox = dsl.GeoShape()
+    bbox_center = dsl.GeoPoint(lat_lon=True)
 
     uso_sigpac = dsl.String()
 
@@ -396,14 +397,16 @@ def create_geojson_polygon(points_str):
             'coordinates': polygon}
 
 
+def create_geojson_point(x, y):
+
+    lat, lon = convert_to_latlong([x, y])
+
+    return {'lat': lat, 'lon': lon}
+
+
 def build_record(row):
     try:
-        record = SIGPACRecord(meta={'id': str(row.PROVINCIA) + '-' +
-                                          str(row.MUNICIPIO) + '-' +
-                                          str(row.AGREGADO) + '-' +
-                                          str(row.POLIGONO) + '-' +
-                                          str(row.PARCELA) + '-' +
-                                          str(row.RECINTO)})
+        record = SIGPACRecord()
 
         record.dn_pk = row.DN_PK
 
@@ -420,6 +423,7 @@ def build_record(row):
 
         record.bbox = create_geojson_envelope(row.bbox)
         record.points = create_geojson_polygon(row.points)
+        record.bbox_center = create_geojson_point(row.x_bbox_center, row.y_bbox_center)
 
         record.uso_sigpac = row.USO_SIGPAC
 
@@ -439,7 +443,6 @@ def build_record(row):
         return None
 
 
-
 def read_codigos(data_dir='../data'):
     codigos_path = os.path.join(path(data_dir), 'codigos.csv')
 
@@ -456,7 +459,7 @@ def save2elasticsearch(zip_codes,
                        force_download=False,
                        data_dir='../data',
                        tmp_dir='./tmp',
-                       chunk_size=1):
+                       chunk_size=100):
     try:
         SIGPACRecord.init()
     except Exception as e:
@@ -469,20 +472,41 @@ def save2elasticsearch(zip_codes,
                               url=url,
                               root_dir=root_dir,
                               force_download=force_download,
-                              with_bbox_center=False,
+                              with_bbox_center=True,
                               data_dir=data_dir,
                               tmp_dir=tmp_dir)
     codigos = read_codigos(data_dir)
 
     dataframe = pd.merge(dataframe, codigos, left_on='USO_SIGPAC', right_on='codigo', how='outer')
 
+    records_to_save = []
     for t in dataframe.itertuples():
-        record = build_record(t)
+        rec = build_record(t)
+        if rec is not None:
+            records_to_save.append(rec)
 
+        if len(records_to_save) >= chunk_size:
+            try:
+                es.helpers.bulk(connections.get_connection(),
+                                ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                                  '_type': r._doc_type.name,
+                                  '_source': r.to_dict()} for r in records_to_save))
+            except Exception as e:
+                for record in records_to_save:
+                    conf.error_handler.error(__name__,
+                                             'save2elasticsearch',
+                                             str(type(e)) + ': ' + str(record.to_dict()))
+            finally:
+                records_to_save = []
+
+    if len(records_to_save) > 0:
         try:
-            if record is not None:
-                record.save()
+            es.helpers.bulk(conf.elastic,
+                            ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                              '_type': r._doc_type.name,
+                              '_source': r.to_dict()} for r in records_to_save))
         except Exception as e:
-            conf.error_handler.error(__name__,
-                                     'save2elasticsearch',
-                                     str(type(e)) + ': ' + str(record.to_dict()))
+            for record in records_to_save:
+                conf.error_handler.error(__name__,
+                                         'save2elasticsearch',
+                                         str(type(e)) + ': ' + str(record.to_dict()))
