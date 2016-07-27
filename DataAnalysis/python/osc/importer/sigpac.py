@@ -406,7 +406,12 @@ def create_geojson_point(x, y):
 
 def build_record(row):
     try:
-        record = SIGPACRecord()
+        record = SIGPACRecord(meta={'id': str(row.PROVINCIA) + '-' +
+                                          str(row.MUNICIPIO) + '-' +
+                                          str(row.AGREGADO) + '-' +
+                                          str(row.POLIGONO) + '-' +
+                                          str(row.PARCELA) + '-' +
+                                          str(row.RECINTO)})
 
         record.dn_pk = row.DN_PK
 
@@ -458,8 +463,9 @@ def save2elasticsearch(zip_codes,
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False,
                        data_dir='../data',
-                       tmp_dir='./tmp',
-                       chunk_size=1000):
+                       tmp_dir='./tmp'):
+    chunk_size = conf.config.getint('elasticsearch', 'chunk_size')
+
     try:
         SIGPACRecord.init()
     except Exception as e:
@@ -489,6 +495,7 @@ def save2elasticsearch(zip_codes,
             try:
                 es.helpers.bulk(connections.get_connection(),
                                 ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                                  '_id': getattr(r.meta, 'id', None),
                                   '_type': r._doc_type.name,
                                   '_source': r.to_dict()} for r in records_to_save))
             except Exception as e:
@@ -503,6 +510,7 @@ def save2elasticsearch(zip_codes,
         try:
             es.helpers.bulk(conf.elastic,
                             ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                              '_id': getattr(r.meta, 'id', None),
                               '_type': r._doc_type.name,
                               '_source': r.to_dict()} for r in records_to_save))
         except Exception as e:

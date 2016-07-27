@@ -14,6 +14,7 @@ config = ConfigParser.ConfigParser(defaults={'data_dir': '../data',
                                              'errors_dir': '../errors',
                                              'token': '',
                                              'port': None,
+                                             'chunk_size': '100',
                                              'flush_bucket': '1000'})
 
 config.read([os.path.expanduser('~/opensmartcountry.ini')])

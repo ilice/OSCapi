@@ -11,7 +11,6 @@ import os
 import elasticsearch_dsl as dsl
 import pandas as pd
 import osc.config as conf
-import time
 
 from osc import util
 
