@@ -54,3 +54,4 @@ weathercrawler/.cache-main
 weathercrawler/.classpath
 weathercrawler/.project
 weathercrawler/data
+*.project

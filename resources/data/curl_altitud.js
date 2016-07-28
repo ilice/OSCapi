@@ -49,7 +49,7 @@
 {"update":{"_id":"25"}}
 {"doc" : {      "altitude" : [ {"min": 0, "max": 1800, "obs":"En latitudes medias (30-60°) se puede cultivar a un menor rango altitudinal."}]}}
 {"update":{"_id":"26"}}
-{"doc" : {      "altitude" : [ {"min": 1300, "obs":"En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien", "source": ["name": "Parsons", "year": 1987]}, {"min": 1300, "obs":"Cerca del Ecuadorl.", "source": ["name": "Santibáñez", "year": 1994]}, {"min": 0, "max: 2200"}]}}
+{"doc" : {      "altitude" : [ {"min": 1300, "obs":"En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien", "source": [{"name": "Parsons", "year": 1987}]}, {"min": 1300, "obs":"Cerca del Ecuadorl.", "source": [{"name": "Santibáñez", "year": 1994}]}, {"min": 0, "max: 2200"}]}}
 {"update":{"_id":"27"}}
 {"doc" : {      "altitude" : [ {"min": 0, "max: 2700"}]}}
 {"update":{"_id":"28"}}
