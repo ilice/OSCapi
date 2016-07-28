@@ -28,7 +28,5 @@ if __name__ == "__main__":
 
             print 'Importing ' + zip_code
 
-            sigpac.save2elasticsearch(zip_codes=sigpac.all_zipcodes(starting_with=zip_code),
-                                      data_dir=data_dir,
-                                      tmp_dir=tmp_dir)
+            sigpac.save2elasticsearch(zip_codes=sigpac.all_zipcodes(starting_with=zip_code))
 

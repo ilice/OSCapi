@@ -13,13 +13,15 @@ import utm
 import re
 
 import pandas as pd
-import numpy as np
+import polyline
 import shapefile
 
 import elasticsearch_dsl as dsl
 from elasticsearch_dsl.connections import connections
 
 import elasticsearch as es
+
+import requests
 
 from osc import util
 
@@ -58,8 +60,7 @@ def download_shapefile(zip_code,
                        root_dir,
                        suffix,
                        working_dir,
-                       force_download=True,
-                       tmp_dir='./tmp'):
+                       force_download=True):
     if not force_download and os.path.exists(working_dir):
         return
 
@@ -85,10 +86,10 @@ def download_shapefile(zip_code,
         # now we have a zip file, which we have to download and decompress
         zipped_shapefile = files[0]
 
-        if not os.path.exists(tmp_dir):
-            os.makedirs(tmp_dir)
+        if not os.path.exists(conf.tmp_dir):
+            os.makedirs(conf.tmp_dir)
 
-        zipped_shapefile_path = os.path.join(tmp_dir, zipped_shapefile)
+        zipped_shapefile_path = os.path.join(conf.tmp_dir, zipped_shapefile)
 
         with open(zipped_shapefile_path, 'wb') as f:
             logger.info("Downloading " + zipped_shapefile)
@@ -112,11 +113,9 @@ def get_shapefile(zip_code,
                   url='ftp.itacyl.es',
                   root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                   suffix='RECFE',
-                  data_dir='../data',
-                  tmp_dir='./tmp',
                   force_download=False):
     print "Getting shapeFile for zipCode: " + str(zip_code)
-    working_dir = path(data_dir, zip_code=zip_code)
+    working_dir = path(conf.data_dir, zip_code=zip_code)
 
     if force_download or not os.path.exists(working_dir):
         download_shapefile(zip_code=zip_code,
@@ -124,8 +123,7 @@ def get_shapefile(zip_code,
                            root_dir=root_dir,
                            suffix=suffix,
                            working_dir=working_dir,
-                           force_download=force_download,
-                           tmp_dir=tmp_dir)
+                           force_download=force_download)
 
     shapefile_name = os.path.join(working_dir, zip_code + '_' + suffix)
 
@@ -144,17 +142,14 @@ def download_shapefiles(zip_codes,
                         url='ftp.itacyl.es',
                         root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                         suffix='RECFE',
-                        data_dir='../data',
-                        tmp_dir='./tmp',
                         force_download=False):
     for zipCode in zip_codes:
-        working_dir = path(data_dir, zip_code=zipCode)
+        working_dir = path(conf.data_dir, zip_code=zipCode)
         download_shapefile(zip_code=zipCode,
                            url=url,
                            root_dir=root_dir,
                            suffix=suffix,
                            working_dir=working_dir,
-                           tmp_dir=tmp_dir,
                            force_download=force_download)
 
 
@@ -162,16 +157,12 @@ def get_shapefiles(zip_codes,
                    url='ftp.itacyl.es',
                    root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                    suffix='RECFE',
-                   data_dir='../data',
-                   tmp_dir='./tmp',
                    force_download=False):
     return filter(lambda x: x is not None,
                   [get_shapefile(zip_code=zc,
                                  url=url,
                                  root_dir=root_dir,
                                  suffix=suffix,
-                                 data_dir=data_dir,
-                                 tmp_dir=tmp_dir,
                                  force_download=force_download) for zc in zip_codes])
 
 
@@ -196,17 +187,13 @@ def write_csv(zip_codes,
               url='ftp.itacyl.es',
               root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
               suffix='RECFE',
-              data_dir='../data',
-              tmp_dir='./tmp',
               force_download=False):
 
-    for zip_code in filter(lambda x: not os.path.exists(csv_file(data_dir, x)), util.as_list(zip_codes)):
+    for zip_code in filter(lambda x: not os.path.exists(csv_file(conf.data_dir, x)), util.as_list(zip_codes)):
         sf = get_shapefile(zip_code=zip_code,
                            url=url,
                            root_dir=root_dir,
                            suffix=suffix,
-                           data_dir=data_dir,
-                           tmp_dir=tmp_dir,
                            force_download=force_download)
 
         if sf is not None:
@@ -215,10 +202,10 @@ def write_csv(zip_codes,
             if df is not None:
                 try:
                     # create directory if it does not exist
-                    if not os.path.exists(csv_path(data_dir=data_dir, zip_code=zip_code)):
-                        os.makedirs(csv_path(data_dir=data_dir, zip_code=zip_code))
+                    if not os.path.exists(csv_path(data_dir=conf.data_dir, zip_code=zip_code)):
+                        os.makedirs(csv_path(data_dir=conf.data_dir, zip_code=zip_code))
 
-                    csv = csv_file(data_dir=data_dir, zip_code=zip_code)
+                    csv = csv_file(data_dir=conf.data_dir, zip_code=zip_code)
 
                     df.to_csv(csv, sep=';')
                 except Exception as e:
@@ -240,40 +227,36 @@ def get_dataframe(zip_codes,
                   url='ftp.itacyl.es',
                   root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                   suffix='RECFE',
-                  data_dir='../data',
-                  tmp_dir='./tmp',
                   force_download=False,
                   with_bbox_center=False):
     write_csv(zip_codes,
               url=url,
               root_dir=root_dir,
               suffix=suffix,
-              data_dir=data_dir,
-              tmp_dir=tmp_dir,
               force_download=force_download)
 
     dataFrames = []
     for zip_code in util.as_list(zip_codes):
         try:
-            dataFrames.append(pd.read_csv(csv_file(data_dir, zip_code),
+            dataFrames.append(pd.read_csv(csv_file(conf.data_dir, zip_code),
                                           sep=';',
                                           thousands='.',
                                           dayfirst=True,
                                           parse_dates=['FECHA_CAM0'],
-                                          dtype={'DN_PK': np.int64,
-                                                 'CAP_AUTO': np.int64,
-                                                 'CAP_MANU': np.int64,
-                                                 'DN_OID': np.int64,
-                                                 'DN_PK': np.int64,
-                                                 'MUNICIPIO': np.int32,
-                                                 'PARCELA': np.int32,
-                                                 'PEND_MED': np.int32,
-                                                 'PERIMETRO': np.int64,
-                                                 'POLIGONO': np.int32,
-                                                 'PROVINCIA': np.int32,
-                                                 'RECINTO': np.int32,
-                                                 'SUPERFICIE': np.int64,
-                                                 'ZONA': np.int64},
+                                          dtype={'DN_PK': long,
+                                                 'CAP_AUTO': long,
+                                                 'CAP_MANU': long,
+                                                 'DN_OID': long,
+                                                 'DN_PK': long,
+                                                 'MUNICIPIO': int,
+                                                 'PARCELA': int,
+                                                 'PEND_MED': int,
+                                                 'PERIMETRO': int,
+                                                 'POLIGONO': int,
+                                                 'PROVINCIA': int,
+                                                 'RECINTO': int,
+                                                 'SUPERFICIE': long,
+                                                 'ZONA': long},
                                           usecols=usecols))
         except Exception as e:
             conf.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
@@ -308,7 +291,7 @@ def all_zipcodes(url='ftp.itacyl.es',
 
 
 # Elastic Search
-class SIGPACRecord(dsl.DocType):
+class sigpac_record(dsl.DocType):
     dn_pk = dsl.Long()
 
     provincia = dsl.Integer()
@@ -336,11 +319,13 @@ class SIGPACRecord(dsl.DocType):
     c_refrec = dsl.String()
     dn_oid = dsl.Long()
 
+    elevation = dsl.Float()
+
     def save(self, ** kwargs):
-        return super(SIGPACRecord, self).save(** kwargs)
+        return super(sigpac_record, self).save(** kwargs)
 
     class Meta:
-        index = 'sigpac'
+        index = 'plots'
 
 
 def convert_to_latlong(coords):
@@ -404,27 +389,27 @@ def create_geojson_point(x, y):
     return {'lat': lat, 'lon': lon}
 
 
+def build_record_id(row):
+    return str(row.PROVINCIA) + '-' + str(row.MUNICIPIO) + '-' + str(row.AGREGADO) + '-' + str(
+        row.POLIGONO) + '-' + str(row.PARCELA) + '-' + str(row.RECINTO)
+
+
 def build_record(row):
     try:
-        record = SIGPACRecord(meta={'id': str(row.PROVINCIA) + '-' +
-                                          str(row.MUNICIPIO) + '-' +
-                                          str(row.AGREGADO) + '-' +
-                                          str(row.POLIGONO) + '-' +
-                                          str(row.PARCELA) + '-' +
-                                          str(row.RECINTO)})
+        record = sigpac_record(meta={'id': build_record_id(row)})
 
-        record.dn_pk = row.DN_PK
+        record.dn_pk = long(row.DN_PK)
 
-        record.provincia = row.PROVINCIA
-        record.municipio = row.MUNICIPIO
-        record.poligono = row.POLIGONO
-        record.parcela = row.PARCELA
-        record.recinto = row.RECINTO
-        record.zona = row.ZONA
+        record.provincia = int(row.PROVINCIA)
+        record.municipio = int(row.MUNICIPIO)
+        record.poligono = int(row.POLIGONO)
+        record.parcela = int(row.PARCELA)
+        record.recinto = int(row.RECINTO)
+        record.zona = int(row.ZONA)
 
-        record.perimetro = row.PERIMETRO
-        record.superficie = row.SUPERFICIE
-        record.pend_med = row.PEND_MED
+        record.perimetro = long(row.PERIMETRO)
+        record.superficie = long(row.SUPERFICIE)
+        record.pend_med = int(row.PEND_MED)
 
         record.bbox = create_geojson_envelope(row.bbox)
         record.points = create_geojson_polygon(row.points)
@@ -439,7 +424,7 @@ def build_record(row):
         record.c_refpar = str(row.C_REFPAR)
         record.c_refpol = str(row.C_REFPOL)
         record.c_refrec = str(row.C_REFREC)
-        record.dn_oid = row.DN_OID
+        record.dn_oid = long(row.DN_OID)
         return record
     except Exception as e:
         conf.error_handler.error(__name__,
@@ -448,8 +433,8 @@ def build_record(row):
         return None
 
 
-def read_codigos(data_dir='../data'):
-    codigos_path = os.path.join(path(data_dir), 'codigos.csv')
+def read_codigos():
+    codigos_path = os.path.join(path(conf.data_dir), 'codigos.csv')
 
     codigos = pd.read_csv(codigos_path,
                             sep=';',
@@ -458,16 +443,44 @@ def read_codigos(data_dir='../data'):
     return codigos
 
 
+def elastic_bulk_update(records):
+    try:
+        es.helpers.bulk(connections.get_connection(),
+                        ({'_op_type': 'update',
+                          '_index': getattr(r.meta, 'index', r._doc_type.index),
+                          '_id': getattr(r.meta, 'id', None),
+                          '_type': r._doc_type.name,
+                          'doc': r.to_dict()} for r in records))
+    except Exception as e:
+        for record in records:
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     str(type(e)) + ': ' + str(record.to_dict()))
+
+
+def elastic_bulk_save(records):
+    try:
+        es.helpers.bulk(connections.get_connection(),
+                        ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                          '_id': getattr(r.meta, 'id', None),
+                          '_type': r._doc_type.name,
+                          '_source': r.to_dict()} for r in records))
+    except Exception as e:
+        for record in records:
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     str(type(e)) + ': ' + str(record.to_dict()))
+
+
+
 def save2elasticsearch(zip_codes,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
-                       force_download=False,
-                       data_dir='../data',
-                       tmp_dir='./tmp'):
+                       force_download=False):
     chunk_size = conf.config.getint('elasticsearch', 'chunk_size')
 
     try:
-        SIGPACRecord.init()
+        sigpac_record.init()
     except Exception as e:
         conf.error_handler.error(__name__, "build_record", str(e))
         conf.error_handler.flush()
@@ -478,12 +491,10 @@ def save2elasticsearch(zip_codes,
                               url=url,
                               root_dir=root_dir,
                               force_download=force_download,
-                              with_bbox_center=True,
-                              data_dir=data_dir,
-                              tmp_dir=tmp_dir)
-    codigos = read_codigos(data_dir)
+                              with_bbox_center=True)
+    codigos = read_codigos()
 
-    dataframe = pd.merge(dataframe, codigos, left_on='USO_SIGPAC', right_on='codigo', how='outer')
+    dataframe = dataframe.merge(codigos, left_on='USO_SIGPAC', right_on='codigo', how='left')
 
     records_to_save = []
     for t in dataframe.itertuples():
@@ -492,29 +503,80 @@ def save2elasticsearch(zip_codes,
             records_to_save.append(rec)
 
         if len(records_to_save) >= chunk_size:
-            try:
-                es.helpers.bulk(connections.get_connection(),
-                                ({'_index': getattr(r.meta, 'index', r._doc_type.index),
-                                  '_id': getattr(r.meta, 'id', None),
-                                  '_type': r._doc_type.name,
-                                  '_source': r.to_dict()} for r in records_to_save))
-            except Exception as e:
-                for record in records_to_save:
-                    conf.error_handler.error(__name__,
-                                             'save2elasticsearch',
-                                             str(type(e)) + ': ' + str(record.to_dict()))
-            finally:
-                records_to_save = []
+            elastic_bulk_save(records_to_save)
+            records_to_save = []
 
     if len(records_to_save) > 0:
-        try:
-            es.helpers.bulk(conf.elastic,
-                            ({'_index': getattr(r.meta, 'index', r._doc_type.index),
-                              '_id': getattr(r.meta, 'id', None),
-                              '_type': r._doc_type.name,
-                              '_source': r.to_dict()} for r in records_to_save))
-        except Exception as e:
-            for record in records_to_save:
-                conf.error_handler.error(__name__,
-                                         'save2elasticsearch',
-                                         str(type(e)) + ': ' + str(record.to_dict()))
+        elastic_bulk_save(records_to_save)
+
+
+def compose_locations_param(points):
+    param = polyline.encode(points)
+
+    return 'enc:'+param
+
+
+def obtain_elevation_from_google(records, centers):
+    api_key = conf.config.get('Google Elevation', 'api_key')
+    url = 'https://maps.googleapis.com/maps/api/elevation/json'
+
+    response = requests.get(url, params={'key': api_key,
+                                         'locations': compose_locations_param(centers)})
+
+    # Process response
+    json_response = response.json()
+    if json_response['status'] == 'OK':
+        for elev in zip(records, json_response['results']):
+            elev[0].elevation = elev[1]['elevation']
+    else:
+        conf.error_handler.error(__name__,
+                                 'obtain_elevation_from_google',
+                                 response['error_message'] if 'error_message' in response else str(response))
+        return None
+
+    return records
+
+
+def add_altitude_info(zip_codes,
+                      url='ftp.itacyl.es',
+                      root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
+                      force_download=False):
+    chunk_size = conf.config.getint('Google Elevation', 'chunk_size')
+
+    try:
+        sigpac_record.init()
+    except Exception as e:
+        conf.error_handler.error(__name__, "build_record", str(e))
+        conf.error_handler.flush()
+        raise
+
+    # download if necessary
+    dataframe = get_dataframe(zip_codes=zip_codes,
+                              url=url,
+                              root_dir=root_dir,
+                              force_download=force_download,
+                              with_bbox_center=True)
+
+    records = []
+    centers = []
+    for t in dataframe.itertuples():
+        record = sigpac_record(meta={'id': build_record_id(t)})
+        x, y = convert_to_latlong([t.x_bbox_center, t.y_bbox_center])
+
+        if record is not None:
+            records.append(record)
+            centers.append((x, y))
+
+        if len(records) >= chunk_size:
+            records = obtain_elevation_from_google(records, centers)
+            if records is not None:
+                elastic_bulk_update(records)
+            records = []
+            centers = []
+
+    if len(records) > 0:
+        records = obtain_elevation_from_google(records, centers)
+        if records is not None:
+            elastic_bulk_update(records)
+
+
