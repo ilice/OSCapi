@@ -27,6 +27,8 @@ from osc import util
 
 import osc.config as conf
 
+import time
+
 logger = logging.Logger(__name__)
 
 
@@ -519,6 +521,7 @@ def compose_locations_param(points):
 def obtain_elevation_from_google(records, centers):
     api_key = conf.config.get('Google Elevation', 'api_key')
     url = 'https://maps.googleapis.com/maps/api/elevation/json'
+    sleep_time_when_over_quota = 3600
 
     response = requests.get(url, params={'key': api_key,
                                          'locations': compose_locations_param(centers)})
@@ -528,6 +531,9 @@ def obtain_elevation_from_google(records, centers):
     if json_response['status'] == 'OK':
         for elev in zip(records, json_response['results']):
             elev[0].elevation = elev[1]['elevation']
+    elif json_response['status'] == 'OVER_QUERY_LIMIT':
+        # Wait for the next trial
+        time.sleep(sleep_time_when_over_quota)
     else:
         conf.error_handler.error(__name__,
                                  'obtain_elevation_from_google',
