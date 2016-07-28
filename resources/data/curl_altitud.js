@@ -49,27 +49,27 @@
 {"update":{"_id":"25"}}
 {"doc" : {      "altitude" : [ {"min": 0, "max": 1800, "obs":"En latitudes medias (30-60°) se puede cultivar a un menor rango altitudinal."}]}}
 {"update":{"_id":"26"}}
-{"doc" : {      "altitude" : [ {"min": 1300, "obs":"En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien", "source": ["name": "Parsons", "year": 1987]}, {"min": 1300, "obs":"Cerca del Ecuadorl.", "source": ["name": "Santibáñez", "year": 1994]}, {"min": 0, "max: 2200"}]}}
+{"doc" : {      "altitude" : [ {"min": 1300, "obs":"En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien", "source": [{"name": "Parsons", "year": 1987}]}, {"min": 1300, "obs":"Cerca del Ecuadorl.", "source": [{"name": "Santibáñez", "year": 1994}]}, {"min": 0, "max": 2200}]}}
 {"update":{"_id":"27"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max: 2700"}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 2700}]}}
 {"update":{"_id":"28"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max: 1800", "source": [{"name":"González", "year": 1984}]}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 1800, "source": [{"name":"González", "year": 1984}]}]}}
 {"update":{"_id":"29"}}
-{"doc" : {      "altitude" : [ {"min": 500, "max: 1500", "source": [{"name":"Ibar", "year": 1983}]}]}}
+{"doc" : {      "altitude" : [ {"min": 500, "max": 1500, "source": [{"name":"Ibar", "year": 1983}]}]}}
 {"update":{"_id":"30"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max: 1800"}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 1800}]}}
 {"update":{"_id":"31"}}
-{"doc" : {      "altitude" : [ {"min": 1900, "max: 1800", "obs": "Si se cultiva en regiones más bajas, se recomienda utilizar cultivares de bajos requerimientos de frío y la aplicación de compensadores de frío y hormonas de crecimiento", "source": [{"name": "Yuste", "year":"1997"}]}, {"min": 2000, "source": [{"name": "Aragón", "year":1995}]}]}}
+{"doc" : {      "altitude" : [ {"min": 1900, "max": 1800, "obs": "Si se cultiva en regiones más bajas, se recomienda utilizar cultivares de bajos requerimientos de frío y la aplicación de compensadores de frío y hormonas de crecimiento", "source": [{"name": "Yuste", "year":1997}]}, {"min": 2000, "source": [{"name": "Aragón", "year":1995}]}]}}
 {"update":{"_id":"32"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max: 150", "obs": "Latitud de 18º", "source": [{"name": "Murray", "year":"1977"}]}, {"min": 0, "max": 1300, "obs": "Sobre el ecuador"}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 150, "obs": "Latitud de 18º", "source": [{"name": "Murray", "year":1977}]}, {"min": 0, "max": 1300, "obs": "Sobre el ecuador"}]}}
 {"update":{"_id":"33"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max: 150", "obs": "Latitud de 18º", "source": [{"name": "Murray", "year":"1977"}]}, {"min": 0, "max": 1300, "obs": "Sobre el ecuador"}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 150, "obs": "Latitud de 18º", "source": [{"name": "Murray", "year":1977}]}, {"min": 0, "max": 1300, "obs": "Sobre el ecuador"}]}}
 {"update":{"_id":"34"}}
-{"doc" : {      "altitude" : [ {"min": 1500, "max: 2000", "obs": "Óptimo", "source": [{"name": "Benacchio", "year":"1982"}]}]}}
+{"doc" : {      "altitude" : [ {"min": 1500, "max": 2000, "obs": "Óptimo", "source": [{"name": "Benacchio", "year":1982}]}]}}
 {"update":{"_id":"34"}}
-{"doc" : {      "altitude" : [ {"min": 600, "max: 2500", "source": [{"name": "Benacchio", "year":"1982"}]}]}}
+{"doc" : {      "altitude" : [ {"min": 600, "max": 2500, "source": [{"name": "Benacchio", "year":1982}]}]}}
 {"update":{"_id":"35"}}
-{"doc" : {      "altitude" : [ {"min": 1000, "max: 1000", "obs":"En ciertas áreas", "source": [{"name": "Benacchio", "year":"1982"}]},{"min": 1600, "max":2700}]}}
+{"doc" : {      "altitude" : [ {"min": 1000, "max": 1000, "obs":"En ciertas áreas", "source": [{"name": "Benacchio", "year":1982}]},{"min": 1600, "max":2700}]}}
 {"update":{"_id":"36"}}
 {"doc" : {      "altitude" : [ {"min": 0,  "obs":"En regiones templadas"},{"min": 1200, "obs":"En regiones tropicales"}]}}
 {"update":{"_id":"37"}}
@@ -81,15 +81,15 @@
 {"update":{"_id":"40"}}
 {"doc" : {      "altitude" : [ {"min": 0, "max": 1800,  "obs":"Desde el nivel del mar (latitudes medias; 30-60°) hasta 1800 m (latitudes bajas; 0-30°)."}]}}
 {"update":{"_id":"42"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max": 1900,  "obs":" A alturas superiores a 1900 m, el girasol desarrolla lentamente y el ciclo se alarga demasiado debido a bajas temperaturas, fuera del rango óptimo", "source": {[{"name": "Ruiz", "year": 1985}]}}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 1900,  "obs":" A alturas superiores a 1900 m, el girasol desarrolla lentamente y el ciclo se alarga demasiado debido a bajas temperaturas, fuera del rango óptimo", "source": [{"name": "Ruiz", "year": 1985}]}]}}
 {"update":{"_id":"44"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max": 500,  "source": {[{"name": "Benacchio", "year": 1982}]}}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 500,  "source": [{"name": "Benacchio", "year": 1982}]}]}}
 {"update":{"_id":"45"}}
-{"doc" : {      "altitude" : [ {"min": 0, "max": 1750, "obs": "La altitud máxima para producción es 1650-1750 m","source": {[{"name": "Ruiz", "year": 1983}]}},{"min": 560, "max": 610, "obs": "Límite económico","source": {[{"name": "Shigeura", "year": 1973}]}},{"min": 0, "max": 1600,  "source": {[{"name": "Benacchio", "year": 1982}]}}]}}
+{"doc" : {      "altitude" : [ {"min": 0, "max": 1750, "obs": "La altitud máxima para producción es 1650-1750 m","source": [{"name": "Ruiz", "year": 1983}]},{"min": 560, "max": 610, "obs": "Límite económico","source": [{"name": "Shigeura", "year": 1973}]},{"min": 0, "max": 1600,  "source": [{"name": "Benacchio", "year": 1982}]}]}}
 {"update":{"_id":"46"}}
-{"doc" : {      "altitude" : [ {"min": 2000, "max": 2650, "obs":"La óptima para mayores rendimientos"  ,"source": {[{"name": "Aragón", "year": 1995},{"name":"Frere y Popov", "year": 1979}]}},{"min": 1850, "max": 3050, "source": {[{"name": "Aragón", "year": 1995}]}},{"min": 0, "max": 2700, "obs":"Desde el nivel del mar (en latitudes medias) hasta 2700 m (en latitudes bajas)"  ,"source": {[{"name": "Aragón", "year": 1995},{"name": "Frere y Popov", "year": 1979}]}},{"min": 1800, "max": 3050, "source": {[{"name": "Frere y Popov", "year": 1979}]}}]}}
+{"doc" : {      "altitude" : [ {"min": 2000, "max": 2650, "obs":"La óptima para mayores rendimientos"  ,"source": [{"name": "Aragón", "year": 1995},{"name":"Frere y Popov", "year": 1979}]},{"min": 1850, "max": 3050, "source": [{"name": "Aragón", "year": 1995}]},{"min": 0, "max": 2700, "obs":"Desde el nivel del mar (en latitudes medias) hasta 2700 m (en latitudes bajas)"  ,"source": [{"name": "Aragón", "year": 1995},{"name": "Frere y Popov", "year": 1979}]},{"min": 1800, "max": 3050, "source": [{"name": "Frere y Popov", "year": 1979}]}]}}
 {"update":{"_id":"47"}}
-{"doc" : {      "altitude" : [ {"min": 30, "max": 1800,"obs", "Los árboles fructifican abundantemente en las laderas de las cordilleras montañosas o en elevaciones de aproximadamente 900 a 1800 m sobre el nivel del mar, en regiones tropicales y subtropicales","source": {[{"name": "Aragón", "year": 1995}]}},{"min": 600, "max": 1800,  "source": {[{"name": "Benacchio", "year": 1982}]}}, {"min": 750, "max": 1000, "obs": "Límite comercial", "source": {[{"name": "Soler", "year": 1980}]}}]}}
+{"doc" : {      "altitude" : [ {"min": 30, "max": 1800,"obs": "Los árboles fructifican abundantemente en las laderas de las cordilleras montañosas o en elevaciones de aproximadamente 900 a 1800 m sobre el nivel del mar, en regiones tropicales y subtropicales","source": [{"name": "Aragón", "year": 1995}]},{"min": 600, "max": 1800,  "source": [{"name": "Benacchio", "year": 1982}]}, {"min": 750, "max": 1000, "obs": "Límite comercial", "source": [{"name": "Soler", "year": 1980}]}]}}
 {"update":{"_id":"48"}}
 {"doc" : {      "altitude" : [ {"min": 0, "max": 1800,  "source": [{"name": "González", "year": 1984}]}]}}
 {"update":{"_id":"49"}}
