@@ -29,6 +29,8 @@ import osc.config as conf
 
 import time
 
+from osc.exceptions import ConnectionError
+
 logger = logging.Logger(__name__)
 
 
@@ -447,7 +449,9 @@ def read_codigos():
 
 def elastic_bulk_update(records):
     try:
-        es.helpers.bulk(connections.get_connection(),
+        connection = connections.get_connection()
+        connection.cluster.health(wait_for_status='yellow', request_timeout=300)
+        es.helpers.bulk(connection,
                         ({'_op_type': 'update',
                           '_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
@@ -462,7 +466,9 @@ def elastic_bulk_update(records):
 
 def elastic_bulk_save(records):
     try:
-        es.helpers.bulk(connections.get_connection(),
+        connection = connections.get_connection()
+        connection.cluster.health(wait_for_status='yellow', request_timeout=300)
+        es.helpers.bulk(connection,
                         ({'_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
                           '_type': r._doc_type.name,
@@ -483,6 +489,7 @@ def save2elasticsearch(zip_codes,
 
     try:
         sigpac_record.init()
+        time.sleep(5)
     except Exception as e:
         conf.error_handler.error(__name__, "build_record", str(e))
         conf.error_handler.flush()
@@ -523,22 +530,25 @@ def obtain_elevation_from_google(records, centers):
     url = 'https://maps.googleapis.com/maps/api/elevation/json'
     sleep_time_when_over_quota = 3600
 
-    response = requests.get(url, params={'key': api_key,
-                                         'locations': compose_locations_param(centers)})
+    while True:
+        response = requests.get(url, params={'key': api_key,
+                                             'locations': compose_locations_param(centers)})
+
+        if response.json()['status'] != 'OVER_QUERY_LIMIT':
+            break
+
+        # Wait for the next trial
+        time.sleep(sleep_time_when_over_quota)
 
     # Process response
     json_response = response.json()
+
     if json_response['status'] == 'OK':
         for elev in zip(records, json_response['results']):
             elev[0].elevation = elev[1]['elevation']
-    elif json_response['status'] == 'OVER_QUERY_LIMIT':
-        # Wait for the next trial
-        time.sleep(sleep_time_when_over_quota)
     else:
-        conf.error_handler.error(__name__,
-                                 'obtain_elevation_from_google',
-                                 response['error_message'] if 'error_message' in response else str(response))
-        return None
+        raise ConnectionError('GOOGLE MAPS',
+                              response['error_message'] if 'error_message' in response else str(response))
 
     return records
 
@@ -551,6 +561,7 @@ def add_altitude_info(zip_codes,
 
     try:
         sigpac_record.init()
+        time.sleep(5)
     except Exception as e:
         conf.error_handler.error(__name__, "build_record", str(e))
         conf.error_handler.flush()
@@ -574,15 +585,22 @@ def add_altitude_info(zip_codes,
             centers.append((x, y))
 
         if len(records) >= chunk_size:
-            records = obtain_elevation_from_google(records, centers)
-            if records is not None:
+            try:
+                records = obtain_elevation_from_google(records, centers)
                 elastic_bulk_update(records)
+            except ConnectionError as e:
+                conf.error_handler.error(__name__,
+                                         'obtain_elevation_from_google',
+                                         e.message)
+
             records = []
             centers = []
 
     if len(records) > 0:
-        records = obtain_elevation_from_google(records, centers)
-        if records is not None:
+        try:
+            records = obtain_elevation_from_google(records, centers)
             elastic_bulk_update(records)
-
-
+        except ConnectionError as e:
+            conf.error_handler.error(__name__,
+                                     'obtain_elevation_from_google',
+                                     e.message)
