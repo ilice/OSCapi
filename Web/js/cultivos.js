@@ -135,18 +135,36 @@ var QueryString = function () {
 	// This function is anonymous, is executed immediately and
 	// the return value is assigned to QueryString!
 	var query_string = {};
+	
+	//El objeto window representa la ventana del navegador abierta
+	//Location contiene la información de la URL de la ventana
+	//Search devuelve desde la ? incluida, hacemos el substring(1) para quitar la ?
 	var query = window.location.search.substring(1);
+	
+	
 	if (query.search("%22") >= 0) {
+		//Buscamos si hay algunas comillas (") ya que en este 
+		//caso buscamos exactamente los términos que nos llegan
+		//y en el orden que nos llegan
+		//https://www.elastic.co/guide/en/elasticsearch/guide/current/phrase-matching.html
 		query_string.queryType = "match_phrase";
 		query_string.boolType = "or";
 	} else if (query.search("%26") >= 0) {
+		//Si hay algún & establecemos que queremos buscar con ese operador
 		query_string.queryType = "match";
 		query_string.boolType = "and";
 	} else {
+		//Y si no hacemos una búsqueda normal en la que aparezcan 
+		//todos los resultados que contengan algunos de los términos de búsqueda
 		query_string.queryType = "match";
 		query_string.boolType = "or";
 	}
+	
 	if (query.length > 0 && query != "search=") {
+		//Si la query tiene algo y no es solo "search=" (esto pasa cuando
+		//limpias el buscador y le das a la lupa, que sigue dejando la palabra search
+		//TODO mejor que cuando no haya cosas que buscar no ponga el "search=" y la query llegue vacía
+		
 		var vars = query.split("&");
 		for (var i = 0; i < vars.length; i++) {
 			var pair = vars[i].split("=");

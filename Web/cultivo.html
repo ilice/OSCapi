@@ -1,485 +1,548 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta charset="UTF-8"/>
-		<title>Open Smart Country - Pera</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1"/>
-		<meta name="keywords" content="Open Smart Country, Agrotech, IoT, Analitycs, Open Data, Pera"/>
-		<meta name="description" content="Información sobre Pera obtenida de Sensores y Open Data"/>
-		<meta name="author" content="Isabel Muñoz @teanocrata"/>
-		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
-		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
-		<link rel="stylesheet" type="text/css" href="css/joyride-2.1.css"/>
-		<link rel="stylesheet" href="css/estilo.css"/>	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-		<script type="text/javascript" src="js/jquery.joyride-2.1.js"></script>   
-		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<head>
+<meta charset="UTF-8" />
+<title>Open Smart Country - </title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords"
+	content="Open Smart Country, Agrotech, IoT, Analitycs, Open Data, Pera" />
+<meta name="description"
+	content="Información sobre Pera obtenida de Sensores y Open Data" />
+<meta name="author" content="Isabel Muñoz @teanocrata" />
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css" />
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Lato" />
+<link rel="stylesheet"
+	href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="css/joyride-2.1.css" />
+<link rel="stylesheet" href="css/estilo.css" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.joyride-2.1.js"></script>
+<script type="text/javascript"
+	src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="js/cultivo.js" type="text/javascript"></script>
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+			'https://www.google-analytics.com/analytics.js', 'ga');
 
+	ga('create', 'UA-74247467-2', 'auto');
+	ga('send', 'pageview');
+</script>
+</head>
+<body onload="cargaDatos()">
 
-		<script>
-		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-		  ga('create', 'UA-74247467-2', 'auto');
-		  ga('send', 'pageview');
-		</script>
-	</head>
-	<body >
-
-		<!-- Navbar (sit on top) -->
-		<div class="w3-top">
-			<div class="w3-navbar w3-container w3-padding-0" id="myNavbar">
-				<img class="w3-padding-large w3-opacity w3-left" src="img/OpenSmartCountry_logo_25x26.png" alt="Open Smart Country logo" />
-				<a id="openNav" href="#" class="w3-padding-large w3-left" onclick="w3_open()">HOME</a>
-				<div class="w3-padding-large w3-right w3-right"><span id="rc"></span></div>
+	<!-- Navbar (sit on top) -->
+	<div class="w3-top">
+		<div class="w3-navbar w3-container w3-padding-0" id="myNavbar">
+			<img class="w3-padding-large w3-opacity w3-left"
+				src="img/OpenSmartCountry_logo_25x26.png"
+				alt="Open Smart Country logo" /> <a id="openNav" href="#"
+				class="w3-padding-large w3-left" onclick="w3_open()">HOME</a>
+			<div class="w3-padding-large w3-right w3-right">
+				<span id="rc"></span>
 			</div>
 		</div>
+	</div>
 
 
 
-		<!-- Sidenav/menu -->
-		<script src="js\codigoBarraLateral.js"></script>
-		<!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
-		<div id="isGoogleChartsCorechartLoaded" style="display:none">false</div>
-		<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left" style="z-index:3;width:300px;display:none"></nav>
+	<!-- Sidenav/menu -->
+	<script src="js\codigoBarraLateral.js"></script>
+	<!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
+	<div id="isGoogleChartsCorechartLoaded" style="display: none">false</div>
+	<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left"
+		style="z-index: 3; width: 300px; display: none"></nav>
 
-		<!-- Overlay effect when opening sidenav on small screens -->
-		<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+	<!-- Overlay effect when opening sidenav on small screens -->
+	<div class="w3-overlay w3-hide-large w3-animate-opacity"
+		onclick="w3_close()" style="cursor: pointer" title="close side menu"
+		id="myOverlay"></div>
 
-		<!-- !PAGE CONTENT! -->
-		<div id="main" class="w3-main">
+	<!-- !PAGE CONTENT! -->
+	<div id="main" class="w3-main">
 
-			<!-- Header -->
-			<header class="w3-container" style="padding-top:65px">
-				<h5><i class="fa fa-dashboard"></i> <span id="pagina">Pera</span> </h5>
-			</header>	
-			<!-- Línea de widgets de colores iniciales -->
-			<div class="w3-row-padding w3-margin-bottom">
-				<a href="#precipitacion">
-					<div class="w3-quarter">
-						<div class="w3-container w3-blue w3-padding-16 w3-margin">
-							<div id="un-widget">
-								<div class="w3-left"><i class="fa fa-tint w3-xxxlarge"></i></div>
-								<div class="w3-right">
-									<p>Se considera una especie sensible a la sequía, por lo que precisa del riego para su cultivo (Yuste, 1997b).</p>
-								</div>
-								<div class="w3-clear"></div>
-								<h4>Precipitación</h4>
-							</div>
+		<!-- Header -->
+		<header class="w3-container" style="padding-top: 65px">
+			<h5>
+				<i class="fa fa-dashboard"></i> <span id="pagina"></span>
+			</h5>
+		</header>
+		<!-- Línea de widgets de colores iniciales -->
+		<div class="w3-row-padding w3-margin-bottom">
+
+			<div class="w3-quarter">
+				<div class="w3-container w3-blue w3-padding-16 w3-margin">
+					<div id="un-widget">
+						<div class="w3-left">
+							<i class="fa fa-tint w3-xxxlarge"></i>
 						</div>
+						<div class="w3-right">
+							<p>
+								<span id="precipitacion"></span>
+							</p>
+						</div>
+						<div class="w3-clear"></div>
+						<h4>Precipitación</h4>
 					</div>
-				</a>
-				<a href="#temperatura">
-					<div class="w3-quarter">
-						<div class="w3-container  w3-red w3-padding-16 w3-margin">
-							<div class="w3-left"><i class="fa fa-eyedropper w3-xxxlarge"></i></div>
-							<div class="w3-right">
-								<ul>
-									<li>450 - 900 Horas de Frío</li>
-									<li>Media óptima en período estival: 20°C - 25°C </li>
-								</div>
-								<div class="w3-clear"></div>
-								<h4>Temperatura</h4>
-							</div>
-						</div>
-					</a>
-					<a href="#sol">
-						<div class="w3-quarter">
-							<div class="w3-container w3-yellow w3-padding-16 w3-margin">
-								<div class="w3-left"><i class="fa fa-sun-o w3-xxxlarge"></i></div>
-								<div class="w3-right">
-									<p>Moderada a alta insolación. Días nublados favorecen la presencia de enfermedades.</p>
-								</div>
-								<div class="w3-clear"></div>
-								<h4>Sol</h4>
-							</div>
-						</div>
-					</a>
-					<a href="#HumedadAmbiental">
-						<div class="w3-quarter">
-							<div class="w3-container w3-green w3-text-white w3-padding-16 w3-margin">
-								<div class="w3-left"><i class="fa fa-rss w3-xxxlarge"></i></div>
-								<div class="w3-right">
-									<p>Requiere condiciones medias de humedad ambiental.</p>
-								</br>
-							</div>
-							<div class="w3-clear"></div>
-							<h4>Humedad ambiental</h4>
-						</div>
-					</div>
-				</a>
+				</div>
 			</div>
-			<!-- FIN Línea de widgets de colores iniciales -->
-
-			<section id="general" class="w3-container w3-section ">
-				<article class="w3-container w3-card-8 w3-row-padding">
-					<span id="botonCerrar" onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-					<h5>Pera</h5>
-					<div class="w3-twothird">
-						<ul class="w3-ul w3-striped w3-white w3-hoverable">
-							<li></i><strong>Nombre</strong> PERA</li>
-							<li></i><strong>Nombre Científico</strong> Pyrus communis L.</li>
-							<li></i><strong>Familia</strong> Rosaceae</li>
-							<li></i><strong>Nombres Comunes</strong> Pera, peral</li>
-						</ul>	
-						<button class="w3-btn w3-margin w3-dark-grey w3-center" href="https://www.google.es/search?q=Pyrus+communis++L.&tbm=isch"><i class="fa fa-search"></i> Buscar otras imágenes en la Web</button>
-					</div>						
-					<div class="w3-third">					
-						<img  src="img/cultivos/73.jpg" alt="Pera" style="width:100%" ></img>
-					</div>
-				</article>
-			</section>
 
 
-			<section id="localizacion" class="w3-container w3-section w3-row-padding">
-				<article class="w3-container w3-card-8">
-					<span id="botonCerrar" onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-					<h5>Origen y distribución</h5>				
-					<div class="w3-twothird">								
-						<div>
-							<div style="background-image: url('img/Mapa_mundi_blanco.PNG');background-size: cover;  height:400px;  width:726px;">
-								<div  style=" width: 100%;  height: 19.45%;  background-color: #ffffff;  opacity: 0.8;"></div>
-								<div  style=" width: 100%;  height: 13.89%;  background-color: #ffffff;  opacity: 0;"></div>
-								<div  style=" width: 100%;  height: 33.33%;  background-color: #ffffff;  opacity: 0.8;"></div>
-								<div  style=" width: 100%;  height: 13.89%;  background-color: #ffffff;  opacity: 0;"></div>
-								<div  style=" width: 100%;  height: 19.45%;  background-color: #ffffff;  opacity: 0.8;"></div>
-							</div>
-						</div>
+			<div class="w3-quarter">
+				<div class="w3-container  w3-red w3-padding-16 w3-margin">
+					<div class="w3-left">
+						<i class="fa fa-eyedropper w3-xxxlarge"></i>
 					</div>
-					<div class="w3-third">
-						<table class="w3-table w3-striped w3-white">
-							<tr>
-								<td><i class="fa fa-map-marker w3-blue w3-padding-tiny"></i></td>
-								<td>Origen</td>
-								<td>Sureste de Europa (Westwood, 1978). Oeste de Asia, alrededor del Mar Caspio (Santibáñez, 1994).</td>
-							</tr>
-							<tr>
-								<td><i class="fa fa-map-o w3-red w3-padding-tiny"></i></td>
-								<td>Distribución</td>
-								<td>30° a 55°LN y LS.</td>
-							</tr>
-							<tr>
-								<td><i class="fa fa-image w3-orange w3-text-white w3-padding-tiny"></i></td>
-								<td>Adaptación</td>
-								<td>Regiones templadas y frías.</td>
-							</tr>
-							<tr>
-								<td><i class="fa fa-arrows-v w3-green w3-text-white w3-padding-tiny"></i></td>
-								<td>Altitud</td>
-								<td>>2000 m en los subtrópicos.</td>
-							</tr>
-						</table>
+					<div class="w3-right">
+						<p>
+							<span id="temperatura"></span>
+						</p>
 					</div>
-				</article>
-			</section>
+					<div class="w3-clear"></div>
+					<h4>Temperatura</h4>
+				</div>
+			</div>
+
+
+			<div class="w3-quarter">
+				<div class="w3-container w3-yellow w3-padding-16 w3-margin">
+					<div class="w3-left">
+						<i class="fa fa-sun-o w3-xxxlarge"></i>
+					</div>
+					<div class="w3-right">
+						<p>
+							<span id="sol"></span>
+						</p>
+					</div>
+					<div class="w3-clear"></div>
+					<h4>Sol</h4>
+				</div>
+			</div>
+
+
+			<div class="w3-quarter">
+				<div
+					class="w3-container w3-green w3-text-white w3-padding-16 w3-margin">
+					<div class="w3-left">
+						<i class="fa fa-rss w3-xxxlarge"></i>
+					</div>
+					<div class="w3-right">
+						<p>
+							<span id="humedad_ambiental"></span>
+						</p>
+					</div>
+					<div class="w3-clear"></div>
+					<h4>Humedad ambiental</h4>
+				</div>
+			</div>
+
 		</div>
+		<!-- FIN Línea de widgets de colores iniciales -->
 
-
-		<section class="w3-container w3-section w3-row-padding ">
-			<span id="botonCerrar" onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-			<article class="w3-container w3-card-8 ">
-				<h5>Periodos</h5>
-				<p>Tipo de planta</p>
-				<div class="w3-progress-container w3-grey">
-					<div id="myBar" class="w3-progressbar w3-green" style="width:100%">
-						<div class="w3-center w3-text-white">Perenne</div>
-					</div>
-				</div>
-
-				<p>Ciclo Vegetativo</p>
-				<div class="w3-progress-container w3-grey">
-					<div id="myBar" class="w3-progressbar w3-orange" style="width:50%">
-						<div class="w3-center w3-text-white">Caducifolio</div>
-					</div>
-				</div>
-
-				<p>Tipo fotosintético</p>
-				<div class="w3-progress-container w3-grey">
-					<div id="myBar" class="w3-progressbar w3-red" style="width:75%">
-						<div class="w3-center w3-text-white">C3</div>
-					</div>
-				</div>
-
-				<p>Fotoperiodo</p>
-				<div class="w3-progress-container w3-grey w3-margin-bottom">
-					<div id="myBar" class="w3-progressbar w3-yellow" style="width:50%">
-						<div class="w3-center w3-text-white">Dia neutro</div>
-					</div>
-				</div>
-			</article>
-		</section>
-
-
-		<!--Una observación-->
-		<div class="w3-container w3-section ">
-			<div class="w3-orange w3-text-dark-grey w3-row-padding">
-				<span onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-				<h3>Observaciones</h3>
-				<p>Huertas localizadas en laderas de montañas o colinas con una pendiente moderada, tienen las mejores condiciones, ya que en las partes bajas de los valles o en terrenos planos se pueden presentar daños por heladas (Teskey y Shoemaker, 1972).</p>
-
-			</div></div>
-		<!--FIN de Una observación-->
-
-		<section id="suelo" class="w3-container w3-section ">
+		<section id="general" class="w3-container w3-section ">
 			<article class="w3-container w3-card-8 w3-row-padding">
-				<span id="botonCerrar" onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-				<h5>Suelo</h5>
-				<div class="w3-half">
-					<dl class="w3-table w3-striped w3-white">
-						<dt><i class="	fa fa-cubes w3-padding-tiny"></i>Textura</dt>
-						<dd>Prefiere suelos de textura media, aunque puede desarrollarse en suelos de textura con tendencia arcillosa (Yuste, 1997b). Prefiere los suelos limosos con buen drenaje (Teskey y Shoemaker, 1972).</dd>
-						<dt><i class="fa fa-database w3-padding-tiny"></i>Profundidad de suelo</dt>
-						<dd>Requiere suelos profundos, aunque este requerimiento puede variar dependiendo del portainjerto que se utilice (Yuste, 1997b). La profundidad de suelo debe ser de 1.8 m o más (Teskey y Shoemaker, 1972).</dd>
-						<dt><i class="fa fa-filter  w3-padding-tiny"></i>Drenaje</dt>
-						<dd>Requiere buen drenaje, máxime cuando se trate de suelos con tendencia arcillosa (Yuste, 1997b).</dd>
-					</dl>	
-					<button class="w3-btn w3-margin w3-dark-grey w3-center" href="https://www.google.es/search?q=Pyrus+communis++L.&tbm=isch"><i class="fa fa-search"></i> Buscar otras imágenes en la Web</button>
-				</div>						
-				<div class="w3-half">					
-					<img  src="img/diagtext.gif" alt="Textura suelo" ></img>
-				</div>
-			</article>
-		</section>
-
-		<section id="química" class="w3-container w3-section ">
-			<article class="w3-container w3-card-8 w3-row-padding">
-				<span id="botonCerrar" onclick="this.parentElement.style.display='none'" class="w3-closebtn w3-padding">&times;</span>
-				<h4>Química</h4>
-				<div class="w3-half">
-					<h5>Salinidad</h5>
-					<img src="img/sal-masivo-halita-_sal-cristalizada_-1kg.jpg" class="w3-circle w3-left w3-padding"></img>
-					<p>Es una especie que presenta baja tolerancia a la salinidad (Gostinçar, 1997). Sufre daños a concentraciones menores a 0.5 g/l de NaCl (Yuste, 1997b). No tolera suelos calichosos (Yuste, 1997b).</p>
-				</div>						
-				<div class="w3-half">					
-					<h5>pH</h5>
-					<div class="w3-row">
-						<div class="w3-col m1 w3-center w3-red">
-							<div class="w3-center w3-text-white">0</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-orange">
-							<div class="w3-center w3-text-white">1</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-amber">
-							<div class="w3-center w3-text-white">2</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-yellow">
-							<div class="w3-center w3-text-white">3</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-lime">
-							<div class="w3-center w3-text-white">4</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-light-green">
-							<div class="w3-center w3-text-white">5</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-green">
-							<div class="w3-center w3-text-white">6</div>
-						</div>
-						<div class="w3-col m1 w3-center" style="background-color:#29a329">
-							<div class="w3-center w3-text-white">7</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-teal">
-							<div class="w3-center w3-text-white">8</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-aqua">
-							<div class="w3-center w3-text-white">9</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-blue">
-							<div class="w3-center w3-text-white">10</div>
-						</div>
-						<div class="w3-col m1 w3-center w3-indigo">
-							<div class="w3-center w3-text-white">11</div>
-						</div>
-					</div>
-					<div class="w3-row">
-						<div class="w3-col" style="width:46%;min-height:1px"> </div>
-						<div class="w3-col w3-green" style="width:15%">
-							<div class="w3-left"><i class="fa fa-arrow-left"></i>5.6</div>
-							<div class="w3-right">7.1<i class="fa fa-arrow-right"></i></div>
-						</div>
-					</div>
-
-					<p>Desarrolla adecuadamente en un rango de pH que va de 5.8 a 7.1, con un mínimo de tolerancia de 5.6 (Yuste, 1997b).</p>	
-				</div>
-			</article>
-		</section>
-
-
-		<!--FIN !PAGE CONTENT! -->
-
-
-		<!-- Footer -->
-		<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
-			<div class="w3-xlarge w3-padding-32">
-				<a href="https://www.facebook.com/isabelmunozordonez" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-facebook-official"></i></a>
-				<a href="https://twitter.com/teanocrata" class="w3-hover-text-light-blue w3-show-inline-block"><i class="fa fa-twitter"></i></a>
-				<a href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-linkedin"></i></a>
-				<a href="https://github.com/teanocrata/OpenSmartCountry" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-github"></i></a>
-			</div>
-			<a class="w3-right w3-padding-medium" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
-				<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
-			</a>
-		</footer>
-
-		<!-- Tour guiado por la página -->
-		<ol id="chooseID" class="w3-hide">
-			<li data-button="Siguiente" class="custom">
-				<h2>Panel de la parcela</h2>
-				<p>En esta página se muestra información sobre una de las parcelas.</p>
-				<p>Si sigues el Tour te mostraré el tipo de información disponible y cómo se consigue.</p>
-				<p>Ahora mismo hay dos fuentes de información fundamentales: 
-					<ul>
-						<li>OSC&alpha;r que está en la parcela enviando los datos de sus sensores.</li>
-						<li>Fuentes de Open Data: datos que normalmente el gobierno publica para uso de cualquier persona.</li>
+				<span id="botonCerrar"
+					onclick="this.parentElement.style.display='none'"
+					class="w3-closebtn w3-padding">&times;</span>
+				<h5>
+					<span id="ficha"></span>
+				</h5>
+				<div class="w3-twothird">
+					<ul class="w3-ul w3-striped w3-white w3-hoverable">
+						<li><strong>Nombre</strong> <span id="nombre"></span></li>
+						<li><strong>Nombre Científico</strong> <span
+							id="nombre_cientifico"></span></li>
+						<li><strong>Familia</strong> <span id="familia"></span></li>
+						<li><strong>Nombres Comunes</strong> <span
+							id="nombres_comunes"></span></li>
 					</ul>
+					<span id="buscar_imagen"></span>
+				</div>
+				<div class="w3-third">
+					<span id="imagen"></span>
+				</div>
+			</article>
+		</section>
+
+
+		<section id="localizacion"
+			class="w3-container w3-section w3-row-padding">
+			<article class="w3-container w3-card-8">
+				<span id="botonCerrar"
+					onclick="this.parentElement.style.display='none'"
+					class="w3-closebtn w3-padding">&times;</span>
+				<h5>Origen y distribución</h5>
+				<div class="w3-twothird">
+					<div>
+						<div
+							style="background-image: url('img/Mapa_mundi_blanco.PNG'); background-size: cover; height: 400px; width: 726px;">
+							<div
+								style="width: 100%; height: 19.45%; background-color: #ffffff; opacity: 0.8;"></div>
+							<div
+								style="width: 100%; height: 13.89%; background-color: #ffffff; opacity: 0;"></div>
+							<div
+								style="width: 100%; height: 33.33%; background-color: #ffffff; opacity: 0.8;"></div>
+							<div
+								style="width: 100%; height: 13.89%; background-color: #ffffff; opacity: 0;"></div>
+							<div
+								style="width: 100%; height: 19.45%; background-color: #ffffff; opacity: 0.8;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="w3-third">
+					<table class="w3-table w3-striped w3-white">
+						<tr>
+							<td><i class="fa fa-map-marker w3-blue w3-padding-tiny"></i></td>
+							<td>Origen</td>
+							<td><span id="origen"></span></td>
+						</tr>
+						<tr>
+							<td><i class="fa fa-map-o w3-red w3-padding-tiny"></i></td>
+							<td>Distribución</td>
+							<td><span id="distribucion"></span></td>
+						</tr>
+						<tr>
+							<td><i
+								class="fa fa-image w3-orange w3-text-white w3-padding-tiny"></i></td>
+							<td>Adaptación</td>
+							<td><span id="adaptacion"></span></td>
+						</tr>
+						<tr>
+							<td><i
+								class="fa fa-arrows-v w3-green w3-text-white w3-padding-tiny"></i></td>
+							<td>Altitud</td>
+							<td><span id="altitud"></span></td>
+						</tr>
+					</table>
+				</div>
+			</article>
+		</section>
+	</div>
+
+
+	<section class="w3-container w3-section w3-row-padding ">
+		
+		<article class="w3-container w3-card-8 ">
+			<div class="w3-row">
+				<div class="w3-half">
+					<h5>Periodos</h5>
+					<p>Ciclo Vegetativo</p>
+					<div class="w3-progress-container w3-grey">
+						<div id="myBar" class="w3-progressbar w3-green"
+							style="width: 100%">
+							<div class="w3-center w3-text-white"><span id="ciclo_vegetativo"></span></div>
+						</div>
+					</div>
+
+					<p>Fotoperiodo</p>
+					<div class="w3-progress-container w3-grey w3-margin-bottom">
+						<div id="myBar" class="w3-progressbar w3-yellow"
+							style="width: 50%">
+							<div class="w3-center w3-text-white"><span id="fotoperiodo"></span></div>
+						</div>
+					</div>
+				</div>
+				<div class="w3-half w3-row w3-padding">
+				<span 
+			onclick="this.parentElement.parentElement.style.display='none'"
+			class="w3-closebtn w3-padding">&times;</span>
+					<p>Tipo fotosintético</p>
+					<div class="w3-container w3-third">
+						<div id="tarjeta_c3" class="w3-card-2">
+							<img id="c3" class="w3-opacity" alt="C3" src="img/C3.png" style="width: 100%;opacity:0.2">
+							<div class="w3-container w3-center">
+								<h5>C3</h5>
+							</div>
+						</div>
+					</div>
+					<div class="w3-container w3-third">
+						<div id="tarjeta_c4" class="w3-card-2">
+							<img id="c4" class="w3-opacity" alt="C4" src="img/C4.png" style="width: 100%;opacity:0.2">
+							<div class="w3-container w3-center">
+								<h5>C4</h5>
+							</div>
+						</div>
+					</div>
+					<div class="w3-container w3-third">
+						<div id="tarjeta_cam" class="w3-card-2">
+							<img id="cam" class="w3-opacity" alt="CAM" src="img/CAM.png" style="width: 100%;opacity:0.2">
+							<div class="w3-container w3-center">
+								<h5>CAM</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</article>
+	</section>
+
+
+	<!--Una observación-->
+	<div id="observaciones" class="w3-container w3-section "></div>
+	<!--FIN de Una observación-->
+
+	<section id="suelo" class="w3-container w3-section ">
+		<article class="w3-container w3-card-8 w3-row-padding">
+			<span id="botonCerrar"
+				onclick="this.parentElement.style.display='none'"
+				class="w3-closebtn w3-padding">&times;</span>
+			<h5>Suelo</h5>
+			<div class="w3-half">
+				<dl class="w3-table w3-striped w3-white">
+					<dt>
+						<i class="	fa fa-cubes w3-padding-tiny"></i>Textura
+					</dt>
+					<dd>
+						<span id="textura"></span>
+					</dd>
+					<dt>
+						<i class="fa fa-database w3-padding-tiny"></i>Profundidad de suelo
+					</dt>
+					<dd>
+						<span id="profundidad"></span>
+					</dd>
+					<dt>
+						<i class="fa fa-filter  w3-padding-tiny"></i>Drenaje
+					</dt>
+					<dd>
+						<span id="drenaje"></span>
+					</dd>
+				</dl>
+			</div>
+			<div class="w3-half">
+				<img src="img/diagtext.gif" alt="Textura suelo"></img>
+			</div>
+		</article>
+	</section>
+
+	<section id="química" class="w3-container w3-section ">
+		<article class="w3-container w3-card-8 w3-row-padding">
+			<span id="botonCerrar"
+				onclick="this.parentElement.style.display='none'"
+				class="w3-closebtn w3-padding">&times;</span>
+			<h4>Química</h4>
+			<div class="w3-half">
+				<h5>Salinidad</h5>
+				<img src="img/sal-masivo-halita-_sal-cristalizada_-1kg.jpg"
+					class="w3-circle w3-left w3-padding"></img>
+				<p>
+					<span id="salinidad"></span>
 				</p>
-				<p>¿Quieres que te los enseñe?</p>
-			</li>
-			<li data-id="openNav" data-button="Siguiente" class="custom" data-options="tipLocation:right;tipAnimation:fade">
-				<h2>Empecemos por la estructura de la página</h2>
-				<p>En la parte superior tendrás siempre el botón HOME, al pulsar sobre él se abre el menú lateral con el que navegar por la página.</p>
-			</li>
-			<li data-id="rc" data-button="Siguiente" class="custom" data-options="tipLocation:left">
-				<h2>Referencia Catastral</h2>
-				<p>En la parte superior izquierda puedes ver la referencia catastral de la parcela, este dato se obtiene del catastro que lo proporciona a partir de las coordenadas geográficas de la parcela.</p>
-				<p>Esta información estará también siempre visible cuando navegues por la página.</p>
-			</li>
-			<li data-id="direccion" data-button="Siguiente" class="custom" data-options="tipLocation:left">
-				<h2>Dirección</h2>
-				<p>Esta es la dirección exacta de la parcela, la que usa el catastro para identificarla. También se obtiene del catastro a partir de las coordenadas geográficas.</p>
-			</li>
-			<li data-id="un-widget" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Widgets de resumen</h2>
-				<p>Estos son los primeros widget con información, tienen información de resumen sobre diversos datos, en este caso las precipitaciones acumuladas de este año.</p>
-				<p>La precipitaciones se obtienen como Open Data, éstas las proporciona la Junta de Castilla y León a través de la página <a href="http://www.inforiego.org/" target="_blank">inforiego.org</a> del Instituto Tecnológico Agrario.</p>
-			</li>
-			<li data-id="botonCerrar" data-button="Siguiente" class="custom" data-options="tipLocation:right;tipAnimation:fade">
-				<h2>Estructura de la página</h2>
-				<p>La información con la que se trabaja está organizada en tarjetas que se pueden cerrar si no es lo que quieres ver ahora mismo.</p>
-				<p>Si quieres volver a abrir una tarjeta que has cerrado simplemente tienes que seleccionarla de nuevo en el menú lateral que se abre al pulsar el botón "HOME".</p>
-			</li>
-			<li data-id="tarjetaMapa" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Mapa interactivo</h2>
-				<p>Las coordenadas geográficas están representadas en un mapa de Google. Además está dibujado el recinto que forma la parcela a través de las coordenadas que da el Catastro a través de la referencia catastral que obtuvimos antes.</p>
-				<p>Si pulsas sobre el recinto, puedes ver el listado de las coordenadas geográficas que lo forman.</p>
-			</li>
-			<li data-id="catastro" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Información del Catastro</h2>
-				<p>Hay más información que proporciona el Catastro y que es imprescindible para saber qué se puede hacer con una parcela a efectos legales.</p>
-				<p>La información que aparece aquí es la que proporciona el Catastro como Open Data, para cualquiera que quiera consultarla, si además eres el propietario de la parcela, en la propia página web del catastro puedes acceder a más información interesante.</p>
-				<p>Toda esta información está disponible en la <a href="http://www.sedecatastro.gob.es/" a>Sede Electrónica del Catastro</a>.</p>
-			</li>
-			<li data-id="oscar" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>OSC&alpha;r</h2>
-				<p>Yo soy OSC&alpha;r, pulsando sobre mí puedes obtener más información sobre cómo funciono.</p>
-				<p>Como puedes ver estoy geolocalizado. Aunque no son mis coordenadas exactas, si alguien me mueve te aviso rápidamente.</p>
-			</li>
-			<li data-id="tabla-oscar" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>OSC&alpha;r</h2>
-				<p>Este es el tipo de información que proporciono con los sensores que tengo ahora mismo, además informo de la fecha y la hora a la que envié la información.</p>
-				<p>La frecuencia con la que la envío es configurable y todos los datos se van guardando para ser posteriormente analizados.</p>
-			</li>
-			<li data-id="datosEstacion" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Estaciones meteorológicas</h2>
-				<p>En esta otra tarjeta se muestran de forma gráfica los datos que se obtienen de la estación meteorológica más cercana a la parcela.</p>
-				<p>Hay estaciones meteorológicas por todo el territorio que ofrecen sus datos como Open Data. En algunos casos están suficientemente cerca como para que sus datos por si mismos sean significativos.</p>
-				<p>En el caso de esta parcela esto no es así, está a unos 11km en línea recta pero las consiciones del terreno hacen que sus datos por si solos no sean suficientes.</p>
-				<p>La parcela se encuentra en una zona de monte separada por unas montañas de esta estación, pero sus datos cruzados con los datos que da <strong>OSC&alpha;r</strong> sí que son muy interesantes.</p>
-			</li>
-			<li data-id="graficoPrecipitacionPorMesYAnio" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Gráficas</h2>
-				<p>Los datos se representan de forma gráfica, en este caso comparando las lluvias acumuladas mensuales a través de los años. Dependiendo de los datos se elige una representación u otra con el objetivo de ayudar visualmente a interpretarlos.</p>
-			</li>
-			<li data-id="tablaResumen" data-button="Siguiente" class="custom" data-options="tipLocation:bottom">
-				<h2>Datos resumen</h2>
-				<p>Además a partir de los datos de la estación se obtienen valores de resumen que pueden resultar interesantes, en este caso los días de lluvia y la cantidad de lluvia acumulada. En otros casos datos medios, mínimos, máximos, etc.</p>
-			</li>
-			<li data-id="informacion" data-button="Siguiente" class="custom" data-options="tipLocation:top">
-				<h2>Información</h2>
-				<p>En este cuadro aparece un resumen de las fuentes de información que actualmente se utilizan con enlaces a las mismas.</p>
-			</li>
-			<li class="custom" data-button="Fin del tour">
-				<h2>Actualizaciones</h2>
-				<p>Esta es una versión inicial muy básica para mostrar el tipo de información y la forma de mostrarla.</p>
-				<p>Las fuentes de información disponibles son muy amplias e iremos añadiendo más en siguientes versiones.</p>
-				<p>Además próximamente añadiremos un tipo de información muy diferente e interesante que no se puede obtener actualmente en otro sitio:</p>
-				<p>Utilizando los datos de la parcela proporcionaremos un listado de <strong>posibles alternativas de uso</strong> específicos para cada parcela.</p>
-				<p>¿Te interesa? Danos tu correo y te mantendremos actualizado. Pulsa sobre el botón "+"</p>
-			</li>
-		</ol>
-
-
-
-
-
-
-		<!-- Botón FAB al estilo material design-->
-		<div class="contenedor w3-container">
-			<ul class="w3-ul w3-center" >
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='cultivos.html'"><i class="fa fa-leaf"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='oscar.html'"><i class="fa fa-wifi"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='viniaDeLaEstacion.html'"><i class="fa fa-unlock-alt"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
-				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
-			</ul>
-		</div>
-		<script src="js\codigoFAB.js"></script>
-		<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
-		<div id="analytics" class="w3-modal">
-			<div class="w3-modal-content">
-				<div class="w3-container">
-					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
-					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
-					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
+			</div>
+			<div class="w3-half">
+				<h5>pH</h5>
+				<div class="w3-row">
+					<div class="w3-col m1 w3-center w3-red">
+						<div class="w3-center w3-text-white">0</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-orange">
+						<div class="w3-center w3-text-white">1</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-amber">
+						<div class="w3-center w3-text-white">2</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-yellow">
+						<div class="w3-center w3-text-white">3</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-lime">
+						<div class="w3-center w3-text-white">4</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-light-green">
+						<div class="w3-center w3-text-white">5</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-green">
+						<div class="w3-center w3-text-white">6</div>
+					</div>
+					<div class="w3-col m1 w3-center" style="background-color: #29a329">
+						<div class="w3-center w3-text-white">7</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-teal">
+						<div class="w3-center w3-text-white">8</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-aqua">
+						<div class="w3-center w3-text-white">9</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-blue">
+						<div class="w3-center w3-text-white">10</div>
+					</div>
+					<div class="w3-col m1 w3-center w3-indigo">
+						<div class="w3-center w3-text-white">11</div>
+					</div>
 				</div>
+				<div class="w3-row">
+					<div class="w3-col" style="width: 46%; min-height: 1px"></div>
+					<div class="w3-col w3-green" style="width: 15%">
+						<div class="w3-left">
+							<i class="fa fa-arrow-left"></i>5.6
+						</div>
+						<div class="w3-right">
+							7.1<i class="fa fa-arrow-right"></i>
+						</div>
+					</div>
+				</div>
+
+				<p>
+					<span id="ph"></span>
+				</p>
+			</div>
+		</article>
+	</section>
+
+
+	<!--FIN !PAGE CONTENT! -->
+
+
+	<!-- Footer -->
+	<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
+		<div class="w3-xlarge w3-padding-32">
+			<a href="https://www.facebook.com/isabelmunozordonez"
+				class="w3-hover-text-indigo w3-show-inline-block"><i
+				class="fa fa-facebook-official"></i></a> <a
+				href="https://twitter.com/teanocrata"
+				class="w3-hover-text-light-blue w3-show-inline-block"><i
+				class="fa fa-twitter"></i></a> <a
+				href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92"
+				class="w3-hover-text-indigo w3-show-inline-block"><i
+				class="fa fa-linkedin"></i></a> <a
+				href="https://github.com/teanocrata/OpenSmartCountry"
+				class="w3-hover-text-indigo w3-show-inline-block"><i
+				class="fa fa-github"></i></a>
+		</div>
+		<a class="w3-right w3-padding-medium" rel="license"
+			href="http://creativecommons.org/licenses/by-nc-sa/4.0/"> <img
+			alt="Creative Commons License" style="border-width: 0"
+			src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+		</a>
+	</footer>
+
+
+
+	<!-- Botón FAB al estilo material design-->
+	<div class="contenedor w3-container">
+		<ul class="w3-ul w3-center">
+			<li class="sinBorde"><button
+					class="btn botonF5 w3-btn-floating w3-dark-grey"
+					onclick="document.getElementById('suscripcion').style.display='block'">
+					<i class="fa fa-envelope-o"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="btn botonF5 w3-btn-floating w3-dark-grey"
+					onclick="location.href='cultivos.html'">
+					<i class="fa fa-leaf"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="btn botonF5 w3-btn-floating w3-dark-grey"
+					onclick="location.href='mapaDeParcelas.html'">
+					<i class="fa fa-map-marker"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="btn botonF4 w3-btn-floating w3-dark-grey"
+					onclick="location.href='oscar.html'">
+					<i class="fa fa-wifi"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="btn botonF3 w3-btn-floating w3-dark-grey"
+					onclick="location.href='viniaDeLaEstacion.html'">
+					<i class="fa fa-unlock-alt"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="btn botonF2 w3-btn-floating w3-dark-grey"
+					onclick="document.getElementById('analytics').style.display='block'">
+					<i class="fa fa-line-chart"></i>
+				</button></li>
+			<li class="sinBorde"><button
+					class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas">
+					<i class="fa fa-plus"></i>
+				</button></li>
+		</ul>
+	</div>
+	<script src="js\codigoFAB.js"></script>
+	<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
+	<div id="analytics" class="w3-modal">
+		<div class="w3-modal-content">
+			<div class="w3-container">
+				<span
+					onclick="document.getElementById('analytics').style.display='none'"
+					class="w3-closebtn">&times;</span>
+				<p class="w3-center">Para esto vamos a necesitar un poco más de
+					tiempo, pero esperamos tener una primera versión en breve para que
+					puedas hacerte una idea del potencial que tiene.</p>
+				<p class="w3-center">
+					Si quieres más información, tienes curiosidad o te apetece
+					participar, no dudes en contactar con <a
+						href="mailto:isabel@opensmartcountry.com">nosotros</a>.
+				</p>
 			</div>
 		</div>
-		<!--Ventana de suscripción -->
-		<div id="suscripcion" class="w3-modal">
-			<div class="w3-modal-content">
-				<div class="w3-container w3-padding w3-center">
-					<span onclick="document.getElementById('suscripcion').style.display='none'" class="w3-closebtn">&times;</span>
-					<p>Si quieres que te avisemos con los avances que realicemos, déjanos tu correo y te informaremos.</p>
-					<p>Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y puedes darte de baja cuando quieras.</p>
-					<p>Rellene el siguiente formulario para suscribirse.</p>
-					<form class="w3-container" enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
-						<dl class="zend_form">
-							<dt id="groups-label"> </dt>
-							<dd id="groups-element">
-								<input class="w3-input" type="hidden" name="groups[]" value="1"/>
-							</dd>
+	</div>
+	<!--Ventana de suscripción -->
+	<div id="suscripcion" class="w3-modal">
+		<div class="w3-modal-content">
+			<div class="w3-container w3-padding w3-center">
+				<span
+					onclick="document.getElementById('suscripcion').style.display='none'"
+					class="w3-closebtn">&times;</span>
+				<p>Si quieres que te avisemos con los avances que realicemos,
+					déjanos tu correo y te informaremos.</p>
+				<p>
+					Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y
+					puedes darte de baja cuando quieras.
+				</p>
+				<p>Rellene el siguiente formulario para suscribirse.</p>
+				<form class="w3-container"
+					enctype="application/x-www-form-urlencoded"
+					action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o"
+					method="post">
+					<dl class="zend_form">
+						<dt id="groups-label"></dt>
+						<dd id="groups-element">
+							<input class="w3-input" type="hidden" name="groups[]" value="1" />
+						</dd>
 
-							<dt id="name-label">
-								<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
-							</dt>
-							<dd id="name-element">
-								<input type="text" class="w3-input" name="name" id="name" value=""/>
-							</dd>
+						<dt id="name-label">
+							<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+						</dt>
+						<dd id="name-element">
+							<input type="text" class="w3-input" name="name" id="name"
+								value="" />
+						</dd>
 
-							<dt id="email-label">
-								<label for="email" class="required w3-label w3-validate w3-text-grey">Email</label>
-							</dt>
-							<dd id="email-element">
-								<input type="email" class="w3-input" name="email" id="email" value="" required/>
-							</dd>				
+						<dt id="email-label">
+							<label for="email"
+								class="required w3-label w3-validate w3-text-grey">Email</label>
+						</dt>
+						<dd id="email-element">
+							<input type="email" class="w3-input" name="email" id="email"
+								value="" required />
+						</dd>
 
-							<dt id="submit-label"> </dt>
-							<dd id="submit-element">
-								<button type="submit" name="submit" id="submit" class="w3-btn w3-dark-grey w3-margin-top" onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme al tanto</button>
-							</dd>
+						<dt id="submit-label"></dt>
+						<dd id="submit-element">
+							<button type="submit" name="submit" id="submit"
+								class="w3-btn w3-dark-grey w3-margin-top"
+								onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme
+								al tanto</button>
+						</dd>
 
-						</dl>
-					</form>
-				</div>
+					</dl>
+				</form>
 			</div>
 		</div>
-		<!-- Fin bloque botón FAB al estilo material design-->
+	</div>
+	<!-- Fin bloque botón FAB al estilo material design-->
 
-	</body>
+</body>
 </html>
 
