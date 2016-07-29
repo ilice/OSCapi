@@ -447,10 +447,18 @@ def read_codigos():
     return codigos
 
 
+def wait_for_cluster_status(status):
+    connection = connections.get_connection()
+    while True:
+        cluster_status = connection.cluster.health(wait_for_status=status)
+        if cluster_status['status'] == status:
+            break
+
+
 def elastic_bulk_update(records):
     try:
         connection = connections.get_connection()
-        connection.cluster.health(wait_for_status='yellow', request_timeout=300)
+        wait_for_cluster_status('yellow')
         es.helpers.bulk(connection,
                         ({'_op_type': 'update',
                           '_index': getattr(r.meta, 'index', r._doc_type.index),
@@ -467,7 +475,7 @@ def elastic_bulk_update(records):
 def elastic_bulk_save(records):
     try:
         connection = connections.get_connection()
-        connection.cluster.health(wait_for_status='yellow', request_timeout=300)
+        wait_for_cluster_status('yellow')
         es.helpers.bulk(connection,
                         ({'_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
