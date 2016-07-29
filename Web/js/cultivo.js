@@ -5,7 +5,7 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "../php/api_rest.php/osc?q=_id:" + cultivo_id;
+	var url = "php/api_rest.php/osc?q=_id:" + cultivo_id;
 
 	var request = jQuery.ajax({
 		crossDomain : true,
