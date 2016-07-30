@@ -186,7 +186,11 @@
 							<tr>
 								<td id="latitud">40.439983</td>
 								<td id="longitud">-5.737026</td>
-								<td><span id="altitud"></span></td>
+								<td><span id="altitud"></span> <span id="idea"
+									class="w3-badge w3-yellow w3-hover-opacity"> <i
+										class="fa fa fa-lightbulb-o w3-spin"
+										onclick="document.getElementById('idea_modal').style.display='block'"></i>
+								</span></td>
 							</tr>
 						</table>
 					</div>
@@ -268,6 +272,24 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Modal con la destripción de la idea y el enlace para ver la información  -->
+		<div id="idea_modal" class="w3-modal w3-animate-zoom">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span
+						onclick="document.getElementById('idea_modal').style.display='none'"
+						class="w3-closebtn">&times;</span>
+					<p>Esta parcela está a una altitud de <strong><span id ="altitud_idea"></span></strong>, 
+					basado en este dato podemos encontrar qué cultivos se dan bien en esa altitud
+					 y ofrecerte información sobre los mismos.
+					 
+					<button id="cultivos_por_altitud" class="w3-btn-block w3-section w3-padding w3-dark-grey" >¡Muéstarme los cultivos!</button>
+					 
+				</div>
+			</div>
+		</div>
+		<!-- Fin de Modal con la destripción de la idea y el enlace para ver la información  -->
 
 		<div id="coordenadasLindeModal" class="w3-modal">
 			<div class="w3-modal-content">
@@ -748,6 +770,14 @@
 			<h2>Información</h2>
 			<p>En este cuadro aparece un resumen de las fuentes de
 				información que actualmente se utilizan con enlaces a las mismas.</p>
+		</li>
+		<li data-id="idea" data-button="Siguiente" class="custom"
+			data-options="tipLocation:top">
+			<h2>Idea</h2>
+			<p>Cuando veas un icono como este quiere decir que tenemos
+				información interesante que darte sobre las posibilidades de tu
+				parcela. En este caso tenemos alternativas de cultivos basadas en la
+				información de la altitud.</p>
 		</li>
 		<li class="custom" data-button="Fin del tour">
 			<h2>Actualizaciones</h2>

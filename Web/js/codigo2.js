@@ -1108,6 +1108,9 @@ function obtenAltitud(latitud, longitud){
 	request.done(function(response, textStatus, jqXHR) {
 		var hits = response["results"][0]["elevation"].toFixed() + " m";
 		document.getElementById('altitud').innerHTML = hits;
+		document.getElementById('altitud_idea').innerHTML = hits;
+		var urlbusqueda = "location.href='cultivos.html?altitud=" + response["results"][0]["elevation"].toFixed() +"'";
+		document.getElementById('cultivos_por_altitud').setAttribute('onclick', urlbusqueda) ;
 	});
 	
 }

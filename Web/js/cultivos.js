@@ -14,12 +14,35 @@ function cargaDatos() {
 
 function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
+	var altitud = QueryString.altitud;
 	var textoBusqueda = QueryString.search;
 	var query;
 	var match = textoBusqueda;
 	var _all = textoBusqueda;
 
-	if (encodeURIComponent(textoBusqueda) == "undefined") {
+	if (encodeURIComponent(altitud) != "undefined"){
+		query = {
+				"constant_score" : {
+		            "filter" : {
+		                "bool": {
+		                "must": [
+		                   {"range" : {
+		                    "altitude.min" : {
+		                        "lte"  : altitud
+		                    }
+		                }},
+		                {"range" : {
+		                    "altitude.min" : {
+		                        "gte" : altitud
+		                    }
+		                }}
+		                
+		                ]
+		                }
+		            }
+		        }
+		};
+	} else if (encodeURIComponent(textoBusqueda) == "undefined") {
 		query = {
 			"match_all" : {}
 		};
