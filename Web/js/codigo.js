@@ -1,5 +1,3 @@
-var query;
-
 var mapa;
 var parcela = {
 	lat : 40.439983,
@@ -276,6 +274,7 @@ function cargaDatos() {
 	obtenDatosCatastro();
 	obtenEstacion();
 	actualiza();
+	obtenAltitud(document.getElementById("latitud").innerHTML, document.getElementById("longitud").innerHTML);
 	//obten(2016);
 	google.charts.load('current', {
 		'packages' : ['table', 'bar', 'corechart', 'geochart']
@@ -1118,4 +1117,23 @@ function trataRespuestaAcumuladoRadiacionDiaria(respuesta) {
 	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = datos.getValue(0, 0).toFixed(2);
 }
 
+function obtenAltitud(latitud, longitud){
 
+	var url = "php/altitud.php?locations=" + latitud +"," + longitud;
+	
+	var request = jQuery.ajax({
+		
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+	
+	request.done(function(response, textStatus, jqXHR) {
+		var hits = response["results"][0]["elevation"].toFixed() + " m";
+		document.getElementById('altitud').innerHTML = hits;
+		document.getElementById('altitud_idea').innerHTML = hits;
+		var urlbusqueda = "location.href='cultivos.html?altitud=" + response["results"][0]["elevation"].toFixed() +"'";
+		document.getElementById('cultivos_por_altitud').setAttribute('onclick', urlbusqueda) ;
+	});
+	
+}
