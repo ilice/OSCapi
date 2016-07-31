@@ -170,20 +170,20 @@ def get_shapefiles(zip_codes,
                                  force_download=force_download) for zc in zip_codes])
 
 
-def get_dataframe_from_shapefile(sf):
-    fields_dict = {'bbox': [shape.bbox for shape in sf.shapes()],
-                   'points': [shape.points for shape in sf.shapes()]}
-
-    for i in range(1, len(sf.fields)):
-        field_name = sf.fields[i][0]
-        field_values = [record[i - 1] for record in sf.records()]
-
-        fields_dict[field_name] = field_values
-
+def get_dataframe_from_shapefile(zip_code, sf):
     try:
+        fields_dict = {'bbox': [shape.bbox for shape in sf.shapes()],
+                       'points': [shape.points for shape in sf.shapes()]}
+
+        for i in range(1, len(sf.fields)):
+            field_name = sf.fields[i][0]
+            field_values = [record[i - 1] for record in sf.records()]
+
+            fields_dict[field_name] = field_values
+
         return pd.DataFrame(fields_dict)
     except Exception as e:
-        conf.error_handler.error(__name__, "get_dataframe_from_shapefile", str(e))
+        conf.error_handler.error(__name__, "get_dataframe_from_shapefile", zip_code + ': ' + str(e))
         return None
 
 
@@ -201,7 +201,7 @@ def write_csv(zip_codes,
                            force_download=force_download)
 
         if sf is not None:
-            df = get_dataframe_from_shapefile(sf)
+            df = get_dataframe_from_shapefile(zip_code, sf)
 
             if df is not None:
                 try:
