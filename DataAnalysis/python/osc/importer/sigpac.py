@@ -451,11 +451,12 @@ def read_codigos():
 def wait_for_yellow_cluster_status():
     connection = connections.get_connection()
     while True:
-        cluster_status = connection.cluster.health(wait_for_status='yellow')
-        if cluster_status['status'] != 'red':
-            break
-
-        print 'Cluster status is red. Waiting for yellow status'
+        try:
+            cluster_status = connection.cluster.health(wait_for_status='yellow')
+            if cluster_status['status'] != 'red':
+                break
+        except Exception as e:
+            print 'Cluster status is red. Waiting for yellow status'
 
 
 def elastic_bulk_update(records):
@@ -471,7 +472,7 @@ def elastic_bulk_update(records):
     except Exception as e:
         for record in records:
             conf.error_handler.error(__name__,
-                                     'save2elasticsearch',
+                                     'elastic_bulk_update',
                                      str(type(e)) + ': ' + str(record.to_dict()))
 
 
@@ -496,7 +497,7 @@ def save2elasticsearch(zip_codes,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False):
-    chunk_size = conf.config.getint('elasticsearch', 'chunk_size')
+    chunk_size = conf.config.getint('elastic_bulk_save', 'chunk_size')
 
     try:
         sigpac_record.init()
@@ -600,7 +601,7 @@ def add_altitude_info(provincia, municipio=None):
                 elastic_bulk_update(records)
                 print " ...success"
             except ConnectionError as e:
-                print " ...success"
+                print " ...error"
                 conf.error_handler.error(__name__,
                                          'obtain_elevation_from_google',
                                          e.message)
