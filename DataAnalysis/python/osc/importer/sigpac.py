@@ -564,6 +564,7 @@ def obtain_elevation_from_google(records, centers):
 
 def add_altitude_info(provincia, municipio=None):
     chunk_size = conf.config.getint('Google Elevation', 'chunk_size')
+    print "Chunk Size = " + str(chunk_size)
 
     try:
         sigpac_record.init()
