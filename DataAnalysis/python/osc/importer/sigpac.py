@@ -578,7 +578,7 @@ def add_altitude_info(provincia, municipio=None):
         filter.append(dsl.Q("term", municipio=municipio))
 
     # query elasticsearch for the neccesary registers
-    search = dsl.Search().query('bool', filter=filter).fields(['bbox_center.lat', 'bbox_center.lon'])
+    search = dsl.Search(index='plots').query('bool', filter=filter).fields(['bbox_center.lat', 'bbox_center.lon'])
     search.execute()
 
     records = []
