@@ -14,7 +14,7 @@ function cargaBarraLateral() {
 
 	document.getElementById('mySidenav').innerHTML += "		<div class=\"w3-container w3-row w3-padding-16\">";
 	document.getElementById('mySidenav').innerHTML += "			<div class=\"w3-col s4\">";
-	document.getElementById('mySidenav').innerHTML += "				<img src=\"img/avatar_vinia.PNG\" class=\"w3-circle w3-margin-right\" style=\"width:46px\" alt=\"Avatar Viña de la Estación\"/>";
+	document.getElementById('mySidenav').innerHTML += "				<img id=\"avatar\" src=\"img/"+getAvatar()+"\" class=\"w3-circle w3-margin-right\" style=\"width:46px\" alt=\"Avatar Viña de la Estación\"/>";
 	document.getElementById('mySidenav').innerHTML += "			</div>";
 	document.getElementById('mySidenav').innerHTML += "			<div class=\"w3-col s8\">";
 	document.getElementById('mySidenav').innerHTML += "				<span>Bienvenidos a <strong>"+ document.getElementById('pagina').innerHTML+"</strong></span><br/>";
@@ -93,4 +93,26 @@ function w3_open() {
 function w3_close() {
 	document.getElementById("mySidenav").style.display = "none";
 	document.getElementById("myOverlay").style.display = "none";
+}
+
+function getAvatar(){
+	var avatar = "avatar.PNG";
+	var query = window.location.search.substring(1);
+	if (query.length > 0) {
+		// Si la query tiene algo
+		var vars = query.split("&");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			// If first entry with this name
+			switch (pair[0]) {
+			case "avatar":
+				avatar = pair[1];
+			default:
+				break;
+			}
+		}
+	}
+	
+	return avatar;
+
 }

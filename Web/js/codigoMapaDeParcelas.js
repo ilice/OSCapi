@@ -1,31 +1,24 @@
-var parcelas = [{
-		lat : 40.416616,
-		lng : -3.703801,
-		foto : "img/IMG_20160501_175931.jpg",
-		url : "viniaDeLaEstacion.html"
-	}, {
-		lat : 40.439983,
-		lng : -5.737026,
-		foto : "img/IMG_20160501_175931.jpg",
-		url : "viniaDeLaEstacion.html"
-	}, {
-		lat : 40.489864,
-		lng : -3.639706,
-		foto : "img/IMG_20160501_175931.jpg",
-		url : "viniaDeLaEstacion.html"
-	}, {
-		lat : 40.384769,
-		lng : -5.762048,
-		foto : "img/IMG_20160501_175931.jpg",
-		url : "viniaDeLaEstacion.html"
-	},
-	{
-		lat : 41.080364,
-		lng : -4.588973,
-		foto : "img/IMG_0882.JPG",
-		url : "laNueva.html"
-	}
-];
+var parcelas = [ {
+	lat : 40.416616,
+	lng : -3.703801,
+	foto : "img/IMG_20160501_175931.jpg",
+}, {
+	lat : 40.439983,
+	lng : -5.737026,
+	foto : "img/IMG_20160501_175931.jpg",
+}, {
+	lat : 40.489864,
+	lng : -3.639706,
+	foto : "img/IMG_20160501_175931.jpg",
+}, {
+	lat : 40.384769,
+	lng : -5.762048,
+	foto : "img/IMG_20160501_175931.jpg",
+}, {
+	lat : 41.080364,
+	lng : -4.588973,
+	foto : "img/IMG_0882.JPG",
+} ];
 
 var marcadores = [];
 var mapa;
@@ -43,8 +36,39 @@ function inicializaMapa() {
 		mapTypeId : google.maps.MapTypeId.SATELLITE
 	};
 
-	mapa = new google.maps.Map(document.getElementById("mapa"), configuracionMapa);
+	mapa = new google.maps.Map(document.getElementById("mapa"),
+			configuracionMapa);
 
+
+	mapa.addListener('click', function(event) {
+		var latitude = event.latLng.lat();
+		var longitude = event.latLng.lng();
+		
+		var image = 'img/OpenSmartCountry_marker_verde.png';
+
+		var marcador = new google.maps.Marker({
+			position : event.latLng,
+			map : mapa,
+			animation : google.maps.Animation.DROP,
+			icon: image
+		});
+
+		var contenidoVentana = '<div id="content">' + 
+		'<h3>Parcela</h3>' +
+		'<p>' +latitude +' ,'+ longitude + '</p>' +
+		'</div><button type="button" onclick="location.href=\'parcela.html?latitud='+ latitude + '&longitud='+ longitude+'&nombre=Demo\'">Más detalles</button>';
+
+		var ventanaInformacion = new google.maps.InfoWindow({
+			content : contenidoVentana
+		});
+
+		marcador.addListener('click', function() {
+			ventanaInformacion.open(mapa, marcador);
+		});
+
+		// Center of map
+		mapa.panTo(new google.maps.LatLng(latitude, longitude));
+	})
 }
 
 function dibujaMarcadores() {
@@ -58,28 +82,28 @@ function aniadeMarcadorConTimeout(posicion, timeout) {
 
 	window.setTimeout(function() {
 		var unaCosa = 'uno';
-		
+
+		var image = 'img/OpenSmartCountry_marker_rojo.png';
 		
 		var marcador = new google.maps.Marker({
-				position : posicion,
-				map : mapa,
-				animation : google.maps.Animation.DROP
-			});
+			position : posicion,
+			map : mapa,
+			animation : google.maps.Animation.DROP,
+			icon: image
+		});
 
-		var contenidoVentana = '<div id="content">' +
-			'<h1>Parcela</h1>' +
-			'<img src="' + posicion.foto + '" height="400""/>' +
-			'<div>' +
-			'<ul><li>Latitud: ' + posicion.lat + '</li>' +
-			'<li>Longitud: ' + posicion.lng + '</li></ul>' +
-			'</div>' +
-			'</div><button type="button" onclick="location.href=\'' + posicion.url + '\'">Más detalles</button>';
+		var contenidoVentana = '<div id="content">' + '<h1>Parcela</h1>'
+				+ '<img src="' + posicion.foto + '" height="400""/>' + '<div>'
+				+ '<ul><li>Latitud: ' + posicion.lat + '</li>'
+				+ '<li>Longitud: ' + posicion.lng + '</li></ul>' + '</div>'
+				+ '</div><button type="button" onclick="location.href=\''
+				+ posicion.url + '\'">Más detalles</button>';
 
 		var ventanaInformacion = new google.maps.InfoWindow({
-				content : contenidoVentana
-			});
+			content : contenidoVentana
+		});
 
-		marcador.addListener('click', function () {
+		marcador.addListener('click', function() {
 			ventanaInformacion.open(mapa, marcador);
 		});
 
