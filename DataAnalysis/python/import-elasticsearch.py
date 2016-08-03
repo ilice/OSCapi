@@ -30,9 +30,9 @@ if __name__ == "__main__":
 
             sigpac.save2elasticsearch(zip_codes=sigpac.all_zipcodes(starting_with=zip_code))
     elif module == 'GOOGLE':
-        for zc in sys.argv[2:]:
-            zip_code = str(zc)
+        for prov in sys.argv[2:]:
+            provincia = int(prov)
 
-            print 'Importing ' + zip_code
+            print 'Importing ' + prov
 
-            sigpac.add_altitude_info(zip_codes=sigpac.all_zipcodes(starting_with=zip_code))
+            sigpac.add_altitude_info(provincia)

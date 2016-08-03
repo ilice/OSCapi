@@ -562,10 +562,7 @@ def obtain_elevation_from_google(records, centers):
     return records
 
 
-def add_altitude_info(zip_codes,
-                      url='ftp.itacyl.es',
-                      root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
-                      force_download=False):
+def add_altitude_info(provincia, municipio=None):
     chunk_size = conf.config.getint('Google Elevation', 'chunk_size')
 
     try:
@@ -576,22 +573,21 @@ def add_altitude_info(zip_codes,
         conf.error_handler.flush()
         raise
 
-    # download if necessary
-    dataframe = get_dataframe(zip_codes=zip_codes,
-                              url=url,
-                              root_dir=root_dir,
-                              force_download=force_download,
-                              with_bbox_center=True)
+    filter = [dsl.Q("term", provincia=provincia)]
+    if municipio is not None:
+        filter.append(dsl.Q("term", municipio=municipio))
+
+    # query elasticsearch for the neccesary registers
+    search = dsl.Search().query('bool', filter=filter).fields(['bbox_center.lat', 'bbox_center.lon'])
+    search.execute()
 
     records = []
     centers = []
-    for t in dataframe.itertuples():
-        record = sigpac_record(meta={'id': build_record_id(t)})
-        x, y = convert_to_latlong([t.x_bbox_center, t.y_bbox_center])
+    for r in search.scan():
+        record = sigpac_record(meta={'id': r.meta.id})
 
-        if record is not None:
-            records.append(record)
-            centers.append((x, y))
+        records.append(record)
+        centers.append((r['bbox_center.lat'][0], r['bbox_center.lon'][0]))
 
         if len(records) >= chunk_size:
             try:
