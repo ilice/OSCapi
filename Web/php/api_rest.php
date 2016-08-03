@@ -17,7 +17,7 @@ $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 $data = json_encode($_POST);
 
 
-$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com";
+$url = "http://81.61.197.16:9200";
 
 if(strlen($index)>0){
 	$url = "$url/$index" ;

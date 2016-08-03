@@ -100,7 +100,7 @@ function showArrays(event) {
 	// MVCArray of LatLngs.
 	var vertices = this.getPath();
 
-	var contentString = '<h3>Viña de la estación</h3>'
+	var contentString = '<h3>Coordenadas del recinto</h3>'
 			+ '<h4>Localización marcada: </h4>' + event.latLng.lat() + ','
 			+ event.latLng.lng()
 			+ '<h6>Conjunto de coordenadas fijadas por el catastro:</h6><ul>';
