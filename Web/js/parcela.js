@@ -73,21 +73,25 @@ function initMap(coordenadasLinde) {
 		// TODO: hacer que esta información se muestre en otra parte
 		// informacionMarcador.open(mapa, marker);
 	});
+	
+	for (var i = 0; i< coordenadasLinde.length; i++){
+		var recinto = new google.maps.Polygon({
+			paths : coordenadasLinde[i],
+			strokeColor : '#FF0000',
+			strokeOpacity : 0.8,
+			strokeWeight : 2,
+			fillColor : '#FF0000',
+			fillOpacity : 0.35
+		});
+		recinto.setMap(mapa);
 
-	var recinto = new google.maps.Polygon({
-		paths : coordenadasLinde,
-		strokeColor : '#FF0000',
-		strokeOpacity : 0.8,
-		strokeWeight : 2,
-		fillColor : '#FF0000',
-		fillOpacity : 0.35
-	});
-	recinto.setMap(mapa);
+		// Add a listener for the click event.
+		recinto.addListener('click', showArrays);
 
-	// Add a listener for the click event.
-	recinto.addListener('click', showArrays);
+		informacionPoligono = new google.maps.InfoWindow;
+	}
 
-	informacionPoligono = new google.maps.InfoWindow;
+	
 }
 
 /** @this {google.maps.Polygon} */
@@ -1307,7 +1311,7 @@ function obtenDatosSIGPAC(c_refpar) {
 
 	var url = "php/api_rest.php/plots/sigpac_record/_search?q=c_refpar:"
 			+ c_refpar;
-	var coordenadasLinde;
+	var coordenadasLinde = [];
 
 	var request = jQuery.ajax({
 		crossDomain : true,
@@ -1325,7 +1329,7 @@ function obtenDatosSIGPAC(c_refpar) {
 
 					var hit = hits[i];
 
-					coordenadasLinde = arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]);
+					coordenadasLinde.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
 				}
 			});
 	return coordenadasLinde;
