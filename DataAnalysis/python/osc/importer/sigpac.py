@@ -590,9 +590,11 @@ def add_altitude_info(provincia, municipio=None):
         centers.append((r['bbox_center.lat'][0], r['bbox_center.lon'][0]))
 
         if len(records) >= chunk_size:
+            print "Inserting next " + str(chunk_size) + " elevations"
             try:
                 records = obtain_elevation_from_google(records, centers)
                 elastic_bulk_update(records)
+                print " ...success"
             except ConnectionError as e:
                 conf.error_handler.error(__name__,
                                          'obtain_elevation_from_google',
