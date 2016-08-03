@@ -482,11 +482,13 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 				document.getElementById("ssp").innerHTML = dspr[0]
 						.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
 
-				var cp = bi[0].getElementsByTagName("dt")[0]
+				var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
 						.getElementsByTagName("loine")[0]
-						.getElementsByTagName("cp")[0].childNodes[0].nodeValue;
-				var cmc = bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("cmc")[0].childNodes[0].nodeValue;
+						.getElementsByTagName("cp")[0].childNodes[0].nodeValue)
+						.slice(-2);
+				var cmc = ("000" + bi[0].getElementsByTagName("dt")[0]
+						.getElementsByTagName("cmc")[0].childNodes[0].nodeValue)
+						.slice(-3);
 				var cpo = ("00000000" + bi[0].getElementsByTagName("dt")[0]
 						.getElementsByTagName("locs")[0]
 						.getElementsByTagName("lors")[0]
