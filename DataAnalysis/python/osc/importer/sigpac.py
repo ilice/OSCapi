@@ -455,6 +455,8 @@ def wait_for_yellow_cluster_status():
         if cluster_status['status'] != 'red':
             break
 
+        print 'Cluster status is red. Waiting for yellow status'
+
 
 def elastic_bulk_update(records):
     try:
@@ -594,9 +596,11 @@ def add_altitude_info(provincia, municipio=None):
             print "Inserting next " + str(chunk_size) + " elevations"
             try:
                 records = obtain_elevation_from_google(records, centers)
+                print " ... Obtained info from google"
                 elastic_bulk_update(records)
                 print " ...success"
             except ConnectionError as e:
+                print " ...success"
                 conf.error_handler.error(__name__,
                                          'obtain_elevation_from_google',
                                          e.message)
