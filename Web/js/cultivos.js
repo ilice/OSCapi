@@ -32,7 +32,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 		                    }
 		                }},
 		                {"range" : {
-		                    "altitude.min" : {
+		                    "altitude.max" : {
 		                        "gte" : altitud
 		                    }
 		                }}
