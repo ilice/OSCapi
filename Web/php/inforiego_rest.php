@@ -24,14 +24,12 @@ if (! empty ( $querystring )) {
 	echo error;
 }
 function doGet($parametros) {
-	
 	$accion = ! empty ( $parametros ["accion"] ) ? $parametros ["accion"] : NULL;
 	
 	if ($accion == NULL) {
 		
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada interna a inforiego sin determinar la acción a realizar" );
 		$resultado = error;
-		
 	} else {
 		
 		$latitud = ! empty ( $parametros ["latitud"] ) ? $parametros ["latitud"] : NULL;
@@ -44,6 +42,11 @@ function doGet($parametros) {
 			case "actualiza" :
 				$resultado = actualizaDatosClima ( $estaciones, $fecha_ini, $fecha_fin );
 				break;
+			case "actualizaDiario" :
+				$resultado = actualizaDatosClima ( $estaciones, $fecha_ini, $fecha_fin );
+				break;
+			case "actualizaEstaciones" :
+				$resultado = actualizaEstaciones ($estaciones);
 			case "obtenEstacion" :
 				$resultado = $estaciones;
 				break;
@@ -54,9 +57,7 @@ function doGet($parametros) {
 	}
 	return json_encode ( $resultado, JSON_UNESCAPED_UNICODE );
 }
-
 function obtenEstaciones($latitud, $longitud) {
-	
 	$url = 'http://www.inforiego.org/opencms/rest/estacion?username=' . username . '&password=' . password;
 	
 	if ($latitud != null) {
@@ -65,9 +66,7 @@ function obtenEstaciones($latitud, $longitud) {
 	
 	return getHttpcUrl ( $url );
 }
-
 function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
-	
 	foreach ( $estaciones as $estacion ) {
 		
 		$ahora = getDate ();
@@ -110,6 +109,18 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 	
 	return $resultado;
 }
+function actualizaEstaciones($estaciones) {
+	foreach ( $estaciones as $estacion ) {
+		
+		$url = 'http://81.61.197.16:9200/test_estaciones_inforiego/info_riego_estacion/' . $estacion ["ESTACIONCORTO"];
+		$estacion = format_info_riego_estacion ( $estacion );
+		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
+	}
+	
+	$resultado ["result"] = "success";
+	
+	return $resultado;
+}
 function fechaUltimoRegistro($estacion) {
 	$url = "http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?";
 	
@@ -138,7 +149,6 @@ function fechaUltimoRegistro($estacion) {
 	return is_null ( $max_fecha ["value"] ) ? NULL : $max_fecha ["value_as_string"];
 }
 function getHttpcUrl($url) {
-	
 	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 	
 	$handler = curl_init ( $url );
@@ -177,9 +187,7 @@ function getHttpcUrl($url) {
 	
 	return $response_json;
 }
-
 function postHttpcUrl($url, $input) {
-	
 	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 	
 	$handler = curl_init ( $url );
@@ -209,7 +217,6 @@ function postHttpcUrl($url, $input) {
 	return $response;
 }
 function putHttpcUrl($url, $input) {
-	
 	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 	
 	$handler = curl_init ( $url );
@@ -232,16 +239,16 @@ function putHttpcUrl($url, $input) {
 		error_log ( 'ERROR: Request header ' . $info ['request_header'] );
 		
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
-		error_log ( 'ERROR: Código HTTP inesperado: ' . $http_code );	
+		error_log ( 'ERROR: Código HTTP inesperado: ' . $http_code );
+	}elseif (isset(json_decode($response, true)["error"])){
+		slack("ERROR: " . $response);
 	}
 	
 	curl_close ( $handler );
 	
 	return $response;
 }
-
 function format_info_riego_diario($element, $estacion) {
-
 	$element ["DIA"] = intval ( $element ["DIA"] );
 	$element ["DIRVIENTO"] = floatval ( $element ["DIRVIENTO"] );
 	$element ["DIRVIENTOVELMAX"] = floatval ( $element ["DIRVIENTOVELMAX"] );
@@ -285,8 +292,23 @@ function format_info_riego_diario($element, $estacion) {
 	
 	return $element;
 }
-function gradosSexagesimalesAgradosDecimales($gradosSexagesimales) {
+function format_info_riego_estacion($estacion) {
+	$estacion ["ALTITUD"] = intval ( $estacion ["ALTITUD"] );
 	
+	$estacion ["lat_lon"] = array (
+			"lat" => gradosSexagesimalesAgradosDecimales ( $estacion ["LATITUD"] ),
+			"lon" => gradosSexagesimalesAgradosDecimales ( $estacion ["LONGITUD"] )
+	);
+	
+	foreach ($estacion as $propiedad_estacion => $valor) {
+		if (empty($valor)) {
+			unset($estacion[$propiedad_estacion]);
+		}
+	}
+	
+	return $estacion;
+}
+function gradosSexagesimalesAgradosDecimales($gradosSexagesimales) {
 	$orientacion = ((strcmp ( substr ( $gradosSexagesimales, - 1 ), "N" ) == 0) || (strcmp ( substr ( $gradosSexagesimales, - 1 ), "E" ) == 0)) ? 1 : - 1;
 	$grados = floatval ( ltrim ( substr ( $gradosSexagesimales, 0, 2 ), 0 ) );
 	$minutos = floatval ( ltrim ( substr ( $gradosSexagesimales, 2, 2 ), 0 ) );

@@ -169,17 +169,19 @@ function obten(campo, anio, tipomedida, variable) {
 }
 
 function actualiza() {
-	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=actualiza&latitud="
-			+ document.getElementById("latitud").innerHTML
-			+ "&longitud="
-			+ document.getElementById("longitud").innerHTML;
+	
+	var url = "php/inforiego_rest.php?accion=actualiza&latitud="
+		+ document.getElementById("latitud").innerHTML
+	+ "&longitud="
+	+ document.getElementById("longitud").innerHTML;
 
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
-		method : "GET",
+		type : 'GET',
 		dataType : "json"
 	});
+	
 }
 
 function cargaDatos() {
