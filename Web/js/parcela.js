@@ -58,22 +58,7 @@ function initMap(coordenadasLinde) {
 		title : 'Parcela'
 	});
 
-	var contenidoVentanaInformacion = '<h1>Viña de la Estación</h1>'
-			+ '<p>Se trata de un bien inmueble de tipo <strong><span id="cn"></span></strong> con <span id = "cucons"></span> unidades constructivas y <span id="cucul"></span> subparcelas o cultivos.</p>'
-			+ '<p>El paraje en el que se encuentra se llama <em><span id="npa"></span></em> en <em><span id="nm"></span> ( <span id="np"></span>).</em></p>'
-			+ '<p>La calificación catastral  según la clase de cultivo es <strong><span id="ccc"></span></strong> y una intensidad productiva de <span id="ip"></span>.</p>'
-			+ '<p>La superficie de la parcela son <strong><span id="ssp"> </span> metros cuadrados</strong>.</p>'
-			+ '<p>Más información disponible en la <a href="http://www.sedecatastro.gob.es/">Sede Electrónica del Catastro</a></p>';
-
-	var informacionMarcador = new google.maps.InfoWindow({
-		content : contenidoVentanaInformacion
-	});
-
-	marker.addListener('click', function() {
-		// TODO: hacer que esta información se muestre en otra parte
-		// informacionMarcador.open(mapa, marker);
-	});
-	
+	//En realidad la parcel apuede estar formada por varios recintos, iteramos para añadir cada uno de ellos como polígono
 	for (var i = 0; i< coordenadasLinde.length; i++){
 		var recinto = new google.maps.Polygon({
 			paths : coordenadasLinde[i],
@@ -125,8 +110,8 @@ function showArrays(event) {
 }
 
 /**
- * The CenterControl adds a control to the map that recenters the map on La Viña
- * de la Estación. This constructor takes the control DIV as an argument.
+ * The CenterControl adds a control to the map that recenters the map on plot.
+ *  This constructor takes the control DIV as an argument.
  * 
  * @constructor
  */
@@ -156,7 +141,7 @@ function CenterControl(controlDiv, map) {
 	controlText.innerHTML = 'Centrar';
 	controlUI.appendChild(controlText);
 
-	// Setup the click event listeners: simply set the map to Chicago.
+	// Setup the click event listeners: simply set the map to plot coordinates.
 	controlUI.addEventListener('click', function() {
 		map.setCenter(parcela);
 		map.setZoom(20);
@@ -270,10 +255,6 @@ function obtenEstacion() {
 
 function obtenDatosCatastro() {
 	
-	// devuelve un xml y no se puede obtener por cross domain, aquí para
-	// resolverlo se utiliza un proxy de yahoo que en realidad da más
-	// posibilidades para cruzar datos pero está limitado en número de
-	// peticiones diarias
 	var url = "php/catastro_coord.php?SRS=EPSG:4326&Coordenada_X="
 		+ document.getElementById("longitud").innerHTML
 		+ "&Coordenada_Y="
