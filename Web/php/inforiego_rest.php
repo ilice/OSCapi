@@ -30,6 +30,7 @@ function doGet($parametros) {
 	if ($accion == NULL) {
 		
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada interna a inforiego sin determinar la acción a realizar" );
+		$resultado = error;
 		
 	} else {
 		
