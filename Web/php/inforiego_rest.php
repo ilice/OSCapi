@@ -246,11 +246,11 @@ function format_info_riego_diario($element, $estacion) {
 	$element ["ETHARG"] = floatval ( $element ["ETHARG"] );
 	$element ["ETPMON"] = floatval ( $element ["ETPMON"] );
 	$element ["ETRAD"] = floatval ( $element ["ETRAD"] );
-	$element ["HORMINHUMMAX"] = str_pad ( $element ["HORMINHUMMAX"], 4, "0", STR_PAD_LEFT );
-	$element ["HORMINHUMMIN"] = str_pad ( $element ["HORMINHUMMIN"], 4, "0", STR_PAD_LEFT );
-	$element ["HORMINTEMPMAX"] = str_pad ( $element ["HORMINTEMPMAX"], 4, "0", STR_PAD_LEFT );
-	$element ["HORMINTEMPMIN"] = str_pad ( $element ["HORMINTEMPMIN"], 4, "0", STR_PAD_LEFT );
-	$element ["HORMINVELMAX"] = str_pad ( $element ["HORMINVELMAX"], 4, "0", STR_PAD_LEFT );
+	$element ["HORMINHUMMAX"] = format_HHmm($element ["HORMINHUMMAX"]);
+	$element ["HORMINHUMMIN"] = format_HHmm ( $element ["HORMINHUMMIN"]);
+	$element ["HORMINTEMPMAX"] = format_HHmm ( $element ["HORMINTEMPMAX"]);
+	$element ["HORMINTEMPMIN"] = format_HHmm ( $element ["HORMINTEMPMIN"]);
+	$element ["HORMINVELMAX"] = format_HHmm ( $element ["HORMINVELMAX"]);
 	$element ["HUMEDADD"] = floatval ( $element ["HUMEDADD"] );
 	$element ["HUMEDADMAX"] = floatval ( $element ["HUMEDADMAX"] );
 	$element ["HUMEDADMEDIA"] = floatval ( $element ["HUMEDADMEDIA"] );
@@ -455,5 +455,15 @@ function temperaturaDiaria($latitud, $longitud, $anio) {
 			}';
 	}
 	return $respuesta;
+}
+
+function format_HHmm($hora){
+	$hora_HHmm = str_pad ( $hora, 4, "0", STR_PAD_LEFT );
+	$HH = substr($hora_HHmm,0,2);
+	$mm = substr($hora_HHmm,2,2);
+	if (strcmp($HH, "24") == 0) {
+		$hora_HHmm = "00" . $mm;
+	}
+	return $hora_HHmm;
 }
 ?>
