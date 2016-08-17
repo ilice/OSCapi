@@ -212,8 +212,7 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(cargaUltimaLatitudCacharrito);
 	google.charts.setOnLoadCallback(cargaUltimaLongitudCacharrito);
 
-	google.charts.setOnLoadCallback(cargaMedidaDiasDeLluvia);
-	google.charts.setOnLoadCallback(cargaMedidaPrecipitacionAcumulada);
+	google.charts.setOnLoadCallback(cargaMedidaDiasDeLluviaYPrecipitacionAcumulada);
 	google.charts.setOnLoadCallback(cargaMedidaMaximaTemperaturaDiurna);
 	google.charts.setOnLoadCallback(cargaMedidaMinimaTemperaturaDiurna);
 	google.charts.setOnLoadCallback(cargaMedidaMediaTemperaturaDiurna);
@@ -974,52 +973,38 @@ function trataUltimaLongitudCacharrito(respuesta) {
 			.getValue(0, 1);
 }
 
-function cargaMedidaDiasDeLluvia() {
+function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
+	
+	var hoy = new Date();
+	
+	var diasDeLluvia = 0;
+	var precipitacionAcumulada = 0;
+	
+	var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
+		+ document.getElementById("latitud").innerHTML
+	+ "&longitud="
+	+ document.getElementById("longitud").innerHTML
+	+ "&anio="
+	+ hoy.getFullYear();
 
-	var queryEncoded = encodeURIComponent('select count(AA) where B = 2016 and AA>0 group by B');
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+	
+	request
+	.done(function(response, textStatus, jqXHR) {
+		diasDeLluvia = response.diasDeLluvia;
+		precipitacionAcumulada = response.precipitacionAcumulada.toFixed(2);
+	});
+	
+	document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
+	document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
+	document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
 
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaDiasDeLluvia);
-}
-
-function trataRespuestaDiasDeLluvia(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('diasDeLluvia').innerHTML = datos.getValue(0, 0)
-			.toFixed(2);
-}
-
-function cargaMedidaPrecipitacionAcumulada() {
-
-	var queryEncoded = encodeURIComponent('select sum(AA) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaPrecipitacionAcumulada);
-}
-
-function trataRespuestaPrecipitacionAcumulada(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('pecipitacionacumulada').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-	document.getElementById('precipitacion-widget').innerHTML = datos.getValue(
-			0, 0).toFixed(2);
 }
 
 function cargaMedidaMaximaTemperaturaDiurna() {

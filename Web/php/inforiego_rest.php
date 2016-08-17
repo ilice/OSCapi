@@ -332,12 +332,22 @@ function diasDeLluvia($latitud, $longitud, $anio) {
       "anios": {
          "terms": {
             "field": "AÑO"
+         },
+         "aggs": { 
+            "sum_precipitacion": { 
+               "sum": {
+                  "field": "PRECIPITACION" 
+               }
+            }
          }
       }
    }
 }');
 	
-	$resultado = json_decode(postHttpcUrl($url, $input), true)["aggregations"]["anios"]["buckets"][0]["doc_count"];
-	return '{"diasDeLluvia": ' . $resultado. '}';
+	$resultado = json_decode(postHttpcUrl($url, $input), true);
+	$diasDeLluvia = $resultado["aggregations"]["anios"]["buckets"][0]["doc_count"];
+	$precipitacionAcumulada = $resultado["aggregations"]["anios"]["buckets"][0]["sum_precipitacion"]["value"];
+	
+	return '{"diasDeLluvia": ' . $diasDeLluvia. ', "precipitacionAcumulada": '. $precipitacionAcumulada . '}';
 }
 ?>
