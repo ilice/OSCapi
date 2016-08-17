@@ -7,7 +7,6 @@ define ( "username", "mariamunoz" );
 define ( "password", "39y67h" );
 define ( "error", '{"error":"error"}' );
 
-
 $querystring = $_SERVER ['QUERY_STRING'];
 $parametros = array ();
 
@@ -62,8 +61,8 @@ function doGet($parametros) {
 			case "temperaturaDiaria" :
 				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
 				break;
-			case "datosMedidaPorAnio":
-				$resultado = datosMedidaPorAnio($medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato);
+			case "datosMedidaPorAnio" :
+				$resultado = datosMedidaPorAnio ( $medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato );
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
@@ -214,6 +213,8 @@ function postHttpcUrl($url, $input) {
 		$info = curl_getinfo ( $handler );
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
+	} elseif (isset ( json_decode ( $response, true ) ["error"] )) {
+		slack ( "ERROR: " . $response );
 	}
 	
 	curl_close ( $handler );
@@ -499,14 +500,14 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
               "order": {
                 "_term" : "desc" 
               },
-             "size": ' . $numeroDeAnios .'
+             "size": ' . $numeroDeAnios . '
          },
          "aggs": { 
             "medida": { 
                "date_histogram": {
                   "field": "FECHA",
-                  "interval": "' . $intervalo .'",
-                  "format": "'. $formato . '" 
+                  "interval": "' . $intervalo . '",
+                  "format": "' . $formato . '" 
                },
                "aggs": {
                   "medida": {
@@ -526,54 +527,72 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 		$respuesta = error;
 	} else {
 		
-		$data = array();
-		$columnas = array();
-		$anios_buckets = $resultado["aggregations"]["anios"]["buckets"];
+		$data = array ();
+		$columnas = array ();
+		$anios_buckets = $resultado ["aggregations"] ["anios"] ["buckets"];
 		
-		foreach ($anios_buckets as $anio_bucket) {
+		foreach ( $anios_buckets as $anio_bucket ) {
 			
-			$anio = $anio_bucket["key_as_string"];
-			$intervalos_buckets = $anio_bucket["medida"]["buckets"];
-			array_push($columnas, array("label"=>$anio, "type" =>"number"));
+			$anio = $anio_bucket ["key_as_string"];
+			$intervalos_buckets = $anio_bucket ["medida"] ["buckets"];
+			array_push ( $columnas, array (
+					"label" => $anio,
+					"type" => "number" 
+			) );
 			
-			foreach ($intervalos_buckets as $intervalo_bucket) {
-				$numero_intervalo = intVal($intervalo_bucket["key_as_string"]);
-				$valor = $intervalo_bucket["medida"]["value"];
-				$data[$anio][$numero_intervalo]=$valor;
+			foreach ( $intervalos_buckets as $intervalo_bucket ) {
+				$numero_intervalo = intVal ( $intervalo_bucket ["key_as_string"] );
+				$valor = $intervalo_bucket ["medida"] ["value"];
+				$data [$anio] [$numero_intervalo] = $valor;
 			}
 		}
 		
-		$max_items = strcmp($formato, "M") == 0?13:367;
-		$rows = array();
-		for ($numero_intervalo = 1; $numero_intervalo < $max_items; $numero_intervalo++) {
-			$row = array();
-			if(strcmp($formato, "M") == 0){
-				array_push($row, nombre_mes($numero_intervalo));
-			}else{
-				array_push($row, "".$numero_intervalo);
+		$max_items = strcmp ( $formato, "M" ) == 0 ? 13 : 367;
+		$rows = array ();
+		for($numero_intervalo = 1; $numero_intervalo < $max_items; $numero_intervalo ++) {
+			$row = array ();
+			if (strcmp ( $formato, "M" ) == 0) {
+				array_push ( $row, nombre_mes ( $numero_intervalo ) );
+			} else {
+				array_push ( $row, "" . $numero_intervalo );
 			}
 			
-			foreach ($columnas as $columna) {
-				array_push($row, isset($data[$columna["label"]][$numero_intervalo])?$data[$columna["label"]][$numero_intervalo]:NULL);
+			foreach ( $columnas as $columna ) {
+				array_push ( $row, isset ( $data [$columna ["label"]] [$numero_intervalo] ) ? $data [$columna ["label"]] [$numero_intervalo] : NULL );
 			}
-			array_push($rows, $row);
+			array_push ( $rows, $row );
 		}
 		
-		array_unshift($columnas,array("label"=>"Mes", "type"=>"string"));
+		array_unshift ( $columnas, array (
+				"label" => "Mes",
+				"type" => "string" 
+		) );
 		
-		$respuesta = json_encode(array("cols"=>$columnas, "rows"=>$rows));
-		
+		$respuesta = json_encode ( array (
+				"cols" => $columnas,
+				"rows" => $rows 
+		) );
 	}
-	
-	
 	
 	return $respuesta;
 }
-
 function nombre_mes($numero_mes) {
+	$nombre_mes = array (
+			"Mes",
+			"Enero",
+			"Febrero",
+			"Marzo",
+			"Abril",
+			"Mayo",
+			"Junio",
+			"Julio",
+			"Agosto",
+			"Septiembre",
+			"Octubre",
+			"Noviembre",
+			"Diciembre" 
+	);
 	
-	$nombre_mes = array("Mes", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
-	
-	return $nombre_mes[$numero_mes];
+	return $nombre_mes [$numero_mes];
 }
 ?>

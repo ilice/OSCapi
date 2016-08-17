@@ -6,7 +6,7 @@
 #define DHTTYPE DHT11   // DHT 11
 #define esTMP36 true //Si en lugar del DHT usamos el TMP36 (solo da la temperatura)
 
-#define restURL F("https://script.google.com/macros/s/AKfycbzJI9ft43uJKXoeZRl0aMNqjl6dOvIxG6AVaXLIQV-Z4hsmWC4/exec?")
+#define restURL F("http://opensmartcountry.com/php/cacharrito_rest.php?")
 #define ON 255
 #define LATITUD 0
 #define LONGITUD 1
@@ -74,13 +74,7 @@ void setup() {
  
 void loop() {
 
-  sensorType = LATITUD;
-  updateSensorValue(latitude);
-  sendMeasure();
-
-  sensorType = LONGITUD;
-  updateSensorValue(longitude);
-  sendMeasure();
+  sendLocation();
 
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
@@ -446,6 +440,34 @@ bool sendMeasure() {
 
   Console.print(sensorValue);
   url.concat(sensorValue);
+  
+  runCurl(url);
+  
+  return true;
+}
+
+bool sendLocation() {
+  uint16_t statuscode;
+  int16_t length;
+
+  Console.print("sensorType: ");
+  Console.println(sensorType);
+  
+  String url = restURL;
+  url.concat(F("IMEI="));
+  url.concat(imei);
+  url.concat(F("&Latitud="));
+  url.concat(latitude);
+  url.concat(F("&Longitud="));
+  url.concat(longitude);
+  
+  Console.print(restURL);
+  Console.print(F("IMEI="));
+  Console.print(imei);
+  Console.print(F("&Latitud="));
+  Console.print(latitude);
+  Console.print(F("&Longitud="));
+  Console.print(longitude);
   
   runCurl(url);
   
