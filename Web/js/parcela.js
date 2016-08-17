@@ -178,6 +178,7 @@ function actualiza() {
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
+		async: false,
 		type : 'GET',
 		dataType : "json"
 	});
@@ -491,7 +492,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 
 function graficoPrecipitacionPorMesYAnio() {
 	
-	var tabla = obtenDatosPorMesYAnio("PRECIPITACION", 3, "month", "M");
+	var tabla = obtenDatosPorAnio("PRECIPITACION", 3, "month", "M");
 	
 	var columnas = tabla.cols;
 	var filas = tabla.rows;
@@ -527,7 +528,7 @@ function graficoPrecipitacionPorMesYAnio() {
 
 function graficoTemperaturasMediasDiurnas() {
 
-	var tabla = obtenDatosPorMesYAnio("TEMPMEDIA", 3, "day", "DDD");
+	var tabla = obtenDatosPorAnio("TEMPMEDIA", 3, "day", "DDD");
 	
 	var columnas = tabla.cols;
 	var filas = tabla.rows;
@@ -585,20 +586,17 @@ function graficoTemperaturasMediasDiurnas() {
 
 function graficoHorasDeSolDiarias() {
 
-	var queryHorasDeSolDiarias = encodeURIComponent('select C, sum(V) where B >= 2014 group by C pivot B');
+var tabla = obtenDatosPorAnio("N", 3, "day", "DDD");
+	
+	var columnas = tabla.cols;
+	var filas = tabla.rows;
+	
+	var dt = new google.visualization.DataTable();
 
-	var queryCompletaHorasDeSolDiarias = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryHorasDeSolDiarias);
-	queryCompletaHorasDeSolDiarias.send(trataRespuestaHorasDeSolDiarias);
-}
-
-function trataRespuestaHorasDeSolDiarias(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
+	for(var i = 0; i < columnas.length; i++){
+		dt.addColumn(columnas[i].type, columnas[i].label);
 	}
+	dt.addRows(filas);
 
 	var opciones = {
 		chart : {
@@ -635,30 +633,27 @@ function trataRespuestaHorasDeSolDiarias(respuesta) {
 		}
 	};
 
-	var datos = respuesta.getDataTable();
+	
 
 	var grafica = new google.visualization.LineChart(document
 			.getElementById('graficoHorasDeSolDiarias'));
 	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(datos, opciones);
+	grafica.draw(dt, opciones);
 }
 
 function graficoRadiacionNetaDiaria() {
 
-	var queryRadiacionNetaDiaria = encodeURIComponent('select C, sum(AB) where B >= 2014 group by C pivot B');
+var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
+	
+	var columnas = tabla.cols;
+	var filas = tabla.rows;
+	
+	var dt = new google.visualization.DataTable();
 
-	var queryCompletaRadiacionNetaDiaria = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryRadiacionNetaDiaria);
-	queryCompletaRadiacionNetaDiaria.send(trataRespuestaRadiacionNetaDiaria);
-}
-
-function trataRespuestaRadiacionNetaDiaria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
+	for(var i = 0; i < columnas.length; i++){
+		dt.addColumn(columnas[i].type, columnas[i].label);
 	}
+	dt.addRows(filas);
 
 	var opciones = {
 		chart : {
@@ -692,73 +687,13 @@ function trataRespuestaRadiacionNetaDiaria(respuesta) {
 		}
 	};
 
-	var datos = respuesta.getDataTable();
-
 	var grafica = new google.visualization.LineChart(document
 			.getElementById('graficoRadiacionNetaDiaria'));
 	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(datos, opciones);
+	grafica.draw(dt, opciones);
 }
 
-function graficoRadiacionNetaDiaria() {
 
-	var queryRadiacionNetaDiaria = encodeURIComponent('select C, sum(AB) where B >= 2014 group by C pivot B');
-
-	var queryCompletaRadiacionNetaDiaria = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryRadiacionNetaDiaria);
-	queryCompletaRadiacionNetaDiaria.send(trataRespuestaRadiacionNetaDiaria);
-}
-
-function trataRespuestaRadiacionNetaDiaria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var opciones = {
-		chart : {
-			title : 'Radiación neta diaria en MJ/m&#178',
-			subtitle : 'Comparativa radiación neta diaria',
-		},
-		explorer : {},
-		colors : [ '#BF480A', '#FF600D', '#E5570C' ],
-		hAxis : {
-			title : 'Día del año',
-			gridlines : {
-				count : 12
-			}
-		},
-		vAxis : {
-			title : 'Radiación neta diaria en MJ/m²'
-		},
-		series : {
-			0 : {
-
-				lineWidth : 1
-
-			},
-			1 : {
-
-				lineWidth : 1
-
-			},
-			2 : {
-
-				lineWidth : 2
-
-			}
-		}
-	};
-
-	var datos = respuesta.getDataTable();
-
-	var grafica = new google.visualization.LineChart(document
-			.getElementById('graficoRadiacionNetaDiaria'));
-	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(datos, opciones);
-}
 
 function cargaUltimoValorHumedadSuelo() {
 
@@ -1036,6 +971,7 @@ var hoy = new Date();
 	document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
 	document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
 	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
+	document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
 }
 
 function obtenAltitud(latitud, longitud) {
@@ -1134,11 +1070,11 @@ function arrayToPathLatLong(array) {
 	return paths;
 }
 
-function obtenDatosPorMesYAnio(medida, numeroDeAnios, intervalo, formato){
+function obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato){
 	
 	var datos;
 	
-	var url = "php/inforiego_rest.php?accion=datosMedidaPorMesYAnio&latitud="
+	var url = "php/inforiego_rest.php?accion=datosMedidaPorAnio&latitud="
 		+ document.getElementById("latitud").innerHTML
 	+ "&longitud="
 	+ document.getElementById("longitud").innerHTML

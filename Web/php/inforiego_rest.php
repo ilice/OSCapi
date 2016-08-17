@@ -62,8 +62,8 @@ function doGet($parametros) {
 			case "temperaturaDiaria" :
 				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
 				break;
-			case "datosMedidaPorMesYAnio":
-				$resultado = datosMedidaPorMesYAnio($medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato);
+			case "datosMedidaPorAnio":
+				$resultado = datosMedidaPorAnio($medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato);
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
@@ -473,7 +473,7 @@ function format_HHmm($hora) {
 	}
 	return $hora_HHmm;
 }
-function datosMedidaPorMesYAnio($medida, $latitud, $longitud, $numeroDeAnios, $intervalo, $formato) {
+function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $intervalo, $formato) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
@@ -533,28 +533,28 @@ function datosMedidaPorMesYAnio($medida, $latitud, $longitud, $numeroDeAnios, $i
 		foreach ($anios_buckets as $anio_bucket) {
 			
 			$anio = $anio_bucket["key_as_string"];
-			$meses_bucket = $anio_bucket["medida"]["buckets"];
+			$intervalos_buckets = $anio_bucket["medida"]["buckets"];
 			array_push($columnas, array("label"=>$anio, "type" =>"number"));
 			
-			foreach ($meses_bucket as $mes_bucket) {
-				$mes = intVal($mes_bucket["key_as_string"]);
-				$valor = $mes_bucket["medida"]["value"];
-				$data[$anio][$mes]=$valor;
+			foreach ($intervalos_buckets as $intervalo_bucket) {
+				$numero_intervalo = intVal($intervalo_bucket["key_as_string"]);
+				$valor = $intervalo_bucket["medida"]["value"];
+				$data[$anio][$numero_intervalo]=$valor;
 			}
 		}
 		
 		$max_items = strcmp($formato, "M") == 0?13:367;
 		$rows = array();
-		for ($numero_mes = 1; $numero_mes < $max_items; $numero_mes++) {
+		for ($numero_intervalo = 1; $numero_intervalo < $max_items; $numero_intervalo++) {
 			$row = array();
 			if(strcmp($formato, "M") == 0){
-				array_push($row, nombre_mes($numero_mes));
+				array_push($row, nombre_mes($numero_intervalo));
 			}else{
-				array_push($row, "".$numero_mes);
+				array_push($row, "".$numero_intervalo);
 			}
 			
 			foreach ($columnas as $columna) {
-				array_push($row, isset($data[$columna["label"]][$numero_mes])?$data[$columna["label"]][$numero_mes]:NULL);
+				array_push($row, isset($data[$columna["label"]][$numero_intervalo])?$data[$columna["label"]][$numero_intervalo]:NULL);
 			}
 			array_push($rows, $row);
 		}
