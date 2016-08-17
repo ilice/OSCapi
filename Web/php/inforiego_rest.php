@@ -37,6 +37,7 @@ function doGet($parametros) {
 		$estaciones = obtenEstaciones ( $latitud, $longitud );
 		$fecha_ini = ! empty ( $parametros ["fecha_ini"] ) ? $parametros ["fecha_ini"] : NULL;
 		$fecha_fin = ! empty ( $parametros ["fecha_fin"] ) ? $parametros ["fecha_fin"] : NULL;
+		$anio = ! empty ( $parametros ["anio"] ) ? $parametros ["anio"] : NULL;
 		
 		switch ($accion) {
 			case "actualiza" :
@@ -46,16 +47,19 @@ function doGet($parametros) {
 				$resultado = actualizaDatosClima ( $estaciones, $fecha_ini, $fecha_fin );
 				break;
 			case "actualizaEstaciones" :
-				$resultado = actualizaEstaciones ($estaciones);
+				$resultado = actualizaEstaciones ( $estaciones );
 			case "obtenEstacion" :
 				$resultado = $estaciones;
+				break;
+			case "diasDeLluvia" :
+				$resultado = diasDeLluvia($latitud, $longitud, $anio);
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
 				$resultado = error;
 		}
 	}
-	return json_encode ( $resultado, JSON_UNESCAPED_UNICODE );
+	return $resultado;
 }
 function obtenEstaciones($latitud, $longitud) {
 	$url = 'http://www.inforiego.org/opencms/rest/estacion?username=' . username . '&password=' . password;
@@ -161,15 +165,9 @@ function getHttpcUrl($url) {
 	$response = curl_exec ( $handler );
 	
 	if (curl_error ( $handler )) {
-		slack ( 'ERROR:' . curl_error ( $handler ) );
-		slack ( "ERROR: " . htmlspecialchars ( curl_error ( $handler ) ) );
-		
 		$info = curl_getinfo ( $handler );
-		slack ( 'ERROR: Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] );
-		slack ( 'ERROR: Request header ' . $info ['request_header'] );
-		
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
-		slack ( 'ERROR: Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
 	}
 	
 	curl_close ( $handler );
@@ -202,14 +200,10 @@ function postHttpcUrl($url, $input) {
 	$response = curl_exec ( $handler );
 	
 	if (curl_error ( $handler )) {
-		slack ( 'ERROR:' . curl_error ( $handler ) );
-		slack ( "ERROR: " . htmlspecialchars ( curl_error ( $handler ) ) );
-		
 		$info = curl_getinfo ( $handler );
-		slack ( 'ERROR: Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] );
-		slack ( 'ERROR: Request header ' . $info ['request_header'] );
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
-		slack ( 'ERROR: Código HTTP inesperado: ' . $http_code );
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
+		
 	}
 	
 	curl_close ( $handler );
@@ -231,17 +225,11 @@ function putHttpcUrl($url, $input) {
 	$response = curl_exec ( $handler );
 	
 	if (curl_error ( $handler )) {
-		error_log ( 'ERROR:' . curl_error ( $handler ) );
-		error_log ( "ERROR: " . htmlspecialchars ( curl_error ( $handler ) ) );
-		
 		$info = curl_getinfo ( $handler );
-		error_log ( 'ERROR: Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] );
-		error_log ( 'ERROR: Request header ' . $info ['request_header'] );
-		
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
-		error_log ( 'ERROR: Código HTTP inesperado: ' . $http_code );
-	}elseif (isset(json_decode($response, true)["error"])){
-		slack("ERROR: " . $response);
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
+	} elseif (isset ( json_decode ( $response, true ) ["error"] )) {
+		slack ( "ERROR: " . $response );
 	}
 	
 	curl_close ( $handler );
@@ -297,12 +285,12 @@ function format_info_riego_estacion($estacion) {
 	
 	$estacion ["lat_lon"] = array (
 			"lat" => gradosSexagesimalesAgradosDecimales ( $estacion ["LATITUD"] ),
-			"lon" => gradosSexagesimalesAgradosDecimales ( $estacion ["LONGITUD"] )
+			"lon" => gradosSexagesimalesAgradosDecimales ( $estacion ["LONGITUD"] ) 
 	);
 	
-	foreach ($estacion as $propiedad_estacion => $valor) {
-		if (empty($valor)) {
-			unset($estacion[$propiedad_estacion]);
+	foreach ( $estacion as $propiedad_estacion => $valor ) {
+		if (empty ( $valor )) {
+			unset ( $estacion [$propiedad_estacion] );
 		}
 	}
 	
@@ -317,5 +305,39 @@ function gradosSexagesimalesAgradosDecimales($gradosSexagesimales) {
 	$centesimas = floatval ( ltrim ( substr ( $gradosSexagesimales, 6, 3 ), 0 ) );
 	$gradosDecimales = $orientacion * ($grados + ($minutos / 60) + ($segundos / 3600) + ($centesimas / 360000));
 	return floatval ( $gradosDecimales );
+}
+function diasDeLluvia($latitud, $longitud, $anio) {
+	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
+	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$input = utf8_encode ('{"size" : 0,
+   "query" : {
+        "constant_score" : {
+            "filter" : {
+              "bool": { 
+                "must": [
+                  {"range" : {
+                      "PRECIPITACION" : {
+                          "gt" : 0
+                      }
+                  }},
+                  { "term": { "IDESTACION" : "' . $estacion ["IDESTACION"] . '" } },
+                  { "term": { "IDPROVINCIA" : "' . $estacion ["IDPROVINCIA"] . '" } },
+                  { "term": { "AÑO" : "' . $anio . '" } }
+                ]
+              }
+            }
+        }
+    },
+   "aggs": {
+      "anios": {
+         "terms": {
+            "field": "AÑO"
+         }
+      }
+   }
+}');
+	
+	$resultado = json_decode(postHttpcUrl($url, $input), true)["aggregations"]["anios"]["buckets"][0]["doc_count"];
+	return '{"diasDeLluvia": ' . $resultado. '}';
 }
 ?>
