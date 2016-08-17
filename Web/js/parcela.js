@@ -491,27 +491,11 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 
 function graficoPrecipitacionPorMesYAnio() {
 	
-	var tabla = obtenDatosPorMesYAnio("PRECIPITACION");
+	var tabla = obtenDatosPorMesYAnio("PRECIPITACION", 3, "month", "M");
 	
 	var columnas = tabla.cols;
 	var filas = tabla.rows;
-		
-	var opciones = {
-		chart : {
-			title : 'Precipitaciones mensuales en mm',
-			subtitle : 'Comparativa acumulado mensual últimos años',
-		},
-		bars : 'vertical',
-		colors : [ '#94E8B4', '#72BDA3', '#5E8C61', '#426A4D', '#4E6151',
-				'#3B322C', '#7246F2' ],
-		hAxis : {
-			title : 'Mes'
-		},
-		vAxis : {
-			title : 'Precipitación en mm'
-		}
-	};
-
+	
 	var dt = new google.visualization.DataTable();
 
 	for(var i = 0; i < columnas.length; i++){
@@ -519,7 +503,21 @@ function graficoPrecipitacionPorMesYAnio() {
 	}
 	dt.addRows(filas);
 	
-	
+	var opciones = {
+			chart : {
+				title : 'Precipitaciones mensuales en mm',
+				subtitle : 'Comparativa acumulado mensual últimos años',
+			},
+			bars : 'vertical',
+			colors : [ '#94E8B4', '#72BDA3', '#5E8C61', '#426A4D', '#4E6151',
+					'#3B322C', '#7246F2' ],
+			hAxis : {
+				title : 'Mes'
+			},
+			vAxis : {
+				title : 'Precipitación en mm'
+			}
+		};
 
 	var grafica = new google.visualization.ColumnChart(document
 			.getElementById('graficoPrecipitacionPorMesYAnio'));
@@ -529,21 +527,18 @@ function graficoPrecipitacionPorMesYAnio() {
 
 function graficoTemperaturasMediasDiurnas() {
 
-	var queryTemperaturasMediasDiurnas = encodeURIComponent('select C, sum(AH) where B >= 2014 group by C pivot B');
+	var tabla = obtenDatosPorMesYAnio("TEMPMEDIA", 3, "day", "DDD");
+	
+	var columnas = tabla.cols;
+	var filas = tabla.rows;
+	
+	var dt = new google.visualization.DataTable();
 
-	var queryCompletaTemperaturasMediasDiurnas = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryTemperaturasMediasDiurnas);
-	queryCompletaTemperaturasMediasDiurnas
-			.send(trataRespuestaTemperaturasMediasDiurnas);
-}
-
-function trataRespuestaTemperaturasMediasDiurnas(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
+	for(var i = 0; i < columnas.length; i++){
+		dt.addColumn(columnas[i].type, columnas[i].label);
 	}
+	dt.addRows(filas);
+
 
 	var opciones = {
 		chart : {
@@ -580,12 +575,12 @@ function trataRespuestaTemperaturasMediasDiurnas(respuesta) {
 		}
 	};
 
-	var datos = respuesta.getDataTable();
+	
 
 	var grafica = new google.visualization.LineChart(document
 			.getElementById('graficoTemperaturaMediaDiurna'));
 	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(datos, opciones);
+	grafica.draw(dt, opciones);
 }
 
 function graficoHorasDeSolDiarias() {
@@ -1139,7 +1134,7 @@ function arrayToPathLatLong(array) {
 	return paths;
 }
 
-function obtenDatosPorMesYAnio(medida){
+function obtenDatosPorMesYAnio(medida, numeroDeAnios, intervalo, formato){
 	
 	var datos;
 	
@@ -1148,7 +1143,13 @@ function obtenDatosPorMesYAnio(medida){
 	+ "&longitud="
 	+ document.getElementById("longitud").innerHTML
 	+ "&medida="
-	+ medida;
+	+ medida
+	+ "&numeroDeAnios="
+	+ numeroDeAnios
+	+ "&intervalo="
+	+ intervalo
+	+ "&formato="
+	+ formato;
 
 	var request = jQuery.ajax({
 		crossDomain : true,

@@ -40,6 +40,9 @@ function doGet($parametros) {
 		$fecha_fin = ! empty ( $parametros ["fecha_fin"] ) ? $parametros ["fecha_fin"] : NULL;
 		$anio = ! empty ( $parametros ["anio"] ) ? $parametros ["anio"] : NULL;
 		$medida = ! empty ( $parametros ["medida"] ) ? $parametros ["medida"] : NULL;
+		$numeroDeAnios = ! empty ( $parametros ["numeroDeAnios"] ) ? $parametros ["numeroDeAnios"] : NULL;
+		$intervalo = ! empty ( $parametros ["intervalo"] ) ? $parametros ["intervalo"] : NULL;
+		$formato = ! empty ( $parametros ["formato"] ) ? $parametros ["formato"] : NULL;
 		
 		switch ($accion) {
 			case "actualiza" :
@@ -60,7 +63,7 @@ function doGet($parametros) {
 				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
 				break;
 			case "datosMedidaPorMesYAnio":
-				$resultado = datosMedidaPorMesYAnio($medida, $longitud, $latitud);
+				$resultado = datosMedidaPorMesYAnio($medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato);
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
@@ -470,7 +473,7 @@ function format_HHmm($hora) {
 	}
 	return $hora_HHmm;
 }
-function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
+function datosMedidaPorMesYAnio($medida, $latitud, $longitud, $numeroDeAnios, $intervalo, $formato) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
@@ -494,16 +497,16 @@ function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
          "terms": {
             "field": "AÑO",
               "order": {
-                "_term" : "asc" 
+                "_term" : "desc" 
               },
-             "size": 0
+             "size": ' . $numeroDeAnios .'
          },
          "aggs": { 
             "medida": { 
                "date_histogram": {
                   "field": "FECHA",
-                  "interval": "month",
-                  "format": "M" 
+                  "interval": "' . $intervalo .'",
+                  "format": "'. $formato . '" 
                },
                "aggs": {
                   "medida": {
@@ -540,10 +543,15 @@ function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
 			}
 		}
 		
+		$max_items = strcmp($formato, "M") == 0?13:367;
 		$rows = array();
-		for ($numero_mes = 1; $numero_mes < 13; $numero_mes++) {
+		for ($numero_mes = 1; $numero_mes < $max_items; $numero_mes++) {
 			$row = array();
-			array_push($row, nombre_mes($numero_mes)); 
+			if(strcmp($formato, "M") == 0){
+				array_push($row, nombre_mes($numero_mes));
+			}else{
+				array_push($row, "".$numero_mes);
+			}
 			
 			foreach ($columnas as $columna) {
 				array_push($row, isset($data[$columna["label"]][$numero_mes])?$data[$columna["label"]][$numero_mes]:NULL);
