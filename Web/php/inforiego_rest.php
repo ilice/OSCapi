@@ -7,6 +7,7 @@ define ( "username", "mariamunoz" );
 define ( "password", "39y67h" );
 define ( "error", '{"error":"error"}' );
 
+
 $querystring = $_SERVER ['QUERY_STRING'];
 $parametros = array ();
 
@@ -491,7 +492,11 @@ function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
    "aggs": {
       "anios": {
          "terms": {
-            "field": "AÑO"
+            "field": "AÑO",
+              "order": {
+                "_term" : "asc" 
+              },
+             "size": 0
          },
          "aggs": { 
             "medida": { 
@@ -517,40 +522,50 @@ function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
 		$respuesta = error;
 	} else {
-		$columns = array(
-				array("label"=>"Mes", "type"=>'string'), 
-				array("label"=>"Enero", "type" =>'number'), 
-				array("label"=>"Febrero", "type" =>"number"),
-				array("label"=>"Marzo", "type" =>"number"),
-				array("label"=>"Abril", "type" =>"number"),
-				array("label"=>"Mayo", "type" =>"number"),
-				array("label"=>"Junio", "type" =>"number"),
-				array("label"=>"Julio", "type" =>"number"),
-				array("label"=>"Agosto", "type" =>"number"),
-				array("label"=>"Septiemre", "type" =>"number"),
-				array("label"=>"Octubre", "type" =>"number"),
-				array("label"=>"Noviembre", "type" =>"number"),
-				array("label"=>"Diciembre", "type" =>"number")				
-		);
-		$rows = array();
+		
+		$data = array();
+		$columnas = array();
 		$anios_buckets = $resultado["aggregations"]["anios"]["buckets"];
+		
 		foreach ($anios_buckets as $anio_bucket) {
-			$row = array();
+			
 			$anio = $anio_bucket["key_as_string"];
-			$row[0]=$anio;
 			$meses_bucket = $anio_bucket["medida"]["buckets"];
+			array_push($columnas, array("label"=>$anio, "type" =>"number"));
+			
 			foreach ($meses_bucket as $mes_bucket) {
 				$mes = intVal($mes_bucket["key_as_string"]);
 				$valor = $mes_bucket["medida"]["value"];
-				$row[$mes]=$valor;
+				$data[$anio][$mes]=$valor;
+			}
+		}
+		
+		$rows = array();
+		for ($numero_mes = 1; $numero_mes < 13; $numero_mes++) {
+			$row = array();
+			array_push($row, nombre_mes($numero_mes)); 
+			
+			foreach ($columnas as $columna) {
+				array_push($row, isset($data[$columna["label"]][$numero_mes])?$data[$columna["label"]][$numero_mes]:NULL);
 			}
 			array_push($rows, $row);
 		}
 		
-		$respuesta = json_encode(array("cols"=>$columns, "rows"=>$rows));
+		array_unshift($columnas,array("label"=>"Mes", "type"=>"string"));
+		
+		$respuesta = json_encode(array("cols"=>$columnas, "rows"=>$rows));
 		
 	}
 	
+	
+	
 	return $respuesta;
+}
+
+function nombre_mes($numero_mes) {
+	
+	$nombre_mes = array("Mes", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+	
+	return $nombre_mes[$numero_mes];
 }
 ?>
