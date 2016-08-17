@@ -213,16 +213,8 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(cargaUltimaLongitudCacharrito);
 
 	google.charts.setOnLoadCallback(cargaMedidaDiasDeLluviaYPrecipitacionAcumulada);
-	google.charts.setOnLoadCallback(cargaMedidaMaximaTemperaturaDiurna);
-	google.charts.setOnLoadCallback(cargaMedidaMinimaTemperaturaDiurna);
-	google.charts.setOnLoadCallback(cargaMedidaMediaTemperaturaDiurna);
-	google.charts.setOnLoadCallback(cargaMedidaMediaHorasSolDiarias);
-	google.charts.setOnLoadCallback(cargaMedidaMaximoHorasSolDiarias);
-	google.charts.setOnLoadCallback(cargaMedidaAcumuladoHorasSolDiarias);
-	google.charts.setOnLoadCallback(cargaMedidaMaximoRadiacionDiaria);
-	google.charts.setOnLoadCallback(cargaMedidaMediaRadiacionDiaria);
-	google.charts.setOnLoadCallback(cargaMedidaAcumuladoRadiacionDiaria);
-
+	google.charts.setOnLoadCallback(cargaMedidasDiarias);
+	
 	google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
@@ -1007,217 +999,53 @@ function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 
 }
 
-function cargaMedidaMaximaTemperaturaDiurna() {
+function cargaMedidasDiarias() {
+	
+var hoy = new Date();
+	
+	var min_temperatura = 0;
+	var max_temperatura = 0;
+	var media_temperatura = 0;
+		
+	var url = "php/inforiego_rest.php?accion=temperaturaDiaria&latitud="
+		+ document.getElementById("latitud").innerHTML
+	+ "&longitud="
+	+ document.getElementById("longitud").innerHTML
+	+ "&anio="
+	+ hoy.getFullYear();
 
-	var queryEncoded = encodeURIComponent('select max(AG) where B = 2016 group by B');
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+	
+	request
+	.done(function(response, textStatus, jqXHR) {
+		min_temperatura = response.min_temperatura.toFixed(2);
+		max_temperatura = response.max_temperatura.toFixed(2);
+		media_temperatura = response.media_temperatura.toFixed(2);
+		media_horas_sol = response.media_horas_sol.toFixed(2);
+		max_horas_sol = response.max_horas_sol.toFixed(2);
+		sum_horas_sol = response.sum_horas_sol.toFixed(2);
+		media_radiacion = response.media_radiacion.toFixed(2);
+		max_radiacion = response.max_radiacion.toFixed(2);
+		sum_radiacion = response.sum_radiacion.toFixed(2);
+	});
 
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMaximaTemperaturaDiurna);
-}
-
-function trataRespuestaMaximaTemperaturaDiurna(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('maximaTemperaturaDiurna').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-}
-
-function cargaMedidaMinimaTemperaturaDiurna() {
-
-	var queryEncoded = encodeURIComponent('select min(AI) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMinimaTemperaturaDiurna);
-}
-
-function trataRespuestaMinimaTemperaturaDiurna(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('minimaTemperaturaDiurna').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-}
-
-function cargaMedidaMediaTemperaturaDiurna() {
-
-	var queryEncoded = encodeURIComponent('select avg(AH) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMediaTemperaturaDiurna);
-}
-
-function trataRespuestaMediaTemperaturaDiurna(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('mediaTemperaturaDiurna').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-	document.getElementById('temperatura-widget').innerHTML = datos.getValue(0,
-			0).toFixed(2);
-}
-
-function cargaMedidaMediaHorasSolDiarias() {
-
-	var queryEncoded = encodeURIComponent('select avg(V) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMediaHorasSolDiarias);
-}
-
-function trataRespuestaMediaHorasSolDiarias(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('mediaHorasSolDiarias').innerHTML = datos.getValue(
-			0, 0).toFixed(2);
-}
-
-function cargaMedidaMaximoHorasSolDiarias() {
-
-	var queryEncoded = encodeURIComponent('select max(V) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMaximoHorasSolDiarias);
-}
-
-function trataRespuestaMaximoHorasSolDiarias(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('maximasHorasSolDiarias').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-}
-
-function cargaMedidaAcumuladoHorasSolDiarias() {
-
-	var queryEncoded = encodeURIComponent('select sum(V) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaAcumuladoHorasSolDiarias);
-}
-
-function trataRespuestaAcumuladoHorasSolDiarias(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horasSolAcumuladas').innerHTML = datos.getValue(0,
-			0).toFixed(2);
-	document.getElementById('horasSol-widget').innerHTML = datos.getValue(0, 0)
-			.toFixed(2);
-}
-
-function cargaMedidaMaximoRadiacionDiaria() {
-
-	var queryEncoded = encodeURIComponent('select max(AB) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMaximoRadiacionDiaria);
-}
-
-function trataRespuestaMaximoRadiacionDiaria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('maximoRadiacionNetaDiaria').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-}
-
-function cargaMedidaMediaRadiacionDiaria() {
-
-	var queryEncoded = encodeURIComponent('select avg(AB) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaMediaRadiacionlDiaria);
-}
-
-function trataRespuestaMediaRadiacionlDiaria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('mediaRadiacionNetaDiaria').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-	document.getElementById('radiacion-widget').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
-}
-
-function cargaMedidaAcumuladoRadiacionDiaria() {
-
-	var queryEncoded = encodeURIComponent('select sum(AB) where B = 2016 group by B');
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataRespuestaAcumuladoRadiacionDiaria);
-}
-
-function trataRespuestaAcumuladoRadiacionDiaria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = datos
-			.getValue(0, 0).toFixed(2);
+	document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
+	document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
+	document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
+	document.getElementById('temperatura-widget').innerHTML = media_temperatura;
+	document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
+	document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
+	document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
+	document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
+	document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
+	document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
+	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
 }
 
 function obtenAltitud(latitud, longitud) {

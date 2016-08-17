@@ -52,7 +52,10 @@ function doGet($parametros) {
 				$resultado = $estaciones;
 				break;
 			case "diasDeLluvia" :
-				$resultado = diasDeLluvia($latitud, $longitud, $anio);
+				$resultado = diasDeLluvia ( $latitud, $longitud, $anio );
+				break;
+			case "temperaturaDiaria" :
+				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
@@ -203,7 +206,6 @@ function postHttpcUrl($url, $input) {
 		$info = curl_getinfo ( $handler );
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
-		
 	}
 	
 	curl_close ( $handler );
@@ -309,7 +311,7 @@ function gradosSexagesimalesAgradosDecimales($gradosSexagesimales) {
 function diasDeLluvia($latitud, $longitud, $anio) {
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
 	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
-	$input = utf8_encode ('{"size" : 0,
+	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
             "filter" : {
@@ -342,12 +344,116 @@ function diasDeLluvia($latitud, $longitud, $anio) {
          }
       }
    }
-}');
+}' );
 	
-	$resultado = json_decode(postHttpcUrl($url, $input), true);
-	$diasDeLluvia = $resultado["aggregations"]["anios"]["buckets"][0]["doc_count"];
-	$precipitacionAcumulada = $resultado["aggregations"]["anios"]["buckets"][0]["sum_precipitacion"]["value"];
+	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
+	$diasDeLluvia = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["doc_count"];
+	$precipitacionAcumulada = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_precipitacion"] ["value"];
 	
-	return '{"diasDeLluvia": ' . $diasDeLluvia. ', "precipitacionAcumulada": '. $precipitacionAcumulada . '}';
+	return '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
+}
+function temperaturaDiaria($latitud, $longitud, $anio) {
+	$respuesta = "";
+	
+	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
+	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$input = utf8_encode ( '{"size" : 0,
+   "query" : {
+        "constant_score" : {
+            "filter" : {
+              "bool": {
+                "must": [
+                  { "term": { "IDESTACION" : "' . $estacion ["IDESTACION"] . '" } },
+                  { "term": { "IDPROVINCIA" : "' . $estacion ["IDPROVINCIA"] . '" } },
+                  { "term": { "AÑO" : "' . $anio . '" } }
+                ]
+              }
+            }
+        }
+    },
+   "aggs": {
+      "anios": {
+         "terms": {
+            "field": "AÑO"
+         },
+         "aggs":  {
+            "max_temperatura": { 
+               "max": {
+                  "field": "TEMPMAX" 
+               }
+            },
+            "min_temperatura": { 
+               "min": {
+                  "field": "TEMPMIN" 
+               }
+            },
+            "media_temperatura": { 
+               "avg": {
+                  "field": "TEMPMEDIA" 
+               }
+            },
+            "media_horas_sol": { 
+               "avg": {
+                  "field": "N" 
+               }
+            },
+            "max_horas_sol": { 
+               "max": {
+                  "field": "N" 
+               }
+            },
+            "sum_horas_sol": { 
+               "sum": {
+                  "field": "N" 
+               }
+            },
+            "media_radiacion": { 
+               "avg": {
+                  "field": "RADIACION" 
+               }
+            },
+            "max_radiacion": { 
+               "max": {
+                  "field": "RADIACION" 
+               }
+            },
+            "sum_radiacion": { 
+               "sum": {
+                  "field": "RADIACION" 
+               }
+            }          
+         }
+      }
+   }
+}' );
+	
+	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
+	
+	if (isset ( $resultado ["error"] )) {
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
+		$respuesta = error;
+	} else {
+		$min_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["min_temperatura"] ["value"];
+		$max_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_temperatura"] ["value"];
+		$media_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_temperatura"] ["value"];
+		$media_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_horas_sol"] ["value"];
+		$max_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_horas_sol"] ["value"];
+		$sum_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_horas_sol"] ["value"];
+		$media_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_radiacion"] ["value"];
+		$max_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_radiacion"] ["value"];
+		$sum_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_radiacion"] ["value"];
+		
+		$respuesta = '{"min_temperatura": ' . $min_temperatura . ',
+			"max_temperatura": ' . $max_temperatura . ',
+			"media_temperatura": ' . $media_temperatura . ',
+			"media_horas_sol": ' . $media_horas_sol . ',
+			"max_horas_sol": ' . $max_horas_sol . ',
+			"sum_horas_sol": ' . $sum_horas_sol . ',
+			"media_radiacion": ' . $media_radiacion . ',
+			"max_radiacion": ' . $max_radiacion . ',
+			"sum_radiacion": ' . $sum_radiacion . '
+			}';
+	}
+	return $respuesta;
 }
 ?>
