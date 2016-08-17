@@ -38,6 +38,7 @@ function doGet($parametros) {
 		$fecha_ini = ! empty ( $parametros ["fecha_ini"] ) ? $parametros ["fecha_ini"] : NULL;
 		$fecha_fin = ! empty ( $parametros ["fecha_fin"] ) ? $parametros ["fecha_fin"] : NULL;
 		$anio = ! empty ( $parametros ["anio"] ) ? $parametros ["anio"] : NULL;
+		$medida = ! empty ( $parametros ["medida"] ) ? $parametros ["medida"] : NULL;
 		
 		switch ($accion) {
 			case "actualiza" :
@@ -56,6 +57,9 @@ function doGet($parametros) {
 				break;
 			case "temperaturaDiaria" :
 				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
+				break;
+			case "datosMedidaPorMesYAnio":
+				$resultado = datosMedidaPorMesYAnio($medida, $longitud, $latitud);
 				break;
 			default :
 				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
@@ -246,11 +250,11 @@ function format_info_riego_diario($element, $estacion) {
 	$element ["ETHARG"] = floatval ( $element ["ETHARG"] );
 	$element ["ETPMON"] = floatval ( $element ["ETPMON"] );
 	$element ["ETRAD"] = floatval ( $element ["ETRAD"] );
-	$element ["HORMINHUMMAX"] = format_HHmm($element ["HORMINHUMMAX"]);
-	$element ["HORMINHUMMIN"] = format_HHmm ( $element ["HORMINHUMMIN"]);
-	$element ["HORMINTEMPMAX"] = format_HHmm ( $element ["HORMINTEMPMAX"]);
-	$element ["HORMINTEMPMIN"] = format_HHmm ( $element ["HORMINTEMPMIN"]);
-	$element ["HORMINVELMAX"] = format_HHmm ( $element ["HORMINVELMAX"]);
+	$element ["HORMINHUMMAX"] = format_HHmm ( $element ["HORMINHUMMAX"] );
+	$element ["HORMINHUMMIN"] = format_HHmm ( $element ["HORMINHUMMIN"] );
+	$element ["HORMINTEMPMAX"] = format_HHmm ( $element ["HORMINTEMPMAX"] );
+	$element ["HORMINTEMPMIN"] = format_HHmm ( $element ["HORMINTEMPMIN"] );
+	$element ["HORMINVELMAX"] = format_HHmm ( $element ["HORMINVELMAX"] );
 	$element ["HUMEDADD"] = floatval ( $element ["HUMEDADD"] );
 	$element ["HUMEDADMAX"] = floatval ( $element ["HUMEDADMAX"] );
 	$element ["HUMEDADMEDIA"] = floatval ( $element ["HUMEDADMEDIA"] );
@@ -456,14 +460,97 @@ function temperaturaDiaria($latitud, $longitud, $anio) {
 	}
 	return $respuesta;
 }
-
-function format_HHmm($hora){
+function format_HHmm($hora) {
 	$hora_HHmm = str_pad ( $hora, 4, "0", STR_PAD_LEFT );
-	$HH = substr($hora_HHmm,0,2);
-	$mm = substr($hora_HHmm,2,2);
-	if (strcmp($HH, "24") == 0) {
+	$HH = substr ( $hora_HHmm, 0, 2 );
+	$mm = substr ( $hora_HHmm, 2, 2 );
+	if (strcmp ( $HH, "24" ) == 0) {
 		$hora_HHmm = "00" . $mm;
 	}
 	return $hora_HHmm;
+}
+function datosMedidaPorMesYAnio($medida, $latitud, $longitud) {
+	$respuesta = "";
+	
+	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
+	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$input = utf8_encode ( '{
+   "size" : 0,
+   "query" : {
+        "constant_score" : {
+            "filter" : {
+              "bool": { 
+                "must": [
+                  { "term": { "IDESTACION" : "' . $estacion ["IDESTACION"] . '" } },
+                  { "term": { "IDPROVINCIA" : "' . $estacion ["IDPROVINCIA"] . '" } } 
+                ]
+              }
+            }
+        }
+    },
+   "aggs": {
+      "anios": {
+         "terms": {
+            "field": "AÑO"
+         },
+         "aggs": { 
+            "medida": { 
+               "date_histogram": {
+                  "field": "FECHA",
+                  "interval": "month",
+                  "format": "M" 
+               },
+               "aggs": {
+                  "medida": {
+                     "sum": { "field": "' . $medida . '"} 
+                  }
+               }
+            }
+         }
+      }
+   }
+}' );
+	
+	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
+	
+	if (isset ( $resultado ["error"] )) {
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
+		$respuesta = error;
+	} else {
+		$columns = array(
+				array("label"=>"Mes", "type"=>'string'), 
+				array("label"=>"Enero", "type" =>'number'), 
+				array("label"=>"Febrero", "type" =>"number"),
+				array("label"=>"Marzo", "type" =>"number"),
+				array("label"=>"Abril", "type" =>"number"),
+				array("label"=>"Mayo", "type" =>"number"),
+				array("label"=>"Junio", "type" =>"number"),
+				array("label"=>"Julio", "type" =>"number"),
+				array("label"=>"Agosto", "type" =>"number"),
+				array("label"=>"Septiemre", "type" =>"number"),
+				array("label"=>"Octubre", "type" =>"number"),
+				array("label"=>"Noviembre", "type" =>"number"),
+				array("label"=>"Diciembre", "type" =>"number")				
+		);
+		$rows = array();
+		$anios_buckets = $resultado["aggregations"]["anios"]["buckets"];
+		foreach ($anios_buckets as $anio_bucket) {
+			$row = array();
+			$anio = $anio_bucket["key_as_string"];
+			$row[0]=$anio;
+			$meses_bucket = $anio_bucket["medida"]["buckets"];
+			foreach ($meses_bucket as $mes_bucket) {
+				$mes = intVal($mes_bucket["key_as_string"]);
+				$valor = $mes_bucket["medida"]["value"];
+				$row[$mes]=$valor;
+			}
+			array_push($rows, $row);
+		}
+		
+		$respuesta = json_encode(array("cols"=>$columns, "rows"=>$rows));
+		
+	}
+	
+	return $respuesta;
 }
 ?>

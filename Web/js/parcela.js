@@ -490,23 +490,12 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 }
 
 function graficoPrecipitacionPorMesYAnio() {
-
-	var queryPrecipitacionPorMesYAnio = encodeURIComponent('select month(J) + 1, sum(AA) group by month(J) pivot B');
-
-	var queryCompletaPrecipitacionPorMesYAnio = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1_Vn8rU9GaedJ6aSVmldOQpeFL0vLcP8HpIEIQv8hofc/gviz/tq?gid=0&headers=1&tq='
-					+ queryPrecipitacionPorMesYAnio);
-	queryCompletaPrecipitacionPorMesYAnio
-			.send(trataRespuestaPrecipitacionPorMesYAnio);
-}
-
-function trataRespuestaPrecipitacionPorMesYAnio(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
+	
+	var tabla = obtenDatosPorMesYAnio("PRECIPITACION");
+	
+	var columnas = tabla.cols;
+	var filas = tabla.rows;
+		
 	var opciones = {
 		chart : {
 			title : 'Precipitaciones mensuales en mm',
@@ -516,7 +505,6 @@ function trataRespuestaPrecipitacionPorMesYAnio(respuesta) {
 		colors : [ '#94E8B4', '#72BDA3', '#5E8C61', '#426A4D', '#4E6151',
 				'#3B322C', '#7246F2' ],
 		hAxis : {
-			ticks : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ],
 			title : 'Mes'
 		},
 		vAxis : {
@@ -524,12 +512,19 @@ function trataRespuestaPrecipitacionPorMesYAnio(respuesta) {
 		}
 	};
 
-	var datos = respuesta.getDataTable();
+	var dt = new google.visualization.DataTable();
+
+	for(var i = 0; i < columnas.length; i++){
+		dt.addColumn(columnas[i].type, columnas[i].label);
+	}
+	dt.addRows(filas);
+	
+	
 
 	var grafica = new google.visualization.ColumnChart(document
 			.getElementById('graficoPrecipitacionPorMesYAnio'));
 	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(datos, opciones);
+	grafica.draw(dt, opciones);
 }
 
 function graficoTemperaturasMediasDiurnas() {
@@ -1142,4 +1137,31 @@ function arrayToPathLatLong(array) {
 	}
 
 	return paths;
+}
+
+function obtenDatosPorMesYAnio(medida){
+	
+	var datos;
+	
+	var url = "php/inforiego_rest.php?accion=datosMedidaPorMesYAnio&latitud="
+		+ document.getElementById("latitud").innerHTML
+	+ "&longitud="
+	+ document.getElementById("longitud").innerHTML
+	+ "&medida="
+	+ medida;
+
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+	
+	request
+	.done(function(response, textStatus, jqXHR) {
+		datos = response;
+	});
+	
+	return datos;
 }
