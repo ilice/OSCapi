@@ -5,8 +5,11 @@ require_once 'slack_notification.php';
 require_once 'cUrl.php';
 
 $querystring = $_SERVER ['QUERY_STRING'];
-$request = explode ( '/', trim ( $_SERVER ['PATH_INFO'], '/' ) );
 
+$request = array ();
+if (! empty ( $_SERVER ['PATH_INFO'] )) {
+	$request = explode ( '/', trim ( $_SERVER ['PATH_INFO'], '/' ) );
+}
 // retrieve the index and type from the path
 $index = preg_replace ( '/[^a-z0-9_]+/i', '', array_shift ( $request ) );
 $type = preg_replace ( '/[^a-z0-9_]+/i', '', array_shift ( $request ) );
@@ -30,11 +33,12 @@ function doGet($parametros, $index, $type) {
 	$imei = ! empty ( $parametros ["IMEI"] ) ? $parametros ["IMEI"] : NULL;
 	$sensor = ! empty ( $parametros ["Sensor"] ) ? $parametros ["Sensor"] : NULL;
 	$valor = ! empty ( $parametros ["Valor"] ) ? $parametros ["Valor"] : 0; // empty("0") es true, por eso en este caso uso 0 en lugar de NULL
-	$latitud = ! empty ( $parametros ["Latitud"] ) ? $parametros ["Latitud"] : ! empty ( $parametros ["latitud"] ) ? $parametros ["latitud"] : NULL;
-	$longitud = ! empty ( $parametros ["Longitud"] ) ? $parametros ["Longitud"] : ! empty ( $parametros ["longitud"] ) ? $parametros ["longitud"] : NULL;
+	$latitud = ! empty ( $parametros ["Latitud"] ) ? $parametros ["Latitud"] : (! empty ( $parametros ["latitud"] ) ? $parametros ["latitud"] : NULL);
+	$longitud = ! empty ( $parametros ["Longitud"] ) ? $parametros ["Longitud"] : (! empty ( $parametros ["longitud"] ) ? $parametros ["longitud"] : NULL);
 	$accion = ! empty ( $parametros ["accion"] ) ? $parametros ["accion"] : NULL;
 	
 	if ($accion == NULL) {
+		date_default_timezone_set ( 'Europe/Madrid' );
 		$fecha = date ( "Y-m-d\TH:i" );
 		$id = $fecha . "-" . $imei;
 		
@@ -45,13 +49,12 @@ function doGet($parametros, $index, $type) {
 		} elseif ($latitud != NULL && $longitud != NULL) {
 			$input = '{"doc": {"IMEI" : ' . $imei . ', "lat_lon": {"lon" : ' . $longitud . ', "lat" : ' . $latitud . '}, "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
 		} else {
-			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " en los parámetros del cacharrito" );
-			;
+			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " en los parámetros del cacharrito: " .  json_encode($parametros));
 		}
 		
 		postHttpcUrl ( $url, $input );
 	} else {
-		$url = "http://81.61.197.16:9200/" . $index . "/". $type ."/_search?";
+		$url = "http://81.61.197.16:9200/" . $index . "/" . $type . "/_search?";
 		
 		$input = '{
   "sort": [
