@@ -1,5 +1,7 @@
 <?php
 
+require_once 'slack_notification.php';
+
 function postHttpcUrl($url, $input) {
 	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 
