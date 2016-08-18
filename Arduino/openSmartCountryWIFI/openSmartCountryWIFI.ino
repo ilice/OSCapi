@@ -4,7 +4,7 @@
 
 #include "DHT.h"
 #define DHTTYPE DHT11   // DHT 11
-#define esTMP36 true //Si en lugar del DHT usamos el TMP36 (solo da la temperatura)
+#define esTMP36 false //Si en lugar del DHT usamos el TMP36 (solo da la temperatura)
 
 #define restURL F("http://opensmartcountry.com/php/cacharrito_rest.php?")
 #define ON 255
