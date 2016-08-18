@@ -60,7 +60,7 @@ function getHttpcUrl($url) {
 		slack ( "Error en getHttpcUrl($url)" );
 	}
 
-	return $response_json;
+	return $response;
 }
 
 function putHttpcUrl($url, $input) {

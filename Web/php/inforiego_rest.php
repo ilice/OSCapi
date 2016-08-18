@@ -79,7 +79,8 @@ function obtenEstaciones($latitud, $longitud) {
 		$url = $url . '&latitud=' . $latitud . '&longitud=' . $longitud;
 	}
 	
-	return getHttpcUrl ( $url );
+	$response = getHttpcUrl ( $url );
+	return json_decode ( utf8_encode ( $response ), true );
 }
 function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 	foreach ( $estaciones as $estacion ) {

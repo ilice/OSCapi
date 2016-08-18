@@ -3,6 +3,9 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
+require_once 'slack_notification.php';
+require_once 'cUrl.php';
+
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
 $querystring = $_SERVER['QUERY_STRING'];
@@ -16,9 +19,6 @@ $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 //Para ver qué versión estoy utilizando
 $curlVersion = curl_version();
-
-$data = json_encode($_POST);
-
 
 $url = "http://81.61.197.16:9200";
 
@@ -36,39 +36,12 @@ if(strlen($querystring)>0){
 	$url = "$url?$querystring" ;
 }
 
-$handler = curl_init($url);  
-
-curl_setopt($handler, CURLINFO_HEADER_OUT, true);
-curl_setopt($handler, CURLOPT_USERAGENT, $user_agent);
-
-if($method=="POST"){
-	curl_setopt($handler, CURLOPT_POST, 1);
-	curl_setopt($handler, CURLOPT_POSTFIELDS, $input);
+if($method=="GET"){
+	echo getHttpcUrl($url);
+}elseif ($method == "POST"){
+	echo postHttpcUrl($url, $input);
+}else{
+	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Método no implementado " . $method . "- para la url: " . $url . " y el input: " . $input);
 }
-
-curl_setopt ($handler, CURLOPT_CONNECTTIMEOUT, 0);
-$response = curl_exec ($handler);
-
-
-if(curl_error($handler))
-{
-	error_log('ERROR:' . curl_error($handler));
-	error_log("ERROR: " . htmlspecialchars(curl_error($handler)));
-	
-	$info = curl_getinfo($handler);
-	error_log( 'INFO: Se tardó ' . $info['total_time']. ' segundos en enviar una petición a '. $info['url']);
-	error_log( 'INFO: Request header ' . $info['request_header']);
-	switch ($http_code = curl_getinfo($handler, CURLINFO_HTTP_CODE)) {
-		case 200:  # OK
-			error_log('INFO: Código HTTP 200-OK: '. $http_code);
-			break;
-		default:
-			error_log('ERROR: Código HTTP inesperado: '. $http_code);
-	}
-	
-}
-
-
-curl_close($handler);
 
 ?>
