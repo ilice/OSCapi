@@ -12,7 +12,9 @@ if(strlen($querystring)>0){
 	$url = "$url$querystring" ;
 }
 
-$response = getHttpcUrl($url);
+$esJson = false;
+
+$response = getHttpcUrl($url, $esJson);
 
 echo $response
 

@@ -29,7 +29,7 @@ function postHttpcUrl($url, $input) {
 	return $response;
 }
 
-function getHttpcUrl($url) {
+function getHttpcUrl($url, $esJson = true) {
 	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 
 	$handler = curl_init ( $url );
@@ -50,12 +50,15 @@ function getHttpcUrl($url) {
 	}
 
 	curl_close ( $handler );
+	
+	if($esJson){
 
-	$response_json = json_decode ( utf8_encode ( $response ), true );
-
-	$error = json_last_error_msg ();
-	if (strcmp ( $error, "No error" ) != 0) {
-		slack ( "Error: " . $error . " para la llamada: <$url>" );
+		$response_json = json_decode ( utf8_encode ( $response ), true );
+	
+		$error = json_last_error_msg ();
+		if (strcmp ( $error, "No error" ) != 0) {
+			slack ( "Error: " . $error . " para la llamada: <$url>" );
+		}
 	}
 
 	if (! $response) {

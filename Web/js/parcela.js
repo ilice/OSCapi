@@ -204,17 +204,9 @@ function cargaDatos() {
 	});
 	document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 
-	google.charts.setOnLoadCallback(cargaUltimoValorHumedadSuelo);
-	google.charts.setOnLoadCallback(cargaUltimoValorTemperatura);
-	google.charts.setOnLoadCallback(cargaUltimoValorHumedad);
-	google.charts.setOnLoadCallback(cargaUltimoValorLluvia);
-	google.charts.setOnLoadCallback(cargaUltimoValorLuz);
-	google.charts.setOnLoadCallback(cargaUltimoValorBateria);
-	google.charts.setOnLoadCallback(cargaUltimaLatitudCacharrito);
-	google.charts.setOnLoadCallback(cargaUltimaLongitudCacharrito);
-
-	google.charts.setOnLoadCallback(cargaMedidaDiasDeLluviaYPrecipitacionAcumulada);
-	google.charts.setOnLoadCallback(cargaMedidasDiarias);
+	cargaUltimosValores_osc_station();
+	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
+	cargaMedidasDiarias();
 	
 	google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
@@ -695,199 +687,40 @@ var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
 
 
 
-function cargaUltimoValorHumedadSuelo() {
+function cargaUltimosValores_osc_station() {
+	
+	var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
+		+ document.getElementById("latitud").innerHTML
+		+ "&longitud="
+		+ document.getElementById("longitud").innerHTML;
 
-	var queryEncoded = encodeURIComponent("select A, D where C = 'HumedadSuelo' order by A desc limit 1");
+	var ultimosValores;
+	var request = jQuery.ajax({
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
 
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorHumedadSuelo);
-}
+request
+		.done(function(response, textStatus, jqXHR) {
+			ultimosValores = response["hits"]["hits"][0];
+			document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo.toFixed(2);
+			document.getElementById('horaUltimaMedidaTemperatura').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura.toFixed(2);
+			document.getElementById('horaUltimaMedidaHumedad').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad.toFixed(2);
+			document.getElementById('horaUltimaMedidaLluvia').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia.toFixed(2);
+			document.getElementById('horaUltimaMedidaLuz').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz.toFixed(2);
+			document.getElementById('horaUltimaMedidaBateria').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria.toFixed(2);
+			document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon.lat;
+			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon.lon;
+		});
 
-function trataUltimoValorHumedadSuelo(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = datos
-			.getValue(0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = datos
-			.getValue(0, 1).toFixed(2);
-}
-
-function cargaUltimoValorTemperatura() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Temperatura' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorTemperatura);
-}
-
-function trataUltimoValorTemperatura(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaTemperatura').innerHTML = datos
-			.getValue(0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaTemperatura').innerHTML = datos
-			.getValue(0, 1).toFixed(2);
-}
-
-function cargaUltimoValorHumedad() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Humedad' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorHumedad);
-}
-
-function trataUltimoValorHumedad(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaHumedad').innerHTML = datos
-			.getValue(0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaHumedad').innerHTML = datos.getValue(
-			0, 1);
-}
-
-function cargaUltimoValorLluvia() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Lluvia' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorLluvia);
-}
-
-function trataUltimoValorLluvia(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaLluvia').innerHTML = datos
-			.getValue(0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaLluvia').innerHTML = datos.getValue(0,
-			1);
-}
-
-function cargaUltimoValorLuz() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Luz' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorLuz);
-}
-
-function trataUltimoValorLuz(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaLuz').innerHTML = datos.getValue(
-			0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaLuz').innerHTML = datos.getValue(0, 1);
-}
-
-function cargaUltimoValorBateria() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Bateria' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimoValorBateria);
-}
-
-function trataUltimoValorBateria(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('horaUltimaMedidaBateria').innerHTML = datos
-			.getValue(0, 0).toLocaleString();
-	document.getElementById('ultimaMedidaBateria').innerHTML = datos.getValue(
-			0, 1);
-}
-
-function cargaUltimaLatitudCacharrito() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Latitud' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimaLatitudCacharrito);
-}
-
-function trataUltimaLatitudCacharrito(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('ultimaPosicionLatitud').innerHTML = datos
-			.getValue(0, 1);
-}
-
-function cargaUltimaLongitudCacharrito() {
-
-	var queryEncoded = encodeURIComponent("select A, D where C = 'Longitud' order by A desc limit 1");
-
-	var queryCompleted = new google.visualization.Query(
-			'https://docs.google.com/spreadsheets/d/1xR-yM3fqh_bvkzs1dbUMZR9pb6AoJpAdtVyF5h18vgY/gviz/tq?gid=0&headers=1&tq='
-					+ queryEncoded);
-	queryCompleted.send(trataUltimaLongitudCacharrito);
-}
-
-function trataUltimaLongitudCacharrito(respuesta) {
-	if (respuesta.isError()) {
-		alert('Error en query: ' + respuesta.getMessage() + ' '
-				+ respuesta.getDetailedMessage());
-		return;
-	}
-
-	var datos = respuesta.getDataTable();
-
-	document.getElementById('ultimaPosicionLongitud').innerHTML = datos
-			.getValue(0, 1);
+	
 }
 
 function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
