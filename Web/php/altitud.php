@@ -2,51 +2,21 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// get the HTTP method, path and body of the request
-$method = $_SERVER['REQUEST_METHOD'];
+require_once 'slack_notification.php';
+require_once 'cUrl.php';
+
 $querystring = $_SERVER['QUERY_STRING'];
-//$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-//$input = file_get_contents('php://input');
-
-// retrieve the index and type from the path
-//$index = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-//$type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-
-
-$data = json_encode($_POST);
-
 
 $url = "https://maps.googleapis.com/maps/api/elevation/json?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M";
 
-
-// if(strlen($index)>0){
-// 	$url = "$url/$index" ;
-	
-// 	if(strlen($type)>0){
-// 		$url = "$url/$type" ;
-// 	}
-// }
-
-
-
-$url = "$url" ;
-
 if(strlen($querystring)>0){
-	$url = "$url&$querystring" ;
+	$url = "$url&$querystring";
+}else{
+	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " llamada sin parámetros");
 }
 
-$handler = curl_init($url);  
+$response = getHttpscUrl($url);
 
-if($method=="POST"){
-	curl_setopt($handler, CURLOPT_POST, 1);
-	curl_setopt($handler, CURLOPT_POSTFIELDS, $input);
-}
-//curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($handler, CURLOPT_SSL_VERIFYPEER, 0);
-$response = curl_exec ($handler);  
-
-
-curl_close($handler); 
-
+echo $response;
 
 ?>

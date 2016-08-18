@@ -2,6 +2,7 @@
 header ( "Content-Type: application/json; charset=UTF-8" );
 
 require_once 'slack_notification.php';
+require_once 'cUrl.php';
 
 $querystring = $_SERVER ['QUERY_STRING'];
 $parametros = array ();
@@ -41,34 +42,6 @@ function doGet($parametros) {
 	}
 	
 	postHttpcUrl ( $url, $input );
-}
-
-
-function postHttpcUrl($url, $input) {
-	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-
-	$handler = curl_init ( $url );
-
-	curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-	curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
-	curl_setopt ( $handler, CURLOPT_POST, 1 );
-	curl_setopt ( $handler, CURLOPT_POSTFIELDS, $input );
-	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-	curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
-
-	$response = curl_exec ( $handler );
-
-	if (curl_error ( $handler )) {
-		$info = curl_getinfo ( $handler );
-		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
-		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
-	} elseif (isset ( json_decode ( $response, true ) ["error"] )) {
-		slack ( "ERROR: " . $response . " para el input: " . $input);
-	}
-
-	curl_close ( $handler );
-
-	return $response;
 }
 
 ?>
