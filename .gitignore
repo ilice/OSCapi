@@ -56,3 +56,4 @@ weathercrawler/.project
 weathercrawler/data
 *.project
 Web/.settings
+*.stackdump

@@ -214,7 +214,7 @@ function postHttpcUrl($url, $input) {
 		$http_code = curl_getinfo ( $handler, CURLINFO_HTTP_CODE );
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . htmlspecialchars ( curl_error ( $handler ) ) . 'Se tardó ' . $info ['total_time'] . ' segundos en enviar una petición a ' . $info ['url'] . 'con Request header ' . $info ['request_header'] . 'y Código HTTP inesperado: ' . $http_code . " en getHttpcUrl($url)" );
 	} elseif (isset ( json_decode ( $response, true ) ["error"] )) {
-		slack ( "ERROR: " . $response );
+		slack ( "ERROR: " . $response . " para el input: " . $input);
 	}
 	
 	curl_close ( $handler );
