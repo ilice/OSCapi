@@ -704,17 +704,19 @@ function cargaUltimosValores_osc_station() {
 request
 		.done(function(response, textStatus, jqXHR) {
 			ultimosValores = response["hits"]["hits"][0];
-			document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			
+			var fecha = new Date(ultimosValores._source.FECHA);
+			document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo.toFixed(2);
-			document.getElementById('horaUltimaMedidaTemperatura').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura.toFixed(2);
-			document.getElementById('horaUltimaMedidaHumedad').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad.toFixed(2);
-			document.getElementById('horaUltimaMedidaLluvia').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia.toFixed(2);
-			document.getElementById('horaUltimaMedidaLuz').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz.toFixed(2);
-			document.getElementById('horaUltimaMedidaBateria').innerHTML = ultimosValores._source.FECHA.toLocaleString();
+			document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha.toLocaleString();
 			document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria.toFixed(2);
 			document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon.lat;
 			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon.lon;
