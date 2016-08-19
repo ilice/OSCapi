@@ -5,9 +5,9 @@
 #define DHTTYPE DHT11   // DHT 11
 
 #define PIN  "8651"
-#define apn  F("ac.vodafone.es")
-#define apnusername F("vodafone")
-#define apnpassword F("vodafone")
+#define apn  F("gprs.pepephone.com")
+#define apnusername F("")
+#define apnpassword F("")
 
 #define restURL F("opensmartcountry.com/php/cacharrito_rest.php?")
 #define esSSL false
