@@ -8,11 +8,11 @@
 #define apn  F("ac.vodafone.es")
 #define apnusername F("vodafone")
 #define apnpassword F("vodafone")
-#define apnpassword F("vodafone")
-#define restURL F("script.google.com/macros/s/AKfycbyAMTjQueuBn3adO1b_fCpMx19LIxd4Ph_BvX_wu7XAtbebJjqV/exec?")
+
+#define restURL F("opensmartcountry.com/php/cacharrito_rest.php?")
+#define esSSL false
 #define ON 255
-#define LATITUD 0
-#define LONGITUD 1
+#define LAT_LON 0
 #define HUMEDADSUELO 2
 #define TEMPERATURA 3
 #define HUMEDAD 4
@@ -24,9 +24,7 @@
 
 #define MEASUREINTERVAL 600000
 
-
-
-
+float latitude, longitude;
 
 SoftwareSerial miPuertoDeSerieVirtual(10, 11);
 
@@ -61,6 +59,7 @@ int lightSensorPin = A2;
 int lightSensorPower = 5;
 
 uint8_t sleepCounter = 0;
+uint8_t sleepTimes = 100;
 
 DHT dht(tempAndHumiditySensorPin, DHTTYPE);
 
@@ -112,6 +111,8 @@ void loop()
 {
   enableGPRS();
 
+  printGSMLoc();
+
   sensorType = HUMEDADSUELO;
   updateSensorValue(moistureSensorMeasure());
   sendMeasure();
@@ -150,7 +151,7 @@ void loop()
   //Dejo 1 segundo para que todo termine correctamente antes de "apagar" temporalmente el Arguino
   delay(1000);
   sleepCounter = 0;
-  while (sleepCounter < 100) {
+  while (sleepCounter < sleepTimes) {
     // do something 10 times
     sleepCounter++;
     // put the processor to sleep for 8 seconds
@@ -584,14 +585,25 @@ bool sendMeasure() {
   Serial.print(imei);
   miPuertoDeSerieVirtual.print(F("&Sensor="));
   Serial.print(F("&Sensor="));
+  
   switch (sensorType) {
-    case LATITUD:
+    case LAT_LON:
       miPuertoDeSerieVirtual.print(F("Latitud"));
       Serial.print(F("Latitud"));
-      break;
-    case LONGITUD:
+      miPuertoDeSerieVirtual.print(F("&Valor="));
+      Serial.print(F("&Valor="));
+      miPuertoDeSerieVirtual.print(latitude);
+      Serial.print(latitude);
+      miPuertoDeSerieVirtual.print(F("&Sensor="));
+      Serial.print(F("&Sensor="));
       miPuertoDeSerieVirtual.print(F("Longitud"));
       Serial.print(F("Longitud"));
+      miPuertoDeSerieVirtual.print(F("&Valor="));
+      Serial.print(F("&Valor="));
+      miPuertoDeSerieVirtual.print(longitude);
+      Serial.print(longitude);
+      miPuertoDeSerieVirtual.println('"');
+      Serial.println('"');
       break;
     case HUMEDADSUELO:
       miPuertoDeSerieVirtual.print(F("HumedadSuelo"));
@@ -630,27 +642,37 @@ bool sendMeasure() {
       Serial.print(F("Medida para sensor no configurado"));
       break;
   }
-  miPuertoDeSerieVirtual.print(F("&Valor="));
-  Serial.print(F("&Valor="));
-  miPuertoDeSerieVirtual.print(sensorValue);
-  Serial.print(sensorValue);
-  miPuertoDeSerieVirtual.println('"');
-  Serial.println('"');
+
+    if(sensorType != LAT_LON){
+      miPuertoDeSerieVirtual.print(F("&Valor="));
+      Serial.print(F("&Valor="));
+      miPuertoDeSerieVirtual.print(sensorValue);
+      Serial.print(sensorValue);
+      miPuertoDeSerieVirtual.println('"');
+      Serial.println('"');
+    }
 
   readline(10000);
 
-  //Serial.print(F("\t<--- "));
-  //Serial.println(replybuffer);
+  Serial.print(F("\t<--- "));
+  Serial.println(replybuffer);
 
   // HTTPS
-  if (!sendCheckReply(F("AT+HTTPSSL=1"), ok_reply)) {
-    //Serial.println(F("ERROR HTTP SSL"));
-    return false;
+  if(esSSL){
+    if (!sendCheckReply(F("AT+HTTPSSL=1"), ok_reply)) {
+      Serial.println(F("ERROR HTTP SSL"));
+      return false;
+    }
+  }else{
+    if (!sendCheckReply(F("AT+HTTPSSL=0"), ok_reply)) {
+      Serial.println(F("ERROR HTTP SSL"));
+      return false;
+    }
   }
 
   if (! sendCheckReply(F("AT+HTTPACTION=0"), ok_reply))
   {
-    //Serial.println(F("ERROR HTTP GET EXECUTION"));
+    Serial.println(F("ERROR HTTP GET EXECUTION"));
     return false;
   }
 
@@ -663,29 +685,29 @@ bool sendMeasure() {
     return false;
 
   //De momento lo que se es que cuando devuelve la redirección funciona bien, así que capturo esto
-  if (statuscode !=  302)
-    Serial.println(F("ERROR AL ENVIAR LA MEDIDA A GOOGLE SHEETS"));
+  if (statuscode !=  200)
+    Serial.println(F("ERROR AL ENVIAR LA MEDIDA"));
 
-  //Serial.print(F("Status: ")); Serial.println(*statuscode);
-  //Serial.print(F("Len: ")); Serial.println(*datalength);
+   Serial.print(F("Status: ")); Serial.println(statuscode);
+//   Serial.print(F("Len: ")); Serial.println(*datalength);
 
-  //  // HTTP response data
-  //  flushInput();
-  //  miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
-  //  uint8_t l = readline(500);
-  //  if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
-  //    //Serial.println(F("ERROR HTTP READ RESPONSE"));
-  //    return false;
-  //  }
-  //  while (length > 0) {
-  //    while (miPuertoDeSerieVirtual.available()) {
-  //      char c = miPuertoDeSerieVirtual.read();
-  //      Serial.write(c);
-  //      length--;
-  //      if (! length) break;
-  //    }
-  //  }
-  //  Serial.println(F("\n****"));
+    // HTTP response data
+    flushInput();
+    miPuertoDeSerieVirtual.println(F("AT+HTTPREAD"));
+    uint8_t l = readline(500);
+    if (! parseReply(F("+HTTPREAD:"), (uint16_t *)&length, ',', 0)) {
+      Serial.println(F("ERROR HTTP READ RESPONSE"));
+      return false;
+    }
+    while (length > 0) {
+      while (miPuertoDeSerieVirtual.available()) {
+        char c = miPuertoDeSerieVirtual.read();
+        Serial.write(c);
+        length--;
+        if (! length) break;
+      }
+    }
+    Serial.println(F("\n****"));
   if (! sendCheckReply(F("AT+HTTPTERM"), ok_reply))
     Serial.println(F("ERROR HTTP TERM"));
   return true;
@@ -747,18 +769,13 @@ void disableGPRS() {
 }
 
 void printGSMLoc() {
-  float latitude, longitude;
+  
   if (getNetworkStatus() == 1) {
     // network & GPRS? Great! Print out the GSM location to compare
     boolean gsmloc_success = getGSMLoc(&latitude, &longitude);
 
     if (gsmloc_success) {
-      sensorType = LATITUD;
-      updateSensorValue(latitude);
-      sendMeasure();
-
-      sensorType = LONGITUD;
-      updateSensorValue(longitude);
+      sensorType = LAT_LON;
       sendMeasure();
 
       Serial.print("GSMLoc lat:");

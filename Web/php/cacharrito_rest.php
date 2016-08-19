@@ -45,14 +45,14 @@ function doGet($parametros, $index, $type) {
 		$url = "http://81.61.197.16:9200/osc_station/osc_station_record/" . $id . "/_update";
 		
 		if ($sensor != NULL) {
-			$input = '{"doc": {"IMEI" : ' . $imei . ', "' . $sensor . '" : ' . $valor . ', "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
+			$input = '{"doc": {"IMEI" : "' . $imei . '", "' . $sensor . '" : ' . formatValor($valor) . ', "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
 		} elseif ($latitud != NULL && $longitud != NULL) {
-			$input = '{"doc": {"IMEI" : ' . $imei . ', "lat_lon": {"lon" : ' . $longitud . ', "lat" : ' . $latitud . '}, "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
+			$input = '{"doc": {"IMEI" : "' . $imei . '", "lat_lon": {"lon" : ' . $longitud . ', "lat" : ' . $latitud . '}, "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
 		} else {
 			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " en los parámetros del cacharrito: " .  json_encode($parametros));
 		}
 		
-		postHttpcUrl ( $url, $input );
+		echo postHttpcUrl ( $url, $input );
 	} else {
 		$url = "http://81.61.197.16:9200/" . $index . "/" . $type . "/_search?";
 		
@@ -76,6 +76,11 @@ function doGet($parametros, $index, $type) {
 		$response = postHttpcUrl ( $url, $input );
 		echo $response;
 	}
+}
+
+function formatValor($valor){
+	$valor = urldecode($valor);
+	return $valor;
 }
 
 ?>

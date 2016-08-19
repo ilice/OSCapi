@@ -14,14 +14,13 @@ El proyecto consiste en dos sensores que envían los valores de temperatura y ni
 En este caso se utiliza un Arduino Yun que permite la conexión mediante Wi-Fi. No es el objetivo final pero es interesante para entender cómo funciona la arquitectura en modelos más avanzados de IoT.
 
 ## openSmartCountryGPRS
-Este proyecto consiste en el envío a internet de datos de nivel de humedad, temperatura, nivel de luz, nivel de humedad del suelo, existencia de precipitaciones y nivel de precipitación mediante una conexión gprs. Ahora mismo la alimentación es con una batería y enchufado a la red, pero la idea es hacerlo completamente autónomo.
-Es el que realmente tiene el código que tengo ahora mismo en la estación. La aplicación Web se ha realizado publicando un Web App desde el App Scripst de Google https://developers.google.com/apps-script/guides/web y siguiendo el [siguiente tutorial y sus enlaces](https://mashe.hawksey.info/2014/07/google-sheets-as-a-database-insert-with-apps-script-using-postget-methods-with-ajax-example/) de [Martin Hawksey (Google Developer Expert (Apps Script) and Open Education advocate)](https://plus.google.com/+MartinHawksey)
+Este proyecto consiste en el envío a internet de datos de nivel de humedad, temperatura, nivel de luz, nivel de humedad del suelo, existencia de precipitaciones y nivel de precipitación mediante una conexión gprs. Utiliza baterías y placas solares aunque aún se necesita pulir un poco el tema de la alimentación.
 
 ## openSmartCountryMoistureSensor
 Proyecto básico con el sensor de humedad, simplemente saca por consola los valores que este sensor recoge.
 
 ## openSmartCountryWIFI
-Hace prácticamente lo mismo que openSmartCountryGPRS (salvo enviar la locacización y el nivel de batería), pero conectándose por WIFI, es decir, si tienes una red WIFI cercana esta puede ser la mejor opción. El prototipo funciona ahora mismo conectado a la corriente eléctrica doméstica.
+Hace prácticamente lo mismo que openSmartCountryGPRS, pero conectándose por WIFI, es decir, si tienes una red WIFI cercana esta puede ser la mejor opción. El prototipo funciona ahora mismo conectado a la corriente eléctrica doméstica.
 
 El código está muy cogido con pinzas, iré limpiándolo y mejorándolo bastante, de momento simplemente funciona ;)
 Tal cual está, con todos los cables y sin fuente de alimentación alternativa, no se puede utilizar. En eso trabajaré en el futuro más inmediato.

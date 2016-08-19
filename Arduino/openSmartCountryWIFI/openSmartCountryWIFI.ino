@@ -24,7 +24,7 @@
 float latitude = 40.489155;
 float longitude = -3.653121;
 
-char imei[16] = {'8','6','7','2','7','3','0','2','8','5','8','5','1','8','5','\0'}; // MUST use a 16 character buffer for IMEI!
+char imei[16] = {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','\0'}; // MUST use a 16 character buffer for IMEI!
 uint8_t sensorType = 0;
 char sensorValue[12] = {0};
 
