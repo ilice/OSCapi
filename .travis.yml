@@ -3,5 +3,11 @@
 #
 # see http://docs.travis-ci.com/user/languages/php/ for more hints
 #
+
+#skip the installation step entirely
+install: true
+
 language: php
+php:
+  - '5.6'
 
