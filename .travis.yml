@@ -1,5 +1,7 @@
+#
+# .travis.yml - configuration file for the travis continuous integration service
+#
+# see http://docs.travis-ci.com/user/languages/php/ for more hints
+#
 language: php
-php:
-  - 5.5
-  - 5.4
-script: simpletest Web/php/test/all_test.php
+
