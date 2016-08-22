@@ -57,3 +57,4 @@ weathercrawler/data
 *.project
 Web/.settings
 *.stackdump
+Web/php/test/simpletest
