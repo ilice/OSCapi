@@ -8,6 +8,7 @@ class AllTests extends TestSuite {
     function __construct() {
         parent::__construct();
         $this->addFile('altitud_test.php');
+        $this->addFile('api_rest_test.php');
     }
 }
 ?>

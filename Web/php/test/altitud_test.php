@@ -7,16 +7,7 @@ class TestOfAltitud extends UnitTestCase {
 		parent::__construct ( 'Altitud test' );
 	}
 	
-	function testAltitudGetPlotAltitudeForLatitudeAndLongitude() {
-		
-		$latitud = 40.439983;
-		$longitud = - 5.737026;
-		$server_name = $_SERVER['SERVER_NAME'];
-		$web_folder = ($server_name == "localhost")? "Web/":"";
-		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
-		
-		
-		
+	function getResponse($url){
 		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 		
 		$handler = curl_init ( $url );
@@ -27,6 +18,19 @@ class TestOfAltitud extends UnitTestCase {
 		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
 		
 		$response = curl_exec ( $handler );
+		return $response;
+	}
+	
+	function testAltitudGetPlotAltitudeForLatitudeAndLongitude() {
+		
+		$latitud = 40.439983;
+		$longitud = - 5.737026;
+		$server_name = $_SERVER['SERVER_NAME'];
+		$web_folder = ($server_name == "localhost")? "Web/":"";
+		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
+		
+		
+		$response = $this->getResponse($url);
 		
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -49,18 +53,7 @@ class TestOfAltitud extends UnitTestCase {
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . ",";
 	
-	
-	
-		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-	
-		$handler = curl_init ( $url );
-	
-		curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
-		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
-	
-		$response = curl_exec ( $handler );
+		$response = $this->getResponse($url);
 	
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -76,14 +69,7 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . "," . $longitud;
 		
-		$handler = curl_init ( $url );
-		
-		curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
-		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
-		
-		$response = curl_exec ( $handler );
+		$response = $this->getResponse($url);
 		
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -98,14 +84,7 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . ",";
 		
-		$handler = curl_init ( $url );
-		
-		curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
-		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
-		
-		$response = curl_exec ( $handler );
+		$response = $this->getResponse($url);
 		
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -126,16 +105,7 @@ class TestOfAltitud extends UnitTestCase {
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?";
 		
-		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-		
-		$handler = curl_init ( $url );
-		
-		curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
-		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
-		
-		$response = curl_exec ( $handler );
+		$response = $this->getResponse($url);
 		
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -150,3 +120,4 @@ class TestOfAltitud extends UnitTestCase {
 		
 	}
 }
+?>

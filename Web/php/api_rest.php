@@ -9,7 +9,7 @@ require_once 'cUrl.php';
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
 $querystring = $_SERVER['QUERY_STRING'];
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$request = explode('/', trim(empty($_SERVER['PATH_INFO'])?"":$_SERVER['PATH_INFO'],'/'));
 $input = file_get_contents('php://input');
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
