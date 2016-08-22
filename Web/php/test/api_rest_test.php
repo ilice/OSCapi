@@ -1,7 +1,8 @@
 <?php
 header ( "Content-Type: text/html; charset=UTF-8" );
 
-require_once '/simpletest/autorun.php';
+require_once( __DIR__ . '/../../../vendor/simpletest/simpletest/autorun.php');
+
 class TestOfapi_rest extends UnitTestCase {
 	function __construct() {
 		parent::__construct ( 'Api rest test' );
