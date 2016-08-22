@@ -9,12 +9,12 @@ class TestOfAltitud extends UnitTestCase {
 	}
 	
 	function getResponse($url){
-		$user_agent = $_SERVER ['HTTP_USER_AGENT'];
+		//$user_agent = $_SERVER ['HTTP_USER_AGENT'];
 		
 		$handler = curl_init ( $url );
 		
 		curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
+		//curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
 		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
 		
@@ -26,7 +26,7 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = $_SERVER['SERVER_NAME'];
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
 		
@@ -50,7 +50,7 @@ class TestOfAltitud extends UnitTestCase {
 			
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = $_SERVER['SERVER_NAME'];
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . ",";
 	
@@ -102,7 +102,7 @@ class TestOfAltitud extends UnitTestCase {
 	
 	function testAltitudServiceExistsAndIsOnline() {
 				
-		$server_name = $_SERVER['SERVER_NAME'];
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?";
 		
