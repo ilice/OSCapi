@@ -3,12 +3,10 @@
 require_once 'slack_notification.php';
 
 function postHttpcUrl($url, $input) {
-	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-
+	
 	$handler = curl_init ( $url );
 
 	curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-	curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
 	curl_setopt ( $handler, CURLOPT_POST, 1 );
 	curl_setopt ( $handler, CURLOPT_POSTFIELDS, $input );
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
@@ -30,12 +28,15 @@ function postHttpcUrl($url, $input) {
 }
 
 function getHttpcUrl($url, $esJson = true) {
-	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
+	
+	$user_agent = !empty($_SERVER ['HTTP_USER_AGENT'])?$_SERVER ['HTTP_USER_AGENT']:NULL;
 
 	$handler = curl_init ( $url );
 
 	curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );
-	curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
+	if($user_agent != NULL){
+		curl_setopt ( $handler, CURLOPT_USERAGENT, $user_agent );
+	}
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 	curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
 
@@ -69,8 +70,7 @@ function getHttpcUrl($url, $esJson = true) {
 }
 
 function putHttpcUrl($url, $input) {
-	$user_agent = $_SERVER ['HTTP_USER_AGENT'];
-
+	
 	$handler = curl_init ( $url );
 
 	curl_setopt ( $handler, CURLINFO_HEADER_OUT, true );

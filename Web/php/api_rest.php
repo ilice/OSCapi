@@ -8,10 +8,10 @@ require_once 'cUrl.php';
 
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
-$querystring = $_SERVER['QUERY_STRING'];
+$querystring = !empty($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:"";
 $request = explode('/', trim(empty($_SERVER['PATH_INFO'])?"":$_SERVER['PATH_INFO'],'/'));
 $input = file_get_contents('php://input');
-$user_agent = $_SERVER['HTTP_USER_AGENT'];
+
 
 // retrieve the index and type from the path
 $index = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
