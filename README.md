@@ -1,6 +1,4 @@
-# OpenSmartCountry
-
-[![Join the chat at https://gitter.im/teanocrata/OpenSmartCountry](https://badges.gitter.im/teanocrata/OpenSmartCountry.svg)](https://gitter.im/teanocrata/OpenSmartCountry?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/teanocrata/OpenSmartCountry.svg?branch=master)](https://travis-ci.org/teanocrata/OpenSmartCountry)
+# OpenSmartCountry [![Build Status](https://travis-ci.org/teanocrata/OpenSmartCountry.svg?branch=master)](https://travis-ci.org/teanocrata/OpenSmartCountry)
 
 ¡Hola! ¡Bienvenid@ a Open Smart Country! Soy **OSC&#945;r**, te voy a contar qué estoy haciendo y por qué.
 
