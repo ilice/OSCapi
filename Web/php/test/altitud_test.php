@@ -26,7 +26,7 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
+		$server_name = empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
 		
@@ -38,7 +38,7 @@ class TestOfAltitud extends UnitTestCase {
 		$error = json_last_error_msg ();
 		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
 		$status = $response_json['status'];
-		$this->assertEqual ($status, "OK", 'El estado de la respuesta es OK');
+		$this->assertEqual ($status, "OK", 'El estado de la respuesta es OK con las variables: ' . json_encode($_SERVER));
 		$results = $response_json['results'];
 		$this->assertNotNull ($results, 'Se hace la llamada interna para obtener la altitud');
 		$this->assertTrue(count($results) == 1, 'Hay un resultado de altitud para las coordenadas dadas');
@@ -50,7 +50,7 @@ class TestOfAltitud extends UnitTestCase {
 			
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
+		$server_name = empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . ",";
 	
@@ -102,7 +102,8 @@ class TestOfAltitud extends UnitTestCase {
 	
 	function testAltitudServiceExistsAndIsOnline() {
 				
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
+		$server_name = empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"";
+		$server_name = "a";
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?";
 		
