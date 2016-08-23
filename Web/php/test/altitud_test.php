@@ -27,13 +27,11 @@ class TestOfAltitud extends UnitTestCase {
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
 		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:$_SERVER["TRAVIS_BUILD_DIR"];
-		$web_folder = ($server_name == "localhost")? "Web/":"";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
 		
-		
 		$response = $this->getResponse($url);
-		$server_variable = json_encode($_SERVER);
-		
+				
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
