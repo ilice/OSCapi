@@ -29,11 +29,8 @@ notifications:
   email: false
   slack:
     rooms:
-      - opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk#osc_development
+      - opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk
     on_success: always
-  slack:
-    rooms:
-      - opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk#error
     on_failure: always
 
 # reduce commit history of git checkout
