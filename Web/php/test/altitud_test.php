@@ -26,19 +26,20 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:php_uname("n");
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:$_SERVER["TRAVIS_BUILD_DIR"];
 		$web_folder = ($server_name == "localhost")? "Web/":"";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
 		
 		
 		$response = $this->getResponse($url);
+		$server_variable = json_encode($_SERVER);
 		
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
 		$status = $response_json['status'];
-		$this->assertEqual ($status, "OK", 'El estado de la respuesta es OK');
+		$this->assertEqual ($status, "OK", 'El estado de la respuesta es' . $status. '  para la url: ' . $url . ' y debe ser OK');
 		$results = $response_json['results'];
 		$this->assertNotNull ($results, 'Se hace la llamada interna para obtener la altitud');
 		$this->assertTrue(count($results) == 1, 'Hay un resultado de altitud para las coordenadas dadas');
