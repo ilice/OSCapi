@@ -26,7 +26,7 @@ class TestOfAltitud extends UnitTestCase {
 		
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:$_SERVER["TRAVIS_BUILD_DIR"];
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
 		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . "," . $longitud;
 		
@@ -49,8 +49,8 @@ class TestOfAltitud extends UnitTestCase {
 			
 		$latitud = 40.439983;
 		$longitud = - 5.737026;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:php_uname("n");
-		$web_folder = ($server_name == "localhost")? "Web/":"";
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?locations=" . $latitud . ",";
 	
 		$response = $this->getResponse($url);
@@ -58,7 +58,7 @@ class TestOfAltitud extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
 		$status = $response_json['status'];
 		$this->assertEqual ($status, "INVALID_REQUEST", 'El estado de la respuesta es petición inválida');
 		$results = $response_json['results'];
@@ -74,7 +74,7 @@ class TestOfAltitud extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
 		$status = $response_json['status'];
 		$this->assertEqual ($status, "INVALID_REQUEST", 'El estado de la respuesta es petición inválida');
 		$results = $response_json['results'];
@@ -89,7 +89,7 @@ class TestOfAltitud extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
 		$status = $response_json['status'];
 		$this->assertEqual ($status, "INVALID_REQUEST", 'El estado de la respuesta es petición inválida');
 		$results = $response_json['results'];
@@ -101,8 +101,8 @@ class TestOfAltitud extends UnitTestCase {
 	
 	function testAltitudServiceExistsAndIsOnline() {
 				
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:php_uname("n");
-		$web_folder = ($server_name == "localhost")? "Web/":"";
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/altitud.php?";
 		
 		$response = $this->getResponse($url);
@@ -110,7 +110,7 @@ class TestOfAltitud extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta');
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo');
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
 		$status = $response_json['status'];
 		$this->assertEqual ($status, "INVALID_REQUEST", 'El estado de la respuesta es petición inválida');
 		$results = $response_json['results'];

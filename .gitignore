@@ -58,4 +58,4 @@ weathercrawler/data
 Web/.settings
 *.stackdump
 vendor
-*.lock
+*.log
