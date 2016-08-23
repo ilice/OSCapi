@@ -27,14 +27,7 @@ script:
 # disable notifications
 notifications:
   email: false
-  slack:
-    rooms:
-      - opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk#osc_development
-    on_success: always
-  slack:
-    rooms:
-      - opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk#error
-    on_failure: always
+  slack: opensmartcountry:gjRfTD0YvySQZPrFw1gFfGmk
 
 # reduce commit history of git checkout
 git:
