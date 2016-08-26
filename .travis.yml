@@ -24,5 +24,4 @@ env:
   - secure: 1Eg76TDCO15ZFjtNAA7ajmb/mFujlXsEtaNheYrGa4PcBC2if8sWGXZWgdk6mAJOihIF0g1kMY34DpxRZkua1dUXMBvuYonjzG73pe2ZlFjIQqiKprmltjdOHT6CpQ2xtR5WTd7YEy2zhGl6HBbz0M8pcgvnGtY0LYmGsgzkCS7/Hx5YpY+CpeE4N+Nrw7rE2saqtodQUQ3Ke/SWQ7Pk1vuD1YwhWg4vNHnyirDuYse7JMWBRbFli0quSwkno2n8slSMSyFjiNL3rx+9uofz6zM9QMk4znlSPK32wVHbMDAPZARZLqS9uZQstEKj+SBhV51oaIMK7LN2bIZDv+tTqm5P0l8dPWl+67X4dpzeZ5qGIOH/mq+DfqPOxmydc6O2TVyjn4lMDXZsd7juCCpD8whHK7HWVVZ2zE35sqrF/Tg4cFgUnooPCavYSgAev9g61H0O9Y83CphG/OAvL9CosBHkqT+dWcdBk5kN8mWeK3GjU5I7E+cvlFO4MGLTBwTRhGbQJlCRZYbzPv7J9aQwa8WTzg6myXhAFdjLZM9M1goiTurbRxIgw43giHVFQ+HKalT4+kKnLYl73grdJgWJPpwtQb9Ka9YtJEu0kfgXr1X+YUym/MmRTm9TJF3L+JFBH2cn3y4PrWm000Hlx1Z2hZZ4wP3QCFvgS666SQTm/dk=
 deploy:
   provider: script
-  script: php Web/git-deploy --FTP_USER $FTP_USER --FTP_PASSWORD $FTP_PASSWORD deploy.ini
-  
+  script: php Web/git-deploy --FTP_USER $FTP_USER --FTP_PASSWORD $FTP_PASSWORD --repo Web/ Web/deploy.ini
