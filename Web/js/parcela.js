@@ -241,7 +241,9 @@ function obtenEstacion() {
 
 function obtenDatosCatastro() {
 	
-	var url = "php/catastro_coord.php?SRS=EPSG:4326&Coordenada_X="
+	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
+	
+	var url = "php/catastro.php?end_point=" + end_point +" &SRS=EPSG:4326&Coordenada_X="
 		+ document.getElementById("longitud").innerHTML
 		+ "&Coordenada_Y="
 		+ document.getElementById("latitud").innerHTML;
@@ -254,9 +256,6 @@ function obtenDatosCatastro() {
 	// código de polígono: 8 dígitos con ceros a la izda para completar
 	// código de parcela: 5 dígitos con ceros a la izda para completar
 	var c_refpar;
-
-	// Request that YSQL string, and run a callback function.
-	// Pass a defined function to prevent cache-busting.
 
 	var request = jQuery.ajax({
 		url : url,
@@ -296,37 +295,35 @@ function obtenDatosCatastro() {
 function obtenProvincia(rc) {
 
 	var codigoProvincia = rc.substr(0, 2);
+	
+	var end_point = "OVCCallejero.asmx/ConsultaProvincia";
+	
+	var url = "php/catastro.php?end_point=" + end_point;
+	
+	var nombre_provincia = "";
 
-	var url = "http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/ConsultaProvincia";
+	var request = jQuery.ajax({
+		url : url,
+		async : false,
+		type : 'GET',
+		dataType : "xml"
+	});
 
-	var yql = 'http://query.yahooapis.com/v1/public/yql?q='
-			+ encodeURIComponent('select * from xml where url="' + url + '"')
-			+ '&format=xml&callback=?';
+	request
+			.done(function(response, textStatus, jqXHR) {
 
-	var xml;
-
-	// Request that YSQL string, and run a callback function.
-	// Pass a defined function to prevent cache-busting.
-	$
-			.getJSON(
-					yql,
-					function(data) {
-						xml = data.results[0];
-						// console.log(xml);
-
-						var xmlDoc = jQuery.parseXML(xml);
+						var xmlDoc = response;
 						var provs = xmlDoc.getElementsByTagName("provinciero")[0].getElementsByTagName["prov"];
 
 						for (var i = 0; i < provs.length; i++) {
 							var prov = provs[i].getElementsByTagName("cpine")[0].childNodes[0].nodeValue;
 							if (prov == codigoProvincia) {
-								return provs[i].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+								nombre_provincia = provs[i].getElementsByTagName("np")[0].childNodes[0].nodeValue;
 							}
 						}
-
 					});
-
-	return "";
+	
+	return nombre_provincia;
 
 }
 
@@ -334,48 +331,46 @@ function obtenMunicipio(rc) {
 
 	var codigoMunicipio = rc.substr(2, 3);
 
-	var url = "http://ovc.catastro.meh.es//ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/ConsultaMunicipio?Provincia="
-			+ obtenProvincia(rc);
+	var end_point = "OVCCallejero.asmx/ConsultaMunicipio";
+	
+	var url = "php/catastro.php?end_point=" + end_point;
+	
+	url = url + "Provincia=" + obtenProvincia(rc) + "&Municipio=";
+	
+	var nombre_municipio = "";
 
-	var yql = 'http://query.yahooapis.com/v1/public/yql?q='
-			+ encodeURIComponent('select * from xml where url="' + url + '"')
-			+ '&format=xml&callback=?';
+	var request = jQuery.ajax({
+		url : url,
+		async : false,
+		type : 'GET',
+		dataType : "xml"
+	});
 
-	var xml;
+	request
+			.done(function(response, textStatus, jqXHR) {
 
-	// Request that YSQL string, and run a callback function.
-	// Pass a defined function to prevent cache-busting.
-	$
-			.getJSON(
-					yql,
-					function(data) {
-						xml = data.results[0];
-						// console.log(xml);
-
-						var xmlDoc = jQuery.parseXML(xml);
+						var xmlDoc = response;
 						var munis = xmlDoc.getElementsByTagName("municipiero")[0].getElementsByTagName["muni"];
 
 						for (var i = 0; i < munis.length; i++) {
 							var muni = munis[i].getElementsByTagName("locat")[0]
 									.getElementsByTagName("cmc")[0].childNodes[0].nodeValue;
 							if (muni == codigoMunicipio) {
-								return munis[i].getElementsByTagName("nm")[0].nodeValue;
+								nombre_municipio = munis[i].getElementsByTagName("nm")[0].nodeValue;
 							}
 						}
 
 					});
 
-	return "";
+	return nombre_municipio;
 
 }
 
 function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 
-	// devuelve un xml y no se puede obtener por cross domain, aquí para
-	// resolverlo se utiliza un proxy de yahoo que en realidad da más
-	// posibilidades para cruzar datos pero está limitado en número de
-	// peticiones diarias
-	var url = "php/catastro_rc.php?RC=" + rc + "&Provincia=" + provincia
+	var end_point = "OVCCallejero.asmx/Consulta_DNPRC";
+
+	var url = "php/catastro.php?end_point=" + end_point + "&RC=" + rc + "&Provincia=" + provincia
 			+ "&Municipio=" + municipio;
 
 	
@@ -707,19 +702,19 @@ request
 			
 			var fecha = new Date(ultimosValores._source.FECHA);
 			document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo.toFixed(2);
+			document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo?ultimosValores._source.HumedadSuelo.toFixed(2):"";
 			document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura.toFixed(2);
+			document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura?ultimosValores._source.Temperatura.toFixed(2):"";
 			document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad.toFixed(2);
+			document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad?ultimosValores._source.Humedad.toFixed(2):"";
 			document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia.toFixed(2);
+			document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia?ultimosValores._source.Lluvia.toFixed(2):"";
 			document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz.toFixed(2);
+			document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz?ultimosValores._source.Luz.toFixed(2):"";
 			document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria.toFixed(2);
-			document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon.lat;
-			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon.lon;
+			document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria?ultimosValores._source.Bateria.toFixed(2):"";
+			document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon?ultimosValores._source.lat_lon.lat:"";
+			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon?ultimosValores._source.lat_lon.lon:"";
 		});
 
 	
