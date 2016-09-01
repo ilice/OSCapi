@@ -1,0 +1,85 @@
+POST /test_estaciones_inforiego/info_riego_estacion/P01/_update
+{
+   "doc" : {
+	  "LATITUD": "420222100N",
+      "LONGITUD": "041759300W",
+      "lat_lon": {
+      "lat": 42.039484,
+      "lon":  -4.310839
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P02/_update
+{
+   "doc" : {
+	  "LATITUD": "415707600N",
+      "LONGITUD": "043030000W",
+      "lat_lon": {
+      "lat": 41.952106,
+      "lon":  -4.508325
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P03/_update
+{
+   "doc" : {
+	  "LATITUD": "420524700N",
+      "LONGITUD": "044602900W",
+      "lat_lon": {
+      "lat": 42.090185,
+      "lon":   -4.767472
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P04/_update
+{
+   "doc" : {
+	  "LATITUD": "421520200N",
+      "LONGITUD": "043553700W",
+      "lat_lon": {
+      "lat": 42.255609,
+      "lon":   -4.598262
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P06/_update
+{
+   "doc" : {
+	  "LATITUD": "423254600N",
+      "LONGITUD": "041839000W",
+      "lat_lon": {
+      "lat": 42.548498,
+      "lon":  -4.310839
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P07/_update
+{
+   "doc" : {
+	  "LATITUD": "423131600N",
+      "LONGITUD": "044634900W",
+      "lat_lon": {
+      "lat": 42.525455,
+      "lon":   -4.776367
+    }
+   }
+}
+
+POST /test_estaciones_inforiego/info_riego_estacion/P08/_update
+{
+   "doc" : {
+	  "LATITUD": "422027600N",
+      "LONGITUD": "041642800W",
+	  "X_UTM": "394679.5",
+	  "Y_UTM": "4688429.75",
+      "lat_lon": {
+      "lat": 42.341000,
+      "lon": -4.278555
+    }
+   }
+}
