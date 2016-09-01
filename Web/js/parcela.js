@@ -170,7 +170,7 @@ function obten(campo, anio, tipomedida, variable) {
 
 function actualiza() {
 	
-	var url = "php/inforiego_rest.php?accion=actualiza&latitud="
+	var url = "php/inforiego_rest.php?accion=actualizaDiario&latitud="
 		+ document.getElementById("latitud").innerHTML
 	+ "&longitud="
 	+ document.getElementById("longitud").innerHTML;

@@ -45,9 +45,6 @@ function main($parametros) {
 		$formato = ! empty ( $parametros ["formato"] ) ? $parametros ["formato"] : NULL;
 		
 		switch ($accion) {
-			case "actualiza" :
-				$resultado = actualizaDatosClima ( $estaciones, $fecha_ini, $fecha_fin );
-				break;
 			case "actualizaDiario" :
 				$resultado = actualizaDatosClima ( $estaciones, $fecha_ini, $fecha_fin );
 				break;
@@ -59,8 +56,8 @@ function main($parametros) {
 			case "diasDeLluvia" :
 				$resultado = diasDeLluvia ( $latitud, $longitud, $anio );
 				break;
-			case "temperaturaDiaria" :
-				$resultado = temperaturaDiaria ( $latitud, $longitud, $anio );
+			case "medidasDiarias" :
+				$resultado = medidasDiarias ( $latitud, $longitud, $anio );
 				break;
 			case "datosMedidaPorAnio" :
 				$resultado = datosMedidaPorAnio ( $medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato );
@@ -112,9 +109,10 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 			$url = 'http://www.inforiego.org/opencms/rest/diario?username=' . username . '&password=' . password . '&provincia=' . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini . '&fecha_fin=' . $fin . '&fecha_ult_modif=' . $fecha_ult_modif;
 			
 			$response = getHttpcUrl ( $url );
+			$response_json =json_decode ( utf8_encode ( $response ), true );
 			
-			foreach ( $response as $element ) {
-				$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
+			foreach ( $response_json as $element ) {
+				$url = 'http://81.61.197.16:9200/new_inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
 				$element = format_info_riego_diario ( $element, $estacion );
 				putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 			}
@@ -123,12 +121,12 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 	
 	$resultado ["result"] = "success";
 	
-	return $resultado;
+	return json_encode($resultado, JSON_UNESCAPED_UNICODE );
 }
 function actualizaEstaciones($estaciones) {
 	foreach ( $estaciones as $estacion ) {
 		
-		$url = 'http://81.61.197.16:9200/test_estaciones_inforiego/info_riego_estacion/' . $estacion ["ESTACIONCORTO"];
+		$url = 'http://81.61.197.16:9200/new_inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
 		$estacion = format_info_riego_estacion ( $estacion );
 		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
 	}
@@ -138,7 +136,7 @@ function actualizaEstaciones($estaciones) {
 	return $resultado;
 }
 function fechaUltimoRegistro($estacion) {
-	$url = "http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?";
+	$url = "http://81.61.197.16:9200/new_inforiego/info_riego_daily/_search?";
 	
 	$input = "{
   \"size\": 0,
@@ -169,7 +167,7 @@ function fechaUltimoRegistro($estacion) {
 
 function diasDeLluvia($latitud, $longitud, $anio) {
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$url = 'http://81.61.197.16:9200/new_inforiego/info_riego_daily/_search?';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -211,11 +209,11 @@ function diasDeLluvia($latitud, $longitud, $anio) {
 	
 	return '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
 }
-function temperaturaDiaria($latitud, $longitud, $anio) {
+function medidasDiarias($latitud, $longitud, $anio) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$url = 'http://81.61.197.16:9200/new_inforiego/info_riego_daily/_search?';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -320,7 +318,7 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = 'http://81.61.197.16:9200/test_inforiego/info_riego_diario/_search?';
+	$url = 'http://81.61.197.16:9200/new_inforiego/info_riego_daily/_search?';
 	$input = utf8_encode ( '{
    "size" : 0,
    "query" : {
