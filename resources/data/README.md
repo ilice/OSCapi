@@ -4,7 +4,11 @@ Se utiliza el [Bulk API de Elasticsearch](https://www.elastic.co/guide/en/elasti
 Como estamos utilizando ficheros, usaremos el --data-binary en lugar del -d que utilizamos habitualmente, es decir, en orden ejecutamos:
 
 ```
-curl -XDELETE "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc"
-curl -s -XPOST "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/requirements/_bulk" --data-binary "@curl_requirements_inicial.js"
-curl -s -XPOST "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc/requirements/_bulk" --data-binary "@curl_altitud.js"
+curl -XDELETE "http://81.61.197.16:9200/osc"
+curl -s -XPOST "http://81.61.197.16:9200/osc/requirements/_bulk" --data-binary "@curl_requirements_inicial.js"
+curl -s -XPOST "http://81.61.197.16:9200/osc/requirements/_bulk" --data-binary "@curl_altitud.js"
 ```
+
+# Modificación de las coordenadas de algunas estaciones de inforiego incorrectas
+
+Se utiliza Kibana Sense para ejecutar las sentenias Query DSL en [update_inforiego_stations.qdsl](OpenSmartCountry/resources/data/update_inforiego_stations.qdsl)
