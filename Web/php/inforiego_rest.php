@@ -117,7 +117,7 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 			foreach ( $response_json as $element ) {
 				$url = 'http://82.158.80.73:9200/new_inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
 				$element = format_info_riego_diario ( $element, $estacion );
-				putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
+				//putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 			}
 		}
 	}
@@ -180,7 +180,7 @@ function actualizaRecord($estaciones, $fecha_ini, $fecha_fin) {
 				foreach ( $response_json as $element ) {
 					$element = format_info_riego_record ( $element, $estacion );
 					$url = 'http://82.158.80.73:9200/new_inforiego/info_riego_record/' . urlencode ( $estacion ["ESTACIONCORTO"] . " - " . substr ( $element ["date"], 0, 10 ) . " " . substr ( $element ["date"], 11, 8 ) );
-					putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
+					//putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 					$updated ++;
 				}
 			}
@@ -197,7 +197,7 @@ function actualizaEstaciones($estaciones) {
 		
 		$url = 'http://82.158.80.73:9200/new_inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
 		$estacion = format_info_riego_estacion ( $estacion );
-		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
+		//putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
 	}
 	
 	$resultado ["result"] = "success";
