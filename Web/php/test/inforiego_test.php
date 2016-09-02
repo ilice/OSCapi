@@ -214,7 +214,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function testInforiegoActualizaDatosDiariosInforiegoForLatitudeAndLongitude() {
+	function tetstInforiegoActualizaDatosDiariosInforiegoForLatitudeAndLongitude() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 	
 		$latitud = 40.439983;
@@ -234,12 +234,31 @@ class TestOfInforiego extends UnitTestCase {
 		
 	}
 	
-	function testInforiegoActualizaDatosDiariosInforiegoForAllStations() {
+	function tetstInforiegoActualizaDatosDiariosInforiegoForAllStations() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 	
 		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
 		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/inforiego_rest.php?accion=actualizaDiario";
+			
+		$response = $this->getResponse($url);
+	
+		$response_json = json_decode ( utf8_encode ( $response ), true );
+		$error = json_last_error_msg ();
+		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error . ' al parsear ' . $response);
+		$result = isset($response_json['result'])?$response_json['result']:null;
+		$this->assertTrue ($result == "success", 'Actualiza correctamente  mediante la url: ' . $url);
+	
+	}
+	
+	function tetstInforiegoActualizaDatosHorariosInforiegoForAllStations() {
+		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
+		$latitud = 40.439983;
+		$longitud = - 5.737026;
+		
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
+		$web_folder = "Web/";
+		$url = $server_name . "/" . $web_folder . "php/inforiego_rest.php?accion=actualizaRecord&fecha_ini=01/07/2016&latitud=" . $latitud . "&longitud=" . $longitud;
 			
 		$response = $this->getResponse($url);
 	

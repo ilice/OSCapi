@@ -20,7 +20,7 @@ $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 //Para ver qué versión estoy utilizando
 $curlVersion = curl_version();
 
-$url = "http://81.61.197.16:9200";
+$url = "http://82.158.80.73:9200";
 
 if(strlen($index)>0){
 	$url = "$url/$index" ;
