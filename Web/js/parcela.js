@@ -762,7 +762,7 @@ var hoy = new Date();
 	var max_temperatura = 0;
 	var media_temperatura = 0;
 		
-	var url = "php/inforiego_rest.php?accion=temperaturaDiaria&latitud="
+	var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
 		+ document.getElementById("latitud").innerHTML
 	+ "&longitud="
 	+ document.getElementById("longitud").innerHTML

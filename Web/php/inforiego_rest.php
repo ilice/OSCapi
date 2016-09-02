@@ -66,7 +66,7 @@ function main($parametros) {
 				$resultado = datosMedidaPorAnio ( $medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato );
 				break;
 			default :
-				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada" );
+				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada: " . $accion);
 				$resultado = error;
 		}
 	}
