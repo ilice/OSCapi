@@ -26,8 +26,8 @@ if (! empty ( $querystring )) {
 	
 	echo doGet ( $parametros, $index, $type );
 } else {
-	slack ( 'ERROR: Llamada sin parametros  '. __FUNCTION__ .' en '. $_SERVER ['SCRIPT_NAME'] .' linea '.__LINE__  );
-	echo '{"result": "error", "error": "ERROR: Llamada sin parametros  '. __FUNCTION__ .' en '. $_SERVER ['SCRIPT_NAME'] .' linea '.__LINE__ .'"}';
+	// slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada interna a cacharrito_rest sin parámetros" );
+	echo error;
 }
 function doGet($parametros, $index, $type) {
 	$imei = ! empty ( $parametros ["IMEI"] ) ? $parametros ["IMEI"] : NULL;
