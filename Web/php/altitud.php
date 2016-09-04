@@ -12,7 +12,7 @@ $url = "https://maps.googleapis.com/maps/api/elevation/json?key=AIzaSyB-K-4XmS9a
 if(strlen($querystring)>0){
 	$url = "$url&$querystring";
 }else{
-	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " llamada sin parámetros");
+	slack ( "ERROR: llamada sin parámetros " . __FUNCTION__ ." en ". $_SERVER ['SCRIPT_NAME'] ." línea ".__LINE__);
 }
 
 $response = getHttpscUrl($url);
