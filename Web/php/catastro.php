@@ -4,7 +4,7 @@ header ( "Content-Type: application/xml; charset=UTF-8" );
 
 require_once 'cUrl.php';
 
-$querystring = $_SERVER ['QUERY_STRING'];
+$querystring = !empty($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:"";
 
 if (! empty ( $querystring )) {
 	$explode_querystring = explode ( "&", $querystring );
