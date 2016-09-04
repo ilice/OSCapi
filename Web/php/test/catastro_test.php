@@ -122,6 +122,22 @@ class TestOfCatastro extends UnitTestCase {
  		$this->assertTrue (strlen($response_xml->bico[0]->bi[0]->dt[0]->locs[0]->lors[0]->lorus[0]->cpp[0]->cpa) > 0, 'La parcela tiene que tener cpa para la url: ' . $url );
 	
 	}
+	
+	function testCatastroGetSinParametros() {
+		
+		
+		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
+		$web_folder = "Web/";
+		$url = $server_name . "/" . $web_folder . "php/catastro.php";
+	
+		$response = $this->getResponse($url);
+	
+		$this->assertNotNull ( $response, 'Hay respuesta');
+		$response_xml=simplexml_load_string($response);
+		$this->assertNotEqual ( $response_xml , false , 'Debe ser xml y parsearse correctamente. Parseando: ' . $response . " para la url: " . $url);
+		$this->assertTrue ($response_xml->control->cuerr == 1, 'Debe dar un error por falta de parámetros de entrada');
+	
+	}
 
 }
 ?>

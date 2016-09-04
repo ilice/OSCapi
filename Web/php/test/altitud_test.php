@@ -2,7 +2,6 @@
 
 require_once( __DIR__ . '/../../../vendor/simpletest/simpletest/autorun.php');
 
-
 class TestOfAltitud extends UnitTestCase {
 	function __construct() {
 		parent::__construct ( 'Altitud test' );
