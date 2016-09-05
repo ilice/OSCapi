@@ -36,6 +36,10 @@ error_dir = config.get('importer', 'errors_dir')
 if not os.path.exists(error_dir):
     os.makedirs(error_dir)
 
+dataframes_dir = config.get('importer', 'dataframes_dir')
+if not os.path.exists(dataframes_dir):
+    os.makedirs(dataframes_dir)
+
 #web
 url = config.get('web', 'url')
 

@@ -232,7 +232,8 @@ def get_dataframe(zip_codes,
                   root_dir='/cartografia/05_SIGPAC/2015_ETRS89/Parcelario_SIGPAC_CyL_Municipios',
                   suffix='RECFE',
                   force_download=False,
-                  with_bbox_center=False):
+                  with_bbox_center=False,
+                  with_codigos=False):
     write_csv(zip_codes,
               url=url,
               root_dir=root_dir,
@@ -270,6 +271,10 @@ def get_dataframe(zip_codes,
     if with_bbox_center:
         df['x_bbox_center'] = df.apply(lambda x: compute_bb_center(x, axis=0), axis=1)
         df['y_bbox_center'] = df.apply(lambda x: compute_bb_center(x, axis=1), axis=1)
+
+    if with_codigos:
+        codigos = read_codigos()
+        df = df.merge(codigos, left_on='USO_SIGPAC', right_on='codigo', how='left')
 
     return df
 
