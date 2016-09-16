@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load static %}
+
+		<title>Open Smart Country</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta name="keywords" content="Open Smart Country, Agrotech, IoT, Analitycs, Open Data"/>
+		<meta name="description" content="Encuentra alternativas sostenibles para parcelas en desuso basándose en análisis de Datos Abiertos y datos de Sensores"/>
+		<meta name="author" content="Isabel Muñoz @teanocrata"/>
+		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="{% static 'osc/css/estilo.css' %}"/>
+		<link href="{% static 'osc/icons/OpenSmartCountry_logo_192x192.png' %}" rel="icon" sizes="192x192" />
+		<link href="{% static 'osc/icons/OpenSmartCountry_logo_128x128.png' %}" rel="icon" sizes="128x128" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script>
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			  ga('create', 'UA-74247467-2', 'auto');
+			  ga('send', 'pageview');
+		</script>
+	</head>
+	<body>
+
+		<!-- Navbar (sit on top) -->
+		<div class="w3-top">
+			<ul class="w3-navbar" id="myNavbar">
+				<li><a href="#" class="w3-padding-large"></a></li>
+				<li class="w3-hide w3-right">
+					<a href="#" class="w3-padding-large w3-hover-red"><i class="fa fa-search"></i></a>
+				</li>
+			</ul>
+		</div>
+
+		<div id="suscripcion" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container w3-padding w3-center">
+					<span onclick="document.getElementById('suscripcion').style.display='none'" class="w3-closebtn">&times;</span>
+					<p>Si quieres que te avisemos con los avances que realicemos, déjanos tu correo y te informaremos.</p>
+					<p>Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y puedes darte de baja cuando quieras.</p>
+					<p>Rellene el siguiente formulario para suscribirse.</p>
+					<form class="w3-container" enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
+						<dl class="zend_form">
+							<dt id="groups-label"> </dt>
+							<dd id="groups-element">
+								<input class="w3-input" type="hidden" name="groups[]" value="1"/>
+							</dd>
+
+							<dt id="name-label">
+								<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+							</dt>
+							<dd id="name-element">
+								<input type="text" class="w3-input" name="name" id="name" value=""/>
+							</dd>
+
+							<dt id="email-label">
+								<label for="email" class="required w3-label w3-validate w3-text-grey">Email</label>
+							</dt>
+							<dd id="email-element">
+								<input type="email" class="w3-input" name="email" id="email" value="" required/>
+							</dd>
+
+							<dt id="submit-label"> </dt>
+							<dd id="submit-element">
+								<button type="submit" name="submit" id="submit" class="w3-btn w3-dark-grey w3-margin-top" onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme al tanto</button>
+							</dd>
+
+						</dl>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- First Parallax Image with Logo Text -->
+		<div class="bgimg-1 w3-opacity w3-display-container">
+
+			<div class="w3-container w3-display-middle w3-center" style="height:50%">
+				<img class="" src="{% static 'osc/img/OpenSmartCountry_logo.png' %}" alt="Open Smart Country logo" style="width:100%;max-width:400px"/>
+				<span class=" w3-center  w3-xxlarge w3-wide w3-animate-opacity w3-text-light-grey w3-hide-small">OPEN<strong>SMART</strong>COUNTRY</span>
+				<span class="w3-xxlarge w3-wide w3-animate-opacity w3-text-light-grey w3-hide-medium w3-hide-large">OPEN</span>
+				<span class="w3-xxlarge w3-wide w3-animate-opacity w3-text-light-grey w3-hide-medium w3-hide-large"><strong>SMART</strong></span>
+				<span class="w3-xxlarge w3-wide w3-animate-opacity w3-text-light-grey w3-hide-medium w3-hide-large">COUNTRY</span>
+			</div>
+
+		</div>
+
+		<!-- Container (About Section) -->
+		<div class="w3-content w3-container w3-padding-64" id="about">
+			<h3 class="w3-center">SOBRE MI</h3>
+			<p class="w3-center"><em>Son las <strong>personas</strong> las que <strong>cambian</strong> las cosas</em></p>
+			<div class="w3-row">
+				<div class="w3-col m6 w3-center w3-section">
+					<p><strong>Isabel Muñoz Ordóñez</strong></p><br/>
+					<img src="{% static 'osc/img/DSCN1409_small.JPG' %}" class="w3-circle" alt="Photo of Me"/>
+				</div>
+
+				<div class="w3-col m6  w3-section">
+					<p>¿Quieres saber más sobre quién y por qué está detrás de todo esto?</p>
+					<p>En <a href="http://www.trabajocuatropuntocero.com/" target="_blank">trabajocuatropuntocero.com</a> puedes conocer mi enfoque sobre cómo está cambiando el mundo y cómo podemos aprovecharlo. También os cuento mi historia, me gustaría conocerte y que me conozcas. Puedes verme directamente <a href="http://www.trabajocuatropuntocero.com/sobre-mi/"  target="_blank">aquí</a>.</p>
+					<p>Pero lo importante no soy yo, es lo que podemos construir y cambiar juntos. Tenemos mucho conocimiento y herramientas a nuestro alrededor con las que conseguir cosas maravillosas, ¿no crees que <strong>es nuestra obligación intentarlo?</strong></p>
+					<p><strong>¡Vamos a por ello!</strong></p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Second Parallax Image with Portfolio Text -->
+		<div class="bgimg-2 w3-display-container">
+			<div class="w3-display-middle">
+				<span class="w3-xxlarge w3-text-light-grey w3-wide w3-hide-small w3-hide-medium">¿ABANDONADAS?</span>
+				<span class="w3-large w3-text-light-grey w3-wide w3-hide-medium w3-hide-large">¿ABANDONADAS?</span>
+				<span class="w3-xlarge w3-text-light-grey w3-wide w3-hide-small w3-hide-large">¿ABANDONADAS?</span>
+			</div>
+		</div>
+
+		<!-- Container (Portfolio Section) -->
+		<div class="w3-content w3-container w3-padding-64">
+			<h3 class="w3-center">SOBRE EL TERRENO</h3>
+			<div class="w3-center">
+				<p >En España <strong>7 millones de hectáreas</strong> son pastizales. ¿Sabes lo que es un pastizal?
+				Lo que ves en la foto, una antigua viña que después de más de 30 años de abandono está cubierta por matorrales
+				y zarzas que ocultan alguna cepa moribunda: <strong>La Viña de la Estación</strong>.</p>
+				<p>Si te das un paseo por el campo y observas lo que te rodea verás que no es un caso aislado (7 millones de hectáreas son muchas hectáreas).</p>
+				<p>¿Quieres ver más casos?</p>
+				<p><em>Click sobre las imágenes para ir al origen.</em></p>
+			</div>
+
+			<!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
+			<div class="w3-row-padding w3-center">
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag  w3-hide-small">Alcornoque en desuso. <br/>
+							<em>Fuente: <a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">Árboles Equilibrio de la Vida</a></em>
+						</span>
+						<a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">
+							<img src="{% static 'osc/img/IMG_7866.JPG' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Alcornoque en desuso. <br/>
+							<em>Fuente: <a href="http://fjagaedv.blogspot.com.es/2013_11_01_archive.html"  target="_blank">Árboles Equilibrio de la Vida</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Olivar abandonado. <br/>
+							<em>Fuente: <a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">Pensando el Territorio: Samuel Galiano Parras</a></em>
+						</span>
+						<a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">
+							<img src="{% static 'osc/img/HPIM6389.jpg' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Olivar abandonado. <br/>
+							<em>Fuente: <a href="http://www.pensandoelterritorio.com/erosion-en-cultivos-mediterraneos-el-olivar/"  target="_blank">Pensando el Territorio: Samuel Galiano Parras</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag  w3-hide-small">Huertas abandonadas en Los Frailes, sobre Barranco Hondo.  <br/>
+							<em>Fuente: <a href="http://es.worldmapz.com/photo/405728_fr.htm" target="_blank">Photo by Bubango</a></em>
+						</span>
+						<a href="http://es.worldmapz.com/photo/405728_fr.htm">
+							<img src="{% static 'osc/img/67119830.jpg' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Huertas abandonadas en Los Frailes, sobre Barranco Hondo.  <br/>
+							<em>Fuente: <a href="http://es.worldmapz.com/photo/405728_fr.htm" target="_blank">Photo by Bubango</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Viñedo abandonado en La Palma  <br/>
+							<em>Fuente: <a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">eldiario.es La Palma Ahora</a></em>
+						</span>
+						<a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">
+							<img src="{% static 'osc/img/imagen-vinedo-Palma_EDIIMA20150127_0353_13.jpg' %}" style="width:100%" class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Viñedo abandonado en La Palma  <br/>
+							<em>Fuente: <a href="http://www.eldiario.es/lapalmaahora/sociedad/viticultores-avanzada-prefieren-abandonados-atendidos_0_350315412.html">eldiario.es La Palma Ahora</a></em>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="w3-row-padding w3-center w3-section">
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Membrillero abandonado en Olocau.  <br/>
+							<em>Fuente: <a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">Una vida y mil historias. La Senda del Agua.</a></em>
+						</span>
+						<a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">
+							<img src="{% static 'osc/img/PICT0408.JPG' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Membrillero abandonado en Olocau.  <br/>
+							<em>Fuente: <a href="http://dafne-milhistorias.blogspot.com.es/2010/04/la-senda-del-agua.html">Una vida y mil historias. La Senda del Agua.</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Los Pagos de Overa secos  <br/>
+							<em>Fuente: <a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">Overa Viva. Abandono de los Pagos de Overa</a></em>
+						</span>
+						<a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">
+							<img src="{% static 'osc/img/RIOYPAGOS20147.jpg' %}" style="width:100%" class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">
+						Los Pagos de Overa secos  <br/>
+							<em>Fuente: <a href="http://overaviva.blogspot.com.es/2014/08/abandono-de-los-pagos-de-overa.html">Overa Viva. Abandono de los Pagos de Overa</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Campo de Cerezos abandonados en Cuatro Caminos (Sueras).  <br/>
+							<em>Fuente: <a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">Pa_Blog Senderismo - "Más de Mil"</a></em>
+						</span>
+						<a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">
+							<img src="{% static 'osc/img/Sueras.JPG' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Campo de Cerezos abandonados en Cuatro Caminos (Sueras).  <br/>
+							<em>Fuente: <a href="http://pabloonce.blogspot.com.es/2015/06/2015-06-fuente-castro-sueras-mas.html">Pa_Blog Senderismo - "Más de Mil"</a></em>
+						</p>
+					</div>
+				</div>
+
+				<div class="w3-col m3">
+					<div class="w3-tooltip">
+						<span style="position:absolute;left:0;bottom:18px" class="w3-text w3-tag w3-hide-small">Naranjos abandonados  <br/>
+							<em>Fuente: <a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">Agronatur La Ribera</a></em>
+						</span>
+						<a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">
+							<img src="{% static 'osc/img/campo-abandonado.jpg' %}" style="width:100%"  class="w3-hover-opacity"/>
+						</a>
+						<p class="w3-hide-large w3-hide-medium">Naranjos abandonados  <br/>
+							<em>Fuente: <a href="https://agronaturlaribera.wordpress.com/2013/12/27/agricultura/">Agronatur La Ribera</a></em>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- Third Parallax Image with Portfolio Text -->
+		<div class="bgimg-3 w3-display-container">
+			<div class="w3-display-middle">
+				<span class="w3-xxlarge w3-text-light-grey w3-wide">CAMBIÉMOSLO</span>
+			</div>
+		</div>
+
+		<!-- Container (Contact Section) -->
+		<div class="w3-content w3-container w3-padding-64">
+			<h3 class="w3-center">¿CÓMO?</h3>
+			<p class="w3-center"><em>Utilicemos las nuevas tecnologías</em></p>
+			<p class="w3-center">Es difícil que esto cambie de un día para otro, pero tenemos herramientas que nos lo están poniendo mucho más fácil, ¡vamos a aprovecharlas!</p>
+			<p class="w3-center"><em>(*Pincha sobre cada icono para conocer más.)</em></p>
+
+			<div class="w3-row"><br/>
+				<div class="w3-quarter w3-center w3-padding-medium">
+					<i class="fa fa-map-marker w3-xxxlarge w3-circle w3-hover-opacity" onclick="location.href='mapaDeParcelas.html'"></i>
+					<h3>Geolocalización</h3>
+					<p>¿Dónde están todos estos sitios?Para resolver un problema primero hay que conocerlo.<br/>
+						<strong>¿Nos ayudas?</strong></p>
+						<hr/>
+						Envíanos tu foto geolocalizada, vamos a construir un <strong>mapa</strong> con fotos de todas las parcelas que nos vamos encontrando.
+
+				</div>
+
+				<div class="w3-quarter w3-center w3-padding-medium">
+					<i class="fa fa-wifi w3-xxxlarge w3-circle w3-hover-opacity" onclick="location.href='oscar.html'"></i>
+					<h3>IoT</h3>
+					<p>¿Conoces el Internet de las cosas? ¿<strong>Arduino</strong>? ¿Sabes que es realmente barato que una parcela envíe a Internet su información?</p>
+						<hr/>
+					La parcela <strong>te informará</strong> de su estado, sus condiciones, todos los datos necesarios para cambiar su situación actual, no más parcelas abandonadas.
+
+				</div>
+
+				<div class="w3-quarter w3-center w3-padding-medium">
+					<i class="fa fa-unlock-alt w3-xxxlarge w3-circle w3-hover-opacity" onclick="location.href='parcela.html?latitud=40.439983&longitud=-5.737026&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG'"></i>
+					<h3>Open Data</h3>
+					<p>Cada día hay más información disponible online, ¿y si la tuvieras toda en el <strong>mismo lugar</strong>, <strong>organizada</strong>, de una forma <strong>visual</strong>?</p>
+						<hr/>Tanto si eres el propietario como si buscas una parcela o una forma de vida distinta, necesitas toda la información disponible.
+
+				</div>
+
+				<div class="w3-quarter w3-center w3-padding-medium">
+					<i class="fa fa-line-chart w3-xxxlarge w3-circle w3-hover-opacity" onclick="document.getElementById('analytics').style.display='block'"></i>
+					<h3>Analytics</h3>
+					<p>¿Sabes lo que es esto? Lo que utilizan las grandes empresas para ser aún más grandes.<br/>
+					¿Y si lo ponemos a nuestro servicio?</p>
+					<hr/>
+					Con <strong>todos los datos</strong> sobre cada parcela, aplicamos <strong>modelos</strong> matemáticos y estadísticos para encontrar posibles alternativas de uso, ¿te imaginas que <strong>cada parcela te diga para qué se puede usar?</strong>
+				</div>
+			</div>
+		</div>
+
+
+
+		<!-- Fourth Parallax Image with Portfolio Text -->
+		<div class="bgimg-4 w3-display-container">
+			<div class="w3-display-middle  w3-center">
+				<span class="w3-xxlarge w3-text-light-grey w3-wide strokeme ">NO ES SUFICIENTE</span>
+			</div>
+		</div>
+
+		<!-- Container (Contact Section) -->
+		<div class="w3-content w3-container w3-padding-64">
+			<h3 class="w3-center">LAS PERSONAS</h3>
+			<p class="w3-center"><em>La tecnología no es nada sin nosotros</em></p>
+			<p class="w3-center">Si queremos que las cosas cambien, nos necesitamos. Necesitamos <strong>ideas</strong>, <strong>ilusión</strong>, <strong>trabajo</strong>, <strong>ganas</strong> de hacer de cada lugar un sitio mejor.</p>
+			<div class="w3-row">
+				<div class="w3-container w3-third">
+					<div class="w3-display-container" style="height:200px">
+						<div class="w3-display-middle"><i class="fa fa-group w3-jumbo"></i></div>
+					</div>
+				</div>
+				<div class="w3-container w3-twothird">
+					<p>Cada uno de nosotros tiene conocimienos, ideas diferentes. La tecnología nos puede ayudar a desarrollarlas, pero sin nosotros, sin que
+					seamos capaces de poner esa tecnología a nuestro servicio y aprovecharnos de ella, no vale nada.</p>
+					<p>Necesitamos que la "gente que sabe" nos ayude. Yo no sé para que sirve mi parcela pero <strong>mi abuelo sí que lo sabía</strong>,
+					supo aprovecharla, cuidarla, sacarle rendimiento.</p>
+					<p>El dueño de la parcela de al lado lo sigue haciendo, miles de personas aprovechan parcelas similares de formas diferentes. Yo no puedo
+					hacer lo mismo que hace mi vecino, no vivo allí, no tengo el mismo tiempo ni las mismas habilidades, pero <strong>si me mi vecino me ayuda, si tú me ayudas, si nos ayudamos</strong>,
+					seguro que podemos encontrar la manera de aprovechar mi parcela y todas las parcelas, de que no sigan siendo cada vez más parcelas abandonadas.</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
+			<div class="w3-xlarge w3-padding-32">
+				<a href="https://www.facebook.com/isabelmunozordonez" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-facebook-official"></i></a>
+				<a href="https://twitter.com/teanocrata" class="w3-hover-text-light-blue w3-show-inline-block"><i class="fa fa-twitter"></i></a>
+				<a href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-linkedin"></i></a>
+				<a href="https://github.com/teanocrata/OpenSmartCountry" class="w3-hover-text-indigo w3-show-inline-block"><i class="fa fa-github"></i></a>
+			</div>
+			<a class="w3-right w3-padding-medium" rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+				<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+			</a>
+		</footer>
+
+		<!-- Botón FAB al estilo material design-->
+		<div class="contenedor w3-container">
+			<ul class="w3-ul w3-center" >
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='oscar.html'"><i class="fa fa-wifi"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='parcela.html?latitud=40.439983&longitud=-5.737026&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG'"><i class="fa fa-unlock-alt"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='cultivos.html'"><i class="fa fa-leaf"></i></button></li>
+				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
+			</ul>
+		</div>
+		<script src="{% static 'osc/js/codigoFAB.js' %}"></script>
+		<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
+		<div id="analytics" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span onclick="document.getElementById('analytics').style.display='none'" class="w3-closebtn">&times;</span>
+					<p class="w3-center">Para esto vamos a necesitar un poco más de tiempo, pero esperamos tener una primera versión en breve para que puedas hacerte una idea del potencial que tiene.</p>
+					<p class="w3-center">Si quieres más información, tienes curiosidad o te apetece participar, no dudes en contactar con <a href="mailto:isabel@opensmartcountry.com">nosotros</a>.</p>
+				</div>
+			</div>
+		</div>
+		<!--Ventana de suscripción -->
+		<div id="suscripcion" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container w3-padding w3-center">
+					<span onclick="document.getElementById('suscripcion').style.display='none'" class="w3-closebtn">&times;</span>
+					<p>Si quieres que te avisemos con los avances que realicemos, déjanos tu correo y te informaremos.</p>
+					<p>Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y puedes darte de baja cuando quieras.</p>
+					<p>Rellene el siguiente formulario para suscribirse.</p>
+					<form class="w3-container" enctype="application/x-www-form-urlencoded" action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o" method="post">
+						<dl class="zend_form">
+							<dt id="groups-label"> </dt>
+							<dd id="groups-element">
+								<input class="w3-input" type="hidden" name="groups[]" value="1"/>
+							</dd>
+
+							<dt id="name-label">
+								<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+							</dt>
+							<dd id="name-element">
+								<input type="text" class="w3-input" name="name" id="name" value=""/>
+							</dd>
+
+							<dt id="email-label">
+								<label for="email" class="required w3-label w3-validate w3-text-grey">Email</label>
+							</dt>
+							<dd id="email-element">
+								<input type="email" class="w3-input" name="email" id="email" value="" required/>
+							</dd>
+
+							<dt id="submit-label"> </dt>
+							<dd id="submit-element">
+								<button type="submit" name="submit" id="submit" class="w3-btn w3-dark-grey w3-margin-top" onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme al tanto</button>
+							</dd>
+
+						</dl>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- Fin bloque botón FAB al estilo material design-->
+
+	</body>
+</html>
