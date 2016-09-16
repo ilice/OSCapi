@@ -1,4 +1,8 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from django.core import serializers
+
+from util import google
 
 
 def index(request):
@@ -19,3 +23,17 @@ def oscar(request):
 
 def mapa_de_parcelas(request):
     return render(request, 'osc/mapaDeParcelas.html', {})
+
+
+def altitud(request):
+    param = request.GET.get('locations', '')
+
+    if param == '':
+        return JsonResponse('{}')
+
+    if param != '':
+        locations_param = map(lambda x: float(x), param.split(','))
+
+        response = google.obtain_elevation_from_google([locations_param])
+
+        return JsonResponse(response)

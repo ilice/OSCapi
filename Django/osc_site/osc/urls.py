@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^parcela/$', views.parcela, name='parcela'),
     url(r'^oscar/$', views.oscar, name='oscar'),
     url(r'^mapa_de_parcelas/$', views.mapa_de_parcelas, name='mapa_de_parcelas'),
+    url(r'^altitud/$', views.altitud, name='altitud'),
 ]

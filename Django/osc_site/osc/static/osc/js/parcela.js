@@ -308,10 +308,10 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
 	google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
 	}else{
-		 document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
-		 document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
-		 document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
-		 document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
+		 document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"/static/osc/img/fixedRainChart.PNG\" >";
+		 document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"/static/osc/img/fixedTempChart.PNG\" >";
+		 document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"/static/osc/img/fixedSunChart.PNG\" >";
+		 document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"/static/osc/img/fixedRadiationChart.PNG\" >";
 	}
 
 }
@@ -970,7 +970,7 @@ var hoy = new Date();
 
 function obtenAltitud(latitud, longitud) {
 
-	var url = "php/altitud.php?locations=" + latitud + "," + longitud;
+	var url = "/osc/altitud?locations=" + latitud + "," + longitud;
 
 	var request = jQuery.ajax({
 
@@ -983,7 +983,7 @@ function obtenAltitud(latitud, longitud) {
 		var hits = response["results"][0]["elevation"].toFixed() + " m";
 		document.getElementById('altitud').innerHTML = hits;
 		document.getElementById('altitud_idea').innerHTML = hits;
-		var urlbusqueda = "location.href='cultivos.html?altitud="
+		var urlbusqueda = "location.href='/osc/cultivos?altitud="
 				+ response["results"][0]["elevation"].toFixed() + "'";
 		document.getElementById('cultivos_por_altitud').setAttribute('onclick',
 				urlbusqueda);
