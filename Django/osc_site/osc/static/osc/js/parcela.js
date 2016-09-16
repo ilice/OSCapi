@@ -5,6 +5,7 @@
 var mapa;
 var parcela = {};
 var informacionPoligono;
+var fixedData = false;
 
 /*
  * Los Google Charts no son responsive por lo que es necesario pintarlos de
@@ -20,8 +21,8 @@ $(window).resize(function() {
 $(window).load(function() {
 
 	// Si voy a un sitio determinado de la página, no cargo el tour, por ejemplo
-	// cuando voy directamente al cacharrito
-	if (!location.hash) {
+	// cuando voy directamente al cacharrito o bien si estoy cargando datos fijos
+	if (!location.hash && (window.location.search.substring(1).length > 0)) {
 		$('#chooseID').joyride({
 			autoStart : true,
 			postStepCallback : function(index, tip) {
@@ -41,7 +42,7 @@ function initMap(coordenadasLinde) {
 		zoom : 16,
 		mapTypeId : google.maps.MapTypeId.SATELLITE
 	}
-
+	
 	mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
 
 	var centerControlDiv = document.createElement('div');
@@ -58,7 +59,7 @@ function initMap(coordenadasLinde) {
 		title : 'Parcela'
 	});
 
-	//En realidad la parcel apuede estar formada por varios recintos, iteramos para añadir cada uno de ellos como polígono
+	//En realidad la parcela apuede estar formada por varios recintos, iteramos para añadir cada uno de ellos como polígono
 	for (var i = 0; i< coordenadasLinde.length; i++){
 		var recinto = new google.maps.Polygon({
 			paths : coordenadasLinde[i],
@@ -189,34 +190,135 @@ function cargaDatos() {
 
 	estableceDatosBaseDeLaParcela();
 	var c_refpar = obtenDatosCatastro();
-	var coordenadasLinde = obtenDatosSIGPAC(c_refpar);
+	
+	var fixedCoords = [[{
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	}, {
+		lng : -5.7374292381294,
+		lat : 40.4390894670862
+	}, {
+		lng : -5.73739180024054,
+		lat : 40.4390907145335
+	}, {
+		lng : -5.73725167450709,
+		lat : 40.4391382615966
+	}, {
+		lng : -5.73724113701022,
+		lat : 40.4391749014607
+	}, {
+		lng : -5.73721803154044,
+		lat : 40.4392562459453
+	}, {
+		lng : -5.73718072633477,
+		lat : 40.4393856619662
+	}, {
+		lng : -5.73714289614587,
+		lat : 40.4394992417711
+	}, {
+		lng : -5.73709900898761,
+		lat : 40.4395972020055
+	}, {
+		lng : -5.73705224582516,
+		lat : 40.4397114438101
+	}, {
+		lng : -5.73699952384232,
+		lat : 40.4398442920897
+	}, {
+		lng : -5.73695236415262,
+		lat : 40.4399778192313
+	}, {
+		lng : -5.7370488836958,
+		lat : 40.440017687337
+	}, {
+		lng : -5.73708040409467,
+		lat : 40.4400274792416
+	}, {
+		lng : -5.73710763776926,
+		lat : 40.4399868408083
+	}, {
+		lng : -5.73712811791558,
+		lat : 40.4399337519324
+	}, {
+		lng : -5.73714969089239,
+		lat : 40.4398814478309
+	}, {
+		lng : -5.7371687868795,
+		lat : 40.4398291123418
+	}, {
+		lng : -5.73717846353938,
+		lat : 40.4397915921367
+	}, {
+		lng : -5.73719421568004,
+		lat : 40.4397383450527
+	}, {
+		lng : -5.73721632635996,
+		lat : 40.4396963867868
+	}, {
+		lng : -5.73724294352035,
+		lat : 40.4396492775525
+	}, {
+		lng : -5.73727487779192,
+		lat : 40.4395821358146
+	}, {
+		lng : -5.73732973018171,
+		lat : 40.4394203229537
+	}, {
+		lng : -5.73739206998265,
+		lat : 40.4392658133442
+	}, {
+		lng : -5.73743630057109,
+		lat : 40.4391501902217
+	}, {
+		lng : -5.73745579242689,
+		lat : 40.4391018085895
+	}, {
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	}, {
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	}
+]];
+	var coordenadasLinde = fixedData?fixedCoords:obtenDatosSIGPAC(c_refpar);
 
 	initMap(coordenadasLinde);
 
 	obtenEstacion();
-	actualiza();
+	if(!fixedData){
+		actualiza();
+	}
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
 			.getElementById("longitud").innerHTML);
 
+	cargaUltimosValores_osc_station();
+	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
+	cargaMedidasDiarias();
+	
+	if(!fixedData){
 	// obten(2016);
 	google.charts.load('current', {
 		'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
 	});
 	document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 
-	cargaUltimosValores_osc_station();
-	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
-	cargaMedidasDiarias();
 	
 	google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
 	google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
+	}else{
+		 document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
+		 document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
+		 document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
+		 document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
+	}
 
 }
 
 function obtenEstacion() {
 
+	if(!fixedData){
 	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="
 			+ document.getElementById("latitud").innerHTML
 			+ "&longitud="
@@ -237,9 +339,16 @@ function obtenEstacion() {
 				document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
 
 			});
+	}else{
+		document.getElementById("estacionLluvia").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionTemperatura").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionSol").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionRadiacion").innerHTML = "Losar Del Barco";
+	}
 }
 
 function obtenDatosCatastro() {
+	
 	
 	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
 	
@@ -257,6 +366,7 @@ function obtenDatosCatastro() {
 	// código de parcela: 5 dígitos con ceros a la izda para completar
 	var c_refpar;
 
+	if(!fixedData){
 	var request = jQuery.ajax({
 		url : url,
 		async : false,
@@ -289,6 +399,12 @@ function obtenDatosCatastro() {
 					});
 
 
+	}else{
+		document.getElementById("rc").innerHTML = '37284A00600098';
+		document.getElementById("direccion").innerHTML = 'Polígono 6 Parcela 98 FTE LUMBRAL. SANCHOTELLO (SALAMANCA)';
+		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098',
+				"", "");;
+	}
 	return c_refpar
 }
 
@@ -385,6 +501,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 	// Request that YSQL string, and run a callback function.
 	// Pass a defined function to prevent cache-busting.
 
+	if(!fixedData){
 	var request = jQuery.ajax({
 		url : url,
 		async : false,
@@ -472,6 +589,16 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 				c_refpar = cp + cmc + cpo + cpa;
 
 			});
+	}else{
+		document.getElementById("cn").innerHTML = "rústico";
+		document.getElementById("cucons").innerHTML = 0;
+		document.getElementById("cucul").innerHTML = 0;
+		document.getElementById("ccc").innerHTML = 'e-pastos';
+		document.getElementById("ip").innerHTML = 0;
+		document.getElementById("ssp").innerHTML = 1409;
+		c_refpar = '372840000000600098';
+		
+	}
 
 	return c_refpar;
 
@@ -683,7 +810,7 @@ var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
 
 
 function cargaUltimosValores_osc_station() {
-	
+	if(!fixedData){
 	var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
 		+ document.getElementById("latitud").innerHTML
 		+ "&longitud="
@@ -717,7 +844,22 @@ request
 			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon?ultimosValores._source.lat_lon.lon:"";
 		});
 
-	
+	}else{
+		document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = 10;
+		document.getElementById('horaUltimaMedidaTemperatura').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaTemperatura').innerHTML = 8;
+		document.getElementById('horaUltimaMedidaHumedad').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaHumedad').innerHTML = 70;
+		document.getElementById('horaUltimaMedidaLluvia').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaLluvia').innerHTML = 34;
+		document.getElementById('horaUltimaMedidaLuz').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaLuz').innerHTML = 56;
+		document.getElementById('horaUltimaMedidaBateria').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaBateria').innerHTML = 67;
+		document.getElementById('ultimaPosicionLatitud').innerHTML = 40.49;
+		document.getElementById('ultimaPosicionLongitud').innerHTML = -3.65;
+	}
 }
 
 function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
@@ -727,6 +869,7 @@ function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 	var diasDeLluvia = 0;
 	var precipitacionAcumulada = 0;
 	
+	if(!fixedData){
 	var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
 		+ document.getElementById("latitud").innerHTML
 	+ "&longitud="
@@ -751,6 +894,11 @@ function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 	document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
 	document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
 	document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
+	}else{
+		document.getElementById('diasDeLluvia').innerHTML = 66;
+		document.getElementById('pecipitacionacumulada').innerHTML = 308.54;
+		document.getElementById('precipitacion-widget').innerHTML = 308.54;
+	}
 
 }
 
@@ -761,6 +909,7 @@ var hoy = new Date();
 	var min_temperatura = 0;
 	var max_temperatura = 0;
 	var media_temperatura = 0;
+	if(!fixedData){
 		
 	var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
 		+ document.getElementById("latitud").innerHTML
@@ -802,6 +951,21 @@ var hoy = new Date();
 	document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
 	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
 	document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
+	
+	}else{
+		document.getElementById('maximaTemperaturaDiurna').innerHTML = 34.66;
+		document.getElementById('minimaTemperaturaDiurna').innerHTML = -6.59;
+		document.getElementById('mediaTemperaturaDiurna').innerHTML = 12.66;
+		document.getElementById('temperatura-widget').innerHTML = 12.66;
+		document.getElementById('mediaHorasSolDiarias').innerHTML = 10.05;
+		document.getElementById('maximasHorasSolDiarias').innerHTML = 13.51;
+		document.getElementById('horasSolAcumuladas').innerHTML = 2462.54;
+		document.getElementById('horasSol-widget').innerHTML = 2462.54;
+		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = 34.02;
+		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = 20.21;
+		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = 4951.24;
+		document.getElementById('radiacion-widget').innerHTML = 4951.24;
+	}
 }
 
 function obtenAltitud(latitud, longitud) {
@@ -856,6 +1020,14 @@ function estableceDatosBaseDeLaParcela() {
 				break;
 			}
 		}
+	}else{
+		document.getElementById('latitud').innerHTML = Number(40.439983);
+		parcela.lat = 40.439983;
+		document.getElementById('longitud').innerHTML = Number(-5.737026);
+		parcela.lng= -5.737026;
+		document.getElementById('pagina').innerHTML = decodeURI('Viña%20de%20la%20estación');
+		fixedData = true;
+		
 	}
 }
 
