@@ -1,8 +1,8 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 	<head>
-		{% load static %}
-
 		<title>Open Smart Country</title>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -352,11 +352,11 @@
 		<div class="contenedor w3-container">
 			<ul class="w3-ul w3-center" >
 				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='oscar.html'"><i class="fa fa-wifi"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='parcela.html'"><i class="fa fa-unlock-alt"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/mapa_de_parcelas'"><i class="fa fa-map-marker"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/oscar'"><i class="fa fa-wifi"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/parcela'"><i class="fa fa-unlock-alt"></i></button></li>
 				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='cultivos.html'"><i class="fa fa-leaf"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/cultivos'"><i class="fa fa-leaf"></i></button></li>
 				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
 			</ul>
 		</div>

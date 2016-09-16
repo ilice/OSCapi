@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -10,13 +12,13 @@
 		<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
 		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"/>
-		<link rel="stylesheet" href="css/estilo.css"/>
-		<link rel="stylesheet" type="text/css" href="css/joyride-2.1.css"/>
+		<link rel="stylesheet" href="{% static 'osc/css/estilo.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'osc/css/joyride-2.1.css' %}"/>
 
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-		<script type="text/javascript" src="js/jquery.joyride-2.1.js"></script>   
-		<script type="text/javascript" src="js/codigo.js"></script>   
+		<script type="text/javascript" src="{% static 'osc/js/jquery.joyride-2.1.js' %}"></script>
+		<script type="text/javascript" src="{% static 'osc/js/codigo.js' %}"></script>
 
 
 
@@ -35,7 +37,7 @@
 
 
 		<ul class="w3-navbar w3-top" id="myNavbar">
-			<li><img class="w3-padding-large w3-opacity w3-left" src="img/OpenSmartCountry_logo_25x26.png" alt="Open Smart Country logo" /></li>
+			<li><img class="w3-padding-large w3-opacity w3-left" src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}" alt="Open Smart Country logo" /></li>
 			<li><a href="index.html" class="w3-padding-large">HOME</a></li>
 			<li class="w3-hide-small w3-right">
 				<a href="#" class="w3-padding-large w3-hover-red"><i class="fa fa-search"></i></a>
@@ -46,15 +48,15 @@
 		<div class="contenedor w3-container">
 			<ul class="w3-ul w3-center" >
 				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="document.getElementById('suscripcion').style.display='block'"><i class="fa fa-envelope-o"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='mapaDeParcelas.html'"><i class="fa fa-map-marker"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="document.getElementById('siguiente').style.display='block'"><i class="fa fa-wifi"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='parcela.html'"><i class="fa fa-unlock-alt"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/mapa_de_parcelas'"><i class="fa fa-map-marker"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF4 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/oscar'"><i class="fa fa-wifi"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF3 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/parcela'"><i class="fa fa-unlock-alt"></i></button></li>
 				<li class="sinBorde"><button class="btn botonF2 w3-btn-floating w3-dark-grey" onclick="document.getElementById('analytics').style.display='block'"><i class="fa fa-line-chart"></i></button></li>
-				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='cultivos.html'"><i class="fa fa-leaf"></i></button></li>
+				<li class="sinBorde"><button class="btn botonF5 w3-btn-floating w3-dark-grey" onclick="location.href='/osc/cultivos'"><i class="fa fa-leaf"></i></button></li>
 				<li class="sinBorde"><button class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas"><i class="fa fa-plus"></i></button></li>
 			</ul>
 		</div>
-		<script src="js\codigoFAB.js"></script>
+		<script src="{% static 'osc/js/codigoFAB.js' %}"></script>
 		<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
 		<div id="analytics" class="w3-modal">
 			<div class="w3-modal-content">
@@ -122,14 +124,14 @@
 
 		<div class="w3-container w3-light-grey w3-center" >
 			<br/><br/>
-			<img class="" src="img/IMG_20160622_181711_400x610.png" alt="OSC&alpha;r" usemap="#cacharritoMap" id="oscar">
+			<img class="" src="{% static 'osc/img/IMG_20160622_181711_400x610.png' %}" alt="OSC&alpha;r" usemap="#cacharritoMap" id="oscar">
 				<map name="cacharritoMap">
 					<area shape="poly" coords="125,0,387,22,321,117,0,81" onclick="document.getElementById('datosPlacaSolar').style.display='block'" alt="Placa Solar" title="Placa solar" id="placaSolar"/>
 					<area shape="poly" coords="116,262,206,282,157,347,53,320" onclick="document.getElementById('datosSensorDeLluvia').style.display='block'" title="Sensor lluvia" id="sensorLluvia"/>
 					<area shape="poly" coords="149,469,189,490,137,600,124,609,124,591,155,527,152,515,141,518,108,586,96,596,94,580" onclick="document.getElementById('datosSensorHumetadSuelo').style.display='block'" alt="Sensor humedad suelo" title="Sensor humedad suelo" id="sensorHumedadSuelo"/>
 				</map>
 			
-			<div class="w3-btn w3-light-grey w3-ripple" onclick="document.getElementById('siguiente').style.display='block'"><img id="enviando" src="img/OpenSmartCountry_gif_animado.gif" alt="Computer man" style="width:48px;height:48px;"/></div>
+			<div class="w3-btn w3-light-grey w3-ripple" onclick="document.getElementById('siguiente').style.display='block'"><img id="enviando" src="{% static 'osc/img/OpenSmartCountry_gif_animado.gif' %}" alt="Computer man" style="width:48px;height:48px;"/></div>
 		</div>
 
 
