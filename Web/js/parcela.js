@@ -297,6 +297,8 @@ function cargaDatos() {
 	
 	if(!fixedData){
 	// obten(2016);
+		document.getElementById("fixed").style.display='none';
+		
 	google.charts.load('current', {
 		'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
 	});
@@ -307,11 +309,14 @@ function cargaDatos() {
 	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
 	google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
+	
+	
 	}else{
 		 document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
 		 document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
 		 document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
 		 document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
+		 openCultivo("All")
 	}
 
 }
