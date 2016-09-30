@@ -55,6 +55,15 @@ function getHttpcUrl($url, $esJson = true) {
 		if (strcmp ( $error, "No error" ) != 0) {
 			slack ( "Error: " . $error . " para la llamada: <$url>" );
 		}
+	}else{
+		
+		if(!simplexml_load_string($response))
+		{
+			slack ("Error: al intentar leer el xml de respuesta de la llamada: <$url>" );
+		}
+		
+		
+		
 	}
 	
 	if (! $response) {

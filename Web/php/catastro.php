@@ -25,6 +25,13 @@ if (! empty ( $querystring )) {
 	$esJson = false;
 	
 	$response = getHttpcUrl ( $url, $esJson );
+	
+	$response_xml=simplexml_load_string($response);
+	
+	if($response_xml->control[0]->cuerr > 0)
+	{
+		slack( "Error: el catastro devuelve errores para la llamada: <". $url. ">: " . $response_xml->lerr[0]->err[0]->des );
+	}
 } else {
 	
 	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada sin parámetros" . __FUNCTION__ ." en ". $_SERVER ['SCRIPT_NAME'] ." linea ".__LINE__ );
