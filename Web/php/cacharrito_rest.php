@@ -42,7 +42,7 @@ function doGet($parametros, $index, $type) {
 		$fecha = date ( "Y-m-d\TH:i" );
 		$id = $fecha . "-" . $imei;
 		
-		$url = "http://82.158.80.73:9200/osc_station/osc_station_record/" . $id . "/_update";
+		$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc_station/osc_station_record/" . $id . "/_update";
 		
 		if ($sensor != NULL) {
 			$input = '{"doc": {"IMEI" : "' . $imei . '", "' . $sensor . '" : ' . formatValor($valor) . ', "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
@@ -54,7 +54,7 @@ function doGet($parametros, $index, $type) {
 		
 		echo postHttpcUrl ( $url, $input );
 	} else {
-		$url = "http://82.158.80.73:9200/" . $index . "/" . $type . "/_search?";
+		$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/" . $index . "/" . $type . "/_search?";
 		
 		$input = '{
   "sort": [

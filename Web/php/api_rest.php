@@ -20,7 +20,7 @@ $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 //Para ver qué versión estoy utilizando
 $curlVersion = curl_version();
 
-$url = "http://82.158.80.73:9200";
+$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/";
 
 if(strlen($index)>0){
 	$url = "$url/$index" ;

@@ -21,7 +21,8 @@ $(window).resize(function() {
 $(window).load(function() {
 
 	// Si voy a un sitio determinado de la página, no cargo el tour, por ejemplo
-	// cuando voy directamente al cacharrito o bien si estoy cargando datos fijos
+	// cuando voy directamente al cacharrito o bien si estoy cargando datos
+	// fijos
 	if (!location.hash && (window.location.search.substring(1).length > 0)) {
 		$('#chooseID').joyride({
 			autoStart : true,
@@ -42,7 +43,7 @@ function initMap(coordenadasLinde) {
 		zoom : 16,
 		mapTypeId : google.maps.MapTypeId.SATELLITE
 	}
-	
+
 	mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
 
 	var centerControlDiv = document.createElement('div');
@@ -59,8 +60,9 @@ function initMap(coordenadasLinde) {
 		title : 'Parcela'
 	});
 
-	//En realidad la parcela apuede estar formada por varios recintos, iteramos para añadir cada uno de ellos como polígono
-	for (var i = 0; i< coordenadasLinde.length; i++){
+	// En realidad la parcela apuede estar formada por varios recintos, iteramos
+	// para añadir cada uno de ellos como polígono
+	for (var i = 0; i < coordenadasLinde.length; i++) {
 		var recinto = new google.maps.Polygon({
 			paths : coordenadasLinde[i],
 			strokeColor : '#FF0000',
@@ -77,7 +79,6 @@ function initMap(coordenadasLinde) {
 		informacionPoligono = new google.maps.InfoWindow;
 	}
 
-	
 }
 
 /** @this {google.maps.Polygon} */
@@ -112,7 +113,7 @@ function showArrays(event) {
 
 /**
  * The CenterControl adds a control to the map that recenters the map on plot.
- *  This constructor takes the control DIV as an argument.
+ * This constructor takes the control DIV as an argument.
  * 
  * @constructor
  */
@@ -170,28 +171,27 @@ function obten(campo, anio, tipomedida, variable) {
 }
 
 function actualiza() {
-	
+
 	var url = "php/inforiego_rest.php?accion=actualizaDiario&latitud="
-		+ document.getElementById("latitud").innerHTML
-	+ "&longitud="
-	+ document.getElementById("longitud").innerHTML;
+			+ document.getElementById("latitud").innerHTML + "&longitud="
+			+ document.getElementById("longitud").innerHTML;
 
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
-		async: false,
+		async : false,
 		type : 'GET',
 		dataType : "json"
 	});
-	
+
 }
 
 function cargaDatos() {
 
 	estableceDatosBaseDeLaParcela();
 	var c_refpar = obtenDatosCatastro();
-	
-	var fixedCoords = [[{
+
+	var fixedCoords = [ [ {
 		lng : -5.73743277138396,
 		lat : 40.4390893833596
 	}, {
@@ -278,14 +278,13 @@ function cargaDatos() {
 	}, {
 		lng : -5.73743277138396,
 		lat : 40.4390893833596
-	}
-]];
-	var coordenadasLinde = fixedData?fixedCoords:obtenDatosSIGPAC(c_refpar);
+	} ] ];
+	var coordenadasLinde = fixedData ? fixedCoords : obtenDatosSIGPAC(c_refpar);
 
 	initMap(coordenadasLinde);
 
 	obtenEstacion();
-	if(!fixedData){
+	if (!fixedData) {
 		actualiza();
 	}
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
@@ -294,57 +293,55 @@ function cargaDatos() {
 	cargaUltimosValores_osc_station();
 	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
 	cargaMedidasDiarias();
-	
-	if(!fixedData){
-	// obten(2016);
-		document.getElementById("fixed").style.display='none';
-		
-	google.charts.load('current', {
-		'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
-	});
-	document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 
-	
-	google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
-	google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
-	google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
-	google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
-	
-	
-	}else{
-		 document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
-		 document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
-		 document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
-		 document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
-		 openCultivo("All")
+	if (!fixedData) {
+		// obten(2016);
+		document.getElementById("fixed").style.display = 'none';
+
+		google.charts.load('current', {
+			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
+		});
+		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
+
+		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
+		google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
+		google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
+		google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
+
+	} else {
+		document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
+		document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
+		document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
+		document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
+		openCultivo("All")
 	}
 
 }
 
 function obtenEstacion() {
 
-	if(!fixedData){
-	var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="
-			+ document.getElementById("latitud").innerHTML
-			+ "&longitud="
-			+ document.getElementById("longitud").innerHTML;
+	if (!fixedData) {
+		var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="
+				+ document.getElementById("latitud").innerHTML
+				+ "&longitud="
+				+ document.getElementById("longitud").innerHTML;
 
-	var request = jQuery.ajax({
-		crossDomain : true,
-		url : url,
-		method : "GET",
-		dataType : "json"
-	});
+		var request = jQuery.ajax({
+			crossDomain : true,
+			url : url,
+			method : "GET",
+			dataType : "json"
+		});
 
-	request
-			.done(function(response, textStatus, jqXHR) {
-				document.getElementById("estacionLluvia").innerHTML = response["ESTACION"];
-				document.getElementById("estacionTemperatura").innerHTML = response["ESTACION"];
-				document.getElementById("estacionSol").innerHTML = response["ESTACION"];
-				document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
+		request
+				.done(function(response, textStatus, jqXHR) {
+					document.getElementById("estacionLluvia").innerHTML = response["ESTACION"];
+					document.getElementById("estacionTemperatura").innerHTML = response["ESTACION"];
+					document.getElementById("estacionSol").innerHTML = response["ESTACION"];
+					document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
 
-			});
-	}else{
+				});
+	} else {
 		document.getElementById("estacionLluvia").innerHTML = "Losar Del Barco";
 		document.getElementById("estacionTemperatura").innerHTML = "Losar Del Barco";
 		document.getElementById("estacionSol").innerHTML = "Losar Del Barco";
@@ -353,16 +350,14 @@ function obtenEstacion() {
 }
 
 function obtenDatosCatastro() {
-	
-	
-	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
-	
-	var url = "php/catastro.php?end_point=" + end_point +" &SRS=EPSG:4326&Coordenada_X="
-		+ document.getElementById("longitud").innerHTML
-		+ "&Coordenada_Y="
-		+ document.getElementById("latitud").innerHTML;
 
-	
+	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
+
+	var url = "php/catastro.php?end_point=" + end_point
+			+ " &SRS=EPSG:4326&Coordenada_X="
+			+ document.getElementById("longitud").innerHTML + "&Coordenada_Y="
+			+ document.getElementById("latitud").innerHTML;
+
 	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
 	// código de parcela que tiene pinta de estar formado por:
 	// código de provincia: 2 dígitos
@@ -371,20 +366,22 @@ function obtenDatosCatastro() {
 	// código de parcela: 5 dígitos con ceros a la izda para completar
 	var c_refpar;
 
-	if(!fixedData){
-	var request = jQuery.ajax({
-		url : url,
-		async : false,
-		type : 'GET',
-		dataType : "xml"
-	});
+	if (!fixedData) {
+		var request = jQuery.ajax({
+			url : url,
+			async : false,
+			type : 'GET',
+			dataType : "xml"
+		});
 
-	request
-			.done(function(response, textStatus, jqXHR) {
+		request
+				.done(function(response, textStatus, jqXHR) {
 
-						var xmlDoc = response;
-						var coordenadas = xmlDoc
-								.getElementsByTagName("coordenadas");
+					var xmlDoc = response;
+					var coordenadas = xmlDoc
+							.getElementsByTagName("coordenadas");
+
+					if (coordenadas.length > 0) {
 						var coord = coordenadas[0]
 								.getElementsByTagName("coord");
 
@@ -401,14 +398,14 @@ function obtenDatosCatastro() {
 						// pero se lo puedo pasar en blanco y funciona igual XD
 						c_refpar = obtenDatosPorReferenciaCatastral(rc,
 								provincia, municipio);
-					});
+					}
+				});
 
-
-	}else{
+	} else {
 		document.getElementById("rc").innerHTML = '37284A00600098';
 		document.getElementById("direccion").innerHTML = 'Polígono 6 Parcela 98 FTE LUMBRAL. SANCHOTELLO (SALAMANCA)';
-		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098',
-				"", "");;
+		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098', "", "");
+		;
 	}
 	return c_refpar
 }
@@ -416,11 +413,11 @@ function obtenDatosCatastro() {
 function obtenProvincia(rc) {
 
 	var codigoProvincia = rc.substr(0, 2);
-	
+
 	var end_point = "OVCCallejero.asmx/ConsultaProvincia";
-	
+
 	var url = "php/catastro.php?end_point=" + end_point;
-	
+
 	var nombre_provincia = "";
 
 	var request = jQuery.ajax({
@@ -433,17 +430,17 @@ function obtenProvincia(rc) {
 	request
 			.done(function(response, textStatus, jqXHR) {
 
-						var xmlDoc = response;
-						var provs = xmlDoc.getElementsByTagName("provinciero")[0].getElementsByTagName["prov"];
+				var xmlDoc = response;
+				var provs = xmlDoc.getElementsByTagName("provinciero")[0].getElementsByTagName["prov"];
 
-						for (var i = 0; i < provs.length; i++) {
-							var prov = provs[i].getElementsByTagName("cpine")[0].childNodes[0].nodeValue;
-							if (prov == codigoProvincia) {
-								nombre_provincia = provs[i].getElementsByTagName("np")[0].childNodes[0].nodeValue;
-							}
-						}
-					});
-	
+				for (var i = 0; i < provs.length; i++) {
+					var prov = provs[i].getElementsByTagName("cpine")[0].childNodes[0].nodeValue;
+					if (prov == codigoProvincia) {
+						nombre_provincia = provs[i].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+					}
+				}
+			});
+
 	return nombre_provincia;
 
 }
@@ -453,11 +450,11 @@ function obtenMunicipio(rc) {
 	var codigoMunicipio = rc.substr(2, 3);
 
 	var end_point = "OVCCallejero.asmx/ConsultaMunicipio";
-	
+
 	var url = "php/catastro.php?end_point=" + end_point;
-	
+
 	url = url + "Provincia=" + obtenProvincia(rc) + "&Municipio=";
-	
+
 	var nombre_municipio = "";
 
 	var request = jQuery.ajax({
@@ -470,18 +467,18 @@ function obtenMunicipio(rc) {
 	request
 			.done(function(response, textStatus, jqXHR) {
 
-						var xmlDoc = response;
-						var munis = xmlDoc.getElementsByTagName("municipiero")[0].getElementsByTagName["muni"];
+				var xmlDoc = response;
+				var munis = xmlDoc.getElementsByTagName("municipiero")[0].getElementsByTagName["muni"];
 
-						for (var i = 0; i < munis.length; i++) {
-							var muni = munis[i].getElementsByTagName("locat")[0]
-									.getElementsByTagName("cmc")[0].childNodes[0].nodeValue;
-							if (muni == codigoMunicipio) {
-								nombre_municipio = munis[i].getElementsByTagName("nm")[0].nodeValue;
-							}
-						}
+				for (var i = 0; i < munis.length; i++) {
+					var muni = munis[i].getElementsByTagName("locat")[0]
+							.getElementsByTagName("cmc")[0].childNodes[0].nodeValue;
+					if (muni == codigoMunicipio) {
+						nombre_municipio = munis[i].getElementsByTagName("nm")[0].nodeValue;
+					}
+				}
 
-					});
+			});
 
 	return nombre_municipio;
 
@@ -491,10 +488,9 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 
 	var end_point = "OVCCallejero.asmx/Consulta_DNPRC";
 
-	var url = "php/catastro.php?end_point=" + end_point + "&RC=" + rc + "&Provincia=" + provincia
-			+ "&Municipio=" + municipio;
+	var url = "php/catastro.php?end_point=" + end_point + "&RC=" + rc
+			+ "&Provincia=" + provincia + "&Municipio=" + municipio;
 
-	
 	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
 	// código de parcela que tiene pinta de estar formado por:
 	// código de provincia: 2 dígitos
@@ -506,95 +502,95 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 	// Request that YSQL string, and run a callback function.
 	// Pass a defined function to prevent cache-busting.
 
-	if(!fixedData){
-	var request = jQuery.ajax({
-		url : url,
-		async : false,
-		type : 'GET',
-		dataType : "xml"
-	});
+	if (!fixedData) {
+		var request = jQuery.ajax({
+			url : url,
+			async : false,
+			type : 'GET',
+			dataType : "xml"
+		});
 
-	request
-			.done(function(response, textStatus, jqXHR) {
+		request
+				.done(function(response, textStatus, jqXHR) {
 
-				var xmlDoc = response;
+					var xmlDoc = response;
 
-				var bi = xmlDoc.getElementsByTagName("bico")[0]
-						.getElementsByTagName("bi");
-				var cn = bi[0].getElementsByTagName("idbi")[0]
-						.getElementsByTagName("cn")[0].childNodes[0].nodeValue;
+					var bi = xmlDoc.getElementsByTagName("bico")[0]
+							.getElementsByTagName("bi");
+					var cn = bi[0].getElementsByTagName("idbi")[0]
+							.getElementsByTagName("cn")[0].childNodes[0].nodeValue;
 
-				switch (cn) {
-				case "RU":
-					document.getElementById("cn").innerHTML = "rústico";
-					break;
-				default:
+					switch (cn) {
+					case "RU":
+						document.getElementById("cn").innerHTML = "rústico";
+						break;
+					default:
 
-				}
+					}
 
-				var control = xmlDoc.getElementsByTagName("control");
-				var cucons = control[0].getElementsByTagName("cucons");
-				if (cucons.length > 0) {
-					document.getElementById("cucons").innerHTML = cucons[0].childNodes[0].nodeValue;
-				} else {
-					document.getElementById("cucons").innerHTML = 0;
-				}
+					var control = xmlDoc.getElementsByTagName("control");
+					var cucons = control[0].getElementsByTagName("cucons");
+					if (cucons.length > 0) {
+						document.getElementById("cucons").innerHTML = cucons[0].childNodes[0].nodeValue;
+					} else {
+						document.getElementById("cucons").innerHTML = 0;
+					}
 
-				var cucul = control[0].getElementsByTagName("cucul");
-				if (cucul.length > 0) {
-					document.getElementById("cucul").innerHTML = cucul[0].childNodes[0].nodeValue;
-				} else {
-					document.getElementById("cucul").innerHTML = 0;
-				}
+					var cucul = control[0].getElementsByTagName("cucul");
+					if (cucul.length > 0) {
+						document.getElementById("cucul").innerHTML = cucul[0].childNodes[0].nodeValue;
+					} else {
+						document.getElementById("cucul").innerHTML = 0;
+					}
 
-				npa = bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("locs")[0]
-						.getElementsByTagName("lors")[0]
-						.getElementsByTagName("lorus")[0]
-						.getElementsByTagName("npa")[0].childNodes[0].nodeValue;
+					npa = bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("npa")[0].childNodes[0].nodeValue;
 
-				// document.getElementById("npa").innerHTML = npa;
-				// document.getElementById("nm").innerHTML =
-				// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
-				// document.getElementById("np").innerHTML =
-				// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
-				var dspr = xmlDoc.getElementsByTagName("bico")[0]
-						.getElementsByTagName("lspr")[0]
-						.getElementsByTagName("spr")[0]
-						.getElementsByTagName("dspr");
-				document.getElementById("ccc").innerHTML = dspr[0]
-						.getElementsByTagName("ccc")[0].childNodes[0].nodeValue
-						+ dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue;
-				document.getElementById("ip").innerHTML = dspr[0]
-						.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
-				document.getElementById("ssp").innerHTML = dspr[0]
-						.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
+					// document.getElementById("npa").innerHTML = npa;
+					// document.getElementById("nm").innerHTML =
+					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
+					// document.getElementById("np").innerHTML =
+					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+					var dspr = xmlDoc.getElementsByTagName("bico")[0]
+							.getElementsByTagName("lspr")[0]
+							.getElementsByTagName("spr")[0]
+							.getElementsByTagName("dspr");
+					document.getElementById("ccc").innerHTML = dspr[0]
+							.getElementsByTagName("ccc")[0].childNodes[0].nodeValue
+							+ dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue;
+					document.getElementById("ip").innerHTML = dspr[0]
+							.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
+					document.getElementById("ssp").innerHTML = dspr[0]
+							.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
 
-				var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("loine")[0]
-						.getElementsByTagName("cp")[0].childNodes[0].nodeValue)
-						.slice(-2);
-				var cmc = ("000" + bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("cmc")[0].childNodes[0].nodeValue)
-						.slice(-3);
-				var cpo = ("00000000" + bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("locs")[0]
-						.getElementsByTagName("lors")[0]
-						.getElementsByTagName("lorus")[0]
-						.getElementsByTagName("cpp")[0]
-						.getElementsByTagName("cpo")[0].childNodes[0].nodeValue)
-						.slice(-8);
-				var cpa = ("0000" + bi[0].getElementsByTagName("dt")[0]
-						.getElementsByTagName("locs")[0]
-						.getElementsByTagName("lors")[0]
-						.getElementsByTagName("lorus")[0]
-						.getElementsByTagName("cpp")[0]
-						.getElementsByTagName("cpa")[0].childNodes[0].nodeValue)
-						.slice(-5);
-				c_refpar = cp + cmc + cpo + cpa;
+					var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("loine")[0]
+							.getElementsByTagName("cp")[0].childNodes[0].nodeValue)
+							.slice(-2);
+					var cmc = ("000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("cmc")[0].childNodes[0].nodeValue)
+							.slice(-3);
+					var cpo = ("00000000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("cpp")[0]
+							.getElementsByTagName("cpo")[0].childNodes[0].nodeValue)
+							.slice(-8);
+					var cpa = ("0000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("cpp")[0]
+							.getElementsByTagName("cpa")[0].childNodes[0].nodeValue)
+							.slice(-5);
+					c_refpar = cp + cmc + cpo + cpa;
 
-			});
-	}else{
+				});
+	} else {
 		document.getElementById("cn").innerHTML = "rústico";
 		document.getElementById("cucons").innerHTML = 0;
 		document.getElementById("cucul").innerHTML = 0;
@@ -602,7 +598,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 		document.getElementById("ip").innerHTML = 0;
 		document.getElementById("ssp").innerHTML = 1409;
 		c_refpar = '372840000000600098';
-		
+
 	}
 
 	return c_refpar;
@@ -610,20 +606,21 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 }
 
 function graficoPrecipitacionPorMesYAnio() {
-	
-	var tabla = obtenDatosPorAnio("PRECIPITACION", 3, "month", "M");
-	
-	var columnas = tabla.cols;
-	var filas = tabla.rows;
-	
-	var dt = new google.visualization.DataTable();
 
-	for(var i = 0; i < columnas.length; i++){
-		dt.addColumn(columnas[i].type, columnas[i].label);
-	}
-	dt.addRows(filas);
-	
-	var opciones = {
+	var tabla = obtenDatosPorAnio("PRECIPITACION", 3, "month", "M");
+
+	if (typeof tabla != 'undefined') {
+		var columnas = tabla.cols;
+		var filas = tabla.rows;
+
+		var dt = new google.visualization.DataTable();
+
+		for (var i = 0; i < columnas.length; i++) {
+			dt.addColumn(columnas[i].type, columnas[i].label);
+		}
+		dt.addRows(filas);
+
+		var opciones = {
 			chart : {
 				title : 'Precipitaciones mensuales en mm',
 				subtitle : 'Comparativa acumulado mensual últimos años',
@@ -639,217 +636,249 @@ function graficoPrecipitacionPorMesYAnio() {
 			}
 		};
 
-	var grafica = new google.visualization.ColumnChart(document
-			.getElementById('graficoPrecipitacionPorMesYAnio'));
-	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(dt, opciones);
+		var grafica = new google.visualization.ColumnChart(document
+				.getElementById('graficoPrecipitacionPorMesYAnio'));
+		// chart.draw(data, google.charts.Bar.convertOptions(options));
+		grafica.draw(dt, opciones);
+	} else {
+		document.getElementById('graficoPrecipitacionPorMesYAnio').innerHTML = "<p style=\"color:red;\">Error al recuperar los datos de precipitación de la estación meteorologica más cercana</p>";
+	}
 }
 
 function graficoTemperaturasMediasDiurnas() {
 
 	var tabla = obtenDatosPorAnio("TEMPMEDIA", 3, "day", "DDD");
-	
-	var columnas = tabla.cols;
-	var filas = tabla.rows;
-	
-	var dt = new google.visualization.DataTable();
 
-	for(var i = 0; i < columnas.length; i++){
-		dt.addColumn(columnas[i].type, columnas[i].label);
-	}
-	dt.addRows(filas);
+	if (typeof tabla != 'undefined') {
+		var columnas = tabla.cols;
+		var filas = tabla.rows;
 
+		var dt = new google.visualization.DataTable();
 
-	var opciones = {
-		chart : {
-			title : 'Temperaturas medias diurnas',
-			subtitle : 'Comparativa temperatura media diurna últimos años',
-		},
-		explorer : {},
-		colors : [ '#7F0D0B', '#BF1411', '#400706' ],
-		hAxis : {
-			title : 'Día del año',
-			gridlines : {
-				count : 12
-			}
-		},
-		vAxis : {
-			title : 'Temperatura en ºC'
-		},
-		series : {
-			0 : {
-
-				lineWidth : 1
-
-			},
-			1 : {
-
-				lineWidth : 1
-
-			},
-			2 : {
-
-				lineWidth : 2
-
-			}
+		for (var i = 0; i < columnas.length; i++) {
+			dt.addColumn(columnas[i].type, columnas[i].label);
 		}
-	};
+		dt.addRows(filas);
 
-	
+		var opciones = {
+			chart : {
+				title : 'Temperaturas medias diurnas',
+				subtitle : 'Comparativa temperatura media diurna últimos años',
+			},
+			explorer : {},
+			colors : [ '#7F0D0B', '#BF1411', '#400706' ],
+			hAxis : {
+				title : 'Día del año',
+				gridlines : {
+					count : 12
+				}
+			},
+			vAxis : {
+				title : 'Temperatura en ºC'
+			},
+			series : {
+				0 : {
 
-	var grafica = new google.visualization.LineChart(document
-			.getElementById('graficoTemperaturaMediaDiurna'));
-	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(dt, opciones);
+					lineWidth : 1
+
+				},
+				1 : {
+
+					lineWidth : 1
+
+				},
+				2 : {
+
+					lineWidth : 2
+
+				}
+			}
+		};
+
+		var grafica = new google.visualization.LineChart(document
+				.getElementById('graficoTemperaturaMediaDiurna'));
+		// chart.draw(data, google.charts.Bar.convertOptions(options));
+		grafica.draw(dt, opciones);
+	} else {
+		document.getElementById('graficoTemperaturaMediaDiurna').innerHTML = "<p  style=\"color:red;\">Error al recuperar los datos de temperatura de la estación meteorologica más cercana</p>";
+	}
+
 }
 
 function graficoHorasDeSolDiarias() {
 
-var tabla = obtenDatosPorAnio("N", 3, "day", "DDD");
-	
-	var columnas = tabla.cols;
-	var filas = tabla.rows;
-	
-	var dt = new google.visualization.DataTable();
+	var tabla = obtenDatosPorAnio("N", 3, "day", "DDD");
 
-	for(var i = 0; i < columnas.length; i++){
-		dt.addColumn(columnas[i].type, columnas[i].label);
-	}
-	dt.addRows(filas);
+	if (typeof tabla != 'undefined') {
 
-	var opciones = {
-		chart : {
-			title : 'Horas de Sol Diarias',
-			subtitle : 'Comparativa horas de sol diarias',
-		},
-		explorer : {},
-		colors : [ '#BFA71F', '#7F6F15', '#FFDF2A' ],
-		hAxis : {
-			title : 'Día del año',
-			gridlines : {
-				count : 12
-			}
-		},
-		vAxis : {
-			title : 'Horas de Sol (h)'
-		},
-		series : {
-			0 : {
+		var columnas = tabla.cols;
+		var filas = tabla.rows;
 
-				lineWidth : 1
+		var dt = new google.visualization.DataTable();
 
-			},
-			1 : {
-
-				lineWidth : 1
-
-			},
-			2 : {
-
-				lineWidth : 2
-
-			}
+		for (var i = 0; i < columnas.length; i++) {
+			dt.addColumn(columnas[i].type, columnas[i].label);
 		}
-	};
+		dt.addRows(filas);
 
-	
+		var opciones = {
+			chart : {
+				title : 'Horas de Sol Diarias',
+				subtitle : 'Comparativa horas de sol diarias',
+			},
+			explorer : {},
+			colors : [ '#BFA71F', '#7F6F15', '#FFDF2A' ],
+			hAxis : {
+				title : 'Día del año',
+				gridlines : {
+					count : 12
+				}
+			},
+			vAxis : {
+				title : 'Horas de Sol (h)'
+			},
+			series : {
+				0 : {
 
-	var grafica = new google.visualization.LineChart(document
-			.getElementById('graficoHorasDeSolDiarias'));
-	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(dt, opciones);
+					lineWidth : 1
+
+				},
+				1 : {
+
+					lineWidth : 1
+
+				},
+				2 : {
+
+					lineWidth : 2
+
+				}
+			}
+		};
+
+		var grafica = new google.visualization.LineChart(document
+				.getElementById('graficoHorasDeSolDiarias'));
+		// chart.draw(data, google.charts.Bar.convertOptions(options));
+		grafica.draw(dt, opciones);
+	} else {
+		document.getElementById('graficoHorasDeSolDiarias').innerHTML = "<p style=\"color:red;\">Error al recuperar los datos de horas de sol de la estación meteorologica más cercana</p>";
+	}
+
 }
 
 function graficoRadiacionNetaDiaria() {
 
-var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
-	
-	var columnas = tabla.cols;
-	var filas = tabla.rows;
-	
-	var dt = new google.visualization.DataTable();
+	var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
+	if (typeof tabla != 'undefined') {
 
-	for(var i = 0; i < columnas.length; i++){
-		dt.addColumn(columnas[i].type, columnas[i].label);
-	}
-	dt.addRows(filas);
+		var columnas = tabla.cols;
+		var filas = tabla.rows;
 
-	var opciones = {
-		chart : {
-			title : 'Radiación neta diaria en MJ/m&#178',
-			subtitle : 'Comparativa radiación neta diaria',
-		},
-		explorer : {},
-		colors : [ '#BF480A', '#FF600D', '#E5570C' ],
-		hAxis : {
-			title : 'Día del año',
-			gridlines : {
-				count : 12
-			}
-		},
-		series : {
-			0 : {
+		var dt = new google.visualization.DataTable();
 
-				lineWidth : 1
-
-			},
-			1 : {
-
-				lineWidth : 1
-
-			},
-			2 : {
-
-				lineWidth : 2
-
-			}
+		for (var i = 0; i < columnas.length; i++) {
+			dt.addColumn(columnas[i].type, columnas[i].label);
 		}
-	};
+		dt.addRows(filas);
 
-	var grafica = new google.visualization.LineChart(document
-			.getElementById('graficoRadiacionNetaDiaria'));
-	// chart.draw(data, google.charts.Bar.convertOptions(options));
-	grafica.draw(dt, opciones);
+		var opciones = {
+			chart : {
+				title : 'Radiación neta diaria en MJ/m&#178',
+				subtitle : 'Comparativa radiación neta diaria',
+			},
+			explorer : {},
+			colors : [ '#BF480A', '#FF600D', '#E5570C' ],
+			hAxis : {
+				title : 'Día del año',
+				gridlines : {
+					count : 12
+				}
+			},
+			series : {
+				0 : {
+
+					lineWidth : 1
+
+				},
+				1 : {
+
+					lineWidth : 1
+
+				},
+				2 : {
+
+					lineWidth : 2
+
+				}
+			}
+		};
+
+		var grafica = new google.visualization.LineChart(document
+				.getElementById('graficoRadiacionNetaDiaria'));
+		// chart.draw(data, google.charts.Bar.convertOptions(options));
+		grafica.draw(dt, opciones);
+	} else {
+		document.getElementById('graficoRadiacionNetaDiaria').innerHTML = "<p style=\"color:red;\">Error al recuperar los datos de temperatura de la estación meteorologica más cercana</p>";
+	}
+
 }
 
-
-
 function cargaUltimosValores_osc_station() {
-	if(!fixedData){
-	var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
-		+ document.getElementById("latitud").innerHTML
-		+ "&longitud="
-		+ document.getElementById("longitud").innerHTML;
+	if (!fixedData) {
+		var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
+				+ document.getElementById("latitud").innerHTML
+				+ "&longitud="
+				+ document.getElementById("longitud").innerHTML;
 
-	var ultimosValores;
-	var request = jQuery.ajax({
-		url : url,
-		type : 'GET',
-		dataType : "json"
-	});
-
-request
-		.done(function(response, textStatus, jqXHR) {
-			ultimosValores = response["hits"]["hits"][0];
-			
-			var fecha = new Date(ultimosValores._source.FECHA);
-			document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo?ultimosValores._source.HumedadSuelo.toFixed(2):"";
-			document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura?ultimosValores._source.Temperatura.toFixed(2):"";
-			document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad?ultimosValores._source.Humedad.toFixed(2):"";
-			document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia?ultimosValores._source.Lluvia.toFixed(2):"";
-			document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz?ultimosValores._source.Luz.toFixed(2):"";
-			document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha.toLocaleString();
-			document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria?ultimosValores._source.Bateria.toFixed(2):"";
-			document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon?ultimosValores._source.lat_lon.lat:"";
-			document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon?ultimosValores._source.lat_lon.lon:"";
+		var ultimosValores;
+		var request = jQuery.ajax({
+			url : url,
+			type : 'GET',
+			dataType : "json"
 		});
 
-	}else{
+		request
+				.done(function(response, textStatus, jqXHR) {
+					ultimosValores = response["hits"]["hits"][0];
+
+					var fecha = new Date(ultimosValores._source.FECHA);
+					document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo ? ultimosValores._source.HumedadSuelo
+							.toFixed(2)
+							: "";
+					document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura ? ultimosValores._source.Temperatura
+							.toFixed(2)
+							: "";
+					document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad ? ultimosValores._source.Humedad
+							.toFixed(2)
+							: "";
+					document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia ? ultimosValores._source.Lluvia
+							.toFixed(2)
+							: "";
+					document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz ? ultimosValores._source.Luz
+							.toFixed(2)
+							: "";
+					document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha
+							.toLocaleString();
+					document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria ? ultimosValores._source.Bateria
+							.toFixed(2)
+							: "";
+					document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lat
+							: "";
+					document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
+							: "";
+				});
+
+	} else {
 		document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = "16/9/2016 09:38:00"
 		document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = 10;
 		document.getElementById('horaUltimaMedidaTemperatura').innerHTML = "16/9/2016 09:38:00"
@@ -868,38 +897,37 @@ request
 }
 
 function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
-	
+
 	var hoy = new Date();
-	
+
 	var diasDeLluvia = 0;
 	var precipitacionAcumulada = 0;
-	
-	if(!fixedData){
-	var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
-		+ document.getElementById("latitud").innerHTML
-	+ "&longitud="
-	+ document.getElementById("longitud").innerHTML
-	+ "&anio="
-	+ hoy.getFullYear();
 
-	var request = jQuery.ajax({
-		crossDomain : true,
-		async : false,
-		url : url,
-		type : 'GET',
-		dataType : "json"
-	});
-	
-	request
-	.done(function(response, textStatus, jqXHR) {
-		diasDeLluvia = response.diasDeLluvia;
-		precipitacionAcumulada = response.precipitacionAcumulada.toFixed(2);
-	});
-	
-	document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
-	document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
-	document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
-	}else{
+	if (!fixedData) {
+		var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
+				+ document.getElementById("latitud").innerHTML + "&longitud="
+				+ document.getElementById("longitud").innerHTML + "&anio="
+				+ hoy.getFullYear();
+
+		var request = jQuery.ajax({
+			crossDomain : true,
+			async : false,
+			url : url,
+			type : 'GET',
+			dataType : "json"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+					diasDeLluvia = response.diasDeLluvia;
+					precipitacionAcumulada = response.precipitacionAcumulada
+							.toFixed(2);
+				});
+
+		document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
+		document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
+		document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
+	} else {
 		document.getElementById('diasDeLluvia').innerHTML = 66;
 		document.getElementById('pecipitacionacumulada').innerHTML = 308.54;
 		document.getElementById('precipitacion-widget').innerHTML = 308.54;
@@ -908,56 +936,61 @@ function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 }
 
 function cargaMedidasDiarias() {
-	
-var hoy = new Date();
-	
+
+	var hoy = new Date();
+
 	var min_temperatura = 0;
 	var max_temperatura = 0;
 	var media_temperatura = 0;
-	if(!fixedData){
-		
-	var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
-		+ document.getElementById("latitud").innerHTML
-	+ "&longitud="
-	+ document.getElementById("longitud").innerHTML
-	+ "&anio="
-	+ hoy.getFullYear();
+	var media_horas_sol = 0;
+	var max_horas_sol = 0;
+	var sum_horas_sol = 0;
+	var sum_horas_sol = 0;
+	var max_radiacion = 0;
+	var media_radiacion = 0;
+	var sum_radiacion = 0;
+	var sum_radiacion = 0;
+	if (!fixedData) {
 
-	var request = jQuery.ajax({
-		crossDomain : true,
-		async : false,
-		url : url,
-		type : 'GET',
-		dataType : "json"
-	});
-	
-	request
-	.done(function(response, textStatus, jqXHR) {
-		min_temperatura = response.min_temperatura.toFixed(2);
-		max_temperatura = response.max_temperatura.toFixed(2);
-		media_temperatura = response.media_temperatura.toFixed(2);
-		media_horas_sol = response.media_horas_sol.toFixed(2);
-		max_horas_sol = response.max_horas_sol.toFixed(2);
-		sum_horas_sol = response.sum_horas_sol.toFixed(2);
-		media_radiacion = response.media_radiacion.toFixed(2);
-		max_radiacion = response.max_radiacion.toFixed(2);
-		sum_radiacion = response.sum_radiacion.toFixed(2);
-	});
+		var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
+				+ document.getElementById("latitud").innerHTML + "&longitud="
+				+ document.getElementById("longitud").innerHTML + "&anio="
+				+ hoy.getFullYear();
 
-	document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
-	document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
-	document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
-	document.getElementById('temperatura-widget').innerHTML = media_temperatura;
-	document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
-	document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
-	document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
-	document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
-	document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
-	document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
-	document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
-	document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
-	
-	}else{
+		var request = jQuery.ajax({
+			crossDomain : true,
+			async : false,
+			url : url,
+			type : 'GET',
+			dataType : "json"
+		});
+
+		request.done(function(response, textStatus, jqXHR) {
+			min_temperatura = response.min_temperatura.toFixed(2);
+			max_temperatura = response.max_temperatura.toFixed(2);
+			media_temperatura = response.media_temperatura.toFixed(2);
+			media_horas_sol = response.media_horas_sol.toFixed(2);
+			max_horas_sol = response.max_horas_sol.toFixed(2);
+			sum_horas_sol = response.sum_horas_sol.toFixed(2);
+			media_radiacion = response.media_radiacion.toFixed(2);
+			max_radiacion = response.max_radiacion.toFixed(2);
+			sum_radiacion = response.sum_radiacion.toFixed(2);
+		});
+
+		document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
+		document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
+		document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
+		document.getElementById('temperatura-widget').innerHTML = media_temperatura;
+		document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
+		document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
+		document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
+		document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
+		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
+		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
+		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
+		document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
+
+	} else {
 		document.getElementById('maximaTemperaturaDiurna').innerHTML = 34.66;
 		document.getElementById('minimaTemperaturaDiurna').innerHTML = -6.59;
 		document.getElementById('mediaTemperaturaDiurna').innerHTML = 12.66;
@@ -1025,14 +1058,14 @@ function estableceDatosBaseDeLaParcela() {
 				break;
 			}
 		}
-	}else{
+	} else {
 		document.getElementById('latitud').innerHTML = Number(40.439983);
 		parcela.lat = 40.439983;
 		document.getElementById('longitud').innerHTML = Number(-5.737026);
-		parcela.lng= -5.737026;
+		parcela.lng = -5.737026;
 		document.getElementById('pagina').innerHTML = decodeURI('Viña%20de%20la%20estación');
 		fixedData = true;
-		
+
 	}
 }
 
@@ -1058,7 +1091,8 @@ function obtenDatosSIGPAC(c_refpar) {
 
 					var hit = hits[i];
 
-					coordenadasLinde.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+					coordenadasLinde
+							.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
 				}
 			});
 	return coordenadasLinde;
@@ -1077,22 +1111,15 @@ function arrayToPathLatLong(array) {
 	return paths;
 }
 
-function obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato){
-	
+function obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) {
+
 	var datos;
-	
+
 	var url = "php/inforiego_rest.php?accion=datosMedidaPorAnio&latitud="
-		+ document.getElementById("latitud").innerHTML
-	+ "&longitud="
-	+ document.getElementById("longitud").innerHTML
-	+ "&medida="
-	+ medida
-	+ "&numeroDeAnios="
-	+ numeroDeAnios
-	+ "&intervalo="
-	+ intervalo
-	+ "&formato="
-	+ formato;
+			+ document.getElementById("latitud").innerHTML + "&longitud="
+			+ document.getElementById("longitud").innerHTML + "&medida="
+			+ medida + "&numeroDeAnios=" + numeroDeAnios + "&intervalo="
+			+ intervalo + "&formato=" + formato;
 
 	var request = jQuery.ajax({
 		crossDomain : true,
@@ -1101,11 +1128,10 @@ function obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato){
 		type : 'GET',
 		dataType : "json"
 	});
-	
-	request
-	.done(function(response, textStatus, jqXHR) {
+
+	request.done(function(response, textStatus, jqXHR) {
 		datos = response;
 	});
-	
+
 	return datos;
 }

@@ -8,6 +8,10 @@ function postHttpcUrl($url, $input) {
 	curl_setopt ( $handler, CURLOPT_POSTFIELDS, $input );
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 	curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
+	if (strpos ( $url, "https://" ) === 0) {
+		curl_setopt ( $handler, CURLOPT_SSL_VERIFYPEER, false );
+	}
+	
 	
 	$response = curl_exec ( $handler );
 	
@@ -34,6 +38,9 @@ function getHttpcUrl($url, $esJson = true) {
 	}
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 	curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
+	if (strpos ( $url, "https://" ) === 0) {
+		curl_setopt ( $handler, CURLOPT_SSL_VERIFYPEER, false );
+	}
 	
 	$response = curl_exec ( $handler );
 	
@@ -55,15 +62,11 @@ function getHttpcUrl($url, $esJson = true) {
 		if (strcmp ( $error, "No error" ) != 0) {
 			slack ( "Error: " . $error . " para la llamada: <$url>" );
 		}
-	}else{
+	} else {
 		
-		if(!simplexml_load_string($response))
-		{
-			slack ("Error: al intentar leer el xml de respuesta de la llamada: <$url>" );
+		if (! simplexml_load_string ( $response )) {
+			slack ( "Error: al intentar leer el xml de respuesta de la llamada: <$url>" );
 		}
-		
-		
-		
 	}
 	
 	if (! $response) {
@@ -85,6 +88,9 @@ function putHttpcUrl($url, $input) {
 	curl_setopt ( $handler, CURLOPT_POSTFIELDS, $input );
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 	curl_setopt ( $handler, CURLOPT_CONNECTTIMEOUT, 0 );
+	if (strpos ( $url, "https://" ) === 0) {
+		curl_setopt ( $handler, CURLOPT_SSL_VERIFYPEER, false );
+	}
 	
 	$response = curl_exec ( $handler );
 	
@@ -102,8 +108,9 @@ function putHttpcUrl($url, $input) {
 }
 function getHttpscUrl($url) {
 	$handler = curl_init ( $url );
-	
-	curl_setopt ( $handler, CURLOPT_SSL_VERIFYPEER, 0 );
+	if (strpos ( $url, "https://" ) === 0) {
+		curl_setopt ( $handler, CURLOPT_SSL_VERIFYPEER, false );
+	}
 	curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 	$response = curl_exec ( $handler );
 	
