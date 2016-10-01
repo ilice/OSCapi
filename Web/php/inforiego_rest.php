@@ -264,6 +264,8 @@ function fechaUltimoRegistro_info_riego_record($estacion) {
 }
 function diasDeLluvia($latitud, $longitud, $anio) {
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener d�as de lluvia para lat:  " . $latitud . " long: " . $longitud . " a�o: " . $anio);
+	}
 	$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
