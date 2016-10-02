@@ -1085,14 +1085,16 @@ function obtenDatosSIGPAC(c_refpar) {
 
 	request
 			.done(function(response, textStatus, jqXHR) {
-				var hits = response["hits"]["hits"];
+				if (typeof response["hits"] != 'undefined') {
+					var hits = response["hits"]["hits"];
 
-				for (var i = 0; i < hits.length; i++) {
+					for (var i = 0; i < hits.length; i++) {
 
-					var hit = hits[i];
+						var hit = hits[i];
 
-					coordenadasLinde
-							.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+						coordenadasLinde
+								.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+					}
 				}
 			});
 	return coordenadasLinde;
