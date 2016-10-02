@@ -212,7 +212,7 @@ class TestOfapi_rest extends UnitTestCase {
 		foreach ($hits as $hit) {
 			$estaEnAlgunRango = false;
 			foreach ($hit["_source"]["altitude"] as $rangoAltitud) {
-				if ($rangoAltitud["min"] < $altitud and $altitud <$rangoAltitud["max"] ) {
+				if (isset($rangoAltitud["min"]) and isset($rangoAltitud["max"]) and $rangoAltitud["min"] < $altitud and $altitud <$rangoAltitud["max"] ) {
 					$estaEnAlgunRango = true;
 				};
 			}
@@ -293,7 +293,7 @@ class TestOfapi_rest extends UnitTestCase {
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
 		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
-		$results = $response_json ['hits'];
+		$results = isset($response_json ['hits'])?$response_json ['hits']:NULL;
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
 		$this->assertEqual ( count ( $hits ) , 1, 'Existen datos para la referencia catastral' );

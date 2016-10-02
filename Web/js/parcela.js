@@ -285,7 +285,7 @@ function cargaDatos() {
 
 	obtenEstacion();
 	if (!fixedData) {
-		actualiza();
+		//actualiza();
 	}
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
 			.getElementById("longitud").innerHTML);
