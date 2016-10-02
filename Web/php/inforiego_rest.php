@@ -264,7 +264,8 @@ function fechaUltimoRegistro_info_riego_record($estacion) {
 }
 function diasDeLluvia($latitud, $longitud, $anio) {
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener dï¿½as de lluvia para lat:  " . $latitud . " long: " . $longitud . " aï¿½o: " . $anio);
+	if ($anio == NULL || $latitud == NULL || $longitud == NULL){
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener días de lluvia para lat:  " . $latitud . " long: " . $longitud . " año: " . $anio);
 	}
 	$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
