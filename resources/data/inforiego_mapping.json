@@ -1,0 +1,176 @@
+{
+	inforiego : {
+		mappings : {
+			info_riego_daily : {
+				properties : {
+					AÑO : {
+						type : "long"
+					},
+					DIA : {
+						type : "long"
+					},
+					DIRVIENTO : {
+						type : "double"
+					},
+					DIRVIENTOVELMAX : {
+						type : "double"
+					},
+					ETBC : {
+						type : "long"
+					},
+					ETHARG : {
+						type : "double"
+					},
+					ETPMON : {
+						type : "double"
+					},
+					ETRAD : {
+						type : "long"
+					},
+					FECHA : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HORMINHUMMAX : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HORMINHUMMIN : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HORMINTEMPMAX : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HORMINTEMPMIN : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HORMINVELMAX : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					HUMEDADD : {
+						type : "double"
+					},
+					HUMEDADMAX : {
+						type : "double"
+					},
+					HUMEDADMEDIA : {
+						type : "double"
+					},
+					HUMEDADMIN : {
+						type : "double"
+					},
+					IDESTACION : {
+						type : "string"
+					},
+					IDPROVINCIA : {
+						type : "string"
+					},
+					N : {
+						type : "double"
+					},
+					PEBC : {
+						type : "long"
+					},
+					PEHARG : {
+						type : "long"
+					},
+					PEPMON : {
+						type : "long"
+					},
+					PERAD : {
+						type : "long"
+					},
+					PRECIPITACION : {
+						type : "long"
+					},
+					RADIACION : {
+						type : "double"
+					},
+					RECORRIDO : {
+						type : "double"
+					},
+					RMAX : {
+						type : "long"
+					},
+					RN : {
+						type : "double"
+					},
+					TEMPD : {
+						type : "double"
+					},
+					TEMPMAX : {
+						type : "double"
+					},
+					TEMPMEDIA : {
+						type : "double"
+					},
+					TEMPMIN : {
+						type : "double"
+					},
+					VD : {
+						type : "long"
+					},
+					VELVIENTO : {
+						type : "double"
+					},
+					VELVIENTOMAX : {
+						type : "double"
+					},
+					VN : {
+						type : "long"
+					},
+					altitud : {
+						type : "long"
+					},
+					lat_lon : {
+						type : "geo_point",
+						lat_lon : true
+					},
+				}
+			},
+			info_riego_station : {
+				properties : {
+					ALTITUD : {
+						type : "long"
+					},
+					ESTACION : {
+						type : "string"
+					},
+					ESTACIONCORTO : {
+						type : "string"
+					},
+					FECHAINSTAL : {
+						type : "date",
+						format : "dateOptionalTime"
+					},
+					IDESTACION : {
+						type : "string"
+					},
+					IDPROVINCIA : {
+						type : "string"
+					},
+					LATITUD : {
+						type : "string"
+					},
+					LONGITUD : {
+						type : "string"
+					},
+					X_UTM : {
+						type : "string"
+					},
+					Y_UTM : {
+						type : "string"
+					},
+					lat_lon : {
+						type : "geo_point",
+						lat_lon : true
+					},
+				}
+			}
+		}
+	}
+}
