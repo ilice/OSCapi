@@ -9,15 +9,16 @@ import ftplib
 import logging
 import os
 import elasticsearch_dsl as dsl
+from elasticsearch_dsl.connections import connections
 import pandas as pd
 import osc.config as conf
+import requests
 
 from osc import util
 
 import utm
 
 logger = logging.Logger(__name__)
-
 
 def as_list(param):
     if type(param) is list:
@@ -33,6 +34,23 @@ def path(data_dir, year=None):
         
     return path_str
 
+
+def read_stations(data_dir='../data'):
+    csv_path = os.path.join(path(data_dir), 'UbicacionEstacionesITACyL 2009.csv')
+
+    locations = pd.read_csv(csv_path,
+                            sep=';',
+                            encoding=None)
+    locations.columns = ['province', 'station', 'code', 'name', 'longitude',
+                         'latitude', 'height', 'xutm', 'yutm']
+    return locations
+
+
+###############################################################
+##                                                           ##
+##                      HOURLY DATA                          ##
+##                                                           ##
+###############################################################
 
 def get_daily_files_list(year,
                          url='ftp.itacyl.es',
@@ -196,17 +214,6 @@ def build_record(row):
     return record
 
 
-def read_locations(data_dir='../data'):
-    csv_path = os.path.join(path(data_dir), 'UbicacionEstacionesITACyL 2009.csv')
-
-    locations = pd.read_csv(csv_path,
-                            sep=';',
-                            encoding=None)
-    locations.columns = ['province', 'station', 'code', 'name', 'longitude',
-                         'latitude', 'height', 'xutm', 'yutm']
-    return locations
-
-
 def save2elasticsearch(years,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
@@ -229,7 +236,7 @@ def save2elasticsearch(years,
                               encoding=encoding,
                               data_dir=data_dir,
                               tmp_dir=tmp_dir)
-    locations = read_locations(data_dir)
+    locations = read_stations(data_dir)
 
     dataframe = pd.merge(dataframe, locations, on='code', how='outer')
 
@@ -243,4 +250,86 @@ def save2elasticsearch(years,
                                      record.code + '_' + record.date.strftime(format='%Y%m%d%H%M') + ':' + str(record))
 
 
+###############################################################
+##                                                           ##
+##                      DAILY DATA                           ##
+##                                                           ##
+###############################################################
 
+
+def get_stations_from_elastic(index=conf.inforiego_index,
+                              mapping=conf.inforiego_station_mapping):
+    stations = []
+    s = dsl.Search(index=index, doc_type=mapping)
+    s.execute()
+    for station in s.scan():
+        stations.append(station.to_dict())
+
+    return stations
+
+
+def get_inforiego_daily_year(provincia,
+                             estacion,
+                             anno,
+                             url=conf.inforiego_daily_url,
+                             user=conf.inforiego_user,
+                             passwd=conf.inforiego_password):
+    response = requests.get(url,
+                            params={'username': user,
+                                    'password': passwd,
+                                    'provincia': provincia,
+                                    'estacion': estacion,
+                                    'fecha_ini': '01/01/' + str(anno),
+                                    'fecha_fin': '31/01/' + str(anno),
+                                    'fecha_ult_modif': '01/01/' + str(anno)})
+
+
+    return response.json()
+
+
+def insert_inforiego_daily_years(provincia,
+                                 estacion,
+                                 years,
+                                 lat_lon,
+                                 altitud,
+                                 index=conf.inforiego_index,
+                                 mapping=conf.inforiego_daily_mapping,
+                                 url=conf.inforiego_daily_url,
+                                 user=conf.inforiego_user,
+                                 passwd=conf.inforiego_password):
+
+    connection = connections.get_connection()
+
+    for year in years:
+        response = get_inforiego_daily_year(provincia, estacion, year, url, user, passwd)
+
+        for document in response:
+            document['lat_lon'] = lat_lon
+            document['altitud'] = altitud
+            document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4)
+            document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4)
+            document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4)
+            document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4)
+            document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4)
+
+            id = document[u'FECHA'].replace('/', '_') + '_' + \
+                 document[u'IDPROVINCIA'] + '_' + \
+                 document[u'IDESTACION']
+
+            try:
+                util.wait_for_yellow_cluster_status()
+                connection.index(index=index, doc_type=mapping, id=id, body=document)
+            except Exception as e:
+                conf.error_handler.error(__name__, "insert_inforiego_daily_years", str(document))
+
+
+def insert_all_stations_inforiego_daily(years):
+    stations = get_stations_from_elastic()
+
+    for station in stations:
+        provincia = station['IDPROVINCIA']
+        estacion = station['IDESTACION']
+        lat_lon = station['lat_lon']
+        altitud = station['ALTITUD']
+
+        insert_inforiego_daily_years(provincia, estacion, years, lat_lon, altitud)

@@ -40,6 +40,15 @@ dataframes_dir = config.get('importer', 'dataframes_dir')
 if not os.path.exists(dataframes_dir):
     os.makedirs(dataframes_dir)
 
+#Inforiego
+inforiego_daily_url=config.get('inforiego', 'url.daily')
+inforiego_user=config.get('inforiego', 'user')
+inforiego_password=config.get('inforiego', 'passwd')
+inforiego_index=config.get('inforiego', 'index')
+inforiego_daily_mapping=config.get('inforiego', 'daily.mapping')
+inforiego_station_mapping=config.get('inforiego', 'station.mapping')
+
+
 #web
 url = config.get('web', 'url')
 
@@ -81,3 +90,4 @@ connections.create_connection('default', hosts=[
     {'host': config.get('elasticsearch', 'host'),
      'port': config.get('elasticsearch', 'port')}],
                               timeout=1200)
+

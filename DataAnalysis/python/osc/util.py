@@ -2,6 +2,7 @@ import os
 import logging
 import zipfile
 import matplotlib.pyplot as plt
+from elasticsearch_dsl.connections import connections
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -49,3 +50,14 @@ def plot_polygon(polygon):
         plt.plot(x, y, '.')
         plt.plot([x[0]], [y[0]], 'o')
     plt.show()
+
+
+def wait_for_yellow_cluster_status():
+    connection = connections.get_connection()
+    while True:
+        try:
+            cluster_status = connection.cluster.health(wait_for_status='yellow')
+            if cluster_status['status'] != 'red':
+                break
+        except Exception as e:
+            print 'Cluster status is red. Waiting for yellow status'

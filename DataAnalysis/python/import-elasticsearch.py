@@ -22,6 +22,11 @@ if __name__ == "__main__":
                                          data_dir=data_dir,
                                          encoding=encoding,
                                          tmp_dir=tmp_dir)
+    if module == 'inforiego_daily':
+        years = sys.argv[2:]
+
+        inforiego.insert_all_stations_inforiego_daily(years=years)
+
     elif module == 'SIGPAC':
         for zc in sys.argv[2:]:
             zip_code = str(zc)
