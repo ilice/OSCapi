@@ -260,13 +260,12 @@ function obtenDatosCatastro() {
 								provincia, municipio);
 					} else {
 
-						document.getElementById("datosCatastro").innerHTML = '<div class="w3-col w3-panel w3-red w3-card-8"> '
-								+ '<span onclick="this.parentElement.style.display=\'none\'"'
+						document.getElementById("datosCatastro").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
 								+ 'class="w3-closebtn">&times;</span>'
-								+ '<h3>Error en la obtención de datos de la sede electrónica del catastro</strong></h3>'
-								+ '<p>Se han intentado recuperar los datos del catastro para la parcela, pero ha ocurrido algún problema. Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>'
-								+ '</div>	';
-
+								+ '<h3>Error en la obtención de los datos de la Sede Electrónica del Catastro</strong></h3>'
+								+ '<p>Se han intentado recuperar los datos públicos del catastro para la parcela, pero ha ocurrido algún problema.</p>'
+								+ 'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
+						document.getElementById("datosCatastroErrorBadge").style.display = 'block';
 					}
 				});
 
@@ -434,8 +433,8 @@ function obtenDatosSIGPAC(c_refpar) {
 					document.getElementById("datosLinde").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
 							+ 'class="w3-closebtn">&times;</span>'
 							+ '<h3>Error en la obtención de las coordenadas de la linde</strong></h3>'
-							+ '<p>Se han intentado recuperar los datos de las coordenadas de la linde de la parcela, pero ha ocurrido algún problema.</p>' +
-							'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
+							+ '<p>Se han intentado recuperar los datos de las coordenadas de la linde de la parcela, pero ha ocurrido algún problema.</p>'
+							+ 'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
 					document.getElementById("datosLindeErrorBadge").style.display = 'block';
 				}
 			});

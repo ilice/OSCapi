@@ -173,8 +173,17 @@
 						onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
-						<h5>Localización <button id = "datosLindeErrorBadge" class="w3-badge w3-red w3-hover-opacity" style="display:none"><i onclick="document.getElementById('datosLinde').style.display='block'" class="fa fa-ban"></i></button></h5>
-						<div id= "datosLinde" class="w3-col w3-panel w3-red w3-card-8" style="display:none"></div>
+						<h5>
+							Localización
+							<button id="datosLindeErrorBadge"
+								class="w3-badge w3-red w3-hover-opacity" style="display: none">
+								<i
+									onclick="document.getElementById('datosLinde').style.display='block'"
+									class="fa fa-ban"></i>
+							</button>
+						</h5>
+						<div id="datosLinde" class="w3-col w3-panel w3-red w3-card-8"
+							style="display: none"></div>
 						<div id="mapa"></div>
 						<table class="w3-table w3-striped w3-bordered">
 							<thead>
@@ -202,9 +211,18 @@
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
-						<h5>Información del catastro</h5>
-						<div id="datosCatastro">
-						<table 
+						<h5>
+							Información del catastro
+							<button id="datosCatastroErrorBadge"
+								class="w3-badge w3-red w3-hover-opacity" style="display: none">
+								<i
+									onclick="document.getElementById('datosCatastro').style.display='block'"
+									class="fa fa-ban"></i>
+							</button>
+						</h5>
+						<div id="datosCatastro" class="w3-col w3-panel w3-red w3-card-8"
+							style="display: none"></div>
+						<table
 							class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey">
 							<tr>
 								<td><i class="fa fa-home w3-blue w3-padding-tiny"></i></td>
@@ -240,7 +258,6 @@
 								<td><i><span id="ssp"> </span> m<sup>2</sup></i></td>
 							</tr>
 						</table>
-						</div>
 						<br /> <a class="w3-btn w3-margin-bottom w3-dark-grey"
 							href="http://www1.sedecatastro.gob.es/">Más información  <i
 							class="fa fa-arrow-right"></i></a>
@@ -307,7 +324,7 @@
 			</div>
 		</div>
 		<!--FIN Línea de localización y datos genéricos-->
-		
+
 		<!--Tarjeta sobre OSC&alpha;r-->
 		<div class="w3-container w3-section" id="cacharrito">
 			<span onclick="this.parentElement.style.display='none'"
@@ -382,12 +399,19 @@
 						</tr>
 					</table>
 				</div>
-				<div id="errorOscar" class="w3-col w3-panel w3-red w3-card-8" style="display:none">
+				<div id="errorOscar" class="w3-col w3-panel w3-red w3-card-8"
+					style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn">&times;</span>
-					<h3>Error en la obtención de datos de <strong>"OSC&alpha;r"</strong></h3>
-					<p>Se han intentado recuperar los datos para la estación de la parcela pero ha ocurrido algún problema. Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>
-				</div>			
+					<h3>
+						Error en la obtención de datos de <strong>"OSC&alpha;r"</strong>
+					</h3>
+					<p>
+						Se han intentado recuperar los datos para la estación de la
+						parcela pero ha ocurrido algún problema. Si el problema persiste
+						puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a>
+					</p>
+				</div>
 			</div>
 		</div>
 		<!--FIN Tarjeta sobre OSC&alpha;r-->
