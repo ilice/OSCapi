@@ -37,6 +37,369 @@ $(window).load(function() {
 	}
 });
 
+function cargaDatos() {
+
+	estableceDatosBaseDeLaParcela();
+	var c_refpar = obtenDatosCatastro();
+
+	var fixedCoords = [ [ {
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	}, {
+		lng : -5.7374292381294,
+		lat : 40.4390894670862
+	}, {
+		lng : -5.73739180024054,
+		lat : 40.4390907145335
+	}, {
+		lng : -5.73725167450709,
+		lat : 40.4391382615966
+	}, {
+		lng : -5.73724113701022,
+		lat : 40.4391749014607
+	}, {
+		lng : -5.73721803154044,
+		lat : 40.4392562459453
+	}, {
+		lng : -5.73718072633477,
+		lat : 40.4393856619662
+	}, {
+		lng : -5.73714289614587,
+		lat : 40.4394992417711
+	}, {
+		lng : -5.73709900898761,
+		lat : 40.4395972020055
+	}, {
+		lng : -5.73705224582516,
+		lat : 40.4397114438101
+	}, {
+		lng : -5.73699952384232,
+		lat : 40.4398442920897
+	}, {
+		lng : -5.73695236415262,
+		lat : 40.4399778192313
+	}, {
+		lng : -5.7370488836958,
+		lat : 40.440017687337
+	}, {
+		lng : -5.73708040409467,
+		lat : 40.4400274792416
+	}, {
+		lng : -5.73710763776926,
+		lat : 40.4399868408083
+	}, {
+		lng : -5.73712811791558,
+		lat : 40.4399337519324
+	}, {
+		lng : -5.73714969089239,
+		lat : 40.4398814478309
+	}, {
+		lng : -5.7371687868795,
+		lat : 40.4398291123418
+	}, {
+		lng : -5.73717846353938,
+		lat : 40.4397915921367
+	}, {
+		lng : -5.73719421568004,
+		lat : 40.4397383450527
+	}, {
+		lng : -5.73721632635996,
+		lat : 40.4396963867868
+	}, {
+		lng : -5.73724294352035,
+		lat : 40.4396492775525
+	}, {
+		lng : -5.73727487779192,
+		lat : 40.4395821358146
+	}, {
+		lng : -5.73732973018171,
+		lat : 40.4394203229537
+	}, {
+		lng : -5.73739206998265,
+		lat : 40.4392658133442
+	}, {
+		lng : -5.73743630057109,
+		lat : 40.4391501902217
+	}, {
+		lng : -5.73745579242689,
+		lat : 40.4391018085895
+	}, {
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	}, {
+		lng : -5.73743277138396,
+		lat : 40.4390893833596
+	} ] ];
+	var coordenadasLinde = fixedData ? fixedCoords : obtenDatosSIGPAC(c_refpar);
+
+	initMap(coordenadasLinde);
+
+	obtenEstacion();
+	if (!fixedData) {
+		// actualiza();
+	}
+	obtenAltitud(document.getElementById("latitud").innerHTML, document
+			.getElementById("longitud").innerHTML);
+
+	cargaUltimosValores_osc_station();
+	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
+	cargaMedidasDiarias();
+
+	if (!fixedData) {
+		// obten(2016);
+		document.getElementById("fixed").style.display = 'none';
+
+		google.charts.load('current', {
+			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
+		});
+		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
+
+		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
+		google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
+		google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
+		google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
+
+	} else {
+		document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
+		document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
+		document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
+		document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
+		openCultivo("All")
+	}
+
+}
+
+function estableceDatosBaseDeLaParcela() {
+	// El objeto window representa la ventana del navegador abierta
+	// Location contiene la información de la URL de la ventana
+	// Search devuelve desde la ? incluida, hacemos el substring(1) para quitar
+	// la ?
+	var query = window.location.search.substring(1);
+
+	if (query.length > 0) {
+		// Si la query tiene algo
+		var vars = query.split("&");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			// If first entry with this name
+			switch (pair[0]) {
+			case "latitud":
+				parcela.lat = Number(pair[1]);
+				document.getElementById('latitud').innerHTML = parcela.lat;
+				break;
+			case "longitud":
+				parcela.lng = Number(pair[1]);
+				document.getElementById('longitud').innerHTML = parcela.lng;
+				break;
+			case "nombre":
+				document.getElementById('pagina').innerHTML = decodeURI(pair[1]);
+				break;
+			default:
+				break;
+			}
+		}
+	} else {
+		document.getElementById('latitud').innerHTML = Number(40.439983);
+		parcela.lat = 40.439983;
+		document.getElementById('longitud').innerHTML = Number(-5.737026);
+		parcela.lng = -5.737026;
+		document.getElementById('pagina').innerHTML = decodeURI('Viña%20de%20la%20estación');
+		fixedData = true;
+
+	}
+}
+
+function obtenDatosCatastro() {
+
+	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
+
+	var url = "php/catastro.php?end_point=" + end_point
+			+ " &SRS=EPSG:4326&Coordenada_X="
+			+ document.getElementById("longitud").innerHTML + "&Coordenada_Y="
+			+ document.getElementById("latitud").innerHTML;
+
+	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
+	// código de parcela que tiene pinta de estar formado por:
+	// código de provincia: 2 dígitos
+	// código de municipio: 3 dígitos
+	// código de polígono: 8 dígitos con ceros a la izda para completar
+	// código de parcela: 5 dígitos con ceros a la izda para completar
+	var c_refpar;
+
+	if (!fixedData) {
+		var request = jQuery.ajax({
+			url : url,
+			async : false,
+			type : 'GET',
+			dataType : "xml"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+
+					var xmlDoc = response;
+					var coordenadas = xmlDoc
+							.getElementsByTagName("coordenadas");
+
+					if (coordenadas.length > 0) {
+						var coord = coordenadas[0]
+								.getElementsByTagName("coord");
+
+						var rc = coord[0].getElementsByTagName("pc")[0]
+								.getElementsByTagName("pc1")[0].childNodes[0].nodeValue
+								+ coord[0].getElementsByTagName("pc")[0]
+										.getElementsByTagName("pc2")[0].childNodes[0].nodeValue;
+						document.getElementById("rc").innerHTML = rc;
+						document.getElementById("direccion").innerHTML = coord[0]
+								.getElementsByTagName("ldt")[0].childNodes[0].nodeValue;
+						var provincia = "";
+						var municipio = "";
+						// Curiosamente me obliga a pasar provincia y municipio
+						// pero se lo puedo pasar en blanco y funciona igual XD
+						c_refpar = obtenDatosPorReferenciaCatastral(rc,
+								provincia, municipio);
+					} else {
+
+						document.getElementById("datosCatastro").innerHTML = '<div class="w3-col w3-panel w3-red w3-card-8"> '
+								+ '<span onclick="this.parentElement.style.display=\'none\'"'
+								+ 'class="w3-closebtn">&times;</span>'
+								+ '<h3>Error en la obtención de datos de la sede electrónica del catastro</strong></h3>'
+								+ '<p>Se han intentado recuperar los datos del catastro para la parcela, pero ha ocurrido algún problema. Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>'
+								+ '</div>	';
+
+					}
+				});
+
+	} else {
+		document.getElementById("rc").innerHTML = '37284A00600098';
+		document.getElementById("direccion").innerHTML = 'Polígono 6 Parcela 98 FTE LUMBRAL. SANCHOTELLO (SALAMANCA)';
+		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098', "", "");
+		;
+	}
+	return c_refpar
+}
+
+function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
+
+	var end_point = "OVCCallejero.asmx/Consulta_DNPRC";
+
+	var url = "php/catastro.php?end_point=" + end_point + "&RC=" + rc
+			+ "&Provincia=" + provincia + "&Municipio=" + municipio;
+
+	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
+	// código de parcela que tiene pinta de estar formado por:
+	// código de provincia: 2 dígitos
+	// código de municipio: 3 dígitos
+	// código de polígono: 8 dígitos con ceros a la izda para completar
+	// código de parcela: 5 dígitos con ceros a la izda para completar
+	var c_refpar;
+
+	// Request that YSQL string, and run a callback function.
+	// Pass a defined function to prevent cache-busting.
+
+	if (!fixedData) {
+		var request = jQuery.ajax({
+			url : url,
+			async : false,
+			type : 'GET',
+			dataType : "xml"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+
+					var xmlDoc = response;
+
+					var bi = xmlDoc.getElementsByTagName("bico")[0]
+							.getElementsByTagName("bi");
+					var cn = bi[0].getElementsByTagName("idbi")[0]
+							.getElementsByTagName("cn")[0].childNodes[0].nodeValue;
+
+					switch (cn) {
+					case "RU":
+						document.getElementById("cn").innerHTML = "rústico";
+						break;
+					default:
+
+					}
+
+					var control = xmlDoc.getElementsByTagName("control");
+					var cucons = control[0].getElementsByTagName("cucons");
+					if (cucons.length > 0) {
+						document.getElementById("cucons").innerHTML = cucons[0].childNodes[0].nodeValue;
+					} else {
+						document.getElementById("cucons").innerHTML = 0;
+					}
+
+					var cucul = control[0].getElementsByTagName("cucul");
+					if (cucul.length > 0) {
+						document.getElementById("cucul").innerHTML = cucul[0].childNodes[0].nodeValue;
+					} else {
+						document.getElementById("cucul").innerHTML = 0;
+					}
+
+					npa = bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("npa")[0].childNodes[0].nodeValue;
+
+					// document.getElementById("npa").innerHTML = npa;
+					// document.getElementById("nm").innerHTML =
+					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
+					// document.getElementById("np").innerHTML =
+					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
+					var dspr = xmlDoc.getElementsByTagName("bico")[0]
+							.getElementsByTagName("lspr")[0]
+							.getElementsByTagName("spr")[0]
+							.getElementsByTagName("dspr");
+					document.getElementById("ccc").innerHTML = dspr[0]
+							.getElementsByTagName("ccc")[0].childNodes[0].nodeValue
+							+ dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue;
+					document.getElementById("ip").innerHTML = dspr[0]
+							.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
+					document.getElementById("ssp").innerHTML = dspr[0]
+							.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
+
+					var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("loine")[0]
+							.getElementsByTagName("cp")[0].childNodes[0].nodeValue)
+							.slice(-2);
+					var cmc = ("000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("cmc")[0].childNodes[0].nodeValue)
+							.slice(-3);
+					var cpo = ("00000000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("cpp")[0]
+							.getElementsByTagName("cpo")[0].childNodes[0].nodeValue)
+							.slice(-8);
+					var cpa = ("0000" + bi[0].getElementsByTagName("dt")[0]
+							.getElementsByTagName("locs")[0]
+							.getElementsByTagName("lors")[0]
+							.getElementsByTagName("lorus")[0]
+							.getElementsByTagName("cpp")[0]
+							.getElementsByTagName("cpa")[0].childNodes[0].nodeValue)
+							.slice(-5);
+					c_refpar = cp + cmc + cpo + cpa;
+
+				});
+	} else {
+		document.getElementById("cn").innerHTML = "rústico";
+		document.getElementById("cucons").innerHTML = 0;
+		document.getElementById("cucul").innerHTML = 0;
+		document.getElementById("ccc").innerHTML = 'e-pastos';
+		document.getElementById("ip").innerHTML = 0;
+		document.getElementById("ssp").innerHTML = 1409;
+		c_refpar = '372840000000600098';
+
+	}
+
+	return c_refpar;
+
+}
+
 function initMap(coordenadasLinde) {
 	var mapOptions = {
 		center : parcela,
@@ -186,138 +549,6 @@ function actualiza() {
 
 }
 
-function cargaDatos() {
-
-	estableceDatosBaseDeLaParcela();
-	var c_refpar = obtenDatosCatastro();
-
-	var fixedCoords = [ [ {
-		lng : -5.73743277138396,
-		lat : 40.4390893833596
-	}, {
-		lng : -5.7374292381294,
-		lat : 40.4390894670862
-	}, {
-		lng : -5.73739180024054,
-		lat : 40.4390907145335
-	}, {
-		lng : -5.73725167450709,
-		lat : 40.4391382615966
-	}, {
-		lng : -5.73724113701022,
-		lat : 40.4391749014607
-	}, {
-		lng : -5.73721803154044,
-		lat : 40.4392562459453
-	}, {
-		lng : -5.73718072633477,
-		lat : 40.4393856619662
-	}, {
-		lng : -5.73714289614587,
-		lat : 40.4394992417711
-	}, {
-		lng : -5.73709900898761,
-		lat : 40.4395972020055
-	}, {
-		lng : -5.73705224582516,
-		lat : 40.4397114438101
-	}, {
-		lng : -5.73699952384232,
-		lat : 40.4398442920897
-	}, {
-		lng : -5.73695236415262,
-		lat : 40.4399778192313
-	}, {
-		lng : -5.7370488836958,
-		lat : 40.440017687337
-	}, {
-		lng : -5.73708040409467,
-		lat : 40.4400274792416
-	}, {
-		lng : -5.73710763776926,
-		lat : 40.4399868408083
-	}, {
-		lng : -5.73712811791558,
-		lat : 40.4399337519324
-	}, {
-		lng : -5.73714969089239,
-		lat : 40.4398814478309
-	}, {
-		lng : -5.7371687868795,
-		lat : 40.4398291123418
-	}, {
-		lng : -5.73717846353938,
-		lat : 40.4397915921367
-	}, {
-		lng : -5.73719421568004,
-		lat : 40.4397383450527
-	}, {
-		lng : -5.73721632635996,
-		lat : 40.4396963867868
-	}, {
-		lng : -5.73724294352035,
-		lat : 40.4396492775525
-	}, {
-		lng : -5.73727487779192,
-		lat : 40.4395821358146
-	}, {
-		lng : -5.73732973018171,
-		lat : 40.4394203229537
-	}, {
-		lng : -5.73739206998265,
-		lat : 40.4392658133442
-	}, {
-		lng : -5.73743630057109,
-		lat : 40.4391501902217
-	}, {
-		lng : -5.73745579242689,
-		lat : 40.4391018085895
-	}, {
-		lng : -5.73743277138396,
-		lat : 40.4390893833596
-	}, {
-		lng : -5.73743277138396,
-		lat : 40.4390893833596
-	} ] ];
-	var coordenadasLinde = fixedData ? fixedCoords : obtenDatosSIGPAC(c_refpar);
-
-	initMap(coordenadasLinde);
-
-	obtenEstacion();
-	if (!fixedData) {
-		// actualiza();
-	}
-	obtenAltitud(document.getElementById("latitud").innerHTML, document
-			.getElementById("longitud").innerHTML);
-
-	cargaUltimosValores_osc_station();
-	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
-	cargaMedidasDiarias();
-
-	if (!fixedData) {
-		// obten(2016);
-		document.getElementById("fixed").style.display = 'none';
-
-		google.charts.load('current', {
-			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
-		});
-		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
-
-		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
-		google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
-		google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
-		google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
-
-	} else {
-		document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
-		document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
-		document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
-		document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
-		openCultivo("All")
-	}
-
-}
-
 function obtenEstacion() {
 
 	if (!fixedData) {
@@ -347,67 +578,6 @@ function obtenEstacion() {
 		document.getElementById("estacionSol").innerHTML = "Losar Del Barco";
 		document.getElementById("estacionRadiacion").innerHTML = "Losar Del Barco";
 	}
-}
-
-function obtenDatosCatastro() {
-
-	var end_point = "OVCCoordenadas.asmx/Consulta_RCCOOR";
-
-	var url = "php/catastro.php?end_point=" + end_point
-			+ " &SRS=EPSG:4326&Coordenada_X="
-			+ document.getElementById("longitud").innerHTML + "&Coordenada_Y="
-			+ document.getElementById("latitud").innerHTML;
-
-	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
-	// código de parcela que tiene pinta de estar formado por:
-	// código de provincia: 2 dígitos
-	// código de municipio: 3 dígitos
-	// código de polígono: 8 dígitos con ceros a la izda para completar
-	// código de parcela: 5 dígitos con ceros a la izda para completar
-	var c_refpar;
-
-	if (!fixedData) {
-		var request = jQuery.ajax({
-			url : url,
-			async : false,
-			type : 'GET',
-			dataType : "xml"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-
-					var xmlDoc = response;
-					var coordenadas = xmlDoc
-							.getElementsByTagName("coordenadas");
-
-					if (coordenadas.length > 0) {
-						var coord = coordenadas[0]
-								.getElementsByTagName("coord");
-
-						var rc = coord[0].getElementsByTagName("pc")[0]
-								.getElementsByTagName("pc1")[0].childNodes[0].nodeValue
-								+ coord[0].getElementsByTagName("pc")[0]
-										.getElementsByTagName("pc2")[0].childNodes[0].nodeValue;
-						document.getElementById("rc").innerHTML = rc;
-						document.getElementById("direccion").innerHTML = coord[0]
-								.getElementsByTagName("ldt")[0].childNodes[0].nodeValue;
-						var provincia = "";
-						var municipio = "";
-						// Curiosamente me obliga a pasar provincia y municipio
-						// pero se lo puedo pasar en blanco y funciona igual XD
-						c_refpar = obtenDatosPorReferenciaCatastral(rc,
-								provincia, municipio);
-					}
-				});
-
-	} else {
-		document.getElementById("rc").innerHTML = '37284A00600098';
-		document.getElementById("direccion").innerHTML = 'Polígono 6 Parcela 98 FTE LUMBRAL. SANCHOTELLO (SALAMANCA)';
-		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098', "", "");
-		;
-	}
-	return c_refpar
 }
 
 function obtenProvincia(rc) {
@@ -481,127 +651,6 @@ function obtenMunicipio(rc) {
 			});
 
 	return nombre_municipio;
-
-}
-
-function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
-
-	var end_point = "OVCCallejero.asmx/Consulta_DNPRC";
-
-	var url = "php/catastro.php?end_point=" + end_point + "&RC=" + rc
-			+ "&Provincia=" + provincia + "&Municipio=" + municipio;
-
-	// En los datos de SIGPAC se usa en luegar de la referencia catastral, un
-	// código de parcela que tiene pinta de estar formado por:
-	// código de provincia: 2 dígitos
-	// código de municipio: 3 dígitos
-	// código de polígono: 8 dígitos con ceros a la izda para completar
-	// código de parcela: 5 dígitos con ceros a la izda para completar
-	var c_refpar;
-
-	// Request that YSQL string, and run a callback function.
-	// Pass a defined function to prevent cache-busting.
-
-	if (!fixedData) {
-		var request = jQuery.ajax({
-			url : url,
-			async : false,
-			type : 'GET',
-			dataType : "xml"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-
-					var xmlDoc = response;
-
-					var bi = xmlDoc.getElementsByTagName("bico")[0]
-							.getElementsByTagName("bi");
-					var cn = bi[0].getElementsByTagName("idbi")[0]
-							.getElementsByTagName("cn")[0].childNodes[0].nodeValue;
-
-					switch (cn) {
-					case "RU":
-						document.getElementById("cn").innerHTML = "rústico";
-						break;
-					default:
-
-					}
-
-					var control = xmlDoc.getElementsByTagName("control");
-					var cucons = control[0].getElementsByTagName("cucons");
-					if (cucons.length > 0) {
-						document.getElementById("cucons").innerHTML = cucons[0].childNodes[0].nodeValue;
-					} else {
-						document.getElementById("cucons").innerHTML = 0;
-					}
-
-					var cucul = control[0].getElementsByTagName("cucul");
-					if (cucul.length > 0) {
-						document.getElementById("cucul").innerHTML = cucul[0].childNodes[0].nodeValue;
-					} else {
-						document.getElementById("cucul").innerHTML = 0;
-					}
-
-					npa = bi[0].getElementsByTagName("dt")[0]
-							.getElementsByTagName("locs")[0]
-							.getElementsByTagName("lors")[0]
-							.getElementsByTagName("lorus")[0]
-							.getElementsByTagName("npa")[0].childNodes[0].nodeValue;
-
-					// document.getElementById("npa").innerHTML = npa;
-					// document.getElementById("nm").innerHTML =
-					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("nm")[0].childNodes[0].nodeValue;
-					// document.getElementById("np").innerHTML =
-					// bi[0].getElementsByTagName("dt")[0].getElementsByTagName("np")[0].childNodes[0].nodeValue;
-					var dspr = xmlDoc.getElementsByTagName("bico")[0]
-							.getElementsByTagName("lspr")[0]
-							.getElementsByTagName("spr")[0]
-							.getElementsByTagName("dspr");
-					document.getElementById("ccc").innerHTML = dspr[0]
-							.getElementsByTagName("ccc")[0].childNodes[0].nodeValue
-							+ dspr[0].getElementsByTagName("dcc")[0].childNodes[0].nodeValue;
-					document.getElementById("ip").innerHTML = dspr[0]
-							.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
-					document.getElementById("ssp").innerHTML = dspr[0]
-							.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
-
-					var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
-							.getElementsByTagName("loine")[0]
-							.getElementsByTagName("cp")[0].childNodes[0].nodeValue)
-							.slice(-2);
-					var cmc = ("000" + bi[0].getElementsByTagName("dt")[0]
-							.getElementsByTagName("cmc")[0].childNodes[0].nodeValue)
-							.slice(-3);
-					var cpo = ("00000000" + bi[0].getElementsByTagName("dt")[0]
-							.getElementsByTagName("locs")[0]
-							.getElementsByTagName("lors")[0]
-							.getElementsByTagName("lorus")[0]
-							.getElementsByTagName("cpp")[0]
-							.getElementsByTagName("cpo")[0].childNodes[0].nodeValue)
-							.slice(-8);
-					var cpa = ("0000" + bi[0].getElementsByTagName("dt")[0]
-							.getElementsByTagName("locs")[0]
-							.getElementsByTagName("lors")[0]
-							.getElementsByTagName("lorus")[0]
-							.getElementsByTagName("cpp")[0]
-							.getElementsByTagName("cpa")[0].childNodes[0].nodeValue)
-							.slice(-5);
-					c_refpar = cp + cmc + cpo + cpa;
-
-				});
-	} else {
-		document.getElementById("cn").innerHTML = "rústico";
-		document.getElementById("cucons").innerHTML = 0;
-		document.getElementById("cucul").innerHTML = 0;
-		document.getElementById("ccc").innerHTML = 'e-pastos';
-		document.getElementById("ip").innerHTML = 0;
-		document.getElementById("ssp").innerHTML = 1409;
-		c_refpar = '372840000000600098';
-
-	}
-
-	return c_refpar;
 
 }
 
@@ -878,7 +927,7 @@ function cargaUltimosValores_osc_station() {
 						document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
 								: "";
 					} else {
-						
+
 						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = 'Error';
 						document.getElementById('horaUltimaMedidaHumedadSuelo').style.color = 'red';
 						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = 'Error';
@@ -895,7 +944,7 @@ function cargaUltimosValores_osc_station() {
 						document.getElementById('ultimaPosicionLatitud').style.color = 'red';
 						document.getElementById('ultimaPosicionLongitud').innerHTML = 'Error';
 						document.getElementById('ultimaPosicionLongitud').style.color = 'red';
-						
+
 						document.getElementById('errorOscar').style.display = 'block';
 
 					}
@@ -1050,46 +1099,6 @@ function obtenAltitud(latitud, longitud) {
 				urlbusqueda);
 	});
 
-}
-
-function estableceDatosBaseDeLaParcela() {
-	// El objeto window representa la ventana del navegador abierta
-	// Location contiene la información de la URL de la ventana
-	// Search devuelve desde la ? incluida, hacemos el substring(1) para quitar
-	// la ?
-	var query = window.location.search.substring(1);
-
-	if (query.length > 0) {
-		// Si la query tiene algo
-		var vars = query.split("&");
-		for (var i = 0; i < vars.length; i++) {
-			var pair = vars[i].split("=");
-			// If first entry with this name
-			switch (pair[0]) {
-			case "latitud":
-				parcela.lat = Number(pair[1]);
-				document.getElementById('latitud').innerHTML = parcela.lat;
-				break;
-			case "longitud":
-				parcela.lng = Number(pair[1]);
-				document.getElementById('longitud').innerHTML = parcela.lng;
-				break;
-			case "nombre":
-				document.getElementById('pagina').innerHTML = decodeURI(pair[1]);
-				break;
-			default:
-				break;
-			}
-		}
-	} else {
-		document.getElementById('latitud').innerHTML = Number(40.439983);
-		parcela.lat = 40.439983;
-		document.getElementById('longitud').innerHTML = Number(-5.737026);
-		parcela.lng = -5.737026;
-		document.getElementById('pagina').innerHTML = decodeURI('Viña%20de%20la%20estación');
-		fixedData = true;
-
-	}
 }
 
 function obtenDatosSIGPAC(c_refpar) {
