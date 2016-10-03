@@ -301,6 +301,7 @@ def insert_inforiego_daily_years(provincia,
     connection = connections.get_connection()
 
     for year in years:
+        print 'Inserting year ' + year + ' province ' + provincia + ' station ' + estacion
         response = get_inforiego_daily_year(provincia, estacion, year, url, user, passwd)
 
         for document in response:
@@ -321,6 +322,8 @@ def insert_inforiego_daily_years(provincia,
                 connection.index(index=index, doc_type=mapping, id=id, body=document)
             except Exception as e:
                 conf.error_handler.error(__name__, "insert_inforiego_daily_years", str(document))
+
+        print 'Inserted year ' + year + ' province ' + provincia + ' station ' + estacion
 
 
 def insert_all_stations_inforiego_daily(years):
