@@ -29,7 +29,7 @@
 					},
 					FECHA : {
 						type : "date",
-						format : "dateOptionalTime"
+						format : "dd/MM/yyyy"
 					},
 					HORMINHUMMAX : {
 						type : "date",
@@ -145,7 +145,7 @@
 					},
 					FECHAINSTAL : {
 						type : "date",
-						format : "dateOptionalTime"
+						format : "dd/MM/yyyy"
 					},
 					IDESTACION : {
 						type : "string"
@@ -168,7 +168,7 @@
 					lat_lon : {
 						type : "geo_point",
 						lat_lon : true
-					},
+					}
 				}
 			}
 		}
