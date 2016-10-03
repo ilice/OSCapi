@@ -176,7 +176,7 @@
 						<h5>
 							Localización
 							<button id="datosLindeErrorBadge"
-								class="w3-badge w3-red w3-hover-opacity" style="display: none">
+								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
 								<i
 									onclick="document.getElementById('datosLinde').style.display='block'"
 									class="fa fa-ban"></i>
@@ -197,7 +197,7 @@
 								<td><span id="latitud"></span></td>
 								<td><span id="longitud"></span></td>
 								<td><span id="altitud"></span>
-									<button id="idea" class="w3-badge w3-yellow w3-hover-opacity">
+									<button id="idea" class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn">
 										<i class="fa fa fa-lightbulb-o w3-spin"
 											onclick="document.getElementById('idea_modal').style.display='block'"></i>
 									</button></td>
@@ -214,7 +214,7 @@
 						<h5>
 							Información del catastro
 							<button id="datosCatastroErrorBadge"
-								class="w3-badge w3-red w3-hover-opacity" style="display: none">
+								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
 								<i
 									onclick="document.getElementById('datosCatastro').style.display='block'"
 									class="fa fa-ban"></i>
@@ -335,14 +335,16 @@
 					<p>
 						<strong>"OSC&alpha;r"</strong> está puesto en la parcela e informa
 						de su posición por si alguien <em>"en un despiste"</em> lo mueve.
+						<button id="datosOscarErrorBadge"
+							class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
+							<i
+								onclick="document.getElementById('datosOscar').style.display='block'"
+								class="fa fa-ban"></i>
+						</button>
 					</p>
 					<p>Su trabajo es recoger y enviar los datos que obtiene de sus
 						sensores: humedad del suelo, luz, lluvia, temperatura, humedad
 						relativa del aire... y los sensores que le vayamos añadiendo.</p>
-					<p>
-						Para ello según el plan de vuelo el <strong>dron Kudron</strong>
-						pasa cerca recogiendo los datos que OSC&alpha;r envía
-					</p>
 					<p>Además nos informa de cómo va de batería, por la noche va a
 						tirar de ella así que durante el día debe estar bien cargado.</p>
 					<table id="tabla-oscar"
@@ -399,19 +401,8 @@
 						</tr>
 					</table>
 				</div>
-				<div id="errorOscar" class="w3-col w3-panel w3-red w3-card-8"
-					style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-						class="w3-closebtn">&times;</span>
-					<h3>
-						Error en la obtención de datos de <strong>"OSC&alpha;r"</strong>
-					</h3>
-					<p>
-						Se han intentado recuperar los datos para la estación de la
-						parcela pero ha ocurrido algún problema. Si el problema persiste
-						puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a>
-					</p>
-				</div>
+				<div id="datosOscar" class="w3-col w3-panel w3-red w3-card-8"
+					style="display: none"></div>
 			</div>
 		</div>
 		<!--FIN Tarjeta sobre OSC&alpha;r-->

@@ -132,6 +132,8 @@ function cargaDatos() {
 	} ] ];
 	var coordenadasLinde = fixedData ? fixedCoords : obtenDatosSIGPAC(c_refpar);
 
+	cargaUltimosValores_osc_station();
+	
 	initMap(coordenadasLinde);
 
 	obtenEstacion();
@@ -141,7 +143,7 @@ function cargaDatos() {
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
 			.getElementById("longitud").innerHTML);
 
-	cargaUltimosValores_osc_station();
+	
 	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
 	cargaMedidasDiarias();
 
@@ -439,6 +441,107 @@ function obtenDatosSIGPAC(c_refpar) {
 				}
 			});
 	return coordenadasLinde;
+}
+
+function cargaUltimosValores_osc_station() {
+	if (!fixedData) {
+		var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
+				+ document.getElementById("latitud").innerHTML
+				+ "&longitud="
+				+ document.getElementById("longitud").innerHTML;
+
+		var ultimosValores;
+		var request = jQuery.ajax({
+			url : url,
+			type : 'GET',
+			dataType : "json"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+					if (typeof response["hits"] != 'undefined') {
+						ultimosValores = response["hits"]["hits"][0];
+
+						var fecha = new Date(ultimosValores._source.FECHA);
+						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo ? ultimosValores._source.HumedadSuelo
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura ? ultimosValores._source.Temperatura
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad ? ultimosValores._source.Humedad
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia ? ultimosValores._source.Lluvia
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz ? ultimosValores._source.Luz
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria ? ultimosValores._source.Bateria
+								.toFixed(2)
+								: "";
+						document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lat
+								: "";
+						document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
+								: "";
+					} else {
+
+						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaHumedadSuelo').style.color = 'red';
+						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaTemperatura').style.color = 'red';
+						document.getElementById('horaUltimaMedidaHumedad').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaHumedad').style.color = 'red';
+						document.getElementById('horaUltimaMedidaLluvia').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaLluvia').style.color = 'red';
+						document.getElementById('horaUltimaMedidaLuz').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaLuz').style.color = 'red';
+						document.getElementById('horaUltimaMedidaBateria').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaBateria').style.color = 'red';
+						document.getElementById('ultimaPosicionLatitud').innerHTML = 'Error';
+						document.getElementById('ultimaPosicionLatitud').style.color = 'red';
+						document.getElementById('ultimaPosicionLongitud').innerHTML = 'Error';
+						document.getElementById('ultimaPosicionLongitud').style.color = 'red';
+
+						document.getElementById("datosOscar").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
+							+ 'class="w3-closebtn">&times;</span>'
+							+ '<h3>Error en la obtención de los datos de la estación <strong>"OSC&alpha;r"</strong></h3>'
+							+ '<p>Se han intentado recuperar los datos de la estación situada en la parcela, pero ha ocurrido algún problema.</p>'
+							+ 'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
+					document.getElementById("datosOscarErrorBadge").style.display = 'block';
+
+					}
+				});
+
+	} else {
+		document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = 10;
+		document.getElementById('horaUltimaMedidaTemperatura').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaTemperatura').innerHTML = 8;
+		document.getElementById('horaUltimaMedidaHumedad').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaHumedad').innerHTML = 70;
+		document.getElementById('horaUltimaMedidaLluvia').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaLluvia').innerHTML = 34;
+		document.getElementById('horaUltimaMedidaLuz').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaLuz').innerHTML = 56;
+		document.getElementById('horaUltimaMedidaBateria').innerHTML = "16/9/2016 09:38:00"
+		document.getElementById('ultimaMedidaBateria').innerHTML = 67;
+		document.getElementById('ultimaPosicionLatitud').innerHTML = 40.49;
+		document.getElementById('ultimaPosicionLongitud').innerHTML = -3.65;
+	}
 }
 
 function initMap(coordenadasLinde) {
@@ -913,101 +1016,7 @@ function graficoRadiacionNetaDiaria() {
 
 }
 
-function cargaUltimosValores_osc_station() {
-	if (!fixedData) {
-		var url = "php/cacharrito_rest.php/osc_station/osc_station_record/_search?accion=ultimoValor&latitud="
-				+ document.getElementById("latitud").innerHTML
-				+ "&longitud="
-				+ document.getElementById("longitud").innerHTML;
 
-		var ultimosValores;
-		var request = jQuery.ajax({
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-					if (typeof response["hits"] != 'undefined') {
-						ultimosValores = response["hits"]["hits"][0];
-
-						var fecha = new Date(ultimosValores._source.FECHA);
-						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo ? ultimosValores._source.HumedadSuelo
-								.toFixed(2)
-								: "";
-						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura ? ultimosValores._source.Temperatura
-								.toFixed(2)
-								: "";
-						document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad ? ultimosValores._source.Humedad
-								.toFixed(2)
-								: "";
-						document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia ? ultimosValores._source.Lluvia
-								.toFixed(2)
-								: "";
-						document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz ? ultimosValores._source.Luz
-								.toFixed(2)
-								: "";
-						document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha
-								.toLocaleString();
-						document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria ? ultimosValores._source.Bateria
-								.toFixed(2)
-								: "";
-						document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lat
-								: "";
-						document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
-								: "";
-					} else {
-
-						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaHumedadSuelo').style.color = 'red';
-						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaTemperatura').style.color = 'red';
-						document.getElementById('horaUltimaMedidaHumedad').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaHumedad').style.color = 'red';
-						document.getElementById('horaUltimaMedidaLluvia').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaLluvia').style.color = 'red';
-						document.getElementById('horaUltimaMedidaLuz').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaLuz').style.color = 'red';
-						document.getElementById('horaUltimaMedidaBateria').innerHTML = 'Error';
-						document.getElementById('horaUltimaMedidaBateria').style.color = 'red';
-						document.getElementById('ultimaPosicionLatitud').innerHTML = 'Error';
-						document.getElementById('ultimaPosicionLatitud').style.color = 'red';
-						document.getElementById('ultimaPosicionLongitud').innerHTML = 'Error';
-						document.getElementById('ultimaPosicionLongitud').style.color = 'red';
-
-						document.getElementById('errorOscar').style.display = 'block';
-
-					}
-				});
-
-	} else {
-		document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = 10;
-		document.getElementById('horaUltimaMedidaTemperatura').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaTemperatura').innerHTML = 8;
-		document.getElementById('horaUltimaMedidaHumedad').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaHumedad').innerHTML = 70;
-		document.getElementById('horaUltimaMedidaLluvia').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaLluvia').innerHTML = 34;
-		document.getElementById('horaUltimaMedidaLuz').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaLuz').innerHTML = 56;
-		document.getElementById('horaUltimaMedidaBateria').innerHTML = "16/9/2016 09:38:00"
-		document.getElementById('ultimaMedidaBateria').innerHTML = 67;
-		document.getElementById('ultimaPosicionLatitud').innerHTML = 40.49;
-		document.getElementById('ultimaPosicionLongitud').innerHTML = -3.65;
-	}
-}
 
 function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 
