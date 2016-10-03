@@ -275,7 +275,7 @@ class TestOfapi_rest extends UnitTestCase {
 			$this->assertTrue ( $estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo" );
 		}
 	}
-	function testBuscaPorReferenciaCatastral() {
+	function teestBuscaPorReferenciaCatastral() {
 		$referenciaCatastral = "372840000000600098";
 		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
 		$web_folder = "Web/";
