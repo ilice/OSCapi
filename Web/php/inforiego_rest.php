@@ -255,6 +255,7 @@ function fechaUltimoRegistro_info_riego_record($estacion) {
 	return is_null ( $max_fecha ["value"] ) ? NULL : formatDateToDDMMYYYY ( $max_fecha ["value_as_string"] );
 }
 function diasDeLluvia($latitud, $longitud, $anio) {
+	$respuesta = '{"error" : "No se han podido obtener los días de lluvia"}';
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
 	if ($anio == NULL || $latitud == NULL || $longitud == NULL) {
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener días de lluvia para lat:  " . $latitud . " long: " . $longitud . " año: " . $anio );
@@ -296,10 +297,14 @@ function diasDeLluvia($latitud, $longitud, $anio) {
 }' );
 	
 	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
+	if(isset($resultado["aggregations"])){
 	$diasDeLluvia = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["doc_count"];
 	$precipitacionAcumulada = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_precipitacion"] ["value"];
 	
-	return '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
+	$respuesta = '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
+	}
+	
+	return $respuesta;
 }
 function medidasDiarias($latitud, $longitud, $anio) {
 	$respuesta = "";
