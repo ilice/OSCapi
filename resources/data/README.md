@@ -33,5 +33,8 @@ curl -s -XPOST "elastic_endpoint/osc/requirements/_bulk" --data-binary "@curl_re
 curl -s -XPOST "elastic_endpoint/osc/requirements/_bulk" --data-binary "@curl_altitud.js"
 ```
 Sustituyendo `elastic_endpoint` por la url de la base de datos que estamos utilizando, por ejemplo `http://localhost:9200`
+### Estaciones de inforiego
+Las estaciones de inforiego se indexan en el index `inforiego`con el type `info_riego_station` ejecutando desde un navegador `.../inforiego_rest.php?accion=actualizaEstaciones`, si el resultado es `success` la actualización se ha completado correctamente.
+
 ### Modificación de las coordenadas de algunas estaciones de inforiego incorrectas
 Se utiliza Kibana Sense para ejecutar las sentenias Query DSL en [update_inforiego_stations.qdsl](OpenSmartCountry/resources/data/update_inforiego_stations.qdsl)
