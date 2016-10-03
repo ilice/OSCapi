@@ -132,19 +132,22 @@ function cargaDatos() {
 	} ] ];
 	var coordenadasLinde = fixedData ? fixedCoords : obtenDatosSIGPAC(c_refpar);
 
-	cargaUltimosValores_osc_station();
-	
 	initMap(coordenadasLinde);
+	
+	cargaUltimosValores_osc_station();
 
-	obtenEstacion();
+	
+	
 	if (!fixedData) {
 		// actualiza();
 	}
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
 			.getElementById("longitud").innerHTML);
 
+	obtenEstacion();
 	
 	cargaMedidaDiasDeLluviaYPrecipitacionAcumulada();
+	
 	cargaMedidasDiarias();
 
 	if (!fixedData) {
@@ -658,6 +661,170 @@ function CenterControl(controlDiv, map) {
 
 }
 
+function obtenAltitud(latitud, longitud) {
+
+	var url = "php/altitud.php?locations=" + latitud + "," + longitud;
+
+	var request = jQuery.ajax({
+
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+
+	request.done(function(response, textStatus, jqXHR) {
+		var hits = response["results"][0]["elevation"].toFixed() + " m";
+		document.getElementById('altitud').innerHTML = hits;
+		document.getElementById('altitud_idea').innerHTML = hits;
+		var urlbusqueda = "location.href='cultivos.html?altitud="
+				+ response["results"][0]["elevation"].toFixed() + "'";
+		document.getElementById('cultivos_por_altitud').setAttribute('onclick',
+				urlbusqueda);
+	});
+
+}
+
+function obtenEstacion() {
+
+	if (!fixedData) {
+		var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="
+				+ document.getElementById("latitud").innerHTML
+				+ "&longitud="
+				+ document.getElementById("longitud").innerHTML;
+
+		var request = jQuery.ajax({
+			crossDomain : true,
+			url : url,
+			method : "GET",
+			dataType : "json"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+					document.getElementById("estacionLluvia").innerHTML = response["ESTACION"];
+					document.getElementById("estacionTemperatura").innerHTML = response["ESTACION"];
+					document.getElementById("estacionSol").innerHTML = response["ESTACION"];
+					document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
+
+				});
+	} else {
+		document.getElementById("estacionLluvia").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionTemperatura").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionSol").innerHTML = "Losar Del Barco";
+		document.getElementById("estacionRadiacion").innerHTML = "Losar Del Barco";
+	}
+}
+
+function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
+
+	var hoy = new Date();
+
+	var diasDeLluvia = 0;
+	var precipitacionAcumulada = 0;
+
+	if (!fixedData) {
+		var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
+				+ document.getElementById("latitud").innerHTML + "&longitud="
+				+ document.getElementById("longitud").innerHTML + "&anio="
+				+ hoy.getFullYear();
+
+		var request = jQuery.ajax({
+			crossDomain : true,
+			async : false,
+			url : url,
+			type : 'GET',
+			dataType : "json"
+		});
+
+		request
+				.done(function(response, textStatus, jqXHR) {
+					diasDeLluvia = response.diasDeLluvia;
+					precipitacionAcumulada = response.precipitacionAcumulada
+							.toFixed(2);
+				});
+
+		document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
+		document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
+		document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
+	} else {
+		document.getElementById('diasDeLluvia').innerHTML = 66;
+		document.getElementById('pecipitacionacumulada').innerHTML = 308.54;
+		document.getElementById('precipitacion-widget').innerHTML = 308.54;
+	}
+
+}
+
+function cargaMedidasDiarias() {
+
+	var hoy = new Date();
+
+	var min_temperatura = 0;
+	var max_temperatura = 0;
+	var media_temperatura = 0;
+	var media_horas_sol = 0;
+	var max_horas_sol = 0;
+	var sum_horas_sol = 0;
+	var sum_horas_sol = 0;
+	var max_radiacion = 0;
+	var media_radiacion = 0;
+	var sum_radiacion = 0;
+	var sum_radiacion = 0;
+	if (!fixedData) {
+
+		var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
+				+ document.getElementById("latitud").innerHTML + "&longitud="
+				+ document.getElementById("longitud").innerHTML + "&anio="
+				+ hoy.getFullYear();
+
+		var request = jQuery.ajax({
+			crossDomain : true,
+			async : false,
+			url : url,
+			type : 'GET',
+			dataType : "json"
+		});
+
+		request.done(function(response, textStatus, jqXHR) {
+			min_temperatura = response.min_temperatura.toFixed(2);
+			max_temperatura = response.max_temperatura.toFixed(2);
+			media_temperatura = response.media_temperatura.toFixed(2);
+			media_horas_sol = response.media_horas_sol.toFixed(2);
+			max_horas_sol = response.max_horas_sol.toFixed(2);
+			sum_horas_sol = response.sum_horas_sol.toFixed(2);
+			media_radiacion = response.media_radiacion.toFixed(2);
+			max_radiacion = response.max_radiacion.toFixed(2);
+			sum_radiacion = response.sum_radiacion.toFixed(2);
+		});
+
+		document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
+		document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
+		document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
+		document.getElementById('temperatura-widget').innerHTML = media_temperatura;
+		document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
+		document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
+		document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
+		document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
+		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
+		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
+		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
+		document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
+
+	} else {
+		document.getElementById('maximaTemperaturaDiurna').innerHTML = 34.66;
+		document.getElementById('minimaTemperaturaDiurna').innerHTML = -6.59;
+		document.getElementById('mediaTemperaturaDiurna').innerHTML = 12.66;
+		document.getElementById('temperatura-widget').innerHTML = 12.66;
+		document.getElementById('mediaHorasSolDiarias').innerHTML = 10.05;
+		document.getElementById('maximasHorasSolDiarias').innerHTML = 13.51;
+		document.getElementById('horasSolAcumuladas').innerHTML = 2462.54;
+		document.getElementById('horasSol-widget').innerHTML = 2462.54;
+		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = 34.02;
+		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = 20.21;
+		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = 4951.24;
+		document.getElementById('radiacion-widget').innerHTML = 4951.24;
+	}
+}
+
 function obten(campo, anio, tipomedida, variable) {
 
 	var url = "https://script.google.com/macros/s/AKfycbwbli8yqu-YzY5t2O0v98XROuAv1cT5K7mF4slKDCpIdEsGd28/exec?anio="
@@ -693,36 +860,7 @@ function actualiza() {
 
 }
 
-function obtenEstacion() {
 
-	if (!fixedData) {
-		var url = "https://script.google.com/macros/s/AKfycbyJ1Qb6CIlZYvW6poU-qAl2MPoEVD-kws2frLnsmOScu-ezbwA/exec?accion=obtenEstacion&latitud="
-				+ document.getElementById("latitud").innerHTML
-				+ "&longitud="
-				+ document.getElementById("longitud").innerHTML;
-
-		var request = jQuery.ajax({
-			crossDomain : true,
-			url : url,
-			method : "GET",
-			dataType : "json"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-					document.getElementById("estacionLluvia").innerHTML = response["ESTACION"];
-					document.getElementById("estacionTemperatura").innerHTML = response["ESTACION"];
-					document.getElementById("estacionSol").innerHTML = response["ESTACION"];
-					document.getElementById("estacionRadiacion").innerHTML = response["ESTACION"];
-
-				});
-	} else {
-		document.getElementById("estacionLluvia").innerHTML = "Losar Del Barco";
-		document.getElementById("estacionTemperatura").innerHTML = "Losar Del Barco";
-		document.getElementById("estacionSol").innerHTML = "Losar Del Barco";
-		document.getElementById("estacionRadiacion").innerHTML = "Losar Del Barco";
-	}
-}
 
 function obtenProvincia(rc) {
 
@@ -1018,138 +1156,9 @@ function graficoRadiacionNetaDiaria() {
 
 
 
-function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
 
-	var hoy = new Date();
 
-	var diasDeLluvia = 0;
-	var precipitacionAcumulada = 0;
 
-	if (!fixedData) {
-		var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
-				+ document.getElementById("latitud").innerHTML + "&longitud="
-				+ document.getElementById("longitud").innerHTML + "&anio="
-				+ hoy.getFullYear();
-
-		var request = jQuery.ajax({
-			crossDomain : true,
-			async : false,
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-					diasDeLluvia = response.diasDeLluvia;
-					precipitacionAcumulada = response.precipitacionAcumulada
-							.toFixed(2);
-				});
-
-		document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
-		document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
-		document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
-	} else {
-		document.getElementById('diasDeLluvia').innerHTML = 66;
-		document.getElementById('pecipitacionacumulada').innerHTML = 308.54;
-		document.getElementById('precipitacion-widget').innerHTML = 308.54;
-	}
-
-}
-
-function cargaMedidasDiarias() {
-
-	var hoy = new Date();
-
-	var min_temperatura = 0;
-	var max_temperatura = 0;
-	var media_temperatura = 0;
-	var media_horas_sol = 0;
-	var max_horas_sol = 0;
-	var sum_horas_sol = 0;
-	var sum_horas_sol = 0;
-	var max_radiacion = 0;
-	var media_radiacion = 0;
-	var sum_radiacion = 0;
-	var sum_radiacion = 0;
-	if (!fixedData) {
-
-		var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
-				+ document.getElementById("latitud").innerHTML + "&longitud="
-				+ document.getElementById("longitud").innerHTML + "&anio="
-				+ hoy.getFullYear();
-
-		var request = jQuery.ajax({
-			crossDomain : true,
-			async : false,
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
-
-		request.done(function(response, textStatus, jqXHR) {
-			min_temperatura = response.min_temperatura.toFixed(2);
-			max_temperatura = response.max_temperatura.toFixed(2);
-			media_temperatura = response.media_temperatura.toFixed(2);
-			media_horas_sol = response.media_horas_sol.toFixed(2);
-			max_horas_sol = response.max_horas_sol.toFixed(2);
-			sum_horas_sol = response.sum_horas_sol.toFixed(2);
-			media_radiacion = response.media_radiacion.toFixed(2);
-			max_radiacion = response.max_radiacion.toFixed(2);
-			sum_radiacion = response.sum_radiacion.toFixed(2);
-		});
-
-		document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
-		document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
-		document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
-		document.getElementById('temperatura-widget').innerHTML = media_temperatura;
-		document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
-		document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
-		document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
-		document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
-		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
-		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
-		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
-		document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
-
-	} else {
-		document.getElementById('maximaTemperaturaDiurna').innerHTML = 34.66;
-		document.getElementById('minimaTemperaturaDiurna').innerHTML = -6.59;
-		document.getElementById('mediaTemperaturaDiurna').innerHTML = 12.66;
-		document.getElementById('temperatura-widget').innerHTML = 12.66;
-		document.getElementById('mediaHorasSolDiarias').innerHTML = 10.05;
-		document.getElementById('maximasHorasSolDiarias').innerHTML = 13.51;
-		document.getElementById('horasSolAcumuladas').innerHTML = 2462.54;
-		document.getElementById('horasSol-widget').innerHTML = 2462.54;
-		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = 34.02;
-		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = 20.21;
-		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = 4951.24;
-		document.getElementById('radiacion-widget').innerHTML = 4951.24;
-	}
-}
-
-function obtenAltitud(latitud, longitud) {
-
-	var url = "php/altitud.php?locations=" + latitud + "," + longitud;
-
-	var request = jQuery.ajax({
-
-		url : url,
-		type : 'GET',
-		dataType : "json"
-	});
-
-	request.done(function(response, textStatus, jqXHR) {
-		var hits = response["results"][0]["elevation"].toFixed() + " m";
-		document.getElementById('altitud').innerHTML = hits;
-		document.getElementById('altitud_idea').innerHTML = hits;
-		var urlbusqueda = "location.href='cultivos.html?altitud="
-				+ response["results"][0]["elevation"].toFixed() + "'";
-		document.getElementById('cultivos_por_altitud').setAttribute('onclick',
-				urlbusqueda);
-	});
-
-}
 
 function arrayToPathLatLong(array) {
 	var paths = [];

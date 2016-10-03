@@ -68,7 +68,7 @@ function main($parametros) {
 				$resultado = datosMedidaPorAnio ( $medida, $longitud, $latitud, $numeroDeAnios, $intervalo, $formato );
 				break;
 			default :
-				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada: " . $accion);
+				slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Acción no implementada: " . $accion );
 				$resultado = error;
 		}
 	}
@@ -85,7 +85,6 @@ function obtenEstaciones($latitud, $longitud) {
 	return json_decode ( utf8_encode ( $response ), true );
 }
 function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
-	
 	foreach ( $estaciones as $estacion ) {
 		
 		$ahora = getDate ();
@@ -118,7 +117,7 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 			$response_json = json_decode ( utf8_encode ( $response ), true );
 			
 			foreach ( $response_json as $element ) {
-				$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
+				$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
 				$element = format_info_riego_diario ( $element, $estacion );
 				putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 			}
@@ -164,25 +163,24 @@ function actualizaRecord($estaciones, $fecha_ini, $fecha_fin) {
 			for($month = explode ( "/", $ini ) [1]; $month <= explode ( "/", $fin ) [1]; $month ++) {
 				
 				$ini_month = "01/" . $month . "/" . $anio;
-				$fin_month = days_in_month($month, $anio) . "/" . $month . "/" . $anio;
-			
+				$fin_month = days_in_month ( $month, $anio ) . "/" . $month . "/" . $anio;
+				
 				if ($month == explode ( "/", $ini ) [1]) {
 					$ini_month = $ini;
 				}
-			
+				
 				if ($month == explode ( "/", $fin ) [1]) {
 					$fin_month = $fin;
-				} 
+				}
 				
 				$url = 'http://www.inforiego.org/opencms/rest/horario?username=' . username . '&password=' . password . '&provincia=' . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini_month . '&fecha_fin=' . $fin_month . '&fecha_ult_modif=' . $fecha_ult_modif;
-				
 				
 				$response = getHttpcUrl ( $url );
 				$response_json = json_decode ( utf8_encode ( $response ), true );
 				
 				foreach ( $response_json as $element ) {
 					$element = format_info_riego_record ( $element, $estacion );
-					$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_record/' . urlencode ( $estacion ["ESTACIONCORTO"] . " - " . substr ( $element ["date"], 0, 10 ) . " " . substr ( $element ["date"], 11, 8 ) );
+					$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_record/' . urlencode ( $estacion ["ESTACIONCORTO"] . " - " . substr ( $element ["date"], 0, 10 ) . " " . substr ( $element ["date"], 11, 8 ) );
 					putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 					$updated ++;
 				}
@@ -190,27 +188,25 @@ function actualizaRecord($estaciones, $fecha_ini, $fecha_fin) {
 		}
 	}
 	
-	$resultado["updated"] = $updated;
+	$resultado ["updated"] = $updated;
 	$resultado ["result"] = "success";
 	
 	return json_encode ( $resultado, JSON_UNESCAPED_UNICODE );
 }
 function actualizaEstaciones($estaciones) {
-	
 	$resultado = "error";
 	
 	foreach ( $estaciones as $estacion ) {
-		$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
+		$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
 		$estacion = format_info_riego_estacion ( $estacion );
-		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ));
+		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
 		$resultado = "success";
 	}
 	
 	return $resultado;
 }
 function fechaUltimoRegistro($estacion) {
-	
-	$url = $GLOBALS['config']['elasticendpoint'] . "inforiego/info_riego_daily/_search";
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . "inforiego/info_riego_daily/_search";
 	
 	$input = "{
   \"size\": 0,
@@ -233,17 +229,15 @@ function fechaUltimoRegistro($estacion) {
 	
 	$response = postHttpcUrl ( $url, $input );
 	
-	$aggregations = isset(json_decode ( $response, true ) ["aggregations"])?json_decode ( $response, true ) ["aggregations"]:NULL;
+	$aggregations = isset ( json_decode ( $response, true ) ["aggregations"] ) ? json_decode ( $response, true ) ["aggregations"] : NULL;
 	
-	$max_fecha = isset($aggregations)?$aggregations ["max_fecha"]:NULL;
+	$max_fecha = isset ( $aggregations ) ? $aggregations ["max_fecha"] : NULL;
 	
 	return is_null ( $max_fecha ["value"] ) ? NULL : $max_fecha ["value_as_string"];
 }
-
 function fechaUltimoRegistro_info_riego_record($estacion) {
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . "inforiego/info_riego_record/_search";
 	
-	$url = $GLOBALS['config']['elasticendpoint'] . "inforiego/info_riego_record/_search";
-
 	$input = "{
   \"size\": 0,
   \"filter\" : { \"term\": { \"code\": \"" . $estacion ["ESTACIONCORTO"] . "\" } },			
@@ -251,23 +245,21 @@ function fechaUltimoRegistro_info_riego_record($estacion) {
         \"max_fecha\" : { \"max\" : { \"field\" : \"date\" } }
     }
 }";
-
+	
 	$response = postHttpcUrl ( $url, $input );
 	
 	$aggregations = json_decode ( $response, true ) ["aggregations"];
 	
+	$max_fecha = isset ( $aggregations ) ? $aggregations ["max_fecha"] : NULL;
 	
-
-	$max_fecha = isset($aggregations)?$aggregations ["max_fecha"]:NULL;
-	
-	return is_null ( $max_fecha ["value"] ) ? NULL : formatDateToDDMMYYYY($max_fecha ["value_as_string"]) ;
+	return is_null ( $max_fecha ["value"] ) ? NULL : formatDateToDDMMYYYY ( $max_fecha ["value_as_string"] );
 }
 function diasDeLluvia($latitud, $longitud, $anio) {
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	if ($anio == NULL || $latitud == NULL || $longitud == NULL){
-		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener días de lluvia para lat:  " . $latitud . " long: " . $longitud . " año: " . $anio);
+	if ($anio == NULL || $latitud == NULL || $longitud == NULL) {
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener días de lluvia para lat:  " . $latitud . " long: " . $longitud . " año: " . $anio );
 	}
-	$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -313,7 +305,7 @@ function medidasDiarias($latitud, $longitud, $anio) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/_search?';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search?';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -417,7 +409,7 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = $GLOBALS['config']['elasticendpoint'] . 'inforiego/info_riego_daily/_search?';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{
    "size" : 0,
    "query" : {
@@ -468,24 +460,28 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 		
 		$data = array ();
 		$columnas = array ();
-		$anios_buckets = $resultado ["aggregations"] ["anios"] ["buckets"];
-		
-		foreach ( $anios_buckets as $anio_bucket ) {
+		if (isset ( $resultado ["aggregations"] )) {
+			$anios_buckets = $resultado ["aggregations"] ["anios"] ["buckets"];
 			
-			$anio = $anio_bucket ["key_as_string"];
-			$intervalos_buckets = $anio_bucket ["medida"] ["buckets"];
-			array_push ( $columnas, array (
-					"label" => $anio,
-					"type" => "number" 
-			) );
-			
-			foreach ( $intervalos_buckets as $intervalo_bucket ) {
-				$numero_intervalo = intVal ( $intervalo_bucket ["key_as_string"] );
-				$valor = $intervalo_bucket ["medida"] ["value"];
-				$data [$anio] [$numero_intervalo] = $valor;
+			foreach ( $anios_buckets as $anio_bucket ) {
+				
+				$anio = $anio_bucket ["key_as_string"];
+				$intervalos_buckets = $anio_bucket ["medida"] ["buckets"];
+				array_push ( $columnas, array (
+						"label" => $anio,
+						"type" => "number" 
+				) );
+				
+				foreach ( $intervalos_buckets as $intervalo_bucket ) {
+					$numero_intervalo = intVal ( $intervalo_bucket ["key_as_string"] );
+					$valor = $intervalo_bucket ["medida"] ["value"];
+					$data [$anio] [$numero_intervalo] = $valor;
+				}
 			}
+		}else{
+			slack ( "ERROR: No se obtienen correctamente los datos agregados. " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
+			$respuesta = error;
 		}
-		
 		$max_items = strcmp ( $formato, "M" ) == 0 ? 13 : 367;
 		$rows = array ();
 		for($numero_intervalo = 1; $numero_intervalo < $max_items; $numero_intervalo ++) {
@@ -636,16 +632,12 @@ function format_HHmm($hora) {
 	}
 	return $hora_HHmm;
 }
-
-function formatDateToDDMMYYYY($date){
-
-	$dateTokenized = explode("-", explode ("T", $date)[0]);
+function formatDateToDDMMYYYY($date) {
+	$dateTokenized = explode ( "-", explode ( "T", $date ) [0] );
 	
-	return $dateTokenized[2] . "/" . $dateTokenized[1] . "/" . $dateTokenized[0];
+	return $dateTokenized [2] . "/" . $dateTokenized [1] . "/" . $dateTokenized [0];
 }
-
-function days_in_month($month, $year)
-{
+function days_in_month($month, $year) {
 	// calculate number of days in a month
 	return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
 }
