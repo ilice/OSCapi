@@ -212,7 +212,7 @@ class TestOfapi_rest extends UnitTestCase {
 		foreach ($hits as $hit) {
 			$estaEnAlgunRango = false;
 			foreach ($hit["_source"]["altitude"] as $rangoAltitud) {
-				if (isset($rangoAltitud["min"]) and isset($rangoAltitud["max"]) and $rangoAltitud["min"] < $altitud and $altitud <$rangoAltitud["max"] ) {
+				if (isset($rangoAltitud["min"]) and isset($rangoAltitud["max"]) and $rangoAltitud["min"] <= $altitud and $altitud <= $rangoAltitud["max"] ) {
 					$estaEnAlgunRango = true;
 				};
 			}
