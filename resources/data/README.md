@@ -95,7 +95,7 @@ Algunas de las estaciones de inforiego tienen mal las coordenadas en origen, se 
 #### Mapping para los datos diarios de inforiego
 ```
 PUT inforiego/_mapping/info_riego_daily
- {
+{
 	properties : {
 		AÑO : {
 			type : "long"
@@ -110,7 +110,7 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		ETBC : {
-			type : "long"
+			type : "double"
 		},
 		ETHARG : {
 			type : "double"
@@ -119,7 +119,7 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		ETRAD : {
-			type : "long"
+			type : "double"
 		},
 		FECHA : {
 			type : "date",
@@ -167,19 +167,19 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		PEBC : {
-			type : "long"
+			type : "double"
 		},
 		PEHARG : {
-			type : "long"
+			type : "double"
 		},
 		PEPMON : {
-			type : "long"
+			type : "double"
 		},
 		PERAD : {
-			type : "long"
+			type : "double"
 		},
 		PRECIPITACION : {
-			type : "long"
+			type : "double"
 		},
 		RADIACION : {
 			type : "double"
@@ -188,7 +188,7 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		RMAX : {
-			type : "long"
+			type : "double"
 		},
 		RN : {
 			type : "double"
@@ -206,7 +206,7 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		VD : {
-			type : "long"
+			type : "double"
 		},
 		VELVIENTO : {
 			type : "double"
@@ -215,10 +215,10 @@ PUT inforiego/_mapping/info_riego_daily
 			type : "double"
 		},
 		VN : {
-			type : "long"
+			type : "double"
 		},
 		altitud : {
-			type : "long"
+			type : "double"
 		},
 		lat_lon : {
 			type : "geo_point",
