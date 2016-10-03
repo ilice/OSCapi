@@ -224,5 +224,7 @@ PUT inforiego/_mapping/info_riego_daily
 }
 ```
 
+Tras tener el mapping se pueden insertar los datos utilizando la URL variando los datos de fechas y localización `.../php/inforiego_rest.php?accion=actualizaDiario&fecha_ini=01/01/2013&fecha_fin=10/01/2013&latitud=40.439983&longitud=-5.737026`
+
 ### Modificación de las coordenadas de algunas estaciones de inforiego incorrectas
 Se utiliza Kibana Sense para ejecutar las sentenias Query DSL en [update_inforiego_stations.qdsl](OpenSmartCountry/resources/data/update_inforiego_stations.qdsl)

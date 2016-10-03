@@ -111,6 +111,10 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 				$ini = $fecha_ini;
 			}
 			
+			if ($anio == explode ( "/", $fecha_fin ) [2]) {
+				$fin = $fecha_fin;
+			}
+			
 			$url = 'http://www.inforiego.org/opencms/rest/diario?username=' . username . '&password=' . password . '&provincia=' . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini . '&fecha_fin=' . $fin . '&fecha_ult_modif=' . $fecha_ult_modif;
 			
 			$response = getHttpcUrl ( $url );
