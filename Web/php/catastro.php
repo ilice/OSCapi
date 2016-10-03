@@ -4,7 +4,7 @@ header ( "Content-Type: application/xml; charset=UTF-8" );
 
 require_once 'cUrl.php';
 
-$querystring = !empty($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:"";
+$querystring = ! empty ( $_SERVER ['QUERY_STRING'] ) ? $_SERVER ['QUERY_STRING'] : "";
 
 if (! empty ( $querystring )) {
 	$explode_querystring = explode ( "&", $querystring );
@@ -26,15 +26,28 @@ if (! empty ( $querystring )) {
 	
 	$response = getHttpcUrl ( $url, $esJson );
 	
-	$response_xml=simplexml_load_string($response);
+	$response_xml = simplexml_load_string ( $response );
 	
-	if($response_xml->control[0]->cuerr > 0)
-	{
-		slack( "Error: el catastro devuelve errores para la llamada: <". $url. ">: " . $response_xml->lerr[0]->err[0]->des );
+	if ($response) {
+		if ($response_xml->control [0]->cuerr > 0) {
+			slack ( "Error: el catastro devuelve errores para la llamada: <" . $url . ">: " . $response_xml->lerr [0]->err [0]->des );
+		}
+	} else {
+		slack ( "Error: el catastro no responde para la llamada: <" . $url . "> " );
+		$response = '<?xml version="1.0" encoding="utf-8"?>
+			<consulta_coordenadas>
+				<control>
+					<cucoor>0</cucoor>
+					<cuerr>1</cuerr>
+				</control>
+				<error>
+					ERROR: ' . $_SERVER ['SCRIPT_NAME'] . ' El catastro no responde ' . __FUNCTION__ . ' en ' . $_SERVER ['SCRIPT_NAME'] . ' linea ' . __LINE__ . '
+				</error>
+			</consulta_coordenadas>	';
 	}
 } else {
 	
-	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada sin parámetros" . __FUNCTION__ ." en ". $_SERVER ['SCRIPT_NAME'] ." linea ".__LINE__ );
+	slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . " Llamada sin parámetros" . __FUNCTION__ . " en " . $_SERVER ['SCRIPT_NAME'] . " linea " . __LINE__ );
 	$response = '<?xml version="1.0" encoding="utf-8"?>
 			<consulta_coordenadas>
 				<control>
@@ -42,7 +55,7 @@ if (! empty ( $querystring )) {
 					<cuerr>1</cuerr>
 				</control>
 				<error>
-					ERROR: ' . $_SERVER ['SCRIPT_NAME'] . ' Llamada sin parametros  '. __FUNCTION__ .' en '. $_SERVER ['SCRIPT_NAME'] .' linea '.__LINE__ .'
+					ERROR: ' . $_SERVER ['SCRIPT_NAME'] . ' Llamada sin parametros  ' . __FUNCTION__ . ' en ' . $_SERVER ['SCRIPT_NAME'] . ' linea ' . __LINE__ . '
 				</error>
 			</consulta_coordenadas>	';
 }

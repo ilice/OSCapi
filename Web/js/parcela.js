@@ -285,7 +285,7 @@ function cargaDatos() {
 
 	obtenEstacion();
 	if (!fixedData) {
-		//actualiza();
+		// actualiza();
 	}
 	obtenAltitud(document.getElementById("latitud").innerHTML, document
 			.getElementById("longitud").innerHTML);
@@ -839,43 +839,66 @@ function cargaUltimosValores_osc_station() {
 
 		request
 				.done(function(response, textStatus, jqXHR) {
-					ultimosValores = response["hits"]["hits"][0];
+					if (typeof response["hits"] != 'undefined') {
+						ultimosValores = response["hits"]["hits"][0];
 
-					var fecha = new Date(ultimosValores._source.FECHA);
-					document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo ? ultimosValores._source.HumedadSuelo
-							.toFixed(2)
-							: "";
-					document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura ? ultimosValores._source.Temperatura
-							.toFixed(2)
-							: "";
-					document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad ? ultimosValores._source.Humedad
-							.toFixed(2)
-							: "";
-					document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia ? ultimosValores._source.Lluvia
-							.toFixed(2)
-							: "";
-					document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz ? ultimosValores._source.Luz
-							.toFixed(2)
-							: "";
-					document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha
-							.toLocaleString();
-					document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria ? ultimosValores._source.Bateria
-							.toFixed(2)
-							: "";
-					document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lat
-							: "";
-					document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
-							: "";
+						var fecha = new Date(ultimosValores._source.FECHA);
+						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaHumedadSuelo').innerHTML = ultimosValores._source.HumedadSuelo ? ultimosValores._source.HumedadSuelo
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaTemperatura').innerHTML = ultimosValores._source.Temperatura ? ultimosValores._source.Temperatura
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaHumedad').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaHumedad').innerHTML = ultimosValores._source.Humedad ? ultimosValores._source.Humedad
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaLluvia').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaLluvia').innerHTML = ultimosValores._source.Lluvia ? ultimosValores._source.Lluvia
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaLuz').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaLuz').innerHTML = ultimosValores._source.Luz ? ultimosValores._source.Luz
+								.toFixed(2)
+								: "";
+						document.getElementById('horaUltimaMedidaBateria').innerHTML = fecha
+								.toLocaleString();
+						document.getElementById('ultimaMedidaBateria').innerHTML = ultimosValores._source.Bateria ? ultimosValores._source.Bateria
+								.toFixed(2)
+								: "";
+						document.getElementById('ultimaPosicionLatitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lat
+								: "";
+						document.getElementById('ultimaPosicionLongitud').innerHTML = ultimosValores._source.lat_lon ? ultimosValores._source.lat_lon.lon
+								: "";
+					} else {
+						
+						document.getElementById('horaUltimaMedidaHumedadSuelo').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaHumedadSuelo').style.color = 'red';
+						document.getElementById('horaUltimaMedidaTemperatura').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaTemperatura').style.color = 'red';
+						document.getElementById('horaUltimaMedidaHumedad').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaHumedad').style.color = 'red';
+						document.getElementById('horaUltimaMedidaLluvia').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaLluvia').style.color = 'red';
+						document.getElementById('horaUltimaMedidaLuz').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaLuz').style.color = 'red';
+						document.getElementById('horaUltimaMedidaBateria').innerHTML = 'Error';
+						document.getElementById('horaUltimaMedidaBateria').style.color = 'red';
+						document.getElementById('ultimaPosicionLatitud').innerHTML = 'Error';
+						document.getElementById('ultimaPosicionLatitud').style.color = 'red';
+						document.getElementById('ultimaPosicionLongitud').innerHTML = 'Error';
+						document.getElementById('ultimaPosicionLongitud').style.color = 'red';
+						
+						document.getElementById('errorOscar').style.display = 'block';
+
+					}
 				});
 
 	} else {
@@ -1071,7 +1094,7 @@ function estableceDatosBaseDeLaParcela() {
 
 function obtenDatosSIGPAC(c_refpar) {
 
-	var url = "php/api_rest.php/plots/sigpac_record/_search?q=c_refpar:"
+	var url = "php/api_rest.php/sigpac/s_ig_pa_crecord/_search?q=c_refpar:"
 			+ c_refpar;
 	var coordenadasLinde = [];
 
