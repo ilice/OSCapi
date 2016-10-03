@@ -36,5 +36,193 @@ Sustituyendo `elastic_endpoint` por la url de la base de datos que estamos utili
 ### Estaciones de inforiego
 Las estaciones de inforiego se indexan en el index `inforiego`con el type `info_riego_station` ejecutando desde un navegador `.../inforiego_rest.php?accion=actualizaEstaciones`, si el resultado es `success` la actualización se ha completado correctamente.
 
+Previamente es necesario establecer el mapping ya que en caso contrario las coordenadas no las toma como geo_point. Para eso podemos utilizar la extensión de chrome **[Sense](https://chrome.google.com/webstore/detail/sense-beta/lhjgkmllcaadmopgmanpapmpjgmfcfig?utm_source=chrome-app-launcher-info-dialog) que básicamente pone las cosas fáciles**. Para configurarla simplemente ponemos en la barra el endpoint de elastic.
+
+#### Mapping para las estaciones de inforiego
+Desde la consola de Sense ejecutamos
+```
+PUT inforiego
+{
+    mappings : {
+		info_riego_station : {
+			properties : {
+				ALTITUD : {
+					type : "long"
+				},
+				ESTACION : {
+					type : "string"
+				},
+				ESTACIONCORTO : {
+					type : "string"
+				},
+				FECHAINSTAL : {
+					type : "date",
+					format : "dd/MM/yyyy"
+				},
+				IDESTACION : {
+					type : "string"
+				},
+				IDPROVINCIA : {
+					type : "string"
+				},
+				LATITUD : {
+					type : "string"
+				},
+				LONGITUD : {
+					type : "string"
+				},
+				X_UTM : {
+					type : "string"
+				},
+				Y_UTM : {
+					type : "string"
+				},
+				lat_lon : {
+					type : "geo_point",
+					lat_lon : true
+				}
+			}
+		}
+	}
+}
+```
+Ahora sólo hay que ejecutar desde el navegador  `.../inforiego_rest.php?accion=actualizaEstaciones`
+
+#### Mapping para los datos diarios de inforiego
+```
+PUT inforiego/_mapping/info_riego_daily
+ {
+	properties : {
+		AÑO : {
+			type : "long"
+		},
+		DIA : {
+			type : "long"
+		},
+		DIRVIENTO : {
+			type : "double"
+		},
+		DIRVIENTOVELMAX : {
+			type : "double"
+		},
+		ETBC : {
+			type : "long"
+		},
+		ETHARG : {
+			type : "double"
+		},
+		ETPMON : {
+			type : "double"
+		},
+		ETRAD : {
+			type : "long"
+		},
+		FECHA : {
+			type : "date",
+			format : "dd/MM/yyyy"
+		},
+		HORMINHUMMAX : {
+			type : "date",
+			format : "HHmm"
+		},
+		HORMINHUMMIN : {
+			type : "date",
+			format : "HHmm"
+		},
+		HORMINTEMPMAX : {
+			type : "date",
+			format : "HHmm"
+		},
+		HORMINTEMPMIN : {
+			type : "date",
+			format : "HHmm"
+		},
+		HORMINVELMAX : {
+			type : "date",
+			format : "HHmm"
+		},
+		HUMEDADD : {
+			type : "double"
+		},
+		HUMEDADMAX : {
+			type : "double"
+		},
+		HUMEDADMEDIA : {
+			type : "double"
+		},
+		HUMEDADMIN : {
+			type : "double"
+		},
+		IDESTACION : {
+			type : "string"
+		},
+		IDPROVINCIA : {
+			type : "string"
+		},
+		N : {
+			type : "double"
+		},
+		PEBC : {
+			type : "long"
+		},
+		PEHARG : {
+			type : "long"
+		},
+		PEPMON : {
+			type : "long"
+		},
+		PERAD : {
+			type : "long"
+		},
+		PRECIPITACION : {
+			type : "long"
+		},
+		RADIACION : {
+			type : "double"
+		},
+		RECORRIDO : {
+			type : "double"
+		},
+		RMAX : {
+			type : "long"
+		},
+		RN : {
+			type : "double"
+		},
+		TEMPD : {
+			type : "double"
+		},
+		TEMPMAX : {
+			type : "double"
+		},
+		TEMPMEDIA : {
+			type : "double"
+		},
+		TEMPMIN : {
+			type : "double"
+		},
+		VD : {
+			type : "long"
+		},
+		VELVIENTO : {
+			type : "double"
+		},
+		VELVIENTOMAX : {
+			type : "double"
+		},
+		VN : {
+			type : "long"
+		},
+		altitud : {
+			type : "long"
+		},
+		lat_lon : {
+			type : "geo_point",
+			lat_lon : true
+		}
+	}
+}
+```
+
 ### Modificación de las coordenadas de algunas estaciones de inforiego incorrectas
 Se utiliza Kibana Sense para ejecutar las sentenias Query DSL en [update_inforiego_stations.qdsl](OpenSmartCountry/resources/data/update_inforiego_stations.qdsl)
