@@ -314,7 +314,7 @@ function medidasDiarias($latitud, $longitud, $anio) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search?';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -388,9 +388,11 @@ function medidasDiarias($latitud, $longitud, $anio) {
 	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
 	
 	if (isset ( $resultado ["error"] )) {
-		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input . " y la url " . $url);
 		$respuesta = error;
 	} else {
+		
+		if(isset($resultado["aggregations"])){
 		$min_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["min_temperatura"] ["value"];
 		$max_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_temperatura"] ["value"];
 		$media_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_temperatura"] ["value"];
@@ -400,6 +402,20 @@ function medidasDiarias($latitud, $longitud, $anio) {
 		$media_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_radiacion"] ["value"];
 		$max_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_radiacion"] ["value"];
 		$sum_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_radiacion"] ["value"];
+		$respuesta = '{"min_temperatura": ' . $min_temperatura . ',
+			"max_temperatura": ' . $max_temperatura . ',
+			"media_temperatura": ' . $media_temperatura . ',
+			"media_horas_sol": ' . $media_horas_sol . ',
+			"max_horas_sol": ' . $max_horas_sol . ',
+			"sum_horas_sol": ' . $sum_horas_sol . ',
+			"media_radiacion": ' . $media_radiacion . ',
+			"max_radiacion": ' . $max_radiacion . ',
+			"sum_radiacion": ' . $sum_radiacion . '
+			}';
+		}else{
+			$respuesta = '{"error" : "No se han obtenido datos agregados"}';
+			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
+		}
 		
 		$respuesta = '{"min_temperatura": ' . $min_temperatura . ',
 			"max_temperatura": ' . $max_temperatura . ',
