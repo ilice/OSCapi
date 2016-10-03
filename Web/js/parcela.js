@@ -400,6 +400,48 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 
 }
 
+function obtenDatosSIGPAC(c_refpar) {
+
+	var url = "php/api_rest.php/sigpac/s_ig_pa_crecord/_search?q=c_refpar:"
+			+ c_refpar;
+	var coordenadasLinde = [];
+
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+
+	request
+			.done(function(response, textStatus, jqXHR) {
+				var hayCoordenadasLinde = false;
+				if (typeof response["hits"] != 'undefined') {
+					var hits = response["hits"]["hits"];
+
+					for (var i = 0; i < hits.length; i++) {
+
+						var hit = hits[i];
+
+						coordenadasLinde
+								.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+						hayCoordenadasLinde = true;
+					}
+
+				}
+				if (!hayCoordenadasLinde) {
+					document.getElementById("datosLinde").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
+							+ 'class="w3-closebtn">&times;</span>'
+							+ '<h3>Error en la obtención de las coordenadas de la linde</strong></h3>'
+							+ '<p>Se han intentado recuperar los datos de las coordenadas de la linde de la parcela, pero ha ocurrido algún problema.</p>' +
+							'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
+					document.getElementById("datosLindeErrorBadge").style.display = 'block';
+				}
+			});
+	return coordenadasLinde;
+}
+
 function initMap(coordenadasLinde) {
 	var mapOptions = {
 		center : parcela,
@@ -1099,37 +1141,6 @@ function obtenAltitud(latitud, longitud) {
 				urlbusqueda);
 	});
 
-}
-
-function obtenDatosSIGPAC(c_refpar) {
-
-	var url = "php/api_rest.php/sigpac/s_ig_pa_crecord/_search?q=c_refpar:"
-			+ c_refpar;
-	var coordenadasLinde = [];
-
-	var request = jQuery.ajax({
-		crossDomain : true,
-		async : false,
-		url : url,
-		type : 'GET',
-		dataType : "json"
-	});
-
-	request
-			.done(function(response, textStatus, jqXHR) {
-				if (typeof response["hits"] != 'undefined') {
-					var hits = response["hits"]["hits"];
-
-					for (var i = 0; i < hits.length; i++) {
-
-						var hit = hits[i];
-
-						coordenadasLinde
-								.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
-					}
-				}
-			});
-	return coordenadasLinde;
 }
 
 function arrayToPathLatLong(array) {
