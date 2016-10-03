@@ -1,4 +1,4 @@
-POST /test_estaciones_inforiego/info_riego_estacion/P01/_update
+POST /inforiego/info_riego_station/P01/_update
 {
    "doc" : {
 	  "LATITUD": "420222100N",
@@ -10,7 +10,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P01/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P02/_update
+POST /inforiego/info_riego_station/P02/_update
 {
    "doc" : {
 	  "LATITUD": "415707600N",
@@ -22,7 +22,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P02/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P03/_update
+POST /inforiego/info_riego_station/P03/_update
 {
    "doc" : {
 	  "LATITUD": "420524700N",
@@ -34,7 +34,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P03/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P04/_update
+POST /inforiego/info_riego_station/P04/_update
 {
    "doc" : {
 	  "LATITUD": "421520200N",
@@ -46,7 +46,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P04/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P06/_update
+POST /inforiego/info_riego_station/P06/_update
 {
    "doc" : {
 	  "LATITUD": "423254600N",
@@ -58,7 +58,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P06/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P07/_update
+POST /inforiego/info_riego_station/P07/_update
 {
    "doc" : {
 	  "LATITUD": "423131600N",
@@ -70,7 +70,7 @@ POST /test_estaciones_inforiego/info_riego_estacion/P07/_update
    }
 }
 
-POST /test_estaciones_inforiego/info_riego_estacion/P08/_update
+POST /inforiego/info_riego_station/P08/_update
 {
    "doc" : {
 	  "LATITUD": "422027600N",
