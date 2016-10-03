@@ -47,7 +47,7 @@ class TestOfInforiego extends UnitTestCase {
 		$this->assertTrue ($precipitacionAcumulada >= 0, 'La precipitación acumulada debe ser mayor o igual a cero para el año mediante la url: ' . $url);
 	}
 	
-	function testInforiegoGetMedidasDiariasForLatitudeAndLongitudeAndYear() {
+	function teestInforiegoGetMedidasDiariasForLatitudeAndLongitudeAndYear() {
 		//cargaMedidasDiarias() en parcela.js
 	
 		$anio = Date('Y');
@@ -94,7 +94,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function testInforiegoGetDatosPrecipitacionAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
+	function teestInforiegoGetDatosPrecipitacionAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 		
 		$medida = "PRECIPITACION";
@@ -124,7 +124,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function testInforiegoGetDatosTemperaturaAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
+	function teestInforiegoGetDatosTemperaturaAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 		
 		$medida = "TEMPMEDIA";
@@ -154,7 +154,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function testInforiegoGetDatosHorasSolAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
+	function teestInforiegoGetDatosHorasSolAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 	
 		$medida = "N";
@@ -184,7 +184,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function testInforiegoGetDatosRadiacionAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
+	function teestInforiegoGetDatosRadiacionAnualesForLatitudeAndLongitudeAndNoYearAndOthers() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 	
 		$medida = "RADIACION";
@@ -214,7 +214,7 @@ class TestOfInforiego extends UnitTestCase {
 	
 	}
 	
-	function tetstInforiegoActualizaDatosDiariosInforiegoForLatitudeAndLongitude() {
+	function teestInforiegoActualizaDatosDiariosInforiegoForLatitudeAndLongitude() {
 		//obtenDatosPorAnio(medida, numeroDeAnios, intervalo, formato) en parcela.js
 	
 		$latitud = 40.439983;

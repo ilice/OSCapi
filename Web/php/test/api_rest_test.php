@@ -1,8 +1,7 @@
 <?php
 header ( "Content-Type: text/html; charset=UTF-8" );
 
-require_once( __DIR__ . '/../../../vendor/simpletest/simpletest/autorun.php');
-
+require_once (__DIR__ . '/../../../vendor/simpletest/simpletest/autorun.php');
 class TestOfapi_rest extends UnitTestCase {
 	function __construct() {
 		parent::__construct ( 'Api rest test' );
@@ -23,8 +22,8 @@ class TestOfapi_rest extends UnitTestCase {
 		return $response;
 	}
 	function testApi_restServiceExistsAndIsOnline() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php?";
 		
 		$response = $this->getResponse ( $url );
@@ -32,14 +31,14 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 	}
 	function testObtieneDatosDelCultivoPorId() {
 		$cultivo_id = 19;
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc?q=_id:" . $cultivo_id;
 		
 		$response = $this->getResponse ( $url );
@@ -47,15 +46,15 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta respondepara la url: ' . $url );
 		$this->assertEqual ( $results ['total'], 1, 'Hay un y solo un cultivo por id en la base de datos' );
 		$this->assertEqual ( $results ['hits'] [0] ['_source'] ["Clave"], "$cultivo_id", 'La clave que obtengo es udual al id' );
 	}
 	function testObtieneCultivosPaginados() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
 		
@@ -66,15 +65,15 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
-		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url . ' con los datos ' . $data);
+		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url . ' con los datos ' . $data );
 		$this->assertTrue ( count ( $results ['hits'] ) <= $tamanioDePagina, 'El m�ximo de cultivos por página es ' . $tamanioDePagina );
 		$this->assertTrue ( count ( $results ['hits'] ) > 0, 'Hay cultivos en la p�gina ' );
 	}
 	function testBuscaPorPalabra() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
 		$palabra = 'lechuga';
@@ -86,7 +85,7 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( utf8_encode ( $response ), true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$this->assertTrue ( count ( $results ['hits'] ) <= $tamanioDePagina, 'El m�ximo de cultivos por p�gina es ' . $tamanioDePagina );
@@ -95,8 +94,8 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertTrue ( $posicion !== false, 'La palabra ' . $palabra . "est� en los resultados" );
 	}
 	function testBuscaPorFraseExacta() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
 		$frase = "chile de árbol";
@@ -108,7 +107,7 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
@@ -120,8 +119,8 @@ class TestOfapi_rest extends UnitTestCase {
 		}
 	}
 	function testBuscaPorPalabras() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
 		$frase = "chile de árbol";
@@ -133,7 +132,7 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
@@ -164,8 +163,8 @@ class TestOfapi_rest extends UnitTestCase {
 		return $esta;
 	}
 	function testBuscaPorAltitud() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
 		
@@ -202,33 +201,31 @@ class TestOfapi_rest extends UnitTestCase {
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
 		$this->assertTrue ( count ( $hits ) <= $tamanioDePagina, 'El máximo de cultivos por página es ' . $tamanioDePagina );
 		$this->assertTrue ( count ( $hits ) > 0, 'Hay cultivos para esa altitud' );
 		
-		foreach ($hits as $hit) {
+		foreach ( $hits as $hit ) {
 			$estaEnAlgunRango = false;
-			foreach ($hit["_source"]["altitude"] as $rangoAltitud) {
-				if ($rangoAltitud["min"] < $altitud and $altitud <$rangoAltitud["max"] ) {
+			foreach ( $hit ["_source"] ["altitude"] as $rangoAltitud ) {
+				if (isset ( $rangoAltitud ["min"] ) and isset ( $rangoAltitud ["max"] ) and $rangoAltitud ["min"] <= $altitud and $altitud <= $rangoAltitud ["max"]) {
 					$estaEnAlgunRango = true;
-				};
+				}
+				;
 			}
-			$this->assertTrue($estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo");
+			$this->assertTrue ( $estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo" );
 		}
-		
-		
 	}
-	
 	function testNoTenemosPlantasMaritimas() {
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
 		$url = $server_name . "/" . $web_folder . "php/api_rest.php/osc";
 		$tamanioDePagina = 6;
-	
-		$altitud = -1;
+		
+		$altitud = - 1;
 		$data = '{
 		"from" : 0,
 		"size" : ' . $tamanioDePagina . ',
@@ -255,51 +252,48 @@ class TestOfapi_rest extends UnitTestCase {
 		}
 		}
 						}}';
-	
+		
 		$response = $this->getResponse ( $url, $data );
-	
+		
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
 		$results = $response_json ['hits'];
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
-		$this->assertEqual ( count ( $hits ) , 0, 'No hay cultivos para esa altitud' );
-	
-		foreach ($hits as $hit) {
-			$estaEnAlgunRango = false;
-			foreach ($hit["_source"]["altitude"] as $rangoAltitud) {
-				if ($rangoAltitud["min"] < $altitud and $altitud <$rangoAltitud["max"] ) {
-					$estaEnAlgunRango = true;
-				};
-			}
-			$this->assertTrue($estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo");
-		}
-	
-	
-	}
-	
-	function testBuscaPorReferenciaCatastral(){
+		$this->assertEqual ( count ( $hits ), 0, 'No hay cultivos para esa altitud' );
 		
+		foreach ( $hits as $hit ) {
+			$estaEnAlgunRango = false;
+			foreach ( $hit ["_source"] ["altitude"] as $rangoAltitud ) {
+				if ($rangoAltitud ["min"] < $altitud and $altitud < $rangoAltitud ["max"]) {
+					$estaEnAlgunRango = true;
+				}
+				;
+			}
+			$this->assertTrue ( $estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo" );
+		}
+	}
+	function testBuscaPorReferenciaCatastral() {
 		$referenciaCatastral = "372840000000600098";
-		$server_name = !empty($_SERVER['SERVER_NAME'])?$_SERVER['SERVER_NAME']:"http://localhost:8080";
-		$web_folder = "Web/" ;
-		$url = $server_name . "/" . $web_folder . "php/api_rest.php/plots/sigpac_record/_search?q=c_refpar:" . $referenciaCatastral;
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
+		$url = $server_name . "/" . $web_folder . "php/api_rest.php/sigpac/s_ig_pa_crecord/_search?q=c_refpar:" . $referenciaCatastral;
 		
 		$response = $this->getResponse ( $url );
 		
 		$this->assertNotNull ( $response, 'Hay respuesta' );
 		$response_json = json_decode ( $response, true );
 		$error = json_last_error_msg ();
-		$this->assertEqual ( $error , 'No error' , 'Es json y no hay errores al parsearlo, error: ' . $error );
-		$results = $response_json ['hits'];
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$results = isset ( $response_json ['hits'] ) ? $response_json ['hits'] : NULL;
 		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
 		$hits = $results ['hits'];
-		$this->assertEqual ( count ( $hits ) , 1, 'Existen datos para la referencia catastral' );
-		$this->assertTrue(count($hits[0]["_source"]["points"]["coordinates"][0]) >= 2 , "Tiene suficientes coordenadas para que sea un recinto");
-		
-		
+		$this->assertEqual ( count ( $hits ), 1, 'Deben existir datos para la referencia catastral: ' . $referenciaCatastral );
+		if (count ( $hits ) > 0) {
+			$this->assertTrue ( count ( $hits [0] ["_source"] ["points"] ["coordinates"] [0] ) >= 2, "Tiene suficientes coordenadas para que sea un recinto" );
+		}
 	}
 }
 ?>

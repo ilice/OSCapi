@@ -173,7 +173,17 @@
 						onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
-						<h5>Localización</h5>
+						<h5>
+							Localización
+							<button id="datosLindeErrorBadge"
+								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
+								<i
+									onclick="document.getElementById('datosLinde').style.display='block'"
+									class="fa fa-ban"></i>
+							</button>
+						</h5>
+						<div id="datosLinde" class="w3-col w3-panel w3-red w3-card-8"
+							style="display: none"></div>
 						<div id="mapa"></div>
 						<table class="w3-table w3-striped w3-bordered">
 							<thead>
@@ -187,7 +197,7 @@
 								<td><span id="latitud"></span></td>
 								<td><span id="longitud"></span></td>
 								<td><span id="altitud"></span>
-									<button id="idea" class="w3-badge w3-yellow w3-hover-opacity">
+									<button id="idea" class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn">
 										<i class="fa fa fa-lightbulb-o w3-spin"
 											onclick="document.getElementById('idea_modal').style.display='block'"></i>
 									</button></td>
@@ -201,7 +211,17 @@
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
-						<h5>Información del catastro</h5>
+						<h5>
+							Información del catastro
+							<button id="datosCatastroErrorBadge"
+								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
+								<i
+									onclick="document.getElementById('datosCatastro').style.display='block'"
+									class="fa fa-ban"></i>
+							</button>
+						</h5>
+						<div id="datosCatastro" class="w3-col w3-panel w3-red w3-card-8"
+							style="display: none"></div>
 						<table
 							class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey">
 							<tr>
@@ -309,19 +329,22 @@
 		<div class="w3-container w3-section" id="cacharrito">
 			<span onclick="this.parentElement.style.display='none'"
 				class="w3-closebtn w3-padding">&times;</span>
+
 			<div class="w3-row-padding w3-card-8">
 				<div class="w3-twothird">
 					<p>
 						<strong>"OSC&alpha;r"</strong> está puesto en la parcela e informa
 						de su posición por si alguien <em>"en un despiste"</em> lo mueve.
+						<button id="datosOscarErrorBadge"
+							class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right" style="display: none">
+							<i
+								onclick="document.getElementById('datosOscar').style.display='block'"
+								class="fa fa-ban"></i>
+						</button>
 					</p>
 					<p>Su trabajo es recoger y enviar los datos que obtiene de sus
 						sensores: humedad del suelo, luz, lluvia, temperatura, humedad
 						relativa del aire... y los sensores que le vayamos añadiendo.</p>
-					<p>
-						Para ello según el plan de vuelo el <strong>dron Kudron</strong>
-						pasa cerca recogiendo los datos que OSC&alpha;r envía
-					</p>
 					<p>Además nos informa de cómo va de batería, por la noche va a
 						tirar de ella así que durante el día debe estar bien cargado.</p>
 					<table id="tabla-oscar"
@@ -378,6 +401,8 @@
 						</tr>
 					</table>
 				</div>
+				<div id="datosOscar" class="w3-col w3-panel w3-red w3-card-8"
+					style="display: none"></div>
 			</div>
 		</div>
 		<!--FIN Tarjeta sobre OSC&alpha;r-->
@@ -572,173 +597,201 @@
 			</div>
 		</div>
 		<!-- FIN Tarjetas de análisis de datos -->
-		
+
 		<!-- Tarjetafija con los datos de Salamanca -->
 		<div id="fixed" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'"
 				class="w3-closebtn w3-padding">&times;</span>
 			<div class="w3-card-8">
 				<p id="datosEstacion" class="w3-padding">
-					<em>Distribución de los diferentes usos del suelo
-					</em>
+					<em>Distribución de los diferentes usos del suelo </em>
 				</p>
 				<ul class="w3-navbar">
-  					<li><a href="#fixed" onclick="openCultivo('All')">Todos</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('Agua')">Agua</a></li>
-  					<!-- <li><a href="#fixed" onclick="openCultivo('Viales')">Viales</a></li>
+					<li><a href="#fixed" onclick="openCultivo('All')">Todos</a></li>
+					<li><a href="#fixed" onclick="openCultivo('Agua')">Agua</a></li>
+					<!-- <li><a href="#fixed" onclick="openCultivo('Viales')">Viales</a></li>
   					<li><a href="#fixed" onclick="openCultivo('Viales')">Edificaciones</a></li> -->
-  					<li><a href="#fixed" onclick="openCultivo('FL')">FS y olivar</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('FO')">Forestal</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('FS')">Frutos secos</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('FV')">FS y Viñedos</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('FY')">Frutales</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('IM')">Frutales</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('IV')">Frutales</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('OF')">Frutales</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('OV')">Olivar</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('PA')">Pasto con arb.</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('PR')">Pasto arbustivo</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('PS')">Pastizal</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('TA')">Arables</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('TH')">Huerta</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('VF')">Viñedo - Frutal</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('VI')">Viñedo</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('VO')">Viñedo - Olivar</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('ZC')">Concentración</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('ZU')">Urbano</a></li>
+					<li><a href="#fixed" onclick="openCultivo('FL')">FS y
+							olivar</a></li>
+					<li><a href="#fixed" onclick="openCultivo('FO')">Forestal</a></li>
+					<li><a href="#fixed" onclick="openCultivo('FS')">Frutos
+							secos</a></li>
+					<li><a href="#fixed" onclick="openCultivo('FV')">FS y
+							Viñedos</a></li>
+					<li><a href="#fixed" onclick="openCultivo('FY')">Frutales</a></li>
+					<li><a href="#fixed" onclick="openCultivo('IM')">Frutales</a></li>
+					<li><a href="#fixed" onclick="openCultivo('IV')">Frutales</a></li>
+					<li><a href="#fixed" onclick="openCultivo('OF')">Frutales</a></li>
+					<li><a href="#fixed" onclick="openCultivo('OV')">Olivar</a></li>
+					<li><a href="#fixed" onclick="openCultivo('PA')">Pasto con
+							arb.</a></li>
+					<li><a href="#fixed" onclick="openCultivo('PR')">Pasto
+							arbustivo</a></li>
+					<li><a href="#fixed" onclick="openCultivo('PS')">Pastizal</a></li>
+					<li><a href="#fixed" onclick="openCultivo('TA')">Arables</a></li>
+					<li><a href="#fixed" onclick="openCultivo('TH')">Huerta</a></li>
+					<li><a href="#fixed" onclick="openCultivo('VF')">Viñedo -
+							Frutal</a></li>
+					<li><a href="#fixed" onclick="openCultivo('VI')">Viñedo</a></li>
+					<li><a href="#fixed" onclick="openCultivo('VO')">Viñedo -
+							Olivar</a></li>
+					<li><a href="#fixed" onclick="openCultivo('ZC')">Concentración</a></li>
+					<li><a href="#fixed" onclick="openCultivo('ZU')">Urbano</a></li>
 				</ul>
-				
+
 				<div id="All" class="w3-container city">
-  <h2>Todos los cultivos</h2>
-  
-  <img src="img/distribucion/37_ALL.png" alt="Todos los cultivos de Salamanca" style="width:100%">
+					<h2>Todos los cultivos</h2>
 
-</div>
+					<img src="img/distribucion/37_ALL.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
 
-<div id="Agua" class="w3-container city">
-  <h2>Corrientes y superficies de agua</h2>
-  <img src="img/distribucion/37_AG.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				</div>
 
-<div id="Viales" class="w3-container city">
-  <h2>Viales</h2>
-  <img src="img/distribucion/37_CA.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="Agua" class="w3-container city">
+					<h2>Corrientes y superficies de agua</h2>
+					<img src="img/distribucion/37_AG.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="ED" class="w3-container city">
-  <h2>Edificaciones</h2>
-  <img src="img/distribucion/37_ED.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="Viales" class="w3-container city">
+					<h2>Viales</h2>
+					<img src="img/distribucion/37_CA.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="FL" class="w3-container city">
-  <h2>Frutos secos y olivar</h2>
-  <img src="img/distribucion/37_FL.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="ED" class="w3-container city">
+					<h2>Edificaciones</h2>
+					<img src="img/distribucion/37_ED.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="FO" class="w3-container city">
-  <h2>Forestal</h2>
-  <img src="img/distribucion/37_FO.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="FL" class="w3-container city">
+					<h2>Frutos secos y olivar</h2>
+					<img src="img/distribucion/37_FL.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="FS" class="w3-container city">
-  <h2>Frutos secos</h2>
-  <img src="img/distribucion/37_FL.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="FO" class="w3-container city">
+					<h2>Forestal</h2>
+					<img src="img/distribucion/37_FO.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="FV" class="w3-container city">
-  <h2>Frutos secos y Viñedos</h2>
-  <img src="img/distribucion/37_FV.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="FS" class="w3-container city">
+					<h2>Frutos secos</h2>
+					<img src="img/distribucion/37_FL.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="FY" class="w3-container city">
-  <h2>Frutales</h2>
-  <img src="img/distribucion/37_FY.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="FV" class="w3-container city">
+					<h2>Frutos secos y Viñedos</h2>
+					<img src="img/distribucion/37_FV.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="IM" class="w3-container city">
-  <h2>Improductivos</h2>
-  <img src="img/distribucion/37_IM.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="FY" class="w3-container city">
+					<h2>Frutales</h2>
+					<img src="img/distribucion/37_FY.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="IV" class="w3-container city">
-  <h2>Invernaderos y cultivos bajo plástico</h2>
-  <img src="img/distribucion/37_IV.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="IM" class="w3-container city">
+					<h2>Improductivos</h2>
+					<img src="img/distribucion/37_IM.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="OF" class="w3-container city">
-  <h2>Olivar frutal</h2>
-  <img src="img/distribucion/37_OF.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="IV" class="w3-container city">
+					<h2>Invernaderos y cultivos bajo plástico</h2>
+					<img src="img/distribucion/37_IV.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="OV" class="w3-container city">
-  <h2>Olivar</h2>
-  <img src="img/distribucion/37_OV.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="OF" class="w3-container city">
+					<h2>Olivar frutal</h2>
+					<img src="img/distribucion/37_OF.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="PA" class="w3-container city">
-  <h2>Pasto con arbolado</h2>
-  <img src="img/distribucion/37_PA.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="OV" class="w3-container city">
+					<h2>Olivar</h2>
+					<img src="img/distribucion/37_OV.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="PR" class="w3-container city">
-  <h2>Pasto arbustivo</h2>
-  <img src="img/distribucion/37_PR.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="PA" class="w3-container city">
+					<h2>Pasto con arbolado</h2>
+					<img src="img/distribucion/37_PA.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="PS" class="w3-container city">
-  <h2>Pastizal</h2>
-  <img src="img/distribucion/37_PS.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="PR" class="w3-container city">
+					<h2>Pasto arbustivo</h2>
+					<img src="img/distribucion/37_PR.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="TA" class="w3-container city">
-  <h2>Tierras arables</h2>
-  <img src="img/distribucion/37_TA.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="PS" class="w3-container city">
+					<h2>Pastizal</h2>
+					<img src="img/distribucion/37_PS.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="TH" class="w3-container city">
-  <h2>Huerta</h2>
-  <img src="img/distribucion/37_TH.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="TA" class="w3-container city">
+					<h2>Tierras arables</h2>
+					<img src="img/distribucion/37_TA.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="VF" class="w3-container city">
-  <h2>Viñedo - Frutal</h2>
-  <img src="img/distribucion/37_VF.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="TH" class="w3-container city">
+					<h2>Huerta</h2>
+					<img src="img/distribucion/37_TH.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="VI" class="w3-container city">
-  <h2>Viñedo</h2>
-  <img src="img/distribucion/37_VI.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="VF" class="w3-container city">
+					<h2>Viñedo - Frutal</h2>
+					<img src="img/distribucion/37_VF.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="VO" class="w3-container city">
-  <h2>Viñedo - Olivar</h2>
-  <img src="img/distribucion/37_VO.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="VI" class="w3-container city">
+					<h2>Viñedo</h2>
+					<img src="img/distribucion/37_VI.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="ZC" class="w3-container city">
-  <h2>Zona concentrada</h2>
-  <img src="img/distribucion/37_ZC.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
+				<div id="VO" class="w3-container city">
+					<h2>Viñedo - Olivar</h2>
+					<img src="img/distribucion/37_VO.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-<div id="ZU" class="w3-container city">
-  <h2>Zona urbana</h2>
-  <img src="img/distribucion/37_ZU.png" alt="Todos los cultivos de Salamanca" style="width:100%">
-</div>
-<script>
+				<div id="ZC" class="w3-container city">
+					<h2>Zona concentrada</h2>
+					<img src="img/distribucion/37_ZC.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
 
-function openCultivo(cultivo) {
-    var i;
-    var x = document.getElementsByClassName("city");
-    for (i = 0; i < x.length; i++) {
-       x[i].style.display = "none";
-    }
-    document.getElementById(cultivo).style.display = "block";
-}
-</script>
-				
+				<div id="ZU" class="w3-container city">
+					<h2>Zona urbana</h2>
+					<img src="img/distribucion/37_ZU.png"
+						alt="Todos los cultivos de Salamanca" style="width: 100%">
+				</div>
+				<script>
+					function openCultivo(cultivo) {
+						var i;
+						var x = document.getElementsByClassName("city");
+						for (i = 0; i < x.length; i++) {
+							x[i].style.display = "none";
+						}
+						document.getElementById(cultivo).style.display = "block";
+					}
+				</script>
+
 			</div>
 		</div>
-		
+
 
 		<!-- Tarjeta de información -->
 		<div class="w3-container w3-section" id="informacion">
