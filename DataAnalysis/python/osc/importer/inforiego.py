@@ -280,7 +280,7 @@ def get_inforiego_daily_year(provincia,
                                     'provincia': provincia,
                                     'estacion': estacion,
                                     'fecha_ini': '01/01/' + str(anno),
-                                    'fecha_fin': '31/01/' + str(anno),
+                                    'fecha_fin': '31/12/' + str(anno),
                                     'fecha_ult_modif': '01/01/' + str(anno)})
 
 
