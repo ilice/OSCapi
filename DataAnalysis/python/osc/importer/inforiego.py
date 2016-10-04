@@ -307,22 +307,17 @@ def insert_inforiego_daily_years(provincia,
         for document in response:
             document['lat_lon'] = lat_lon
             document['altitud'] = altitud
-            if 'HORMINHUMMAX' in document:
+            try:
                 document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4).replace('2400', '0000')
-            if 'HORMINHUMMIN' in document:
                 document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4).replace('2400', '0000')
-            if 'HORMINTEMPMAX' in document:
                 document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4).replace('2400', '0000')
-            if 'HORMINTEMPMIN' in document:
                 document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4).replace('2400', '0000')
-            if 'HORMINVELMAX' in document:
                 document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4).replace('2400', '0000')
 
-            id = document[u'FECHA'].replace('/', '_') + '_' + \
-                 document[u'IDPROVINCIA'] + '_' + \
-                 document[u'IDESTACION']
+                id = document[u'FECHA'].replace('/', '_') + '_' + \
+                     document[u'IDPROVINCIA'] + '_' + \
+                     document[u'IDESTACION']
 
-            try:
                 util.wait_for_yellow_cluster_status()
                 connection.index(index=index, doc_type=mapping, id=id, body=document)
             except Exception as e:
