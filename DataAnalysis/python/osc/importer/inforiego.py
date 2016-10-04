@@ -307,11 +307,11 @@ def insert_inforiego_daily_years(provincia,
         for document in response:
             document['lat_lon'] = lat_lon
             document['altitud'] = altitud
-            document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4)
-            document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4)
-            document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4)
-            document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4)
-            document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4)
+            document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4).replace('2400', '0000')
+            document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4).replace('2400', '0000')
+            document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4).replace('2400', '0000')
+            document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4).replace('2400', '0000')
+            document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4).replace('2400', '0000')
 
             id = document[u'FECHA'].replace('/', '_') + '_' + \
                  document[u'IDPROVINCIA'] + '_' + \
