@@ -307,11 +307,16 @@ def insert_inforiego_daily_years(provincia,
         for document in response:
             document['lat_lon'] = lat_lon
             document['altitud'] = altitud
-            document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4).replace('2400', '0000')
-            document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4).replace('2400', '0000')
-            document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4).replace('2400', '0000')
-            document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4).replace('2400', '0000')
-            document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4).replace('2400', '0000')
+            if 'HORMINHUMMAX' in document:
+                document['HORMINHUMMAX'] = document['HORMINHUMMAX'].zfill(4).replace('2400', '0000')
+            if 'HORMINHUMMIN' in document:
+                document['HORMINHUMMIN'] = document['HORMINHUMMIN'].zfill(4).replace('2400', '0000')
+            if 'HORMINTEMPMAX' in document:
+                document['HORMINTEMPMAX'] = document['HORMINTEMPMAX'].zfill(4).replace('2400', '0000')
+            if 'HORMINTEMPMIN' in document:
+                document['HORMINTEMPMIN'] = document['HORMINTEMPMIN'].zfill(4).replace('2400', '0000')
+            if 'HORMINVELMAX' in document:
+                document['HORMINVELMAX'] = document['HORMINVELMAX'].zfill(4).replace('2400', '0000')
 
             id = document[u'FECHA'].replace('/', '_') + '_' + \
                  document[u'IDPROVINCIA'] + '_' + \
