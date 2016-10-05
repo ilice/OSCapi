@@ -121,7 +121,7 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 			$response_json = json_decode ( utf8_encode ( $response ), true );
 			
 			foreach ( $response_json as $element ) {
-				$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
+				$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_daily/' . str_replace ( "/", "_", $element ["FECHA"] ) . '_' . $element ["IDPROVINCIA"] . '_' . $element ['IDESTACION'];
 				$element = format_info_riego_diario ( $element, $estacion );
 				putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 			}
@@ -184,7 +184,7 @@ function actualizaRecord($estaciones, $fecha_ini, $fecha_fin) {
 				
 				foreach ( $response_json as $element ) {
 					$element = format_info_riego_record ( $element, $estacion );
-					$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_record/' . urlencode ( $estacion ["ESTACIONCORTO"] . " - " . substr ( $element ["date"], 0, 10 ) . " " . substr ( $element ["date"], 11, 8 ) );
+					$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_record/' . urlencode ( $estacion ["ESTACIONCORTO"] . " - " . substr ( $element ["date"], 0, 10 ) . " " . substr ( $element ["date"], 11, 8 ) );
 					putHttpcUrl ( $url, json_encode ( $element, JSON_UNESCAPED_UNICODE ) );
 					$updated ++;
 				}
@@ -201,7 +201,7 @@ function actualizaEstaciones($estaciones) {
 	$resultado = "error";
 	
 	foreach ( $estaciones as $estacion ) {
-		$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
+		$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_station/' . $estacion ["ESTACIONCORTO"];
 		$estacion = format_info_riego_estacion ( $estacion );
 		putHttpcUrl ( $url, json_encode ( $estacion, JSON_UNESCAPED_UNICODE ) );
 		$resultado = "success";
@@ -210,7 +210,7 @@ function actualizaEstaciones($estaciones) {
 	return $resultado;
 }
 function fechaUltimoRegistro($estacion) {
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . "inforiego/info_riego_daily/_search";
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . "/inforiego/info_riego_daily/_search";
 	
 	$input = "{
   \"size\": 0,
@@ -240,7 +240,7 @@ function fechaUltimoRegistro($estacion) {
 	return is_null ( $max_fecha ["value"] ) ? NULL : $max_fecha ["value_as_string"];
 }
 function fechaUltimoRegistro_info_riego_record($estacion) {
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . "inforiego/info_riego_record/_search";
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . "/inforiego/info_riego_record/_search";
 	
 	$input = "{
   \"size\": 0,
@@ -264,7 +264,7 @@ function diasDeLluvia($latitud, $longitud, $anio) {
 	if ($anio == NULL || $latitud == NULL || $longitud == NULL) {
 		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " al obtener días de lluvia para lat:  " . $latitud . " long: " . $longitud . " año: " . $anio );
 	}
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -314,7 +314,7 @@ function medidasDiarias($latitud, $longitud, $anio) {
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{"size" : 0,
    "query" : {
         "constant_score" : {
@@ -434,7 +434,7 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 	$respuesta = "";
 	
 	$estacion = obtenEstaciones ( $latitud, $longitud ) [0];
-	$url = $GLOBALS ['config'] ['elasticendpoint'] . 'inforiego/info_riego_daily/_search';
+	$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_daily/_search';
 	$input = utf8_encode ( '{
    "size" : 0,
    "query" : {

@@ -16,6 +16,10 @@
 	href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="css/joyride-2.1.css" />
 <link rel="stylesheet" href="css/estilo.css" />
+<link href="OpenSmartCountry_logo_192x192.png" rel="icon"
+	sizes="192x192" />
+<link href="OpenSmartCountry_logo_128x128.png" rel="icon"
+	sizes="128x128" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="js/jquery.joyride-2.1.js"></script>
@@ -48,17 +52,22 @@
 
 	<!-- Navbar (sit on top) -->
 	<div class="w3-top">
-		<div class="w3-navbar w3-container w3-padding-0" id="myNavbar">
-			<img class="w3-padding-large w3-opacity w3-left"
-				src="img/OpenSmartCountry_logo_25x26.png"
-				alt="Open Smart Country logo" /> <a id="openNav" href="#"
-				class="w3-padding-large w3-left" onclick="w3_open()">HOME</a>
-			<div class="w3-padding-large w3-right w3-right">
+		<ul class="w3-navbar w3-card-2 w3-left-align">
+			<li >
+				<a class="w3-padding-large w3-opacity" href="index.html">
+					<img src="img/OpenSmartCountry_logo_25x26.png"
+					alt="Open Smart Country logo" /></a>
+			</li>
+			<li>
+				<a id="openNav" href="javascript:void(0)" class="w3-padding-large w3-text-grey"
+				onclick="w3_open()">MENU</a>
+			</li>
+			<li class="w3-padding-large w3-right">
 				<span id="rc"></span>
-			</div>
-		</div>
+			</li>
+		</ul>
 	</div>
-	
+
 	<!-- Sidenav/menu -->
 	<script src="js\codigoBarraLateral.js"></script>
 	<!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
@@ -601,7 +610,7 @@
 		<!-- FIN Tarjetas de análisis de datos -->
 
 		<!-- Tarjeta fija con los datos de Salamanca -->
-		<div id="fixed" class="w3-container w3-section" style="display:none">
+		<div id="fixed" class="w3-container w3-section" style="display: none">
 			<span onclick="this.parentElement.style.display='none'"
 				class="w3-closebtn w3-padding">&times;</span>
 			<div class="w3-container w3-card-8">
@@ -609,41 +618,54 @@
 					<em>Distribución de los diferentes usos del suelo </em>
 				</p>
 				<div id="w3-row">
-				<div class="w3-col" style="width:150px">
-					<ul class="w3-ul w3-hoverable w3-large">
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('All')">Todos</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('Agua')">Agua</a></li>
-						<!-- <li><a href="#fixed" onclick="openCultivo('Viales')">Viales</a></li>
+					<div class="w3-col" style="width: 150px">
+						<ul class="w3-ul w3-hoverable w3-large">
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('All')">Todos</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('Agua')">Agua</a></li>
+							<!-- <li><a href="#fixed" onclick="openCultivo('Viales')">Viales</a></li>
   					<li><a href="#fixed" onclick="openCultivo('Viales')">Edificaciones</a></li> -->
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('FL')">FS y
-								olivar</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('FO')">Forestal</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('FS')">Frutos
-								secos</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('FV')">FS y
-								Viñedos</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('FY')">Frutales</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('IM')">Improductivo</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('IV')">Invernaderos</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('OF')">Olivar -
-								Frutal</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('OV')">Olivar</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('PA')">Pasto
-								con arb.</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('PR')">Pasto
-								arbustivo</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('PS')">Pastizal</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('TA')">Arables</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('TH')">Huerta</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('VF')">Viñedo -
-								Frutal</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('VI')">Viñedo</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('VO')">Viñedo -
-								Olivar</a></li>
-						<li><a style="display: block; text-decoration: none;" href="#fixed" onclick="openCultivo('ZC')">Concentración</a></li>
-						<li><a style="display: block; text-decoration: none;"  href="#fixed" onclick="openCultivo('ZU')">Urbano</a></li>
-					</ul>
-</div>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('FL')">FS y olivar</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('FO')">Forestal</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('FS')">Frutos secos</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('FV')">FS y Viñedos</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('FY')">Frutales</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('IM')">Improductivo</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('IV')">Invernaderos</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('OF')">Olivar - Frutal</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('OV')">Olivar</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('PA')">Pasto con arb.</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('PR')">Pasto arbustivo</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('PS')">Pastizal</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('TA')">Arables</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('TH')">Huerta</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('VF')">Viñedo - Frutal</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('VI')">Viñedo</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('VO')">Viñedo - Olivar</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('ZC')">Concentración</a></li>
+							<li><a style="display: block; text-decoration: none;"
+								href="#fixed" onclick="openCultivo('ZU')">Urbano</a></li>
+						</ul>
+					</div>
 					<div class="w3-rest w3-padding">
 						<div id="All" class="w3-container city">
 							<h2>Todos los cultivos</h2>
