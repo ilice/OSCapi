@@ -336,6 +336,7 @@ class sigpac_record(dsl.DocType):
 
     class Meta:
         index = 'plots'
+        doc_type = 'sigpac'
 
 
 def convert_to_latlong(coords):
@@ -453,21 +454,10 @@ def read_codigos():
     return codigos
 
 
-def wait_for_yellow_cluster_status():
-    connection = connections.get_connection()
-    while True:
-        try:
-            cluster_status = connection.cluster.health(wait_for_status='yellow')
-            if cluster_status['status'] != 'red':
-                break
-        except Exception as e:
-            print 'Cluster status is red. Waiting for yellow status'
-
-
 def elastic_bulk_update(records):
     try:
         connection = connections.get_connection()
-        wait_for_yellow_cluster_status()
+        util.wait_for_yellow_cluster_status()
         es.helpers.bulk(connection,
                         ({'_op_type': 'update',
                           '_index': getattr(r.meta, 'index', r._doc_type.index),
@@ -484,7 +474,7 @@ def elastic_bulk_update(records):
 def elastic_bulk_save(records):
     try:
         connection = connections.get_connection()
-        wait_for_yellow_cluster_status()
+        util.wait_for_yellow_cluster_status()
         es.helpers.bulk(connection,
                         ({'_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
@@ -495,7 +485,6 @@ def elastic_bulk_save(records):
             conf.error_handler.error(__name__,
                                      'save2elasticsearch',
                                      str(type(e)) + ': ' + str(record.to_dict()))
-
 
 
 def save2elasticsearch(zip_codes,
