@@ -3,6 +3,7 @@ header ( "Content-Type: application/json; charset=UTF-8" );
 
 require_once 'slack_notification.php';
 require_once 'cUrl.php';
+$config = include 'config.php';
 
 $querystring = $_SERVER ['QUERY_STRING'];
 
@@ -42,7 +43,7 @@ function doGet($parametros, $index, $type) {
 		$fecha = date ( "Y-m-d\TH:i" );
 		$id = $fecha . "-" . $imei;
 		
-		$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc_station/osc_station_record/" . $id . "/_update";
+		$url = $GLOBALS ['config'] ['elasticendpoint'] . "/osc_station/osc_station_record/" . $id . "/_update";
 		
 		if ($sensor != NULL) {
 			$input = '{"doc": {"IMEI" : "' . $imei . '", "' . $sensor . '" : ' . formatValor($valor) . ', "FECHA" : "' . $fecha . '"}, "doc_as_upsert" : true }';
@@ -54,7 +55,7 @@ function doGet($parametros, $index, $type) {
 		
 		echo postHttpcUrl ( $url, $input );
 	} else {
-		$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/" . $index . "/" . $type . "/_search";
+		$url = $GLOBALS ['config'] ['elasticendpoint'] . "/" . $index . "/" . $type . "/_search";
 		
 		$input = '{
   "sort": [

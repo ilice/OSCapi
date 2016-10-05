@@ -279,7 +279,7 @@ class TestOfapi_rest extends UnitTestCase {
 		$referenciaCatastral = "372840000000600098";
 		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
 		$web_folder = "Web/";
-		$url = $server_name . "/" . $web_folder . "php/api_rest.php/sigpac/s_ig_pa_crecord/_search?q=c_refpar:" . $referenciaCatastral;
+		$url = $server_name . "/" . $web_folder . "php/api_rest.php/plots/sigpac/_search?q=c_refpar:" . $referenciaCatastral;
 		
 		$response = $this->getResponse ( $url );
 		

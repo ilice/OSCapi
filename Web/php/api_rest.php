@@ -5,6 +5,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once 'slack_notification.php';
 require_once 'cUrl.php';
+$config = include 'config.php';
 
 // get the HTTP method, path and body of the request
 $method = $_SERVER['REQUEST_METHOD'];
@@ -20,7 +21,7 @@ $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 //Para ver qué versión estoy utilizando
 $curlVersion = curl_version();
 
-$url = "https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/";
+$url = $GLOBALS ['config'] ['elasticendpoint'];
 
 if(strlen($index)>0){
 	$url = "$url/$index" ;

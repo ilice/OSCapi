@@ -408,7 +408,7 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 function obtenDatosSIGPAC(c_refpar) {
 
 	var url = "php/api_rest.php/plots" +
-			"/plots/_search?q=c_refpar:"
+			"/sigpac/_search?q=c_refpar:"
 			+ c_refpar;
 	var coordenadasLinde = [];
 
