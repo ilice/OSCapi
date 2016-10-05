@@ -11,6 +11,8 @@
 	content="Conoce al equipo que está detrás de Open Smart Country" />
 <meta name="author" content="Isabel Muñoz @teanocrata" />
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css" />
+<link rel="stylesheet"
+	href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
 <link rel="stylesheet" href="css/estilo.css" />
 <link href="OpenSmartCountry_logo_192x192.png" rel="icon"
 	sizes="192x192" />
@@ -37,26 +39,47 @@
 	<!-- Navbar (sit on top) -->
 	<div class="w3-top">
 		<ul class="w3-navbar w3-container w3-large w3-dark-grey">
+			<li class="w3-hide-medium w3-hide-large w3-opennav w3-right"><a
+				class="w3-padding-large" href="javascript:void(0)"
+				onclick="myFunction()" title="Toggle Navigation Menu"><i
+					class="fa fa-bars"></i></a></li>
 			<li><a href="index.html" class="w3-padding-large"><img
 					src="img/OpenSmartCountry_logo_light_grey_25x26.png"
 					alt="Open Smart Country logo"></img></a></li>
 			<li><a href="team.html"
-				class="w3-padding-large w3-text-light-grey">NOSOTROS</a></li>
-			<li><a href="#" class="w3-padding-large w3-text-light-grey">LA
+				class="w3-hide-small w3-padding-large">NOSOTROS</a></li>
+			<li><a href="javascript:void(0)"
+				class="w3-hide-small w3-padding-large">LA
 					IDEA</a></li>
 			<li><a
 				onclick="document.getElementById('suscripcion').style.display='block'"
-				class="w3-padding-large w3-text-light-grey">CONTACTO</a></li>
-			<li class="w3-right"><a href="https://twitter.com/opnsc"
-				class="w3-padding-large w3-text-light-grey"><i
+				class="w3-hide-small w3-padding-large">CONTACTO</a></li>
+			<li class="w3-hide-small w3-right"><a
+				href="https://twitter.com/opnsc"
+				class="w3-padding-large"><i
 					class="fa fa-twitter"></i></a></li>
-			<li class="w3-right"><a href="https://www.facebook.com/OpnSC/"
-				class="w3-padding-large w3-text-light-grey"><i
+			<li class="w3-hide-small w3-right"><a
+				href="https://www.facebook.com/OpnSC/"
+				class="w3-padding-large"><i
 					class="fa fa-facebook-official"></i></a></li>
-			<li class="w3-right"><a
+			<li class="w3-hide-small w3-right"><a
 				href="https://github.com/teanocrata/OpenSmartCountry"
-				class="w3-padding-large w3-text-light-grey"><i
+				class="w3-padding-large"><i
 					class="fa fa-github"></i></a></li>
+		</ul>
+	</div>
+
+	<!-- Navbar on small screens -->
+	<div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium w3-top"
+		style="margin-top: 46px">
+		<ul class="w3-navbar w3-left-align w3-dark-grey">
+			<li><a href="team.html"
+				class="w3-padding-large">NOSOTROS</a></li>
+			<li><a href="javascript:void(0)"
+				class="w3-padding-large">LA IDEA</a></li>
+			<li><a
+				onclick="document.getElementById('suscripcion').style.display='block'"
+				class="w3-padding-large">CONTACTO</a></li>
 		</ul>
 	</div>
 
@@ -199,5 +222,17 @@
 			</div>
 		</div>
 	</div>
+	
+	<script>
+		// Used to toggle the menu on small screens when clicking on the menu button
+		function myFunction() {
+			var x = document.getElementById("navDemo");
+			if (x.className.indexOf("w3-show") == -1) {
+				x.className += " w3-show";
+			} else {
+				x.className = x.className.replace(" w3-show", "");
+			}
+		}
+	</script>
 </body>
 </html>

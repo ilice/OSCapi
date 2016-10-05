@@ -150,9 +150,10 @@ function cargaDatos() {
 	
 	cargaMedidasDiarias();
 
+	if (fixedData){document.getElementById("fixed").style.display = 'inline';}
 	if (!fixedData) {
 		// obten(2016);
-		document.getElementById("fixed").style.display = 'none';
+		
 
 		google.charts.load('current', {
 			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]

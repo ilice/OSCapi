@@ -490,7 +490,7 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 			
 			foreach ( $anios_buckets as $anio_bucket ) {
 				
-				$anio = $anio_bucket ["key_as_string"];
+				$anio = $anio_bucket ["key"];
 				$intervalos_buckets = $anio_bucket ["medida"] ["buckets"];
 				array_push ( $columnas, array (
 						"label" => $anio,
