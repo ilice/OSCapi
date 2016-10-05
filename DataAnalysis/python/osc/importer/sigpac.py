@@ -491,7 +491,7 @@ def save2elasticsearch(zip_codes,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False):
-    chunk_size = conf.config.getint('elastic_bulk_save', 'chunk_size')
+    chunk_size = conf.config.getint('elasticsearch', 'chunk_size')
 
     try:
         sigpac_record.init()
