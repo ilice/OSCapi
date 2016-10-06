@@ -17,9 +17,6 @@ import polyline
 import shapefile
 
 import elasticsearch_dsl as dsl
-from elasticsearch_dsl.connections import connections
-
-import elasticsearch as es
 
 import requests
 
@@ -28,6 +25,7 @@ from osc import util
 import osc.config as conf
 
 import time
+import datetime
 
 from osc.exceptions import ConnectionError
 
@@ -454,52 +452,17 @@ def read_codigos():
     return codigos
 
 
-def elastic_bulk_update(records):
-    try:
-        connection = connections.get_connection()
-        util.wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
-                        ({'_op_type': 'update',
-                          '_index': getattr(r.meta, 'index', r._doc_type.index),
-                          '_id': getattr(r.meta, 'id', None),
-                          '_type': r._doc_type.name,
-                          'doc': r.to_dict()} for r in records))
-    except Exception as e:
-        for record in records:
-            conf.error_handler.error(__name__,
-                                     'elastic_bulk_update',
-                                     str(type(e)) + ': ' + str(record.to_dict()))
-
-
-def elastic_bulk_save(records):
-    try:
-        connection = connections.get_connection()
-        util.wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
-                        ({'_index': getattr(r.meta, 'index', r._doc_type.index),
-                          '_id': getattr(r.meta, 'id', None),
-                          '_type': r._doc_type.name,
-                          '_source': r.to_dict()} for r in records))
-    except Exception as e:
-        for record in records:
-            conf.error_handler.error(__name__,
-                                     'save2elasticsearch',
-                                     str(type(e)) + ': ' + str(record.to_dict()))
-
-
 def save2elasticsearch(zip_codes,
                        url='ftp.itacyl.es',
                        root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                        force_download=False):
     chunk_size = conf.config.getint('elasticsearch', 'chunk_size')
 
-    try:
+    def init_and_wait():
         sigpac_record.init()
         time.sleep(5)
-    except Exception as e:
-        conf.error_handler.error(__name__, "build_record", str(e))
-        conf.error_handler.flush()
-        raise
+
+    util.try_times(init_and_wait, 3, 60)
 
     # download if necessary
     dataframe = get_dataframe(zip_codes=zip_codes,
@@ -511,6 +474,8 @@ def save2elasticsearch(zip_codes,
 
     dataframe = dataframe.merge(codigos, left_on='USO_SIGPAC', right_on='codigo', how='left')
 
+    last_rest_time = datetime.datetime.now()
+
     records_to_save = []
     for t in dataframe.itertuples():
         rec = build_record(t)
@@ -518,11 +483,13 @@ def save2elasticsearch(zip_codes,
             records_to_save.append(rec)
 
         if len(records_to_save) >= chunk_size:
-            elastic_bulk_save(records_to_save)
+            util.elastic_bulk_save(records_to_save)
             records_to_save = []
 
+            last_rest_time = util.try_rest(last_rest_time, 20, 10)
+
     if len(records_to_save) > 0:
-        elastic_bulk_save(records_to_save)
+        util.elastic_bulk_save(records_to_save)
 
 
 def compose_locations_param(points):
@@ -592,7 +559,7 @@ def add_altitude_info(provincia, municipio=None):
             try:
                 records = obtain_elevation_from_google(records, centers)
                 print " ... Obtained info from google"
-                elastic_bulk_update(records)
+                util.elastic_bulk_update(records)
                 print " ...success"
             except ConnectionError as e:
                 print " ...error"
@@ -606,7 +573,7 @@ def add_altitude_info(provincia, municipio=None):
     if len(records) > 0:
         try:
             records = obtain_elevation_from_google(records, centers)
-            elastic_bulk_update(records)
+            util.elastic_bulk_update(records)
         except ConnectionError as e:
             conf.error_handler.error(__name__,
                                      'obtain_elevation_from_google',

@@ -3,6 +3,10 @@ import logging
 import zipfile
 import matplotlib.pyplot as plt
 from elasticsearch_dsl.connections import connections
+import elasticsearch as es
+import config as conf
+import datetime
+import time
 
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -52,6 +56,31 @@ def plot_polygon(polygon):
     plt.show()
 
 
+def try_rest(last_rest_time, working_interval_minutes, rest_time_minutes):
+    working_time = (datetime.datetime.now() - last_rest_time).total_seconds() / 60
+
+    if working_time > working_interval_minutes:
+        time.sleep(rest_time_minutes * 60)
+        last_rest_time = datetime.datetime.now()
+
+    return last_rest_time
+
+
+def try_times(f, max_trials, time_wait):
+    trial = 0
+    while True:
+        try:
+            f()
+        except Exception as e:
+            conf.error_handler.error(__name__, "try_times -- " + f.__name__, str(e))
+            conf.error_handler.flush()
+            if trial > max_trials:
+                raise
+
+            trial += 1
+            time.sleep(time_wait)
+
+
 def wait_for_yellow_cluster_status():
     connection = connections.get_connection()
     while True:
@@ -61,3 +90,36 @@ def wait_for_yellow_cluster_status():
                 break
         except Exception as e:
             print 'Cluster status is red. Waiting for yellow status'
+
+
+def elastic_bulk_update(records):
+    try:
+        connection = connections.get_connection()
+        wait_for_yellow_cluster_status()
+        es.helpers.bulk(connection,
+                        ({'_op_type': 'update',
+                          '_index': getattr(r.meta, 'index', r._doc_type.index),
+                          '_id': getattr(r.meta, 'id', None),
+                          '_type': r._doc_type.name,
+                          'doc': r.to_dict()} for r in records))
+    except Exception as e:
+        for record in records:
+            conf.error_handler.error(__name__,
+                                     'elastic_bulk_update',
+                                     str(type(e)) + ': ' + str(record.to_dict()))
+
+
+def elastic_bulk_save(records):
+    try:
+        connection = connections.get_connection()
+        wait_for_yellow_cluster_status()
+        es.helpers.bulk(connection,
+                        ({'_index': getattr(r.meta, 'index', r._doc_type.index),
+                          '_id': getattr(r.meta, 'id', None),
+                          '_type': r._doc_type.name,
+                          '_source': r.to_dict()} for r in records))
+    except Exception as e:
+        for record in records:
+            conf.error_handler.error(__name__,
+                                     'save2elasticsearch',
+                                     str(type(e)) + ': ' + str(record.to_dict()))
