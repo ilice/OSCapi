@@ -230,3 +230,13 @@ PUT inforiego/_mapping/info_riego_daily
 
 Tras tener el mapping se pueden insertar los datos utilizando la URL variando los datos de fechas y localización `.../php/inforiego_rest.php?accion=actualizaDiario&fecha_ini=01/01/2013&fecha_fin=10/01/2013&latitud=40.439983&longitud=-5.737026`
 
+## Configuración temporal miestras insertamos todos los datos de un indice
+
+Tal cual especifica la [documentación de Elastic sobre Index Settings](https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_settings.html) es interesante configurar el  `number_of_replicas` a 0 en algunos casos, por ejemplo para el nuestro por estar metiendo muchos datos de golpe. Para esto desde el Sense podemos ejecutar:
+```
+PUT /my_temp_index/_settings
+{
+    "number_of_replicas": 0
+}
+```
+>**Es muy importante recordar que luego hay que dejarlo de nuevo a 1.**
