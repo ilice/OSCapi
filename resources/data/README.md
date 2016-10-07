@@ -240,3 +240,25 @@ PUT /my_temp_index/_settings
 }
 ```
 >**Es muy importante recordar que luego hay que dejarlo de nuevo a 1.**
+
+
+## Cambio de Elasticsearch al CPD
+
+Utilizamos [elasticdump](https://www.npmjs.com/package/elasticdump) que ha sido previamente instalado tal como se describe en [la documentación de configuración de entornos](https://github.com/teanocrata/OpenSmartCountry/wiki/Entornos)
+
+```
+elasticdump \
+  --input=https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc \
+  --output=http://82.158.80.73:9200/osc \
+  --type=analyzer
+elasticdump \
+  --input=https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc \
+  --output=http://82.158.80.73:9200/osc \
+  --type=mapping
+elasticdump \
+  --input=https://search-opensmartcountry-trmalel6c5huhmpfhdh7j7m7ey.eu-west-1.es.amazonaws.com/osc \
+  --output=http://82.158.80.73:9200/osc \
+  --type=data
+```
+
+Hacemos este proceso son todos los indices
