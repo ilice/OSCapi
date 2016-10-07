@@ -5,8 +5,6 @@ require_once 'slack_notification.php';
 require_once 'cUrl.php';
 $config = include 'config.php';
 
-define ( "username", "mariamunoz" );
-define ( "password", "39y67h" );
 define ( "error", '{"error":"error"}' );
 
 $querystring = $_SERVER ['QUERY_STRING'];
@@ -74,18 +72,59 @@ function main($parametros) {
 	}
 	return $resultado;
 }
-function obtenEstaciones($latitud, $longitud) {
-	$url = 'http://www.inforiego.org/opencms/rest/estacion?username=' . username . '&password=' . password;
-	
-	if ($latitud != null) {
-		$url = $url . '&latitud=' . $latitud . '&longitud=' . $longitud;
+function obtenEstaciones($latitud, $longitud, $inforiego = true) {
+	if (!$inforiego) {
+		$url = $GLOBALS ['config'] ['inforiegoEstacionEndpoint'];
+		
+		if ($latitud != null) {
+			$url = $url . '&latitud=' . $latitud . '&longitud=' . $longitud;
+		}
+		
+		$response = getHttpcUrl ( $url );
+		
+		if (!(stripos ( $response, 'javax.servlet.ServletException' ) === false)) {
+			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . $response . " al consultar las estaciones a inforiego" );
+			$inforiego = false;
+			$response = obtenEstaciones ( $latitud, $longitud, $inforiego );
+		}
+	} else {
+		$url = $GLOBALS ['config'] ['elasticendpoint'] . '/inforiego/info_riego_station/_search';
+		
+		if ($latitud != null) {
+			
+			$input = '{
+					    "size": 1, 
+    					"sort" : [
+        					{
+            					"_geo_distance" : {
+									"lat_lon" : {
+										"lat" : ' . $latitud . ',
+										"lon" : ' . $longitud . '
+									},
+									"order" : "asc",
+									"unit" : "km",
+									"mode" : "min",
+									"distance_type" : "sloppy_arc"
+								}
+							}
+						]
+					}';
+			$response_json = json_decode(postHttpcUrl ( $url, $input ), true);
+			$response = json_encode($response_json['hits']['hits']);
+		} else {
+			$response_json =json_decode( getHttpUrl($url)['hits']['hits'], true);
+			$response = json_encode($response_json['hits']['hits']);
+		}
 	}
 	
-	$response = getHttpcUrl ( $url );
 	return json_decode ( utf8_encode ( $response ), true );
 }
 function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 	foreach ( $estaciones as $estacion ) {
+		
+		if($estacion['_source']){
+			$estacion = $estacion['_source'];
+		}
 		
 		$ahora = getDate ();
 		$fecha_ult_modif = fechaUltimoRegistro ( $estacion );
@@ -115,7 +154,7 @@ function actualizaDatosClima($estaciones, $fecha_ini, $fecha_fin) {
 				$fin = $fecha_fin;
 			}
 			
-			$url = 'http://www.inforiego.org/opencms/rest/diario?username=' . username . '&password=' . password . '&provincia=' . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini . '&fecha_fin=' . $fin . '&fecha_ult_modif=' . $fecha_ult_modif;
+			$url = $GLOBALS ['config'] ['inforiegoDiarioEndpoint'] . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini . '&fecha_fin=' . $fin . '&fecha_ult_modif=' . $fecha_ult_modif;
 			
 			$response = getHttpcUrl ( $url );
 			$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -177,7 +216,7 @@ function actualizaRecord($estaciones, $fecha_ini, $fecha_fin) {
 					$fin_month = $fin;
 				}
 				
-				$url = 'http://www.inforiego.org/opencms/rest/horario?username=' . username . '&password=' . password . '&provincia=' . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini_month . '&fecha_fin=' . $fin_month . '&fecha_ult_modif=' . $fecha_ult_modif;
+				$url = $GLOBALS ['config'] ['inforiegoHorarioEndpoint'] . $estacion ["IDPROVINCIA"] . '&estacion=' . $estacion ["IDESTACION"] . '&fecha_ini=' . $ini_month . '&fecha_fin=' . $fin_month . '&fecha_ult_modif=' . $fecha_ult_modif;
 				
 				$response = getHttpcUrl ( $url );
 				$response_json = json_decode ( utf8_encode ( $response ), true );
@@ -301,11 +340,11 @@ function diasDeLluvia($latitud, $longitud, $anio) {
 }' );
 	
 	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
-	if(isset($resultado["aggregations"])){
-	$diasDeLluvia = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["doc_count"];
-	$precipitacionAcumulada = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_precipitacion"] ["value"];
-	
-	$respuesta = '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
+	if (isset ( $resultado ["aggregations"] )) {
+		$diasDeLluvia = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["doc_count"];
+		$precipitacionAcumulada = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_precipitacion"] ["value"];
+		
+		$respuesta = '{"diasDeLluvia": ' . $diasDeLluvia . ', "precipitacionAcumulada": ' . $precipitacionAcumulada . '}';
 	}
 	
 	return $respuesta;
@@ -388,21 +427,21 @@ function medidasDiarias($latitud, $longitud, $anio) {
 	$resultado = json_decode ( postHttpcUrl ( $url, $input ), true );
 	
 	if (isset ( $resultado ["error"] )) {
-		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input . " y la url " . $url);
+		slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input . " y la url " . $url );
 		$respuesta = error;
 	} else {
 		
-		if(isset($resultado["aggregations"])){
-		$min_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["min_temperatura"] ["value"];
-		$max_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_temperatura"] ["value"];
-		$media_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_temperatura"] ["value"];
-		$media_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_horas_sol"] ["value"];
-		$max_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_horas_sol"] ["value"];
-		$sum_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_horas_sol"] ["value"];
-		$media_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_radiacion"] ["value"];
-		$max_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_radiacion"] ["value"];
-		$sum_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_radiacion"] ["value"];
-		$respuesta = '{"min_temperatura": ' . $min_temperatura . ',
+		if (isset ( $resultado ["aggregations"] )) {
+			$min_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["min_temperatura"] ["value"];
+			$max_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_temperatura"] ["value"];
+			$media_temperatura = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_temperatura"] ["value"];
+			$media_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_horas_sol"] ["value"];
+			$max_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_horas_sol"] ["value"];
+			$sum_horas_sol = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_horas_sol"] ["value"];
+			$media_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["media_radiacion"] ["value"];
+			$max_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["max_radiacion"] ["value"];
+			$sum_radiacion = $resultado ["aggregations"] ["anios"] ["buckets"] [0] ["sum_radiacion"] ["value"];
+			$respuesta = '{"min_temperatura": ' . $min_temperatura . ',
 			"max_temperatura": ' . $max_temperatura . ',
 			"media_temperatura": ' . $media_temperatura . ',
 			"media_horas_sol": ' . $media_horas_sol . ',
@@ -412,7 +451,7 @@ function medidasDiarias($latitud, $longitud, $anio) {
 			"max_radiacion": ' . $max_radiacion . ',
 			"sum_radiacion": ' . $sum_radiacion . '
 			}';
-		}else{
+		} else {
 			$respuesta = '{"error" : "No se han obtenido datos agregados"}';
 			slack ( "ERROR: " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
 		}
@@ -503,7 +542,7 @@ function datosMedidaPorAnio($medida, $latitud, $longitud, $numeroDeAnios, $inter
 					$data [$anio] [$numero_intervalo] = $valor;
 				}
 			}
-		}else{
+		} else {
 			slack ( "ERROR: No se obtienen correctamente los datos agregados. " . $_SERVER ['SCRIPT_NAME'] . json_encode ( $resultado ) . " para el input " . $input );
 			$respuesta = error;
 		}

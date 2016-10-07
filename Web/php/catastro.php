@@ -3,6 +3,7 @@ header ( "Access-Control-Allow-Origin: *" );
 header ( "Content-Type: application/xml; charset=UTF-8" );
 
 require_once 'cUrl.php';
+$config = include 'config.php';
 
 $querystring = ! empty ( $_SERVER ['QUERY_STRING'] ) ? $_SERVER ['QUERY_STRING'] : "";
 
@@ -14,7 +15,7 @@ if (! empty ( $querystring )) {
 		$parametros [$explode_parametro [0]] = $explode_parametro [1];
 	}
 	
-	$url = "http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/" . $parametros ["end_point"] . "?";
+	$url = $GLOBALS ['config'] ['catastroOVCSWLocalizacionRCendpoint'] . $parametros ["end_point"] . "?";
 	
 	foreach ( $parametros as $clave => $valor ) {
 		if ($clave != "end_point") {

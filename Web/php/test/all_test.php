@@ -8,9 +8,9 @@ class AllTests extends TestSuite {
     function __construct() {
         parent::__construct();
         $this->addFile(dirname(__FILE__) . '/altitud_test.php');
-        //$this->addFile(dirname(__FILE__) . '/api_rest_test.php');
+        $this->addFile(dirname(__FILE__) . '/api_rest_test.php');
         $this->addFile(dirname(__FILE__) . '/catastro_test.php');
-        //$this->addFile(dirname(__FILE__) . '/inforiego_test.php');
+        $this->addFile(dirname(__FILE__) . '/inforiego_test.php');
     }
 }
 ?>
