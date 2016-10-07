@@ -68,9 +68,10 @@ def try_rest(last_rest_time, working_interval_minutes, rest_time_minutes):
 
 def try_times(f, max_trials, time_wait):
     trial = 0
-    while True:
+    while trial < max_trials:
         try:
             f()
+            return
         except Exception as e:
             conf.error_handler.error(__name__, "try_times -- " + f.__name__, str(e))
             conf.error_handler.flush()
