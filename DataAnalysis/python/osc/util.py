@@ -93,7 +93,7 @@ def wait_for_yellow_cluster_status():
             print 'Cluster status is red. Waiting for yellow status'
 
 
-def elastic_bulk_update(records):
+def elastic_bulk_update(records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -105,12 +105,15 @@ def elastic_bulk_update(records):
                           'doc': r.to_dict()} for r in records))
     except Exception as e:
         for record in records:
-            conf.error_handler.error(__name__,
-                                     'elastic_bulk_update',
-                                     str(type(e)) + ': ' + str(record.to_dict()))
+            if retry:
+                elastic_bulk_update([record], retry=False)
+            else:
+                conf.error_handler.error(__name__,
+                                         'elastic_bulk_update',
+                                         str(type(e)) + ': ' + str(record.to_dict()))
 
 
-def elastic_bulk_save(records):
+def elastic_bulk_save(records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -121,6 +124,9 @@ def elastic_bulk_save(records):
                           '_source': r.to_dict()} for r in records))
     except Exception as e:
         for record in records:
-            conf.error_handler.error(__name__,
-                                     'save2elasticsearch',
-                                     str(type(e)) + ': ' + str(record.to_dict()))
+            if retry:
+                elastic_bulk_save([record], retry=False)
+            else:
+                conf.error_handler.error(__name__,
+                                         'save2elasticsearch',
+                                         str(type(e)) + ': ' + str(record.to_dict()))
