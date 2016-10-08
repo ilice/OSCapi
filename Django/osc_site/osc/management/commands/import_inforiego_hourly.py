@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Imports the specified years of daily data at inforiego'
+    help = 'Imports the specified years of hourly data at inforiego'
 
     def add_arguments(self, parser):
         parser.add_argument('--last_update_date', dest='last_update_date', type=str)
@@ -17,4 +17,4 @@ class Command(BaseCommand):
         years = options['years']
         last_update_date = options['last_update_date']
 
-        insert_all_stations_inforiego_daily(years, last_update_date)
+        insert_all_stations_inforiego_hourly(years, last_update_date)
