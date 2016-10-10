@@ -3,7 +3,7 @@ import os
 
 from elasticsearch_dsl.connections import connections
 
-from osc.util.handlers import SlackErrorHandler, FileErrorHandler
+from osc.util.handlers import SlackErrorHandler, DBErrorHandler
 
 import atexit
 
@@ -61,23 +61,22 @@ class ErrorHandler:
     def __init__(self, error_handlers):
         self.error_handlers = error_handlers
 
-    def error(self, module_name, function_name, message):
+    def error(self, process_name, module_name, function_name, message, actionable_info=None):
         for handler in self.error_handlers:
-            handler.error(module_name, function_name, message)
+            handler.error(process_name, module_name, function_name, message, actionable_info)
 
-    def warning(self, module_name, function_name, message):
+    def warning(self, process_name, module_name, function_name, message, actionable_info=None):
         for handler in self.error_handlers:
-            handler.warning(module_name, function_name, message)
+            handler.warning(process_name, module_name, function_name, message, actionable_info)
 
     def flush(self):
         for handler in self.error_handlers:
             handler.flush()
 
-error_handler = ErrorHandler([SlackErrorHandler(config.get('slack', 'token'),
-                                                         config.getint('slack', 'flush_bucket'),
-                                                         error_dir,
-                                                         url),
-                              FileErrorHandler(config.get('importer', 'tmp_dir'))])
+error_handler = ErrorHandler([DBErrorHandler(),
+                              SlackErrorHandler(config.get('slack', 'token'),
+                                                config.getint('slack', 'flush_bucket'),
+                                                url)])
 
 
 def flush_handlers():

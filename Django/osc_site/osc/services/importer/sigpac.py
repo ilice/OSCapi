@@ -25,6 +25,7 @@ import datetime
 
 from osc.exceptions import ConnectionError
 from osc.services import obtain_elevation_from_google
+from osc.models import BatchProcess
 
 __all__ = ['save_plots_to_elasticsearch', 'all_sigpac_zipcodes']
 
@@ -104,7 +105,10 @@ def download_shapefile(zip_code,
 
         ftp.close()
     except Exception as e:
-        util.error_handler.error(__name__, 'download_shapefile', zip_code + ': ' + str(e))
+        util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                 __name__,
+                                 'download_shapefile',
+                                 zip_code + ': ' + str(e))
 
 
 def get_shapefile(zip_code,
@@ -132,7 +136,10 @@ def get_shapefile(zip_code,
 
         return sp
     except Exception as e:
-        util.error_handler.error(__name__, "get_shapefile", zip_code + ': ' + str(e))
+        util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                 __name__,
+                                 "get_shapefile",
+                                 zip_code + ': ' + str(e))
         return None
 
 
@@ -177,7 +184,10 @@ def get_dataframe_from_shapefile(zip_code, sf):
 
         return pd.DataFrame(fields_dict)
     except Exception as e:
-        util.error_handler.error(__name__, "get_dataframe_from_shapefile", zip_code + ': ' + str(e))
+        util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                 __name__,
+                                 "get_dataframe_from_shapefile",
+                                 zip_code + ': ' + str(e))
         return None
 
 
@@ -207,7 +217,10 @@ def write_csv(zip_codes,
 
                     df.to_csv(csv, sep=';')
                 except Exception as e:
-                    util.error_handler.error(__name__, "write_csv", zip_code + ': ' + str(e))
+                    util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                             __name__,
+                                             "write_csv",
+                                             zip_code + ': ' + str(e))
 
 
 def compute_bb_center(row, axis=None):
@@ -259,7 +272,10 @@ def get_dataframe(zip_codes,
                                                  'ZONA': long},
                                           usecols=usecols))
         except Exception as e:
-            util.error_handler.error(__name__, 'get_dataframe', zip_code + ': ' + str(e))
+            util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                     __name__,
+                                     'get_dataframe',
+                                     zip_code + ': ' + str(e))
 
     df = pd.concat(dataframes)
 
@@ -433,9 +449,11 @@ def build_record(row):
         record.dn_oid = long(row.DN_OID)
         return record
     except Exception as e:
-        util.error_handler.error(__name__,
-                                 'save2elasticsearch',
-                                 str(e) + ': ' + str(row))
+        util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                 __name__,
+                                 'build_record',
+                                 str(e),
+                                 str(row))
         return None
 
 
@@ -513,7 +531,10 @@ def add_altitude_info(provincia, municipio=None):
         sigpac_record.init()
         time.sleep(5)
     except Exception as e:
-        util.error_handler.error(__name__, "build_record", str(e))
+        util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                 __name__,
+                                 "build_record",
+                                 str(e))
         util.error_handler.flush()
         raise
 
@@ -542,7 +563,8 @@ def add_altitude_info(provincia, municipio=None):
                 print (" ...success")
             except ConnectionError as e:
                 print (" ...error")
-                util.error_handler.error(__name__,
+                util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                         __name__,
                                          'obtain_elevation',
                                          e.message)
 
@@ -554,6 +576,7 @@ def add_altitude_info(provincia, municipio=None):
             records = obtain_elevation(records, centers)
             util.elastic_bulk_update(records)
         except ConnectionError as e:
-            util.error_handler.error(__name__,
+            util.error_handler.error(BatchProcess.P_SIGPAC_PLOTS,
+                                     __name__,
                                      'obtain_elevation',
                                      e.message)

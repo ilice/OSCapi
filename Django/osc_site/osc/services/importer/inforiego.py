@@ -11,6 +11,8 @@ from elasticsearch_dsl.connections import connections
 import requests
 import calendar
 
+from osc.models import BatchProcess
+
 import osc.util as util
 
 __all__ = ['insert_all_stations_inforiego_daily',
@@ -103,7 +105,11 @@ def store_daily_document(document,
         util.wait_for_yellow_cluster_status()
         connection.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
-        util.error_handler.error(__name__, "insert_inforiego_daily_years", str(document))
+        util.error_handler.error(BatchProcess.P_INFORIEGO_DAILY,
+                                 __name__,
+                                 "store_daily_document",
+                                 str(type(e)),
+                                 str(document))
 
 
 def insert_inforiego_daily_years(provincia,
@@ -231,7 +237,11 @@ def store_hourly_document(document,
         util.wait_for_yellow_cluster_status()
         connection.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
-        util.error_handler.error(__name__, "insert_inforiego_daily_years", str(document))
+        util.error_handler.error(BatchProcess.P_INFORIEGO_DAILY,
+                                 __name__,
+                                 "store_hourly_document",
+                                 str(type(e)),
+                                 str(document))
 
 
 def insert_inforiego_hourly_years(provincia,

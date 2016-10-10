@@ -8,7 +8,6 @@ import config as conf
 import datetime
 import time
 
-
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
@@ -73,8 +72,6 @@ def try_times(f, max_trials, time_wait):
             f()
             return
         except Exception as e:
-            conf.error_handler.error(__name__, "try_times -- " + f.__name__, str(e))
-            conf.error_handler.flush()
             if trial > max_trials:
                 raise
 
@@ -93,7 +90,7 @@ def wait_for_yellow_cluster_status():
             print ('Cluster status is red. Waiting for yellow status')
 
 
-def elastic_bulk_update(records, retry=True):
+def elastic_bulk_update(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -108,12 +105,14 @@ def elastic_bulk_update(records, retry=True):
             if retry:
                 elastic_bulk_update([record], retry=False)
             else:
-                conf.error_handler.error(__name__,
-                                         'elastic_bulk_update',
-                                         str(type(e)) + ': ' + str(record.to_dict()))
+                conf.error_handler.error(process_name,
+                                         __name__,
+                                         'elastic_bulk_save',
+                                         str(type(e)),
+                                         str(record.to_dict()))
 
 
-def elastic_bulk_save(records, retry=True):
+def elastic_bulk_save(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -127,6 +126,8 @@ def elastic_bulk_save(records, retry=True):
             if retry:
                 elastic_bulk_save([record], retry=False)
             else:
-                conf.error_handler.error(__name__,
-                                         'save2elasticsearch',
-                                         str(type(e)) + ': ' + str(record.to_dict()))
+                conf.error_handler.error(process_name,
+                                         __name__,
+                                         'elastic_bulk_save',
+                                         str(type(e)),
+                                         str(record.to_dict()))
