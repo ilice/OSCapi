@@ -1,11 +1,6 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 
-from services import google
-
-
-def index(request):
-    return render(request, 'osc/home.html', {})
+from osc.services import google
 
 
 def altitud(request):

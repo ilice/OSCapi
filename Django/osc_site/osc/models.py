@@ -13,10 +13,11 @@ class BatchProcess(models.Model):
     PROCESS_STATUS = (
         ('P', 'In Process'),
         ('F', 'Failed'),
-        ('S', 'Success')
+        ('S', 'Success'),
+        ('C', 'Cancelled')
     )
 
     name = models.CharField(max_length=4, choices=PROCESS_NAMES)
     status = models.CharField(max_length=1, choices=PROCESS_STATUS)
-    date_launched = models.DateTimeField()
+    date_launched = models.DateTimeField(auto_now_add=True)
     date_finished = models.DateTimeField(null=True)
