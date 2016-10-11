@@ -23,13 +23,13 @@ body, html {
 /* Second image (Portfolio) */
 .bgimg-2 {
     background-image: url('../img/14469337569_fe1a849240_o.jpg');
-    min-height: 10%;
+    min-height: 20%;
 }
 
 /* Third image (Contact) */
 .bgimg-3 {
     background-image: url('../img/14469337569_fe1a849240_o.jpg');
-    min-height: 10%;
+    min-height: 20%;
 }
 
 .w3-wide {letter-spacing: 10px;}
