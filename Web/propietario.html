@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<title>Conoce tu parcela y aprovéchala online | Open Smart
+	Country</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords"
+	content="Open Smart Country, Agrotech, IoT, Analitycs, Open Data, Parcela, Terreno, Aprovechamiento, Rentabilidad" />
+<meta name="description"
+	content="Conoce tu parcela, obten un perfil online basado en datos abietos y aprovéchala, te ofrecemos alternativas de uso sostenibles" />
+<meta name="author" content="Isabel Muñoz @teanocrata" />
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="css/estilo.css" />
+<link rel="stylesheet" href="css/propietario.css" />
+<link href="OpenSmartCountry_logo_192x192.png" rel="icon"
+	sizes="192x192" />
+<link href="OpenSmartCountry_logo_128x128.png" rel="icon"
+	sizes="128x128" />
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script',
+			'https://www.google-analytics.com/analytics.js', 'ga');
+
+	ga('create', 'UA-74247467-2', 'auto');
+	ga('send', 'pageview');
+</script>
+<body>
+
+	<!-- Navbar (sit on top) -->
+	<div class="w3-top">
+		<ul class="w3-navbar w3-card-2 w3-left-align w3-text-light-grey"
+			id="myNavbar">
+			<li class="w3-hide-medium w3-hide-large w3-opennav w3-right"><a
+				class="w3-padding-large" href="javascript:void(0)"
+				onclick="myFunction()" title="Toggle Navigation Menu"><i
+					class="fa fa-bars"></i></a></li>
+			<li><a href="index.html" class="w3-padding-large"><img
+					id="logo" src="img/OpenSmartCountry_logo_light_grey_25x26.png"
+					alt="Open Smart Country logo"></img></a></li>
+			<li><a href="team.html" class="w3-hide-small w3-padding-large ">NOSOTROS</a></li>
+			<li><a href="javascript:void(0)"
+				class="w3-hide-small w3-padding-large">LA IDEA</a></li>
+			<li><a
+				href="#contacto"
+				class="w3-hide-small w3-padding-large">CONTACTO</a></li>
+			<li id="botonBuscaTuParcelaNavBar"></li>
+			<li class="w3-hide-small w3-right"><a
+				href="https://twitter.com/opnsc" class="w3-padding-large"><i
+					class="fa fa-twitter"></i></a></li>
+			<li class="w3-hide-small w3-right"><a
+				href="https://www.facebook.com/OpnSC/" class="w3-padding-large"><i
+					class="fa fa-facebook-official"></i></a></li>
+			<li class="w3-hide-small w3-right"><a
+				href="https://github.com/teanocrata/OpenSmartCountry"
+				class="w3-padding-large"><i class="fa fa-github"></i></a></li>
+		</ul>
+	</div>
+
+	<!-- Navbar on small screens -->
+	<div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium w3-top"
+		style="margin-top: 46px">
+		<ul class="w3-navbar w3-left-align w3-dark-grey">
+			<li><a href="team.html"
+				class="w3-padding-large w3-text-light-grey">NOSOTROS</a></li>
+			<li><a href="javascript:void(0)"
+				class="w3-padding-large w3-text-light-grey">LA IDEA</a></li>
+			<li><a
+				onclick="document.getElementById('suscripcion').style.display='block'"
+				class="w3-padding-large w3-text-light-grey">CONTACTO</a></li>
+		</ul>
+	</div>
+
+	<!-- First Parallax Image with Logo Text -->
+	<header class="bgimg-1 w3-opacity w3-display-container">
+		<div class="w3-display-middle w3-text-light-grey"
+			style="text-shadow: 0 0 10px black;">
+			<h1
+				class="w3-center w3-padding-xlarge w3-xxlarge w3-wide w3-animate-opacity ">
+				<span class="w3-hide-small">CONOCE TU PARCELA Y </span>APROVÉCHALA
+			</h1>
+			<p class="w3-large w3-center">Obten hoy por tiempo limitado tu
+				perfil gratuito online</p>
+			<div class="w3-center">
+				<button
+					class="w3-btn w3-padding-xlarge w3-ripple w3-large w3-hover-dark-grey w3-margin-top"
+					onclick="location.href='mapaDeParcelas.html'">Busca tu
+					parcela</button>
+			</div>
+		</div>
+
+	</header>
+
+	<!-- Container (Cómo obtener el perfil) -->
+	<div class="w3-content w3-container w3-padding-64">
+		<h3 class="w3-center">
+			¿Cómo <strong>obtener tu perfil</strong> y dar un paso hacia el <strong>aprovechamiento
+				inteligente</strong> de tu parcela?
+		</h3>
+		<p class="w3-center">
+			<em>Sigue estos 3 pasos, es gratis y tú decides qué quieres
+				hacer</em>
+		</p>
+		<div class="w3-row-padding w3-center w3-margin-top">
+			<div class="w3-third">
+				<div class="w3-card-2 w3-padding-top" style="min-height: 460px">
+					<h4>Localiza tu parcela en el mapa</h4>
+					<br> <i
+						class="fa fa-map-marker w3-margin-bottom w3-text-theme"
+						style="font-size: 120px"></i>
+					<p>Igual que en Google Maps</p>
+					<p>Por la dirección</p>
+					<p>Por el código postal</p>
+					<p>Por las coordenadas geográficas</p>
+					<p>
+						Por la <strong>referencia catastral</strong>
+					</p>
+				</div>
+			</div>
+
+			<div class="w3-third">
+				<div class="w3-card-2 w3-padding-top" style="min-height: 460px">
+					<h4>Obten tu perfil de trabajo</h4>
+					<br> <i class="fa fa-pencil w3-margin-bottom w3-text-theme"
+						style="font-size: 120px"></i>
+					<p>Con toda la información automática</p>
+					<p>Información catastral, agroclimática</p>
+					<p>
+						Con <strong>alternativas de uso</strong> basadas en datos
+					</p>
+					<p>Puedes añadir fotos, texto, enlaces,..</p>
+				</div>
+			</div>
+
+			<div class="w3-third">
+				<div class="w3-card-2 w3-padding-top" style="min-height: 460px">
+					<h4>Decide qué hacer</h4>
+					<br> <i
+						class="fa fa-lightbulb-o w3-margin-bottom w3-text-theme"
+						style="font-size: 120px"></i>
+					<p>
+						<i class="fa fa-file-text"></i> Obten un informe para descargar
+					</p>
+					<p>
+						<i class="fa fa fa-cloud"></i> Guarda tu perfil para seguir más
+						adelante
+					</p>
+					<p>
+						<i class="fa fa-share-alt"></i> <strong>¡Compártelo!</strong> Hoy
+						si no está en la Web, no existe
+					</p>
+					<p>
+						<i class="fa fa-user-times"></i> <em>Nada: si no te ha
+							gustado, borraremos todo, como si no hubieras estado aquí</em>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="w3-row-padding w3-center w3-margin-top">
+			<button
+				class="w3-btn w3-ripple w3-dark-grey w3-hover-light-grey w3-margin-top"
+				onclick="location.href='mapaDeParcelas.html'">Más ayuda</button>
+		</div>
+	</div>
+
+	<!-- Second Parallax Image with Portfolio Text -->
+	<div class="bgimg-2 w3-display-container"
+		style="text-shadow: 0 0 10px black;">
+		<div class="w3-display-middle">
+			<span class="w3-xlarge w3-text-light-grey w3-wide">¿Por qué
+				OPEN<strong>SMART</strong>COUNTRY?
+			</span>
+		</div>
+	</div>
+
+	<!-- Container (Por qué Open Smart Country) -->
+	<div class="w3-content w3-container w3-padding-64">
+		<div class="w3-row-padding w3-center w3-margin-top">
+			<div class="w3-half">
+				<div class="w3-card-2 w3-padding-top" style="min-height: 290px">
+					<header class="w3-container w3-dark-grey">
+						<h3>Rápido y fácil</h3>
+					</header>
+					<ul class="w3-ul w3-hoverable">
+						<li><i class="fa fa-check"></i> Simplemente selecciona tu
+							parcela, nosotros nos encargamos de lo demás</li>
+						<li><i class="fa fa-check"></i> El perfil se carga
+							automáticamente y en el momento</li>
+						<li><i class="fa fa-check"></i> Con todos los datos
+							disponibles como datos abiertos: catastro, ministerio
+							agricultura, agroclimáticos, satélites,.. ¡Y creciendo!</li>
+						<li><i class="fa fa-check"></i> Visual, muy visual</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="w3-half">
+				<div class="w3-card-2 w3-padding-top" style="min-height: 290px">
+					<header class="w3-container w3-dark-grey">
+						<h3>Inteligente y sostenible</h3>
+					</header>
+					<ul class="w3-ul w3-hoverable">
+						<li><i class="fa fa-check"></i> Los mejores algoritmos para
+							encontrar alternativas para tu parcela</li>
+						<li><i class="fa fa-check"></i> Siempre pensando en el medio
+							ambiente, el futuro será sostenible o no será</li>
+						<li><i class="fa fa-check"></i> Al servicio de las personas,
+							tú tomas todas las decisiones</li>
+						<li><i class="fa fa-check"></i> En continua evolución y
+							actualización</li>
+					</ul>
+				</div>
+			</div>
+
+
+			<div class="w3-row-padding w3-center w3-margin-top">
+				<button
+					class="w3-btn w3-ripple w3-dark-grey w3-hover-light-grey w3-margin-top"
+					onclick="location.href='mapaDeParcelas.html'">
+					Obten tu perfil gratuito <strong>ya</strong>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal for full size images on click-->
+	<div id="modal01" class="w3-modal w3-black"
+		onclick="this.style.display='none'">
+		<span
+			class="w3-closebtn w3-hover-red w3-text-white w3-xxxlarge w3-container w3-display-topright">×</span>
+		<div
+			class="w3-modal-content w3-animate-zoom w3-center w3-transparent w3-padding-64">
+			<img id="img01" style="max-width: 100%">
+		</div>
+	</div>
+
+	<!-- Third Parallax Image with Portfolio Text -->
+	<div id="contacto" class="bgimg-3 w3-display-container"
+		style="text-shadow: 0 0 10px black;">
+		<div class="w3-display-middle">
+			<span class="w3-xlarge w3-text-light-grey w3-wide">¿Más? <strong>Contacta</strong>
+				con nosotros
+			</span>
+		</div>
+	</div>
+
+	<!-- Container (Contact Section) -->
+	<div  class="w3-content w3-container w3-padding-64">
+		<h3 class="w3-center">DÓNDE ESTAMOS</h3>
+		<p class="w3-center">
+			<em>¡Queremos escucharte!</em>
+		</p>
+
+		<div class="w3-row w3-padding-32 w3-section">
+			<div class="w3-col m4 w3-container">
+				<!-- Add Google Maps -->
+				<div id="googleMap" class="w3-round-large"></div>
+			</div>
+			<div class="w3-col m8 w3-container w3-section">
+				<div class="w3-large w3-margin-bottom">
+					<i class="fa fa-map-marker w3-hover-text-black" style="width: 30px"></i>
+					Madrid, ES<br> <i class="fa fa-phone w3-hover-text-black"
+						style="width: 30px"></i> Teléfono: +34 615401486<br> <i
+						class="fa fa-envelope w3-hover-text-black" style="width: 30px">
+					</i> Email: info@opensmartcoutry.com<br>
+				</div>
+				<p>Tómate un café con nosotros, o déjanos una nota:</p>
+				<form class="w3-container"
+					enctype="application/x-www-form-urlencoded"
+					action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o"
+					method="post">
+					<div class="zend_form">
+						<div id="groups-label"></div>
+						<div id="groups-element">
+							<input class="w3-input" type="hidden" name="groups[]" value="1" />
+						</div>
+						 <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+						 <div class="w3-half">
+						<div id="name-label">
+							<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+						</div>
+						<div id="name-element">
+							<input type="text" class="w3-input w3-border w3-hover-light-grey" name="name" id="name"
+								value="" placeholder="Nombre" />
+						</div>
+</div><div class="w3-half">
+						<div id="email-label">
+							<label for="email"
+								class="required w3-label w3-validate w3-text-grey">Email</label>
+						</div>
+						<div id="email-element">
+							<input type="email" class="w3-input w3-border w3-hover-light-grey" name="email" id="email"
+								value="" required placeholder="e-mail" />
+						</div>
+						</div></div>
+						
+						 <input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Comentario">
+
+						<div id="submit-label"></div>
+						<div id="submit-element">
+							<button type="submit" name="submit" id="submit"
+								class="w3-btn w3-dark-grey w3-margin-top"
+								onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Enviar</button>
+						</div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- Footer -->
+	<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
+		<p>
+			Open Smat Country
+		</p>
+	</footer>
+
+	<!-- Add Google Maps -->
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M"></script>
+	<script>
+		var myCenter = new google.maps.LatLng(40.488647, -3.656272);
+
+		function initialize() {
+			var mapProp = {
+				center : myCenter,
+				zoom : 12,
+				scrollwheel : false,
+				draggable : false,
+				mapTypeId : google.maps.MapTypeId.ROADMAP
+			};
+
+			var map = new google.maps.Map(document.getElementById("googleMap"),
+					mapProp);
+
+			var marker = new google.maps.Marker({
+				position : myCenter,
+			});
+
+			marker.setMap(map);
+		}
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+
+		// Modal Image Gallery
+		function onClick(element) {
+			document.getElementById("img01").src = element.src;
+			document.getElementById("modal01").style.display = "block";
+		}
+
+		// Change style of navbar on scroll
+		window.onscroll = function() {
+			myFunction()
+		};
+		function myFunction() {
+			var navbar = document.getElementById("myNavbar");
+			var boton = document.getElementById("botonBuscaTuParcelaNavBar");
+			var logo = document.getElementById("logo");
+			if (document.body.scrollTop > 100
+					|| document.documentElement.scrollTop > 100) {
+				navbar.className = "w3-navbar w3-card-2 w3-left-align w3-text-grey w3-white";
+				logo.src = "img/OpenSmartCountry_logo_25x26.png";
+				logo.className = "w3-opacity";
+				boton.innerHTML = '<button class="w3-btn w3-ripple w3-large w3-hover-dark-grey w3-text-light-grey w3-dark-grey" onclick="location.href=\'mapaDeParcelas.html\'">Busca tu parcela</button>';
+			} else {
+				navbar.className = "w3-navbar w3-card-2 w3-left-align w3-text-light-grey";
+				boton.innerHTML = "";
+				logo.src = "img/OpenSmartCountry_logo_light_grey_25x26.png";
+				logo.className = "";
+			}
+		}
+	</script>
+</body>
+</html>
