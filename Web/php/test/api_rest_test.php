@@ -275,7 +275,7 @@ class TestOfapi_rest extends UnitTestCase {
 			$this->assertTrue ( $estaEnAlgunRango, "La altitud de referencia está comprendida en alguno de los rangos de altitudes del cultivo" );
 		}
 	}
-	function teestBuscaPorReferenciaCatastral() {
+	function testBuscaPorReferenciaCatastral() {
 		$referenciaCatastral = "372840000000600098";
 		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
 		$web_folder = "Web/";
@@ -294,6 +294,46 @@ class TestOfapi_rest extends UnitTestCase {
 		if (count ( $hits ) > 0) {
 			$this->assertTrue ( count ( $hits [0] ["_source"] ["points"] ["coordinates"] [0] ) >= 2, "Tiene suficientes coordenadas para que sea un recinto" );
 		}
+	}
+	function testBuscaCoordenadasPorReferenciaCatastral() {
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
+		$url = $server_name . "/" . $web_folder . "php/api_rest.php/plots/sigpac/_search";
+		
+		$data = '{"query": {"constant_score": {"filter": {"bool": {"must": [ {"term": {"provincia": 37 }}, { "term": { "municipio": 284 }},{ "term": { "poligono": 6 } },  { "term": {"parcela": 98 }} ], "must_not": {"match": {"uso_sigpac": "CA" }}} }}}}';
+		
+		$response = $this->getResponse ( $url, $data );
+		
+		$this->assertNotNull ( $response, 'Hay respuesta' );
+		$response_json = json_decode ( $response, true );
+		$error = json_last_error_msg ();
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$results = $response_json ['hits'];
+		$this->assertNotNull ( $results, 'Se hace la llamada interna a la base de datos y esta responde para la url: ' . $url );
+		$hits = $results ['hits'];
+		$this->assertTrue ( count ( $hits ) == 1, 'Tiene que haber un resultado para la url: ' . $url . " y los datos " . $data);
+		$this->assertTrue ($results["total"] == 1, 'Tiene que haber un resultado para la url: ' . $url . " y los datos " . $data);
+	}
+	function testBuscaBasurillaPorId() {
+		$idBasurilla = "37";
+		$server_name = ! empty ( $_SERVER ['SERVER_NAME'] ) ? $_SERVER ['SERVER_NAME'] : "http://localhost:8080";
+		$web_folder = "Web/";
+		$url = $server_name . "/" . $web_folder . "php/api_rest.php/crappyzone/bullshit/" . $idBasurilla;
+		
+		$response = $this->getResponse ( $url );
+		
+		$this->assertNotNull ( $response, 'Hay respuesta' );
+		$response_json = json_decode ( $response, true );
+		$error = json_last_error_msg ();
+		$this->assertEqual ( $error, 'No error', 'Es json y no hay errores al parsearlo, error: ' . $error );
+		$resultsForSearch = isset ( $response_json ['hits'] ) ? $response_json ['hits'] : NULL;
+		$this->assertNull ( $resultsForSearch, 'Esto no es una búsqueda sino un acceso a un elemento, no pueden existir hits para la url: ' . $url );
+		$resultsForGetElement = isset ( $response_json ['_source'] ) ? $response_json ['_source'] : NULL;
+		$this->assertNotNull ( $resultsForGetElement, 'Se accede correctametne al elemento para la url: ' . $url );
+		$boundaries = isset ( $resultsForGetElement ["boundaries"] ) ? $resultsForGetElement ["boundaries"] : NULL;
+		$this->assertNotNull ( $boundaries, 'Existe geometría para el elemento ' . $idBasurilla . ' para la url: ' . $url );
+		$coordinates = isset ( $boundaries ["coordinates"] ) ? $boundaries ["coordinates"] : [ ];
+		$this->assertEqual ( count ( $coordinates ) > 4, 'Deben existir polígonos para el elemento : ' . $idBasurilla );
 	}
 }
 ?>
