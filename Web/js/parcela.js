@@ -367,6 +367,18 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 							.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
 					document.getElementById("ssp").innerHTML = dspr[0]
 							.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
+					
+					var czc = bi[0].getElementsByTagName("dt")[0]
+					.getElementsByTagName("locs")[0]
+					.getElementsByTagName("lors")[0]
+					.getElementsByTagName("lorus")[0]
+					.getElementsByTagName("czc")[0].childNodes[0].nodeValue;
+					
+					if(czc == 0){
+						document.getElementById("czc").innerHTML = "No";
+					}else{
+						document.getElementById("czc").innerHTML = czc;
+					}
 
 					var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
 							.getElementsByTagName("loine")[0]

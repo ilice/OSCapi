@@ -186,7 +186,7 @@
 		<!-- Línea de localización y datos genéricos-->
 		<div class="w3-container w3-section w3-row-padding">
 			<div class="w3-third">
-				<div id="tarjetaMapa" class="w3-card-8">
+				<div id="tarjetaMapa" class="w3-card-8" style="min-height:451px;">
 					<span id="botonCerrar"
 						onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
@@ -195,39 +195,41 @@
 							Localización
 							<button id="datosLindeErrorBadge"
 								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-								style="display: none">
-								<i
-									onclick="document.getElementById('datosLinde').style.display='block'"
-									class="fa fa-ban"></i>
+								style="display: none"
+								onclick="document.getElementById('datosLinde').style.display='block'">
+								<i class="fa fa-ban"></i>
 							</button>
 						</h5>
 						<div id="datosLinde" class="w3-col w3-panel w3-red w3-card-8"
 							style="display: none"></div>
 						<div id="mapa"></div>
-						<table class="w3-table w3-striped w3-bordered">
-							<thead>
+						<div class="w3-responsive">
+							<table class="w3-table w3-striped w3-bordered">
 								<tr>
 									<th>Latitud</th>
-									<th>Longitud</th>
-									<th>Altitud</th>
+									<td><span id="latitud"></span></td>
 								</tr>
-							</thead>
-							<tr>
-								<td><span id="latitud"></span></td>
-								<td><span id="longitud"></span></td>
-								<td><span id="altitud"></span>
-									<button id="idea"
-										class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn">
-										<i class="fa fa fa-lightbulb-o w3-spin"
-											onclick="document.getElementById('idea_modal').style.display='block'"></i>
+								<tr>
+									<th>Longitud</th>
+									<td><span id="longitud"></span></td>
+								</tr>
+								<tr>
+									<th>Altitud</th>
+									<td><span id="altitud"></span>
+										<button id="idea"
+											class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn"
+											onclick="document.getElementById('idea_modal').style.display='block'">
+											<i class="fa fa fa-lightbulb-o w3-spin"></i>
 									</button></td>
-							</tr>
-						</table>
+								</tr>
+							</table>
+						</div>
+
 					</div>
 				</div>
 			</div>
 			<div class="w3-twothird">
-				<div id="catastro" class="w3-card-8">
+				<div id="catastro" class="w3-card-8" style="min-height:451px;">
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
@@ -277,6 +279,11 @@
 								<td><i class="fa fa-gavel w3-brown w3-padding-tiny"></i></td>
 								<td>Superficie</td>
 								<td><i><span id="ssp"> </span> m<sup>2</sup></i></td>
+							</tr>
+							<tr>
+								<td><i class="fa fa-arrows w3-khaki w3-padding-tiny"></i></td>
+								<td>Zona de concentración</td>
+								<td><i><span id="czc"> </span></i></td>
 							</tr>
 						</table>
 						<br /> <a class="w3-btn w3-margin-bottom w3-dark-grey"
