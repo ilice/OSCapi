@@ -63,63 +63,58 @@ function inicializaMapa() {
 		map : mapa,
 		anchorPoint : new google.maps.Point(0, -29)
 	});
-	
+
 	var geocoder = new google.maps.Geocoder();
 
 	document.getElementById('buscar').addEventListener('click', function() {
 		geocodeAddress(geocoder, mapa);
 	});
 
-	autocomplete
-			.addListener(
-					'place_changed',
-					function() {
-						infowindow.close();
-						marker.setVisible(false);
-						var place = autocomplete.getPlace();
-						if (!place.geometry) {
-							geocodeAddress(geocoder, mapa);
-							return;
-						}
+	autocomplete.addListener('place_changed', function() {
+		infowindow.close();
+		marker.setVisible(false);
+		var place = autocomplete.getPlace();
+		if (!place.geometry) {
+			geocodeAddress(geocoder, mapa);
+			return;
+		}
 
-						// If the place has a geometry, then present it on a
-						// map.
-						if (place.geometry.viewport) {
-							mapa.fitBounds(place.geometry.viewport);
-						} else {
-							mapa.setCenter(place.geometry.location);
-							mapa.setZoom(17); // Why 17? Because it looks
-												// good.
-						}
-						marker.setIcon(/** @type {google.maps.Icon} */
-						({
-							url : place.icon,
-							size : new google.maps.Size(71, 71),
-							origin : new google.maps.Point(0, 0),
-							anchor : new google.maps.Point(17, 34),
-							scaledSize : new google.maps.Size(35, 35)
-						}));
-						marker.setPosition(place.geometry.location);
-						// marker.setVisible(true);
+		// If the place has a geometry, then present it on a
+		// map.
+		if (place.geometry.viewport) {
+			mapa.fitBounds(place.geometry.viewport);
+		} else {
+			mapa.setCenter(place.geometry.location);
+			mapa.setZoom(17); // Why 17? Because it looks
+			// good.
+		}
+		marker.setIcon(/** @type {google.maps.Icon} */
+		({
+			url : place.icon,
+			size : new google.maps.Size(71, 71),
+			origin : new google.maps.Point(0, 0),
+			anchor : new google.maps.Point(17, 34),
+			scaledSize : new google.maps.Size(35, 35)
+		}));
+		marker.setPosition(place.geometry.location);
+		// marker.setVisible(true);
 
-						var address = '';
-						if (place.address_components) {
-							address = [
-									(place.address_components[0]
-											&& place.address_components[0].short_name || ''),
-									(place.address_components[1]
-											&& place.address_components[1].short_name || ''),
-									(place.address_components[2]
-											&& place.address_components[2].short_name || '') ]
-									.join(' ');
-						}
+		var address = '';
+		if (place.address_components) {
+			address = [
+					(place.address_components[0]
+							&& place.address_components[0].short_name || ''),
+					(place.address_components[1]
+							&& place.address_components[1].short_name || ''),
+					(place.address_components[2]
+							&& place.address_components[2].short_name || '') ]
+					.join(' ');
+		}
 
-						infowindow.setContent('<div><strong>' + place.name
-								+ '</strong><br>' + address);
-						infowindow.open(mapa, marker);
-					});
-
-	
+		infowindow.setContent('<div><strong>' + place.name + '</strong><br>'
+				+ address);
+		infowindow.open(mapa, marker);
+	});
 
 	var castillaYLeonCoords = [
 
@@ -51359,22 +51354,66 @@ function limpiaMarcadores() {
 }
 
 function geocodeAddress(geocoder, resultsMap) {
-	  var address = document.getElementById('buscador').value;
-	  geocoder.geocode({'address': address}, function(results, status) {
-	    if (status === google.maps.GeocoderStatus.OK) {
-	      resultsMap.setCenter(results[0].geometry.location);
-	      resultsMap.setZoom(15);
-	      var marker = new google.maps.Marker({
-	        map: resultsMap,
-	        position: results[0].geometry.location
-	      });
-	      marker.setVisible(false);
-	      var infowindow = new google.maps.InfoWindow();
-	      infowindow.setContent('<div><strong>'  + address
-					+ '</strong></div>');
+	var address = document.getElementById('buscador').value;
+	geocoder.geocode({
+		'address' : address
+	}, function(results, status) {
+		if (status === google.maps.GeocoderStatus.OK) {
+			resultsMap.setCenter(results[0].geometry.location);
+			resultsMap.setZoom(15);
+			var marker = new google.maps.Marker({
+				map : resultsMap,
+				position : results[0].geometry.location
+			});
+			marker.setVisible(false);
+			var infowindow = new google.maps.InfoWindow();
+			infowindow
+					.setContent('<div><strong>' + address + '</strong></div>');
 			infowindow.open(mapa, marker);
-	    } else {
-	      alert('No se encontró la dirección: ' + status);
-	    }
-	  });
-	}
+		} else {
+			alert('No se encontró la dirección: ' + status);
+		}
+	});
+}
+
+function obtenDatosSIGPAC(c_refpar) {
+
+	var url = "php/api_rest.php/plots" + "/sigpac/_search?q=c_refpar:"
+			+ c_refpar;
+	var coordenadasLinde = [];
+
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		type : 'GET',
+		dataType : "json"
+	});
+
+	request
+			.done(function(response, textStatus, jqXHR) {
+				var hayCoordenadasLinde = false;
+				if (typeof response["hits"] != 'undefined') {
+					var hits = response["hits"]["hits"];
+
+					for (var i = 0; i < hits.length; i++) {
+
+						var hit = hits[i];
+
+						coordenadasLinde
+								.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+						hayCoordenadasLinde = true;
+					}
+
+				}
+				if (!hayCoordenadasLinde) {
+					document.getElementById("datosLinde").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
+							+ 'class="w3-closebtn">&times;</span>'
+							+ '<h3>Error en la obtención de las coordenadas de la linde</strong></h3>'
+							+ '<p>Se han intentado recuperar los datos de las coordenadas de la linde de la parcela, pero ha ocurrido algún problema.</p>'
+							+ 'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
+					document.getElementById("datosLindeErrorBadge").style.display = 'block';
+				}
+			});
+	return coordenadasLinde;
+}
