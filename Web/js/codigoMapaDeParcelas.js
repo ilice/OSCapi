@@ -51383,7 +51383,6 @@ function geocodeAddress(geocoder, resultsMap) {
 			infowindow.setContent('<div>Referencia catastral: <strong>'
 					+ address + '</strong></div>');
 			infowindow.open(mapa, marker);
-			alert('No se encontró la dirección: ' + status);
 		}
 	});
 }
