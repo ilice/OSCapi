@@ -51367,26 +51367,88 @@ function geocodeAddress(geocoder, resultsMap) {
 			});
 			marker.setVisible(false);
 			var infowindow = new google.maps.InfoWindow();
-			infowindow
-					.setContent('<div><strong>' + address + '</strong></div>');
+			infowindow.setContent('<div>Localización aproximada: <strong>'
+					+ address + '</strong></div>');
 			infowindow.open(mapa, marker);
 		} else {
+			var location = buscaLocalizacionPorReferenciaCatastral(address);
+			resultsMap.setCenter(location);
+			resultsMap.setZoom(15);
+			var marker = new google.maps.Marker({
+				map : resultsMap,
+				position : location
+			});
+			marker.setVisible(false);
+			var infowindow = new google.maps.InfoWindow();
+			infowindow.setContent('<div>Referencia catastral: <strong>'
+					+ address + '</strong></div>');
+			infowindow.open(mapa, marker);
 			alert('No se encontró la dirección: ' + status);
 		}
 	});
 }
 
-function obtenDatosSIGPAC(c_refpar) {
-
-	var url = "php/api_rest.php/plots" + "/sigpac/_search?q=c_refpar:"
-			+ c_refpar;
+function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
+	var location = {
+			lat : 40.416616,
+			lng : -3.703801
+	};
+	var base = 10;
+	var provincia = parseInt(referenciaCatastral.substring(0,2), base);
+	var municipio = parseInt(referenciaCatastral.substring(2,5), base);
+	var poligono = parseInt(referenciaCatastral.substring(6,9), base);
+	var parcela = parseInt(referenciaCatastral.substring(9,14), base);
+	
+	var url = "php/api_rest.php/plots" + "/sigpac/_search";
+	
+	var input = '{' + 
+	'   "query": {' + 
+	'      "constant_score": {' + 
+	'         "filter": {' + 
+	'            "bool": {' + 
+	'               "must": [' + 
+	'                  {' + 
+	'                     "term": {' + 
+	'                        "provincia": ' + provincia + 
+	'                     }' + 
+	'                  }, ' + 
+	'                  {' + 
+	'                     "term": {' + 
+	'                        "municipio": ' + municipio + 
+	'                     }' + 
+	'                  }, ' + 
+	'                  {' + 
+	'                     "term": {' + 
+	'                        "poligono": ' + poligono + 
+	'                     }' + 
+	'                  }, ' + 
+	'                  {' + 
+	'                     "term": {' + 
+	'                        "parcela": ' + parcela + 
+	'                     }' + 
+	'                  }' + 
+	'               ],' + 
+	'               "must_not": ' + 
+	'                  {' + 
+	'                      "match": {' + 
+	'                         "uso_sigpac": "CA"' + 
+	'                      }' + 
+	'                  }' + 
+	'               ' + 
+	'            }' + 
+	'         }' + 
+	'      }' + 
+	'   }' + 
+	'}';
+	
 	var coordenadasLinde = [];
 
 	var request = jQuery.ajax({
 		crossDomain : true,
 		async : false,
 		url : url,
-		type : 'GET',
+		data: input,
+		type : 'POST',
 		dataType : "json"
 	});
 
@@ -51400,20 +51462,17 @@ function obtenDatosSIGPAC(c_refpar) {
 
 						var hit = hits[i];
 
-						coordenadasLinde
-								.push(arrayToPathLatLong(hit["_source"]["points"]["coordinates"][0]));
+						//coordenadasLinde
+						//		.push(arrayToPathLatLong(hit["_source"]["bbox_center"]["coordinates"][0]));
 						hayCoordenadasLinde = true;
+						location["lat"] = hit["_source"]["bbox_center"]["lat"];
+						location["lng"] = hit["_source"]["bbox_center"]["lon"];
 					}
 
 				}
-				if (!hayCoordenadasLinde) {
-					document.getElementById("datosLinde").innerHTML = '<span onclick="this.parentElement.style.display=\'none\'"'
-							+ 'class="w3-closebtn">&times;</span>'
-							+ '<h3>Error en la obtención de las coordenadas de la linde</strong></h3>'
-							+ '<p>Se han intentado recuperar los datos de las coordenadas de la linde de la parcela, pero ha ocurrido algún problema.</p>'
-							+ 'Si el problema persiste puede contactar con <a href="mailto:info@opensmartcountry.com">info@opensmartcountry.com</a></p>';
-					document.getElementById("datosLindeErrorBadge").style.display = 'block';
-				}
 			});
-	return coordenadasLinde;
+	
+	
+
+	return location;
 }
