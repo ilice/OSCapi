@@ -17,21 +17,30 @@ $input = file_get_contents('php://input');
 // retrieve the index and type from the path
 $index = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 $type = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+$element = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
 
 //Para ver qué versión estoy utilizando
 $curlVersion = curl_version();
 
 $url = $GLOBALS ['config'] ['elasticendpoint'];
 
+$esAccesoPorElementoExacto = false;
+
 if(strlen($index)>0){
 	$url = "$url/$index" ;
 	
 	if(strlen($type)>0){
 		$url = "$url/$type" ;
+		if(strlen($element)>0){
+			$url = "$url/$element" ;
+			$esAccesoPorElementoExacto = true;
+		}
 	}
 }
 
-$url = "$url/_search" ;
+if(!$esAccesoPorElementoExacto){
+	$url = "$url/_search" ;
+}
 
 if(strlen($querystring)>0){
 	$url = "$url?$querystring" ;

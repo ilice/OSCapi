@@ -256,6 +256,7 @@ function obtenDatosCatastro() {
 								+ coord[0].getElementsByTagName("pc")[0]
 										.getElementsByTagName("pc2")[0].childNodes[0].nodeValue;
 						document.getElementById("rc").innerHTML = rc;
+						document.getElementById("rc_smallBar").innerHTML = rc;
 						document.getElementById("direccion").innerHTML = coord[0]
 								.getElementsByTagName("ldt")[0].childNodes[0].nodeValue;
 						var provincia = "";
@@ -277,6 +278,7 @@ function obtenDatosCatastro() {
 
 	} else {
 		document.getElementById("rc").innerHTML = '37284A00600098';
+		document.getElementById("rc_smallBar").innerHTML = '37284A00600098';
 		document.getElementById("direccion").innerHTML = 'Polígono 6 Parcela 98 FTE LUMBRAL. SANCHOTELLO (SALAMANCA)';
 		c_refpar = obtenDatosPorReferenciaCatastral('37284A00600098', "", "");
 		;
@@ -365,6 +367,18 @@ function obtenDatosPorReferenciaCatastral(rc, provincia, municipio) {
 							.getElementsByTagName("ip")[0].childNodes[0].nodeValue;
 					document.getElementById("ssp").innerHTML = dspr[0]
 							.getElementsByTagName("ssp")[0].childNodes[0].nodeValue;
+					
+					var czc = bi[0].getElementsByTagName("dt")[0]
+					.getElementsByTagName("locs")[0]
+					.getElementsByTagName("lors")[0]
+					.getElementsByTagName("lorus")[0]
+					.getElementsByTagName("czc")[0].childNodes[0].nodeValue;
+					
+					if(czc == 0){
+						document.getElementById("czc").innerHTML = "No";
+					}else{
+						document.getElementById("czc").innerHTML = czc;
+					}
 
 					var cp = ("00" + bi[0].getElementsByTagName("dt")[0]
 							.getElementsByTagName("loine")[0]

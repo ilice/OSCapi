@@ -52,20 +52,31 @@
 
 	<!-- Navbar (sit on top) -->
 	<div class="w3-top">
-		<ul class="w3-navbar w3-card-2 w3-left-align">
-			<li >
-				<a class="w3-padding-large w3-opacity" href="index.html">
+		<ul class="w3-navbar w3-card-2 w3-left-align w3-hide-small">
+			<li><a class="w3-padding-large w3-opacity" href="index.html">
 					<img src="img/OpenSmartCountry_logo_25x26.png"
-					alt="Open Smart Country logo" /></a>
-			</li>
-			<li>
-				<a id="openNav" href="javascript:void(0)" class="w3-padding-large w3-text-grey"
-				onclick="w3_open()">MENU</a>
-			</li>
-			<li class="w3-padding-large w3-right">
-				<span id="rc"></span>
-			</li>
+					alt="Open Smart Country logo" />
+			</a></li>
+			<li><a id="openNav" href="javascript:void(0)"
+				class="w3-padding-large w3-text-grey" onclick="w3_open()">MENU</a></li>
+			<li class="w3-padding-large w3-right"><span id="rc"></span></li>
 		</ul>
+		<div class="w3-hide-medium w3-hide-large">
+			<div class="w3-padding-large w3-opacity"
+				style="width: 15%; float: left;">
+				<a href="index.html"><img id="logo"
+					src="img/OpenSmartCountry_logo_25x26.png"
+					alt="Open Smart Country logo"></img></a>
+			</div>
+			<div class="w3-center w3-padding-large"
+				style="width: 70%; float: left;">
+				<span id="rc_smallBar"></span>
+			</div>
+			<div style="width: 15%; float: left;" class="w3-right w3-margin-top">
+				<a class="w3-padding-large" href="javascript:void(0)"
+					onclick="w3_open()"><i class="fa fa-bars"></i></a>
+			</div>
+		</div>
 	</div>
 
 	<!-- Sidenav/menu -->
@@ -175,7 +186,7 @@
 		<!-- Línea de localización y datos genéricos-->
 		<div class="w3-container w3-section w3-row-padding">
 			<div class="w3-third">
-				<div id="tarjetaMapa" class="w3-card-8">
+				<div id="tarjetaMapa" class="w3-card-8" style="min-height:451px;">
 					<span id="botonCerrar"
 						onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
@@ -184,39 +195,41 @@
 							Localización
 							<button id="datosLindeErrorBadge"
 								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-								style="display: none">
-								<i
-									onclick="document.getElementById('datosLinde').style.display='block'"
-									class="fa fa-ban"></i>
+								style="display: none"
+								onclick="document.getElementById('datosLinde').style.display='block'">
+								<i class="fa fa-ban"></i>
 							</button>
 						</h5>
 						<div id="datosLinde" class="w3-col w3-panel w3-red w3-card-8"
 							style="display: none"></div>
 						<div id="mapa"></div>
-						<table class="w3-table w3-striped w3-bordered">
-							<thead>
+						<div class="w3-responsive">
+							<table class="w3-table w3-striped w3-bordered">
 								<tr>
 									<th>Latitud</th>
-									<th>Longitud</th>
-									<th>Altitud</th>
+									<td><span id="latitud"></span></td>
 								</tr>
-							</thead>
-							<tr>
-								<td><span id="latitud"></span></td>
-								<td><span id="longitud"></span></td>
-								<td><span id="altitud"></span>
-									<button id="idea"
-										class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn">
-										<i class="fa fa fa-lightbulb-o w3-spin"
-											onclick="document.getElementById('idea_modal').style.display='block'"></i>
+								<tr>
+									<th>Longitud</th>
+									<td><span id="longitud"></span></td>
+								</tr>
+								<tr>
+									<th>Altitud</th>
+									<td><span id="altitud"></span>
+										<button id="idea"
+											class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn"
+											onclick="document.getElementById('idea_modal').style.display='block'">
+											<i class="fa fa fa-lightbulb-o w3-spin"></i>
 									</button></td>
-							</tr>
-						</table>
+								</tr>
+							</table>
+						</div>
+
 					</div>
 				</div>
 			</div>
 			<div class="w3-twothird">
-				<div id="catastro" class="w3-card-8">
+				<div id="catastro" class="w3-card-8" style="min-height:451px;">
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
@@ -266,6 +279,11 @@
 								<td><i class="fa fa-gavel w3-brown w3-padding-tiny"></i></td>
 								<td>Superficie</td>
 								<td><i><span id="ssp"> </span> m<sup>2</sup></i></td>
+							</tr>
+							<tr>
+								<td><i class="fa fa-arrows w3-khaki w3-padding-tiny"></i></td>
+								<td>Zona de concentración</td>
+								<td><i><span id="czc"> </span></i></td>
 							</tr>
 						</table>
 						<br /> <a class="w3-btn w3-margin-bottom w3-dark-grey"
@@ -459,9 +477,7 @@
 					<div class="w3-third w3-center" id="tablaResumen">
 						<table>
 							<tr>
-								<td><img
-									src="img/Nube.png"
-									alt="Nube" /></td>
+								<td><img src="img/Nube.png" alt="Nube" /></td>
 							</tr>
 							<tr>
 								<th>Días de lluvia 2016</th>
@@ -495,9 +511,7 @@
 					<div class="w3-third w3-center">
 						<table>
 							<tr>
-								<td><img
-									src="img/Termometro.png"
-									alt="Termómetro" /></td>
+								<td><img src="img/Termometro.png" alt="Termómetro" /></td>
 							</tr>
 							<tr>
 								<th>Máxima diurna 2016</th>
@@ -538,9 +552,7 @@
 					<div class="w3-third w3-center">
 						<table>
 							<tr>
-								<td><img
-									src="img/Sol.png"
-									alt="Sol con horas" /></td>
+								<td><img src="img/Sol.png" alt="Sol con horas" /></td>
 							</tr>
 							<tr>
 								<th>Horas diarias de sol 2016 (en media)</th>
@@ -579,8 +591,7 @@
 					<div class="w3-third w3-center">
 						<table>
 							<tr>
-								<td><img
-									src="img/Radiacion.png"
+								<td><img src="img/Radiacion.png"
 									alt="Sol con flechas de radiación" /></td>
 							</tr>
 							<tr>
@@ -855,22 +866,26 @@
 
 
 	<!-- Footer -->
-	<footer class="w3-center w3-dark-grey w3-padding-48 w3-hover-black">
-		<div class="w3-xlarge w3-padding-32">
+	<footer
+		class="w3-center w3-dark-grey w3-hover-black w3-display-container"
+		style="height: 8%;">
+		<div class="w3-xlarge w3-display-bottomleft w3-padding">
 			<a href="https://www.facebook.com/opnsc"
 				class="w3-hover-text-indigo w3-show-inline-block"><i
 				class="fa fa-facebook-official"></i></a> <a
 				href="https://twitter.com/opnsc"
 				class="w3-hover-text-light-blue w3-show-inline-block"><i
-				class="fa fa-twitter"></i></a> <a
-				href="https://www.linkedin.com/in/m-isabel-muñoz-ordóñez-588a8b92"
-				class="w3-hover-text-indigo w3-show-inline-block"><i
-				class="fa fa-linkedin"></i></a> <a
+				class="fa fa-twitter"></i></a><a
 				href="https://github.com/teanocrata/OpenSmartCountry"
 				class="w3-hover-text-indigo w3-show-inline-block"><i
 				class="fa fa-github"></i></a>
 		</div>
-		<a class="w3-right w3-padding-medium" rel="license"
+		<div class="w3-display-middle">
+
+			OPEN<strong>SMART</strong>COUNTRY
+
+		</div>
+		<a class="w3-right w3-display-bottomright w3-padding" rel="license"
 			href="http://creativecommons.org/licenses/by-nc-sa/4.0/"> <img
 			alt="Creative Commons License" style="border-width: 0"
 			src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
