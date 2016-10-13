@@ -120,11 +120,9 @@ function inicializaMapa() {
 
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
-	// var geojson = JSON.parse(castillaYLeonCoords);
 	mapa.data.addGeoJson(castillaYLeonCoords);
-	zoom(mapa);
+	aniadeListenerParaNuevasParcelas(mapa);
 
-	
 }
 
 function dibujaMarcadores() {
@@ -324,48 +322,125 @@ function getBoundaries(idProvincia) {
 	return geoJSONBoundaries;
 }
 
-function zoom(mapa) {
-	  
-	  mapa.data.forEach(function(feature) {
-	    			
-					mapa.data.addListener('click',
-							function(event) {
-								var latitude = event.latLng.lat();
-								var longitude = event.latLng.lng();
+function aniadeListenerParaNuevasParcelas(mapa) {
 
-								var image = 'img/OpenSmartCountry_marker_verde.png';
+	mapa.data
+			.forEach(function(feature) {
 
-								var marcador = new google.maps.Marker({
-									position : event.latLng,
-									map : mapa,
-									animation : google.maps.Animation.DROP,
-									icon : image
-								});
+				mapa.data
+						.addListener(
+								'click',
+								function(event) {
+									var latitude = event.latLng.lat();
+									var longitude = event.latLng.lng();
 
-								var contenidoVentana = '<div id="content">'
-										+ '<h3>Parcela</h3>'
-										+ '<p>'
-										+ latitude
-										+ ' ,'
-										+ longitude
-										+ '</p>'
-										+ '</div><button type="button" onclick="location.href=\'parcela.html?latitud='
-										+ latitude + '&longitud=' + longitude
-										+ '&nombre=Demo\'">Más detalles</button>';
+									if (perteneceAParcela(latitude, longitude)) {
 
-								var ventanaInformacion = new google.maps.InfoWindow({
-									content : contenidoVentana
-								});
+										var image = 'img/OpenSmartCountry_marker_verde.png';
 
-								marcador.addListener('click', function() {
-									ventanaInformacion.open(mapa, marcador);
-								});
+										var marcador = new google.maps.Marker(
+												{
+													position : event.latLng,
+													map : mapa,
+													animation : google.maps.Animation.DROP,
+													icon : image
+												});
 
-								// Center of map
-								mapa.panTo(new google.maps.LatLng(latitude, longitude));
-								mapa.setZoom(14);
+										var contenidoVentana = '<div id="content">'
+												+ '<h3>Parcela</h3>'
+												+ '<p>'
+												+ latitude
+												+ ' ,'
+												+ longitude
+												+ '</p>'
+												+ '</div><button type="button" onclick="location.href=\'parcela.html?latitud='
+												+ latitude
+												+ '&longitud='
+												+ longitude
+												+ '&nombre=Demo\'">Más detalles</button>';
 
-							})
-	  });
+										var ventanaInformacion = new google.maps.InfoWindow(
+												{
+													content : contenidoVentana
+												});
 
+										marcador.addListener('click',
+												function() {
+													ventanaInformacion.open(
+															mapa, marcador);
+												});
+
+										// Center of map
+										mapa.panTo(new google.maps.LatLng(
+												latitude, longitude));
+										mapa.setZoom(14);
+
+									}
+
+								})
+			});
+
+}
+
+function perteneceAParcela(latitude, longitude) {
+
+	var esCarretera = false;
+	var usos = [];
+	var usosNoAgricolasYOtros = ["AG", "ED", "IM", "CA", "ZU", "ZV", "ZC"];
+
+	var url = "php/api_rest.php/plots" + "/sigpac/_search";
+
+	var input = '{                                    '
+	+ '   "query": {                        '
+	+ '      "geo_shape": {                 '
+	+ '         "points": {                 '
+	+ '            "relation": "intersects",'
+	+ '            "shape": {               '
+	+ '                "type": "point",     '
+	+ '               "coordinates": [      '
+	+ '                  ' + latitude + ',         '
+	+ '                  ' + longitude + '          '
+	+ '               ]                     '
+	+ '            }                        '
+	+ '         }                           '
+	+ '      }                              '
+	+ '   }                                 '
+	+ '}                                    ';
+
+	var coordenadasLinde = [];
+
+	var request = jQuery.ajax({
+		crossDomain : true,
+		async : false,
+		url : url,
+		data : input,
+		type : 'POST',
+		dataType : "json"
+	});
+
+	request.done(function(response, textStatus, jqXHR) {
+		var hayCoordenadasLinde = false;
+		if (typeof response["hits"] != 'undefined') {
+			var hits = response["hits"]["hits"];
+
+			for (var i = 0; i < hits.length; i++) {
+
+				var hit = hits[i];
+
+				hayCoordenadasLinde = true;
+
+				var uso = hit["_source"]["uso_sigpac"];
+				usos.push(uso);
+
+				if (usosNoAgricolasYOtros.indexOf(uso)>-1) {
+					esCarretera = true;
+
+				}
+
+			}
+
+		}
+	});
+
+	return !esCarretera;
 }
