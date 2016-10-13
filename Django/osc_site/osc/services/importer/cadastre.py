@@ -38,7 +38,7 @@ def get_gml_linear_ring(linear_ring_elem):
             for c in range(0, len(linear_ring_coords), 2):
                 lat, lon = utm_2_latlon(*map(lambda x: float(x), linear_ring_coords[c:(c+2)]))
 
-                linear_ring.append([lat, lon])
+                linear_ring.append([lon, lat])
 
     return linear_ring
 
@@ -82,12 +82,12 @@ def get_gml_bbox(cadastral_parcel):
     lower_corner = []
     if lower_corner_txt is not None:
         lat, lon = utm_2_latlon(*map(lambda x: float(x), lower_corner_txt.split()))
-        lower_corner = [lat, lon]
+        lower_corner = [lon, lat]
 
     upper_corner = []
     if upper_corner_txt is not None:
         lat, lon = utm_2_latlon(*map(lambda x: float(x), upper_corner_txt.split()))
-        upper_corner = [lat, lon]
+        upper_corner = [lon, lat]
 
     bbox = {'type': 'envelope',
             'coordinates': [lower_corner, upper_corner]}
