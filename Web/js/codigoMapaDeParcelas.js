@@ -375,6 +375,9 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 												latitude, longitude));
 										mapa.setZoom(14);
 
+									}else{
+										document.getElementById('textoDelAviso').innerHTML='<p>El lugar que ha selecionado <strong>no es una parcela</strong> por tanto no podemos generar un perfil.</p>';
+										document.getElementById('aviso').style.display='block';
 									}
 
 								})
