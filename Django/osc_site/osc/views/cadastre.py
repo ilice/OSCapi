@@ -12,7 +12,13 @@ def obtain_catastral_parcels(request):
 
     parcels = get_catastral_parcels(lat_min, lon_min, lat_max, lon_max)
 
-    return JsonResponse({'status': 'OK',
-                         'response': parcels})
+    # Convert into geojson
+    for parcel in parcels:
+        parcel['type'] = 'Feature'
+
+    parcels_geojson = {'type': 'FeatureCollection',
+                       'features': parcels}
+
+    return JsonResponse(parcels_geojson)
 
 
