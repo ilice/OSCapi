@@ -386,7 +386,7 @@ function perteneceAParcela(latitude, longitude) {
 
 	var esCarretera = false;
 	var usos = [];
-	var usosNoAgricolasYOtros = ["AG", "ED", "IM", "CA", "ZU", "ZV", "ZC"];
+	var usosNoAgricolasYOtros = ["AG", "ED", "CA", "ZU", "ZV", "ZC"];
 
 	var url = "php/api_rest.php/plots" + "/sigpac/_search";
 
