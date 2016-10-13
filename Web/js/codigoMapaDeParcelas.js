@@ -192,27 +192,27 @@ function geocodeAddress(geocoder, resultsMap) {
 			infowindow.open(mapa, marker);
 		} else {
 			var location = buscaLocalizacionPorReferenciaCatastral(address);
-			resultsMap.setCenter(location);
-			resultsMap.setZoom(15);
-			var marker = new google.maps.Marker({
-				map : resultsMap,
-				position : location
-			});
-			marker.setVisible(false);
-			var infowindow = new google.maps.InfoWindow();
-			infowindow.setContent('<div>Referencia catastral: <strong>'
-					+ address + '</strong></div>');
-			infowindow.open(mapa, marker);
+			if (!jQuery.isEmptyObject(location)) {
+				resultsMap.setCenter(location);
+				resultsMap.setZoom(15);
+				var marker = new google.maps.Marker({
+					map : resultsMap,
+					position : location
+				});
+				marker.setVisible(false);
+				var infowindow = new google.maps.InfoWindow();
+				infowindow.setContent('<div>Referencia catastral: <strong>'
+						+ address + '</strong></div>');
+				infowindow.open(mapa, marker);
+			}
 		}
 	});
 }
 
 function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
-	var location = {
-		lat : 40.416616,
-		lng : -3.703801
-	};
+	var location = {};
 	var base = 10;
+	var provinciasConDatos = [ 5, 9, 24, 34, 37, 40, 42, 47, 49 ];
 	var provincia = parseInt(referenciaCatastral.substring(0, 2), base);
 	var municipio = parseInt(referenciaCatastral.substring(2, 5), base);
 	var poligono = parseInt(referenciaCatastral.substring(6, 9), base);
@@ -220,6 +220,26 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 
 	if (isNaN(provincia) || isNaN(municipio) || isNaN(poligono)
 			|| isNaN(parcela)) {
+		document.getElementById('textoDelAviso').innerHTML = '<p>No encontramos lugares para el texto de búsqueda introducido.</p>'
+				+ '<p> Si está intentando buscar una referencia catastral el formato debe ser: </p>'
+				+ '<ul class="w3-ul w3-hoverable w3-small">'
+				+ '	<li>00 - Dos dígitos para la provincia </li>'
+				+ '	<li>000 - Tres dígitos para el municipio </li>'
+				+ '	<li>A -Una letra para el sector</li>'
+				+ '	<li>000 - Tres dígitos para el polígono</li>'
+				+ '	<li>00000 - Cuatro dígitos para la parcela</li>'
+				+ '	<li>0000 - Cuatro dígitos para el identificador de construcción (no son obligatorios)</li>'
+				+ '	<li>AA - Dos letras de control (no son obligatorios)</li>'
+				+ '	</ul>'
+				+ 'Por ejemplo puede probar a buscar la referencia catastral: <strong>37284A00600098</strong>'
+				+ '<p> Pruebe a realizar la búsqueda de nuevo.</p>';
+		document.getElementById('aviso').style.display = 'block';
+
+	} else if (provinciasConDatos.indexOf(provincia) == -1) {
+		document.getElementById('textoDelAviso').innerHTML = '<p>Aún no tenemos datos para esa provincia.</p>'
+				+ '<p> Estamos empezando por Castilla y León pero en breve ampliaremos a otras comunidades. </p>'
+				+ '<p> Si quiere que <strong>prioricemos su zona</strong> contacte con nosotros. </p>';
+		document.getElementById('aviso').style.display = 'block';
 
 	} else {
 
@@ -373,7 +393,9 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 										// Center of map
 										mapa.panTo(new google.maps.LatLng(
 												latitude, longitude));
-										mapa.setZoom(14);
+										if (mapa.getZoom() < 14) {
+											mapa.setZoom(14);
+										}
 
 									}
 
@@ -387,7 +409,14 @@ function perteneceAParcela(latitude, longitude) {
 	var esCarretera = false;
 	var usos = [];
 	var usosNoAgricolasYOtros = [ "AG", "ED", "CA", "ZU", "ZV", "ZC" ];
-	var descripcionesUsos = {AG: "Corrientes y superficies de aguas", ED: "Edificaciones", CA: "Viales", ZU: "Zona urbana", ZV: "Zona censurada", ZC: "Zona concentrada"};
+	var descripcionesUsos = {
+		AG : "Corrientes y superficies de aguas",
+		ED : "Edificaciones",
+		CA : "Viales",
+		ZU : "Zona urbana",
+		ZV : "Zona censurada",
+		ZC : "Zona concentrada"
+	};
 
 	var url = "php/api_rest.php/plots" + "/sigpac/_search";
 
@@ -435,7 +464,8 @@ function perteneceAParcela(latitude, longitude) {
 
 						if (usosNoAgricolasYOtros.indexOf(uso) > -1) {
 							if (!esCarretera) {
-								//Se comprueba que es el primer uso que no es apto para dar un perfil
+								// Se comprueba que es el primer uso que no es
+								// apto para dar un perfil
 								document.getElementById('textoDelAviso').innerHTML = '<p>El lugar que ha selecionado <strong>no es una parcela</strong>, según el catastro es <strong>'
 										+ descripcionesUsos[uso]
 										+ '</strong> por tanto no podemos generar un perfil.</p>';
