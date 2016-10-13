@@ -100,7 +100,8 @@ def get_gml_bbox(cadastral_parcel):
 def parse_cadastral_parcel(cadastral_parcel_elem):
     parcel = dict()
 
-    parcel['areaValue'] = cadastral_parcel_elem.find('cp:areaValue', ns).text
+    area_text = cadastral_parcel_elem.find('cp:areaValue', ns).text
+    parcel['areaValue'] = float(area_text) if area_text is not None else None
     parcel['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
     parcel['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
     parcel['label'] = cadastral_parcel_elem.find('cp:label', ns).text
