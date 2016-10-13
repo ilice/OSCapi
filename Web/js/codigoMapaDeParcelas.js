@@ -375,9 +375,6 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 												latitude, longitude));
 										mapa.setZoom(14);
 
-									}else{
-										document.getElementById('textoDelAviso').innerHTML='<p>El lugar que ha selecionado <strong>no es una parcela</strong> por tanto no podemos generar un perfil.</p>';
-										document.getElementById('aviso').style.display='block';
 									}
 
 								})
@@ -389,26 +386,26 @@ function perteneceAParcela(latitude, longitude) {
 
 	var esCarretera = false;
 	var usos = [];
-	var usosNoAgricolasYOtros = ["AG", "ED", "CA", "ZU", "ZV", "ZC"];
+	var usosNoAgricolasYOtros = [ "AG", "ED", "CA", "ZU", "ZV", "ZC" ];
+	var descripcionesUsos = {AG: "Corrientes y superficies de aguas", ED: "Edificaciones", CA: "Viales", ZU: "Zona urbana", ZV: "Zona censurada", ZC: "Zona concentrada"};
 
 	var url = "php/api_rest.php/plots" + "/sigpac/_search";
 
 	var input = '{                                    '
-	+ '   "query": {                        '
-	+ '      "geo_shape": {                 '
-	+ '         "points": {                 '
-	+ '            "relation": "intersects",'
-	+ '            "shape": {               '
-	+ '                "type": "point",     '
-	+ '               "coordinates": [      '
-	+ '                  ' + latitude + ',         '
-	+ '                  ' + longitude + '          '
-	+ '               ]                     '
-	+ '            }                        '
-	+ '         }                           '
-	+ '      }                              '
-	+ '   }                                 '
-	+ '}                                    ';
+			+ '   "query": {                        '
+			+ '      "geo_shape": {                 '
+			+ '         "points": {                 '
+			+ '            "relation": "intersects",'
+			+ '            "shape": {               '
+			+ '                "type": "point",     '
+			+ '               "coordinates": [      ' + '                  '
+			+ latitude + ',         ' + '                  ' + longitude
+			+ '          ' + '               ]                     '
+			+ '            }                        '
+			+ '         }                           '
+			+ '      }                              '
+			+ '   }                                 '
+			+ '}                                    ';
 
 	var coordenadasLinde = [];
 
@@ -421,29 +418,37 @@ function perteneceAParcela(latitude, longitude) {
 		dataType : "json"
 	});
 
-	request.done(function(response, textStatus, jqXHR) {
-		var hayCoordenadasLinde = false;
-		if (typeof response["hits"] != 'undefined') {
-			var hits = response["hits"]["hits"];
+	request
+			.done(function(response, textStatus, jqXHR) {
+				var hayCoordenadasLinde = false;
+				if (typeof response["hits"] != 'undefined') {
+					var hits = response["hits"]["hits"];
 
-			for (var i = 0; i < hits.length; i++) {
+					for (var i = 0; i < hits.length; i++) {
 
-				var hit = hits[i];
+						var hit = hits[i];
 
-				hayCoordenadasLinde = true;
+						hayCoordenadasLinde = true;
 
-				var uso = hit["_source"]["uso_sigpac"];
-				usos.push(uso);
+						var uso = hit["_source"]["uso_sigpac"];
+						usos.push(uso);
 
-				if (usosNoAgricolasYOtros.indexOf(uso)>-1) {
-					esCarretera = true;
+						if (usosNoAgricolasYOtros.indexOf(uso) > -1) {
+							if (!esCarretera) {
+								//Se comprueba que es el primer uso que no es apto para dar un perfil
+								document.getElementById('textoDelAviso').innerHTML = '<p>El lugar que ha selecionado <strong>no es una parcela</strong>, según el catastro es <strong>'
+										+ descripcionesUsos[uso]
+										+ '</strong> por tanto no podemos generar un perfil.</p>';
+								document.getElementById('aviso').style.display = 'block';
+							}
+							esCarretera = true;
+
+						}
+
+					}
 
 				}
-
-			}
-
-		}
-	});
+			});
 
 	return !esCarretera;
 }
