@@ -1,11 +1,13 @@
 import requests
 import xml.etree.ElementTree as ET
 
+from osc.util import xml_to_json
+
 import utm
 
-__all__ = ['get_catastral_parcels']
+__all__ = ['get_cadastral_parcels_by_bbox', 'get_cadastral_parcels_by_code', 'get_public_cadastre_info']
 
-url_catastral_code = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
+url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 zone_number = 30
 
@@ -95,35 +97,41 @@ def get_gml_bbox(cadastral_parcel):
     return bbox
 
 
+def parse_cadastral_parcel(cadastral_parcel_elem):
+    parcel = dict()
+
+    parcel['areaValue'] = cadastral_parcel_elem.find('cp:areaValue', ns).text
+    parcel['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
+    parcel['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
+    parcel['label'] = cadastral_parcel_elem.find('cp:label', ns).text
+    parcel['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
+
+    # read BBOX
+    parcel['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
+
+    # read Reference point
+    parcel['reference_point'] = get_gml_reference_point(cadastral_parcel_elem)
+
+    # read geometry
+    parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
+
+    return parcel
+
+
 def parse_inspire_response(xml_text):
     parcels = []
 
     root = ET.fromstring(xml_text)
 
     for cadastral_parcel_elem in root.findall('./gml:featureMember/cp:CadastralParcel', ns):
-        parcel = dict()
-
-        parcel['areaValue'] = cadastral_parcel_elem.find('cp:areaValue', ns).text
-        parcel['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
-        parcel['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
-        parcel['label'] = cadastral_parcel_elem.find('cp:label', ns).text
-        parcel['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
-
-        #read BBOX
-        parcel['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
-
-        #read Reference point
-        parcel['reference_point'] = get_gml_reference_point(cadastral_parcel_elem)
-
-        #read geometry
-        parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
+        parcel = parse_cadastral_parcel(cadastral_parcel_elem)
 
         parcels.append(parcel)
 
     return parcels
 
 
-def get_inspire_data(min_x, min_y, max_x, max_y):
+def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
     """
     Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
 
@@ -142,18 +150,54 @@ def get_inspire_data(min_x, min_y, max_x, max_y):
                                                  'SRSname': 'EPSG::25830',
                                                  'bbox': bbox_text})
 
-    if not response.ok:
-        return None
+    if response.ok:
+        parcels = parse_inspire_response(response.text)
 
-    parcels = parse_inspire_response(response.text)
+        return parcels
 
-    return parcels
+    return []
 
 
-def get_catastral_parcels(min_lat, min_lon, max_lat, max_lon):
+def get_inspire_data_by_code(code):
+    """
+    Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
+    """
+
+    response = requests.get(url_inspire, params={'service': 'wfs',
+                                                 'request': 'getfeature',
+                                                 'STOREDQUERIE_ID': 'GetParcel',
+                                                 'srsname': 'EPSG::25830',
+                                                 'REFCAT': code})
+
+    if response.ok:
+        parcels = parse_inspire_response(response.text)
+
+        return parcels
+
+    return []
+
+
+def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
     min_x, min_y, zn, zl = latlon_2_utm(min_lat, min_lon)
     max_x, max_y, zn, zl = latlon_2_utm(max_lat, max_lon)
 
-    parcels = get_inspire_data(min_x, min_y, max_x, max_y)
+    parcels = get_inspire_data_by_bbox(min_x, min_y, max_x, max_y)
 
     return parcels
+
+
+def get_cadastral_parcels_by_code(code):
+    parcels = get_inspire_data_by_code(code)
+
+    return parcels
+
+
+def get_public_cadastre_info(code):
+    response = requests.get(url_public_cadastral_info, params={'Provincia': '',
+                                                               'Municipio': '',
+                                                               'RC': code})
+
+    if response.ok:
+        root = ET.fromstring(response.text.encode('utf-8'))
+        return xml_to_json(root)
+

@@ -131,3 +131,27 @@ def elastic_bulk_save(process_name, records, retry=True):
                                          'elastic_bulk_save',
                                          str(type(e)),
                                          str(record.to_dict()))
+
+
+def num(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(s)
+
+
+def xml_to_json(element):
+    json_element = dict()
+    for child in element:
+        tag = child.tag.split('}')[-1]
+        json_element[tag] = xml_to_json(child)
+
+    if len(json_element) == 0:
+        json_element = None
+        if element.text is not None:
+            try:
+                json_element = num(element.text)
+            except ValueError:
+                json_element = element.text
+
+    return json_element
