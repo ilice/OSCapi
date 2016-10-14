@@ -91,8 +91,7 @@ def get_gml_bbox(cadastral_parcel):
         lat, lon = utm_2_latlon(*map(lambda x: float(x), upper_corner_txt.split()))
         upper_corner = [lon, lat]
 
-    bbox = {'type': 'envelope',
-            'coordinates': [lower_corner, upper_corner]}
+    bbox = lower_corner + upper_corner
 
     return bbox
 
@@ -113,7 +112,7 @@ def parse_cadastral_parcel(cadastral_parcel_elem):
     parcel['properties']['reference_point'] = get_reference_point(cadastral_parcel_elem)
 
     # read BBOX
-    parcel['properties']['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
+    parcel['bbox'] = get_gml_bbox(cadastral_parcel_elem)
 
     # read geometry
     parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)

@@ -32,7 +32,7 @@ def obtain_catastral_parcels(request):
                 parcel['properties']['climate_aggregations'] = climate_agg
 
     elif bbox_param is not None:
-        lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))
+        lon_min, lat_min, lon_max, lat_max = map(lambda x: float(x), bbox_param.split(','))
 
         parcels = get_cadastral_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
 
