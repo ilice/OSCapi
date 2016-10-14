@@ -113,7 +113,7 @@ def parse_cadastral_parcel(cadastral_parcel_elem):
     parcel['properties']['reference_point'] = get_reference_point(cadastral_parcel_elem)
 
     # read BBOX
-    parcel['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
+    parcel['properties']['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
 
     # read geometry
     parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
