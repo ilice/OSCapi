@@ -1,11 +1,13 @@
 from django.http import JsonResponse
 from osc.services.importer import get_cadastral_parcels_by_code, get_cadastral_parcels_by_bbox, get_public_cadastre_info
+from osc.services.elastic import get_closest_station, get_aggregated_climate_measures
 
 
 def obtain_catastral_parcels(request):
     bbox_param = request.GET.get('bbox', None)
     cadastral_code_param = request.GET.get('cadastral_code', None)
     retrieve_public_info_param = request.GET.get('retrieve_public_info', None)
+    retrieve_climate_info_param = request.GET.get('retrieve_climate_info', None)
 
     parcels = []
 
@@ -17,6 +19,16 @@ def obtain_catastral_parcels(request):
             for parcel in parcels:
                 public_info = get_public_cadastre_info(cadastral_code_param)
                 parcel['cadastralData'] = public_info
+
+        # Add climate info
+        if retrieve_climate_info_param == 'True':
+            for parcel in parcels:
+                closest_station = \
+                    get_closest_station(parcel['reference_point']['lat'], parcel['reference_point']['lon'])
+                climate_agg = get_aggregated_climate_measures(closest_station['IDESTACION'],
+                                                              closest_station['IDPROVINCIA'],
+                                                              3)
+                parcel['climate_aggregations'] = climate_agg
 
     elif bbox_param is not None:
         lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))
