@@ -10,7 +10,8 @@ def update_inforiego_daily(request):
 
     if last_update_date is None:
         latest_date_launched = get_latest_date_launched(BatchProcess.P_INFORIEGO_DAILY)
-        last_update_date = (latest_date_launched - timedelta(days=1)).strftime('%d/%m/%Y')
+        if latest_date_launched is not None:
+            last_update_date = (latest_date_launched - timedelta(days=1)).strftime('%d/%m/%Y')
 
     if last_update_date is None:
         default_date = datetime.now() - timedelta(weeks=2)

@@ -7,6 +7,9 @@ __all__ = ['start_batch_process', 'success_batch_process', 'fail_batch_process',
 
 
 def start_batch_process(process_name, date_launched=None):
+    if date_launched is None:
+        date_launched = timezone.now()
+        
     process = BatchProcess(name=process_name, status=BatchProcess.S_PROCESS, date_launched=date_launched)
     process.save()
 
