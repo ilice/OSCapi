@@ -2,7 +2,7 @@ from django.test import TestCase
 import osc.services.elastic as elastic
 
 
-class BatchProcessServiceTest(TestCase):
+class ElasticServiceTest(TestCase):
     def setUp(self):
         pass
 

@@ -2,7 +2,7 @@ from django.test import TestCase
 import osc.services.importer.cadastre as cadastre
 
 
-class BatchProcessServiceTest(TestCase):
+class CadastreServiceTest(TestCase):
     def setUp(self):
         pass
 
