@@ -43,3 +43,4 @@ def fail_batch_process(process_id):
 def get_latest_date_launched(process_name):
     return BatchProcess.objects.filter(name=process_name,
                                        status=BatchProcess.S_SUCCESS).aggregate(max=Max('date_launched'))['max']
+
