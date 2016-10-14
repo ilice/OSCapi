@@ -64,7 +64,7 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                 "size": 1
                              },
                              "aggs": {
-                                "sum_precipitation": {
+                                "sum_rainfall": {
                                    "sum": {
                                       "field": "PRECIPITACION"
                                    }
@@ -133,7 +133,7 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                       "format": "M"
                                    },
                                    "aggs": {
-                                      "precipitation": {
+                                      "rainfall": {
                                          "sum": {
                                             "field": "PRECIPITACION"
                                          }
