@@ -30,6 +30,47 @@ def get_closest_station(lat, lon):
     return hit.to_dict()
 
 
+def parse_by_month(bymonth):
+    result = []
+
+    for year_info in bymonth:
+        year = dict()
+        year['year'] = year_info['key']
+        year['monthly_measures'] = []
+
+        for month_info in year_info['measure']['buckets']:
+            month = dict()
+            month['month'] = int(month_info['key_as_string'])
+            month['rainfall'] = month_info['rainfall']['value']
+            month['avg_temperature'] = month_info['avg_temperature']['value']
+            month['radiation'] = month_info['radiation']['value']
+            month['sun_hours'] = month_info['sun_hours']['value']
+
+            year['monthly_measures'].append(month)
+
+        result.append(year)
+
+    return result
+
+
+def parse_last_year(last_year):
+    result = {}
+
+    if len(last_year) == 1:
+        result['max_sun_hours'] = last_year[0]['max_sun_hours']['value']
+        result['avg_radiation'] = last_year[0]['avg_radiation']['value']
+        result['avg_sun_hours'] = last_year[0]['avg_sun_hours']['value']
+        result['avg_temperature'] = last_year[0]['avg_temperature']['value']
+        result['sum_radiation'] = last_year[0]['sum_radiation']['value']
+        result['max_temperature'] = last_year[0]['max_temperature']['value']
+        result['sum_rainfall'] = last_year[0]['sum_rainfall']['value']
+        result['sum_rainfall'] = last_year[0]['sum_rainfall']['value']
+        result['min_temperature'] = last_year[0]['min_temperature']['value']
+        result['max_radiation'] = last_year[0]['max_radiation']['value']
+
+    return result
+
+
 def get_aggregated_climate_measures(station_id, province_id, num_years_back):
     s = Search(index='inforiego', doc_type='info_riego_daily')
     s.update_from_dict({
@@ -55,7 +96,7 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                           }
                        },
                        "aggs": {
-                          "by_year": {
+                          "last_year": {
                              "terms": {
                                 "field": u'AÑO',
                                 "order": {
@@ -161,6 +202,10 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                        })
 
     result = s.execute()
-    hit = result.aggregations
+    hit = result.aggregations.to_dict()
 
-    return hit.to_dict()
+    by_month = parse_by_month(hit['by_month']['buckets'])
+    last_year = parse_last_year(hit['last_year']['buckets'])
+
+    return { 'by_month': by_month,
+             'last_year': last_year }
