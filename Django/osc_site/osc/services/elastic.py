@@ -55,7 +55,7 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                           }
                        },
                        "aggs": {
-                          "por_anio": {
+                          "by_year": {
                              "terms": {
                                 "field": u'AÑO',
                                 "order": {
@@ -64,52 +64,52 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                 "size": 1
                              },
                              "aggs": {
-                                "sum_precipitacion": {
+                                "sum_precipitation": {
                                    "sum": {
                                       "field": "PRECIPITACION"
                                    }
                                 },
-                                "max_temperatura": {
+                                "max_temperature": {
                                    "max": {
                                       "field": "TEMPMAX"
                                    }
                                 },
-                                "min_temperatura": {
+                                "min_temperature": {
                                    "min": {
                                       "field": "TEMPMIN"
                                    }
                                 },
-                                "media_temperatura": {
+                                "avg_temperature": {
                                    "avg": {
                                       "field": "TEMPMEDIA"
                                    }
                                 },
-                                "media_horas_sol": {
+                                "avg_sun_hours": {
                                    "avg": {
                                       "field": "N"
                                    }
                                 },
-                                "max_horas_sol": {
+                                "max_sun_hours": {
                                    "max": {
                                       "field": "N"
                                    }
                                 },
-                                "sum_horas_sol": {
+                                "sum_sun_hours": {
                                    "sum": {
                                       "field": "N"
                                    }
                                 },
-                                "media_radiacion": {
+                                "avg_radiation": {
                                    "avg": {
                                       "field": "RADIACION"
                                    }
                                 },
-                                "max_radiacion": {
+                                "max_radiation": {
                                    "max": {
                                       "field": "RADIACION"
                                    }
                                 },
-                                "sum_radiacion": {
+                                "sum_radiation": {
                                    "sum": {
                                       "field": "RADIACION"
                                    }
@@ -117,7 +117,7 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
 
                              }
                           },
-                          "por_mes": {
+                          "by_month": {
                              "terms": {
                                 "field": u'AÑO',
                                 "order": {
@@ -126,29 +126,29 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                 "size": num_years_back
                              },
                              "aggs": {
-                                "medida": {
+                                "measure": {
                                    "date_histogram": {
                                       "field": "FECHA",
                                       "interval": "month",
                                       "format": "M"
                                    },
                                    "aggs": {
-                                      "precipitacion": {
+                                      "precipitation": {
                                          "sum": {
                                             "field": "PRECIPITACION"
                                          }
                                       },
-                                      "temperatura": {
+                                      "temperature": {
                                          "avg": {
                                             "field": "TEMPERATURA"
                                          }
                                       },
-                                      "horas_sol": {
+                                      "sun_hours": {
                                          "sum": {
                                             "field": "N"
                                          }
                                       },
-                                      "radiacion": {
+                                      "radiation": {
                                          "sum": {
                                             "field": "RADIACION"
                                          }
