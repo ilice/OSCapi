@@ -138,9 +138,9 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                             "field": "PRECIPITACION"
                                          }
                                       },
-                                      "temperature": {
+                                      "avg_temperature": {
                                          "avg": {
-                                            "field": "TEMPERATURA"
+                                            "field": "TEMPMEDIA"
                                          }
                                       },
                                       "sun_hours": {
