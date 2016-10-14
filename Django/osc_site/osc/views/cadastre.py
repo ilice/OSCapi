@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from osc.services.importer import get_cadastral_parcels_by_code, get_cadastral_parcels_by_bbox, get_public_cadastre_info
 from osc.services.elastic import get_closest_station, get_aggregated_climate_measures
+from osc.services.google import obtain_elevation_from_google
 
 
 def is_valid_parcel(parcel):
@@ -56,6 +57,21 @@ def obtain_catastral_parcels(request):
     # Convert into geojson
     for parcel in parcels:
         parcel['type'] = 'Feature'
+
+
+    # Add elevation from google
+    try:
+        centers = [(parcel['properties']['reference_point']['lat'],
+                    parcel['properties']['reference_point']['lon']) for parcel in parcels]
+
+        elevations = obtain_elevation_from_google(centers)
+
+        if elevations is not None:
+            for item in zip(elevations, parcels):
+                item[1]['properties']['reference_point']['elevation'] = item[0]['elevation']
+
+    except KeyError:
+        pass
 
     parcels_geojson = {'type': 'FeatureCollection',
                        'features': parcels}

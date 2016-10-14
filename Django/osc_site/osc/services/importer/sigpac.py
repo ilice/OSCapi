@@ -24,7 +24,7 @@ import time
 import datetime
 
 from osc.exceptions import ConnectionError
-from osc.services import obtain_elevation_from_google
+from osc.services import try_obtain_elevation_from_google
 from osc.models import BatchProcess
 
 __all__ = ['save_plots_to_elasticsearch', 'all_sigpac_zipcodes']
@@ -515,10 +515,11 @@ def compose_locations_param(points):
 
 def obtain_elevation(records, centers):
     # Process response
-    json_response = obtain_elevation_from_google(centers)
+    response = try_obtain_elevation_from_google(centers)
 
-    for elev in zip(records, json_response['results']):
-        elev[0].elevation = elev[1]['elevation']
+    if response is not None:
+        for elev in zip(records, response['results']):
+            elev[0].elevation = elev[1]['elevation']
 
     return records
 
