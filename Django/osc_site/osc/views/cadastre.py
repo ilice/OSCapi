@@ -3,6 +3,19 @@ from osc.services.importer import get_cadastral_parcels_by_code, get_cadastral_p
 from osc.services.elastic import get_closest_station, get_aggregated_climate_measures
 
 
+def is_valid_parcel(parcel):
+    is_valid = True
+
+    try:
+        public_info = get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
+        if public_info is not None:
+            is_valid = public_info['bico']['lspr']['spr']['dspr']['ccc'] not in ['VT', 'OT', 'FF']
+    except KeyError:
+        is_valid = True
+
+    return is_valid
+
+
 def obtain_catastral_parcels(request):
     bbox_param = request.GET.get('bbox', None)
     cadastral_code_param = request.GET.get('cadastral_code', None)
@@ -35,6 +48,10 @@ def obtain_catastral_parcels(request):
         lon_min, lat_min, lon_max, lat_max = map(lambda x: float(x), bbox_param.split(','))
 
         parcels = get_cadastral_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
+
+        # Filter the parcels that are roads, ways, etc.
+        # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
+        parcels = filter(is_valid_parcel, parcels)
 
     # Convert into geojson
     for parcel in parcels:
