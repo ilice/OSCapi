@@ -5,6 +5,7 @@ return array(
 		'agroclimaticStationType' => "info_riego_station",
 		'googleMapsElevationEndpoint' => 'https://maps.googleapis.com/maps/api/elevation/json?key=AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M',
 		'catastroOVCSWLocalizacionRCendpoint' => 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/',
-		'slackHookEndpoint' => "https://hooks.slack.com/services/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"
+		'slackHookEndpoint' => "https://hooks.slack.com/services/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",
+		'quijoteServerEndPoint' => "http://89.141.96.206:8000"
 );
 ?>
