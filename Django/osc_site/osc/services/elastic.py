@@ -207,5 +207,5 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
     by_month = parse_by_month(hit['by_month']['buckets'])
     last_year = parse_last_year(hit['last_year']['buckets'])
 
-    return { 'by_month': by_month,
-             'last_year': last_year }
+    return {'by_month': by_month,
+            'last_year': last_year}

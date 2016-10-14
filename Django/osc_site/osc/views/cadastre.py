@@ -18,17 +18,18 @@ def obtain_catastral_parcels(request):
         if retrieve_public_info_param == 'True':
             for parcel in parcels:
                 public_info = get_public_cadastre_info(cadastral_code_param)
-                parcel['cadastralData'] = public_info
+                parcel['properties']['cadastralData'] = public_info
 
         # Add climate info
         if retrieve_climate_info_param == 'True':
             for parcel in parcels:
                 closest_station = \
-                    get_closest_station(parcel['reference_point']['lat'], parcel['reference_point']['lon'])
+                    get_closest_station(parcel['properties']['reference_point']['lat'],
+                                        parcel['properties']['reference_point']['lon'])
                 climate_agg = get_aggregated_climate_measures(closest_station['IDESTACION'],
                                                               closest_station['IDPROVINCIA'],
                                                               3)
-                parcel['climate_aggregations'] = climate_agg
+                parcel['properties']['climate_aggregations'] = climate_agg
 
     elif bbox_param is not None:
         lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))

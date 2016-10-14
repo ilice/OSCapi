@@ -62,7 +62,7 @@ def get_gml_geometry(cadastral_parcel):
             'coordinates': geometry}
 
 
-def get_gml_reference_point(cadastral_parcel):
+def get_reference_point(cadastral_parcel):
     point_text = cadastral_parcel.find('./cp:referencePoint/gml:Point/gml:pos', ns).text
 
     reference_point = None
@@ -100,18 +100,20 @@ def get_gml_bbox(cadastral_parcel):
 def parse_cadastral_parcel(cadastral_parcel_elem):
     parcel = dict()
 
+    parcel['properties'] = dict()
+
     area_text = cadastral_parcel_elem.find('cp:areaValue', ns).text
-    parcel['areaValue'] = float(area_text) if area_text is not None else None
-    parcel['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
-    parcel['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
-    parcel['label'] = cadastral_parcel_elem.find('cp:label', ns).text
-    parcel['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
+    parcel['properties']['areaValue'] = float(area_text) if area_text is not None else None
+    parcel['properties']['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
+    parcel['properties']['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
+    parcel['properties']['label'] = cadastral_parcel_elem.find('cp:label', ns).text
+    parcel['properties']['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
+
+    # read Reference point
+    parcel['properties']['reference_point'] = get_reference_point(cadastral_parcel_elem)
 
     # read BBOX
     parcel['bounded_by'] = get_gml_bbox(cadastral_parcel_elem)
-
-    # read Reference point
-    parcel['reference_point'] = get_gml_reference_point(cadastral_parcel_elem)
 
     # read geometry
     parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
