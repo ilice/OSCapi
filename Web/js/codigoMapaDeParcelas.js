@@ -36,7 +36,7 @@ function inicializaMapa() {
 	var configuracionMapa = {
 		zoom : zoomCastillaYLeon,
 		center : castillaYLeon,
-		mapTypeId : google.maps.MapTypeId.SATELLITE,
+		mapTypeId : google.maps.MapTypeId.HYBRID,
 		mapTypeControl : true,
 		mapTypeControlOptions : {
 			style : google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -117,11 +117,45 @@ function inicializaMapa() {
 				+ address);
 		infowindow.open(mapa, marker);
 	});
+	
+	 mapa.data.setStyle(function(feature) {
+		    var zoneType = feature.getProperty('zoneType');
+		    var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
+		    var weight = typeof zoneType != 'undefined' ? 2 : 1;
+		    return {
+		    	fillColor: color,
+			    fillOpacity: 0.1,
+			    strokeColor: color,
+			    strokeWeight: weight
+		    };
+	});
 
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
 	mapa.data.addGeoJson(castillaYLeonCoords);
 	aniadeListenerParaNuevasParcelas(mapa);
+
+	mapa
+			.addListener(
+					'bounds_changed',
+					function() {
+						var bbox = mapa.getBounds();
+						var area = computeArea(bbox);
+						if (area <= 4000000) {
+							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
+							if (cadastralParcelFeatureCollection.features.length > 0) {
+								mapa.data.forEach(function(feature) {
+									var zoneType = feature.getProperty("zoneType");
+									if(typeof zoneType == 'undefined' || zoneType != 'administrative'){
+										mapa.data.remove(feature);
+									}
+								});
+							}
+							mapa.data
+									.addGeoJson(cadastralParcelFeatureCollection);
+						}
+
+					});
 
 }
 
@@ -319,8 +353,8 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 }
 
 function getBoundaries(idProvincia) {
-	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection",'
-			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}'
+	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection", ' 
+			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
 			+ '}]}');
 
 	var url = "php/api_rest.php/crappyzone/bullshit/" + idProvincia;
@@ -335,11 +369,34 @@ function getBoundaries(idProvincia) {
 
 	request.done(function(response, textStatus, jqXHR) {
 		coordinates = response["_source"]["boundaries"];
+		zone = response["_source"]["zone"];
 	});
 
 	geoJSONBoundaries["features"][0]["geometry"] = coordinates;
+	geoJSONBoundaries["features"][0]["properties"]["zone"] = zone;
 
 	return geoJSONBoundaries;
+}
+
+function getCadastralParcelFeatureCollection(bbox) {
+	var cadastralParcelFeatureCollection;
+
+	// 41.401658195918856,-3.7401386077600485,41.402228979075865,-3.74004553075701
+	var url = "php/django_server_wrapper.php/osc/cadastral/parcel?bbox="
+			+ bbox.toUrlValue();
+
+	var request = jQuery.ajax({
+		url : url,
+		type : 'GET',
+		dataType : "json",
+		async : false
+	});
+
+	request.done(function(response, textStatus, jqXHR) {
+		cadastralParcelFeatureCollection = response;
+	});
+
+	return cadastralParcelFeatureCollection;
 }
 
 function aniadeListenerParaNuevasParcelas(mapa) {
@@ -481,4 +538,20 @@ function perteneceAParcela(latitude, longitude) {
 			});
 
 	return !esCarretera;
+}
+
+function computeArea(bbox) {
+	var area = 0;
+
+	var northEastCorner = bbox.getNorthEast();
+	var southWestCorner = bbox.getSouthWest();
+	var northWestCorner = new google.maps.LatLng(northEastCorner.lat(),
+			southWestCorner.lng());
+
+	area = google.maps.geometry.spherical.computeDistanceBetween(
+			northEastCorner, northWestCorner)
+			* google.maps.geometry.spherical.computeDistanceBetween(
+					northWestCorner, southWestCorner);
+
+	return area;
 }
