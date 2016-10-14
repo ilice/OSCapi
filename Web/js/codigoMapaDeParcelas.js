@@ -36,7 +36,7 @@ function inicializaMapa() {
 	var configuracionMapa = {
 		zoom : zoomCastillaYLeon,
 		center : castillaYLeon,
-		mapTypeId : google.maps.MapTypeId.SATELLITE,
+		mapTypeId : google.maps.MapTypeId.HYBRID,
 		mapTypeControl : true,
 		mapTypeControlOptions : {
 			style : google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
@@ -117,6 +117,18 @@ function inicializaMapa() {
 				+ address);
 		infowindow.open(mapa, marker);
 	});
+	
+	 mapa.data.setStyle(function(feature) {
+		    var zoneType = feature.getProperty('zoneType');
+		    var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
+		    var weight = typeof zoneType != 'undefined' ? 2 : 1;
+		    return {
+		    	fillColor: color,
+			    fillOpacity: 0.1,
+			    strokeColor: color,
+			    strokeWeight: weight
+		    };
+	});
 
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
@@ -131,12 +143,13 @@ function inicializaMapa() {
 						var area = computeArea(bbox);
 						if (area <= 4000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
-							if(cadastralParcelFeatureCollection.features.length> 0){
-							mapa.data.forEach(function(feature) {
-						        //If you want, check here for some constraints.
-						        mapa.data.remove(feature);
-
-						    });
+							if (cadastralParcelFeatureCollection.features.length > 0) {
+								mapa.data.forEach(function(feature) {
+									var zoneType = feature.getProperty("zoneType");
+									if(typeof zoneType == 'undefined' || zoneType != 'administrative'){
+										mapa.data.remove(feature);
+									}
+								});
 							}
 							mapa.data
 									.addGeoJson(cadastralParcelFeatureCollection);
@@ -340,8 +353,8 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 }
 
 function getBoundaries(idProvincia) {
-	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection",'
-			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}'
+	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection", ' 
+			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
 			+ '}]}');
 
 	var url = "php/api_rest.php/crappyzone/bullshit/" + idProvincia;
@@ -356,9 +369,11 @@ function getBoundaries(idProvincia) {
 
 	request.done(function(response, textStatus, jqXHR) {
 		coordinates = response["_source"]["boundaries"];
+		zone = response["_source"]["zone"];
 	});
 
 	geoJSONBoundaries["features"][0]["geometry"] = coordinates;
+	geoJSONBoundaries["features"][0]["properties"]["zone"] = zone;
 
 	return geoJSONBoundaries;
 }
