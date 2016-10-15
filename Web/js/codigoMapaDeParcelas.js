@@ -143,7 +143,7 @@ function inicializaMapa() {
 						var area = computeArea(bbox);
 						if (area <= 4000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
-							if (cadastralParcelFeatureCollection.features.length > 0) {
+							if (typeof(cadastralParcelFeatureCollection)!= 'undefined' && cadastralParcelFeatureCollection.features.length > 0) {
 								mapa.data.forEach(function(feature) {
 									var zoneType = feature.getProperty("zoneType");
 									if(typeof zoneType == 'undefined' || zoneType != 'administrative'){
@@ -383,8 +383,9 @@ function getCadastralParcelFeatureCollection(bbox) {
 
 	// 41.401658195918856,-3.7401386077600485,41.402228979075865,-3.74004553075701
 	var url = "php/django_server_wrapper.php/osc/cadastral/parcel?bbox="
-			+ bbox.toUrlValue();
-
+		+ bbox.getSouthWest().lng() + "," +bbox.getSouthWest().lat() + "," 
+		+ bbox.getNorthEast().lng() + "," +bbox.getNorthEast().lat() ;
+	
 	var request = jQuery.ajax({
 		url : url,
 		type : 'GET',
