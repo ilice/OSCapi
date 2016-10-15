@@ -2,21 +2,12 @@
  * 
  */
 
-var mapa;
-var parcela = {};
-var informacionPoligono;
-var fixedData = false;
-var tableee;
-
 /*
  * Los Google Charts no son responsive por lo que es necesario pintarlos de
  * nuevo cuado se produce un cambio de tamaño de la pantalla
  */
 $(window).resize(function() {
-	graficoPrecipitacionPorMesYAnio();
-	graficoTemperaturasMediasDiurnas();
-	graficoRadiacionNetaDiaria();
-	graficoHorasDeSolDiarias();
+	onBodyLoad();
 });
 
 $(window).load(function() {
@@ -38,32 +29,11 @@ $(window).load(function() {
 	}
 });
 
-function cargaDatos() {
+function onBodyLoad() {
 
 	var nationalCadastralReference = getNationalCadastreReference();
 
-	var cadastralParcelFeature = getPublicParcelInfoByNationalCadastralReference(nationalCadastralReference);
-
-	draw(cadastralParcelFeature);
-
-	if (!fixedData) {
-		google.charts.load('current', {
-			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
-		});
-		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
-		//
-		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
-		// google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
-		// google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
-		// google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
-
-	} else {
-		document.getElementById("graficoPrecipitacionPorMesYAnio").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRainChart.PNG\" >";
-		document.getElementById("graficoTemperaturaMediaDiurna").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedTempChart.PNG\" >";
-		document.getElementById("graficoHorasDeSolDiarias").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedSunChart.PNG\" >";
-		document.getElementById("graficoRadiacionNetaDiaria").innerHTML = "<img style=\"width:100%;height:100%\" src=\"img/fixedRadiationChart.PNG\" >";
-		openCultivo("All")
-	}
+	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference);
 
 }
 
@@ -109,7 +79,7 @@ function initMap(cadastralParcelFeature) {
 		mapTypeId : google.maps.MapTypeId.HYBRID
 	}
 
-	mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
+	var mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
 
 	// TODO: me extraña que esto no se pueda hacer más limpio
 	var parcelEnvelopeCoordinates = cadastralParcelFeature.bbox;
@@ -180,130 +150,20 @@ function CenterControl(controlDiv, map, parcelBounds) {
 
 }
 
-function cargaMedidaDiasDeLluviaYPrecipitacionAcumulada() {
+function drawChartOfRainfallByMonthAndYear(parcelclimate_aggregations) {
 
-	var hoy = new Date();
+	var table = parcelclimate_aggregations.googleFormatedTable.rainfall;
 
-	var diasDeLluvia = 0;
-	var precipitacionAcumulada = 0;
-
-	if (!fixedData) {
-		var url = "php/inforiego_rest.php?accion=diasDeLluvia&latitud="
-				+ document.getElementById("latitud").innerHTML + "&longitud="
-				+ document.getElementById("longitud").innerHTML + "&anio="
-				+ hoy.getFullYear();
-
-		var request = jQuery.ajax({
-			crossDomain : true,
-			async : false,
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
-
-		request
-				.done(function(response, textStatus, jqXHR) {
-					diasDeLluvia = response.diasDeLluvia;
-					precipitacionAcumulada = response.precipitacionAcumulada
-							.toFixed(2);
-				});
-
-		document.getElementById('diasDeLluvia').innerHTML = diasDeLluvia;
-		document.getElementById('pecipitacionacumulada').innerHTML = precipitacionAcumulada;
-		document.getElementById('precipitacion-widget').innerHTML = precipitacionAcumulada;
-	} else {
-		document.getElementById('diasDeLluvia').innerHTML = 66;
-		document.getElementById('pecipitacionacumulada').innerHTML = 308.54;
-		document.getElementById('precipitacion-widget').innerHTML = 308.54;
-	}
-
-}
-
-function cargaMedidasDiarias() {
-
-	var hoy = new Date();
-
-	var min_temperatura = 0;
-	var max_temperatura = 0;
-	var media_temperatura = 0;
-	var media_horas_sol = 0;
-	var max_horas_sol = 0;
-	var sum_horas_sol = 0;
-	var sum_horas_sol = 0;
-	var max_radiacion = 0;
-	var media_radiacion = 0;
-	var sum_radiacion = 0;
-	var sum_radiacion = 0;
-	if (!fixedData) {
-
-		var url = "php/inforiego_rest.php?accion=medidasDiarias&latitud="
-				+ document.getElementById("latitud").innerHTML + "&longitud="
-				+ document.getElementById("longitud").innerHTML + "&anio="
-				+ hoy.getFullYear();
-
-		var request = jQuery.ajax({
-			crossDomain : true,
-			async : false,
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
-
-		request.done(function(response, textStatus, jqXHR) {
-			min_temperatura = response.min_temperatura.toFixed(2);
-			max_temperatura = response.max_temperatura.toFixed(2);
-			media_temperatura = response.media_temperatura.toFixed(2);
-			media_horas_sol = response.media_horas_sol.toFixed(2);
-			max_horas_sol = response.max_horas_sol.toFixed(2);
-			sum_horas_sol = response.sum_horas_sol.toFixed(2);
-			media_radiacion = response.media_radiacion.toFixed(2);
-			max_radiacion = response.max_radiacion.toFixed(2);
-			sum_radiacion = response.sum_radiacion.toFixed(2);
-		});
-
-		document.getElementById('maximaTemperaturaDiurna').innerHTML = max_temperatura;
-		document.getElementById('minimaTemperaturaDiurna').innerHTML = min_temperatura;
-		document.getElementById('mediaTemperaturaDiurna').innerHTML = media_temperatura;
-		document.getElementById('temperatura-widget').innerHTML = media_temperatura;
-		document.getElementById('mediaHorasSolDiarias').innerHTML = media_horas_sol;
-		document.getElementById('maximasHorasSolDiarias').innerHTML = max_horas_sol;
-		document.getElementById('horasSolAcumuladas').innerHTML = sum_horas_sol;
-		document.getElementById('horasSol-widget').innerHTML = sum_horas_sol;
-		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = max_radiacion;
-		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = media_radiacion;
-		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = sum_radiacion;
-		document.getElementById('radiacion-widget').innerHTML = sum_radiacion;
-
-	} else {
-		document.getElementById('maximaTemperaturaDiurna').innerHTML = 34.66;
-		document.getElementById('minimaTemperaturaDiurna').innerHTML = -6.59;
-		document.getElementById('mediaTemperaturaDiurna').innerHTML = 12.66;
-		document.getElementById('temperatura-widget').innerHTML = 12.66;
-		document.getElementById('mediaHorasSolDiarias').innerHTML = 10.05;
-		document.getElementById('maximasHorasSolDiarias').innerHTML = 13.51;
-		document.getElementById('horasSolAcumuladas').innerHTML = 2462.54;
-		document.getElementById('horasSol-widget').innerHTML = 2462.54;
-		document.getElementById('maximoRadiacionNetaDiaria').innerHTML = 34.02;
-		document.getElementById('mediaRadiacionNetaDiaria').innerHTML = 20.21;
-		document.getElementById('acumuladoRadiacionNetaDiaria').innerHTML = 4951.24;
-		document.getElementById('radiacion-widget').innerHTML = 4951.24;
-	}
-}
-
-function graficoPrecipitacionPorMesYAnio() {
-
-	var tabla = tableee.avg_temperature;
-
-	if (typeof tabla != 'undefined') {
-		var columnas = tabla.cols;
-		var filas = tabla.rows;
+	if (typeof table != 'undefined') {
+		var columns = table.cols;
+		var rows = table.rows;
 
 		var dt = new google.visualization.DataTable();
 
-		for (var i = 0; i < columnas.length; i++) {
-			dt.addColumn(columnas[i].type, columnas[i].label);
+		for (var i = 0; i < columns.length; i++) {
+			dt.addColumn(columns[i].type, columns[i].label);
 		}
-		dt.addRows(filas);
+		dt.addRows(rows);
 
 		var opciones = {
 			chart : {
@@ -330,20 +190,20 @@ function graficoPrecipitacionPorMesYAnio() {
 	}
 }
 
-function graficoTemperaturasMediasDiurnas() {
+function drawChartOfTemperaturesByMonthAndYear(parcelclimate_aggregations) {
 
-	var tabla = obtenDatosPorAnio("TEMPMEDIA", 3, "day", "DDD");
+	var table = parcelclimate_aggregations.googleFormatedTable.avg_temperature;
 
-	if (typeof tabla != 'undefined') {
-		var columnas = tabla.cols;
-		var filas = tabla.rows;
+	if (typeof table != 'undefined') {
+		var columns = table.cols;
+		var rows = table.rows;
 
 		var dt = new google.visualization.DataTable();
 
-		for (var i = 0; i < columnas.length; i++) {
-			dt.addColumn(columnas[i].type, columnas[i].label);
+		for (var i = 0; i < columns.length; i++) {
+			dt.addColumn(columns[i].type, columns[i].label);
 		}
-		dt.addRows(filas);
+		dt.addRows(rows);
 
 		var opciones = {
 			chart : {
@@ -390,21 +250,21 @@ function graficoTemperaturasMediasDiurnas() {
 
 }
 
-function graficoHorasDeSolDiarias() {
+function drawChartOfDailySunHoursByMonthAndYear(parcelclimate_aggregations) {
 
-	var tabla = obtenDatosPorAnio("N", 3, "day", "DDD");
+	var table = parcelclimate_aggregations.googleFormatedTable.sun_hours;
 
-	if (typeof tabla != 'undefined') {
+	if (typeof table != 'undefined') {
 
-		var columnas = tabla.cols;
-		var filas = tabla.rows;
+		var columns = table.cols;
+		var rows = table.rows;
 
 		var dt = new google.visualization.DataTable();
 
-		for (var i = 0; i < columnas.length; i++) {
-			dt.addColumn(columnas[i].type, columnas[i].label);
+		for (var i = 0; i < columns.length; i++) {
+			dt.addColumn(columns[i].type, columns[i].label);
 		}
-		dt.addRows(filas);
+		dt.addRows(rows);
 
 		var opciones = {
 			chart : {
@@ -451,20 +311,20 @@ function graficoHorasDeSolDiarias() {
 
 }
 
-function graficoRadiacionNetaDiaria() {
+function drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations) {
 
-	var tabla = obtenDatosPorAnio("RADIACION", 3, "day", "DDD");
-	if (typeof tabla != 'undefined') {
+	var table = parcelclimate_aggregations.googleFormatedTable.radiation;
+	if (typeof table != 'undefined') {
 
-		var columnas = tabla.cols;
-		var filas = tabla.rows;
+		var columns = table.cols;
+		var rows = table.rows;
 
 		var dt = new google.visualization.DataTable();
 
-		for (var i = 0; i < columnas.length; i++) {
-			dt.addColumn(columnas[i].type, columnas[i].label);
+		for (var i = 0; i < columns.length; i++) {
+			dt.addColumn(columns[i].type, columns[i].label);
 		}
-		dt.addRows(filas);
+		dt.addRows(rows);
 
 		var opciones = {
 			chart : {
@@ -508,20 +368,7 @@ function graficoRadiacionNetaDiaria() {
 
 }
 
-function arrayToPathLatLong(array) {
-	var paths = [];
-
-	for (var i = 0; i < array.length; i++) {
-		var path = {};
-		path.lat = array[i][0];
-		path.lng = array[i][1];
-		paths.push(path);
-	}
-
-	return paths;
-}
-
-function getPublicParcelInfoByNationalCadastralReference(
+function drawPublicParcelInfoByNationalCadastralReference(
 		nationalCadastralReference) {
 	var cadastralParcelFeature;
 
@@ -532,21 +379,17 @@ function getPublicParcelInfoByNationalCadastralReference(
 	var request = jQuery.ajax({
 		url : url,
 		type : 'GET',
-		dataType : "json",
-		async : false
+		dataType : "json"
 	});
 
 	request.done(function(response, textStatus, jqXHR) {
 		cadastralParcelFeature = response.features[0];
+		cadastralParcelFeature.properties.climate_aggregations = addGoogleFormatedTablesOf(cadastralParcelFeature.properties.climate_aggregations);
+		drawCardsAndWidgets(cadastralParcelFeature);
 	});
-
-	cadastralParcelFeature.properties.climate_aggregations = addGoogleFormatedTables(cadastralParcelFeature.properties.climate_aggregations);
-
-	return cadastralParcelFeature;
-
 }
 
-function draw(cadastralParcelFeature) {
+function drawCardsAndWidgets(cadastralParcelFeature) {
 
 	setValueInField(
 			cadastralParcelFeature.properties.nationalCadastralReference, "rc");
@@ -559,6 +402,12 @@ function draw(cadastralParcelFeature) {
 
 	drawRainfallAggregationsCard(cadastralParcelFeature.properties.climate_aggregations);
 
+	drawTemperatureAggregationsCard(cadastralParcelFeature.properties.climate_aggregations);
+	
+	drawSunHoursAggregationsCard(cadastralParcelFeature.properties.climate_aggregations);
+	
+	drawRadiationAggregationsCard(cadastralParcelFeature.properties.climate_aggregations);
+	
 	drawCropDistributionCard(cadastralParcelFeature);
 
 }
@@ -616,7 +465,61 @@ function drawLastYearClimateAggregationsWidgetBar(
 }
 
 function drawRainfallAggregationsCard(parcelclimate_aggregations) {
-	// google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
+	loadGoogleChartsCorechart();
+
+	google.charts.setOnLoadCallback(function() {
+		drawChartOfRainfallByMonthAndYear(parcelclimate_aggregations)
+	});
+
+	setValueInField(parcelclimate_aggregations.last_year.rainfall_days,
+			"diasDeLluvia");
+	setValueInField(parcelclimate_aggregations.last_year.sum_rainfall.toFixed(2),
+			"pecipitacionacumulada");
+}
+
+function drawTemperatureAggregationsCard(parcelclimate_aggregations) {
+	loadGoogleChartsCorechart();
+
+	google.charts.setOnLoadCallback(function() {
+		drawChartOfTemperaturesByMonthAndYear(parcelclimate_aggregations)
+	});
+
+	setValueInField(parcelclimate_aggregations.last_year.max_temperature.toFixed(2),
+			"maximaTemperaturaDiurna");
+	setValueInField(parcelclimate_aggregations.last_year.min_temperature.toFixed(2),
+			"minimaTemperaturaDiurna");
+	setValueInField(parcelclimate_aggregations.last_year.avg_temperature.toFixed(2),
+			"mediaTemperaturaDiurna");
+}
+
+function drawSunHoursAggregationsCard(parcelclimate_aggregations) {
+	loadGoogleChartsCorechart();
+
+	google.charts.setOnLoadCallback(function() {
+		drawChartOfDailySunHoursByMonthAndYear(parcelclimate_aggregations)
+	});
+
+	setValueInField(parcelclimate_aggregations.last_year.avg_sun_hours.toFixed(2),
+			"mediaHorasSolDiarias");
+	setValueInField(parcelclimate_aggregations.last_year.max_sun_hours.toFixed(2),
+			"maximasHorasSolDiarias");
+	setValueInField(parcelclimate_aggregations.last_year.sum_sun_hours,
+			"horasSolAcumuladas");
+}
+
+function drawRadiationAggregationsCard(parcelclimate_aggregations) {
+	loadGoogleChartsCorechart();
+
+	google.charts.setOnLoadCallback(function() {
+		drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations)
+	});
+
+	setValueInField(parcelclimate_aggregations.last_year.max_radiation.toFixed(2),
+			"maximoRadiacionNetaDiaria");
+	setValueInField(parcelclimate_aggregations.last_year.avg_radiation.toFixed(2),
+			"mediaRadiacionNetaDiaria");
+	setValueInField(parcelclimate_aggregations.last_year.sum_radiation.toFixed(2),
+			"acumuladoRadiacionNetaDiaria");
 }
 
 function drawCropDistributionCard(cadastralParcelFeature) {
@@ -640,56 +543,70 @@ function openCropDistribution(crop) {
 	document.getElementById(crop).style.display = "block";
 }
 
-function addGoogleFormatedTables(parcelClimate_aggregations) {
+function addGoogleFormatedTablesOf(parcelClimate_aggregations) {
 
-	var parcelClimate_aggregationsBy_month = parcelClimate_aggregations.by_month;
-	var cols = [];
-	var rows = [];
+	var yearly_measures = parcelClimate_aggregations.by_month;
+	var colsByMeasure = [];
+	var rowsByMeasure = [];
 	var monthNames = [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
 			"Diciembre" ];
 
-	for (i = 0; i < parcelClimate_aggregationsBy_month.length; i++) {
-		var year = parcelClimate_aggregationsBy_month[i].year;
-		var monthly_measures = parcelClimate_aggregationsBy_month[i].monthly_measures;
+	for (i = 0; i < yearly_measures.length; i++) {
+		var year = yearly_measures[i].year;
+		var monthly_measures = yearly_measures[i].monthly_measures;
 		for (j = 0; j < monthly_measures.length; j++) {
 			var measures = monthly_measures[j];
 			var month = measures.month;
 			for ( var measure in measures) {
 				if (measure != 'month') {
-					if (!cols.hasOwnProperty(measure)) {
-						cols[measure] = [ {
+					if (!colsByMeasure.hasOwnProperty(measure)) {
+						colsByMeasure[measure] = [ {
 							label : "Mes",
 							type : "string"
 						} ];
 					}
-					if (!rows.hasOwnProperty(measure)) {
-						rows[measure] = [];
+					if (!rowsByMeasure.hasOwnProperty(measure)) {
+						rowsByMeasure[measure] = [];
 						for (monthName in monthNames) {
-							rows[measure].push([ monthNames[monthName] ]);
+							rowsByMeasure[measure].push([ monthNames[monthName] ]);
 						}
 					}
+					rowsByMeasure[measure][month - 1].push(measures[measure]);
 				}
-				rows[measure][month - 1].push(measures[measure]);
 			}
 		}
-		for ( var col in cols) {
-			cools[col].push({
+		for ( var measure in colsByMeasure) {
+			colsByMeasure[measure].push({
 				label : year,
 				type : "number"
 			});
+			for ( var month in rowsByMeasure[measure]) {
+				if (rowsByMeasure[measure][month].length < colsByMeasure[measure].length) {
+					rowsByMeasure[measure][month].push(null);
+				}
+
+			}
 		}
 	}
 
 	var googleFormatedTable = [];
-	for(var measureType in cols){
+	for ( var measureType in colsByMeasure) {
 		googleFormatedTable[measureType] = {
-				cols : cols[measureType],
-				rows : rows[measureType]
+			cols : colsByMeasure[measureType],
+			rows : rowsByMeasure[measureType]
 		}
 	}
-	
+
 	parcelClimate_aggregations["googleFormatedTable"] = googleFormatedTable;
-	tableee = googleFormatedTable;
 	return parcelClimate_aggregations;
+}
+
+function loadGoogleChartsCorechart() {
+	if (document.getElementById("isGoogleChartsCorechartLoaded").innerHTML != "true") {
+		google.charts.load('current', {
+			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
+		});
+		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
+	}
 }
