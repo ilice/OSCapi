@@ -137,11 +137,11 @@ function inicializaMapa() {
 
 	mapa
 			.addListener(
-					'bounds_changed',
+					'idle',
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 4000000) {
+						if (area <= 1000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof(cadastralParcelFeatureCollection)!= 'undefined' && cadastralParcelFeatureCollection.features.length > 0) {
 								mapa.data.forEach(function(feature) {
@@ -380,11 +380,15 @@ function getBoundaries(idProvincia) {
 
 function getCadastralParcelFeatureCollection(bbox) {
 	var cadastralParcelFeatureCollection;
+	
+	if(computeArea(bbox) > 1000000){
+		bbox = reduceToArea(bbox, 1000000);
+	}
+		
 
 	// 41.401658195918856,-3.7401386077600485,41.402228979075865,-3.74004553075701
 	var url = "php/django_server_wrapper.php/osc/cadastral/parcel?bbox="
-		+ bbox.getSouthWest().lng() + "," +bbox.getSouthWest().lat() + "," 
-		+ bbox.getNorthEast().lng() + "," +bbox.getNorthEast().lat() ;
+		+ bbox.toUrlValue() ;
 	
 	var request = jQuery.ajax({
 		url : url,
@@ -411,6 +415,8 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 								function(event) {
 									var latitude = event.latLng.lat();
 									var longitude = event.latLng.lng();
+									
+									var bbox = new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(event.latLng, 500, -135), google.maps.geometry.spherical.computeOffset(event.latLng, 500, 45));
 
 									if (perteneceAParcela(latitude, longitude)) {
 
@@ -451,9 +457,7 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 										// Center of map
 										mapa.panTo(new google.maps.LatLng(
 												latitude, longitude));
-										if (mapa.getZoom() < 14) {
-											mapa.setZoom(14);
-										}
+										mapa.fitBounds(bbox);
 
 									}
 
@@ -555,4 +559,8 @@ function computeArea(bbox) {
 					northWestCorner, southWestCorner);
 
 	return area;
+}
+
+function reduceToArea(bbox, area){
+	return new google.maps.LatLngBounds(bbox.getCenter(), 500, -135, bbox.getCenter(), 500, 45);
 }
