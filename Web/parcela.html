@@ -7,7 +7,7 @@
 <meta name="keywords"
 	content="Open Smart Country, Agrotech, IoT, Analitycs, Open Data" />
 <meta name="description"
-	content="Información sobre parcelas obtenida de Sensores y Open Data" />
+	content="Información sobre parcelas obtenida de fuentes de Open Data" />
 <meta name="author" content="Isabel Muñoz @teanocrata" />
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css" />
 <link rel="stylesheet"
@@ -292,33 +292,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="w3-third" style="display: none;">
-				<div id="kudron" class="w3-card-8">
-					<span onclick="this.parentElement.style.display='none'"
-						class="w3-closebtn w3-padding">&times;</span>
-					<div class="w3-container">
-						<h5>Kudron - actualizar datos de vuelo</h5>
-						<div class="w3-center">
-							<img src="img/Drone.png" alt="Foto del prototipo de sensores"></img>
-						</div>
-						<table class="w3-table w3-striped w3-bordered">
-							<thead>
-								<tr>
-									<th>Latitud</th>
-									<th>Longitud</th>
-								</tr>
-							</thead>
-							<tr>
-								<td id="latitud">41.080364</td>
-								<td id="longitud">-4.589025</td>
-							</tr>
-						</table>
-						<a class="w3-btn w3-margin-bottom w3-dark-grey" href="#">Ver
-							Plan de Vuelo  <i class="fa fa-arrow-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
 		</div>
 
 		<!-- Modal con la destripción de la idea y el enlace para ver la información  -->
@@ -342,99 +315,6 @@
 		</div>
 		<!-- Fin de Modal con la destripción de la idea y el enlace para ver la información  -->
 
-		<div id="coordenadasLindeModal" class="w3-modal">
-			<div class="w3-modal-content">
-				<div class="w3-container">
-					<span
-						onclick="document.getElementById('coordenadasLindeModal').style.display='none'"
-						class="w3-closebtn">&times;</span> <span id="coordenadasLinde"></span>
-				</div>
-			</div>
-		</div>
-		<!--FIN Línea de localización y datos genéricos-->
-
-		<!--Tarjeta sobre OSC&alpha;r-->
-		<div class="w3-container w3-section" id="cacharrito">
-			<span onclick="this.parentElement.style.display='none'"
-				class="w3-closebtn w3-padding">&times;</span>
-
-			<div class="w3-row-padding w3-card-8">
-				<div class="w3-twothird">
-					<p>
-						<strong>"OSC&alpha;r"</strong> está puesto en la parcela e informa
-						de su posición por si alguien <em>"en un despiste"</em> lo mueve.
-						<button id="datosOscarErrorBadge"
-							class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-							style="display: none">
-							<i
-								onclick="document.getElementById('datosOscar').style.display='block'"
-								class="fa fa-ban"></i>
-						</button>
-					</p>
-					<p>Su trabajo es recoger y enviar los datos que obtiene de sus
-						sensores: humedad del suelo, luz, lluvia, temperatura, humedad
-						relativa del aire... y los sensores que le vayamos añadiendo.</p>
-					<p>Además nos informa de cómo va de batería, por la noche va a
-						tirar de ella así que durante el día debe estar bien cargado.</p>
-					<table id="tabla-oscar"
-						class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey w3-margin-bottom">
-						<tr>
-							<td><i class="fa fa-fire w3-brown w3-padding-tiny"></i></td>
-							<td>Último valor de humedad del suelo</td>
-							<td><i><span id="horaUltimaMedidaHumedadSuelo"></span></i></td>
-							<td><i><span id="ultimaMedidaHumedadSuelo"></span> %</i></td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-eyedropper w3-red w3-padding-tiny"></i></td>
-							<td>Último valor de temperatura</td>
-							<td><i><span id="horaUltimaMedidaTemperatura"></span></i></td>
-							<td><i><span id="ultimaMedidaTemperatura"></span> ºC</i></td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-tint w3-green w3-padding-tiny"></i></td>
-							<td>Último valor de humedad relativa</td>
-							<td><i><span id="horaUltimaMedidaHumedad"></span></i></td>
-							<td><i><span id="ultimaMedidaHumedad"></span> %</i></td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-cloud w3-blue w3-padding-tiny"></i></td>
-							<td>Último valor de lluvia</td>
-							<td><i><span id="horaUltimaMedidaLluvia"></span></i></td>
-							<td><i><span id="ultimaMedidaLluvia"></span> l/m<sup>2</sup></i></td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-sun-o w3-yellow w3-padding-tiny"></i></td>
-							<td>Último valor de luz</td>
-							<td><i><span id="horaUltimaMedidaLuz"></span></i></td>
-							<td><i><span id="ultimaMedidaLuz"></span> lumin</i></td>
-						</tr>
-						<tr>
-							<td><i class="fa fa-battery-half w3-grey w3-padding-tiny"></i></td>
-							<td>Último valor de batería</td>
-							<td><i><span id="horaUltimaMedidaBateria"></span></i></td>
-							<td><i><span id="ultimaMedidaBateria"></span> %<span
-									class="w3-badge w3-right w3-small w3-orange">!</span></i></td>
-						</tr>
-					</table>
-				</div>
-				<div class="w3-third" id="oscar">
-					<div class="w3-center">
-						<a href="oscar.html"><img src="img/cacharrito.png"
-							alt="Foto del prototipo de sensores"></a>
-					</div>
-					<table
-						class="w3-table w3-bordered w3-border w3-hoverable w3-white w3-text-grey w3-margin-bottom">
-						<tr>
-							<th>Latitud: <span id="ultimaPosicionLatitud"></span></th>
-							<th>Longitud: <span id="ultimaPosicionLongitud"></span></th>
-						</tr>
-					</table>
-				</div>
-				<div id="datosOscar" class="w3-col w3-panel w3-red w3-card-8"
-					style="display: none"></div>
-			</div>
-		</div>
-		<!--FIN Tarjeta sobre OSC&alpha;r-->
 
 		<!--Una observación-->
 		<div class="w3-container w3-section ">
@@ -632,49 +512,49 @@
 					<div class="w3-col" style="width: 150px">
 						<ul class="w3-ul w3-hoverable w3-large">
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('All')">Todos</a></li>
+								href="#fixed" onclick="openCropDistribution('All')">Todos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('Agua')">Agua</a></li>
-							<!-- <li><a href="#fixed" onclick="openCultivo('Viales')">Viales</a></li>
-  					<li><a href="#fixed" onclick="openCultivo('Viales')">Edificaciones</a></li> -->
+								href="#fixed" onclick="openCropDistribution('Agua')">Agua</a></li>
+							<!-- <li><a href="#fixed" onclick="openCropDistribution('Viales')">Viales</a></li>
+  					<li><a href="#fixed" onclick="openCropDistribution('Viales')">Edificaciones</a></li> -->
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('FL')">FS y olivar</a></li>
+								href="#fixed" onclick="openCropDistribution('FL')">FS y olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('FO')">Forestal</a></li>
+								href="#fixed" onclick="openCropDistribution('FO')">Forestal</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('FS')">Frutos secos</a></li>
+								href="#fixed" onclick="openCropDistribution('FS')">Frutos secos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('FV')">FS y Viñedos</a></li>
+								href="#fixed" onclick="openCropDistribution('FV')">FS y Viñedos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('FY')">Frutales</a></li>
+								href="#fixed" onclick="openCropDistribution('FY')">Frutales</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('IM')">Improductivo</a></li>
+								href="#fixed" onclick="openCropDistribution('IM')">Improductivo</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('IV')">Invernaderos</a></li>
+								href="#fixed" onclick="openCropDistribution('IV')">Invernaderos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('OF')">Olivar - Frutal</a></li>
+								href="#fixed" onclick="openCropDistribution('OF')">Olivar - Frutal</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('OV')">Olivar</a></li>
+								href="#fixed" onclick="openCropDistribution('OV')">Olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('PA')">Pasto con arb.</a></li>
+								href="#fixed" onclick="openCropDistribution('PA')">Pasto con arb.</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('PR')">Pasto arbustivo</a></li>
+								href="#fixed" onclick="openCropDistribution('PR')">Pasto arbustivo</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('PS')">Pastizal</a></li>
+								href="#fixed" onclick="openCropDistribution('PS')">Pastizal</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('TA')">Arables</a></li>
+								href="#fixed" onclick="openCropDistribution('TA')">Arables</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('TH')">Huerta</a></li>
+								href="#fixed" onclick="openCropDistribution('TH')">Huerta</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('VF')">Viñedo - Frutal</a></li>
+								href="#fixed" onclick="openCropDistribution('VF')">Viñedo - Frutal</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('VI')">Viñedo</a></li>
+								href="#fixed" onclick="openCropDistribution('VI')">Viñedo</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('VO')">Viñedo - Olivar</a></li>
+								href="#fixed" onclick="openCropDistribution('VO')">Viñedo - Olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('ZC')">Concentración</a></li>
+								href="#fixed" onclick="openCropDistribution('ZC')">Concentración</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCultivo('ZU')">Urbano</a></li>
+								href="#fixed" onclick="openCropDistribution('ZU')">Urbano</a></li>
 						</ul>
 					</div>
 					<div class="w3-rest w3-padding">
@@ -817,16 +697,6 @@
 							<img src="img/distribucion/37_ZU.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
-						<script>
-							function openCultivo(cultivo) {
-								var i;
-								var x = document.getElementsByClassName("city");
-								for (i = 0; i < x.length; i++) {
-									x[i].style.display = "none";
-								}
-								document.getElementById(cultivo).style.display = "block";
-							}
-						</script>
 					</div>
 				</div>
 			</div>
@@ -900,13 +770,8 @@
 				parcelas.</p>
 			<p>Si sigues el Tour te mostraré el tipo de información
 				disponible y cómo se consigue.</p>
-			<p>Ahora mismo hay dos fuentes de información fundamentales:</p>
-			<ul>
-				<li>OSC&alpha;r que está en la parcela enviando los datos de
-					sus sensores.</li>
-				<li>Fuentes de Open Data: datos que normalmente el gobierno
-					publica para uso de cualquier persona.</li>
-			</ul>
+			<p>Utilizamos como fuentes de información datos disponibles como Open Data. Datos que normalmente el gobierno
+					publica para uso de cualquier persona
 			<p>¿Quieres que te los enseñe?</p>
 		</li>
 		<li data-id="openNav" data-button="Siguiente" class="custom"
@@ -980,23 +845,6 @@
 					Catastro</a>.
 			</p>
 		</li>
-		<li data-id="oscar" data-button="Siguiente" class="custom"
-			data-options="tipLocation:bottom">
-			<h2>OSC&alpha;r</h2>
-			<p>Yo soy OSC&alpha;r, pulsando sobre mí puedes obtener más
-				información sobre cómo funciono.</p>
-			<p>Como puedes ver estoy geolocalizado. Aunque no son mis
-				coordenadas exactas, si alguien me mueve te aviso rápidamente.</p>
-		</li>
-		<li data-id="tabla-oscar" data-button="Siguiente" class="custom"
-			data-options="tipLocation:bottom">
-			<h2>OSC&alpha;r</h2>
-			<p>Este es el tipo de información que proporciono con los
-				sensores que tengo ahora mismo, además informo de la fecha y la hora
-				a la que envié la información.</p>
-			<p>La frecuencia con la que la envío es configurable y todos los
-				datos se van guardando para ser posteriormente analizados.</p>
-		</li>
 		<li data-id="datosEstacion" data-button="Siguiente" class="custom"
 			data-options="tipLocation:bottom">
 			<h2>Estaciones meteorológicas</h2>
@@ -1007,14 +855,6 @@
 				ofrecen sus datos como Open Data. En algunos casos están
 				suficientemente cerca como para que sus datos por si mismos sean
 				significativos.</p>
-			<p>En el caso de esta parcela esto no es así, está a unos 11km en
-				línea recta pero las consiciones del terreno hacen que sus datos por
-				si solos no sean suficientes.</p>
-			<p>
-				La parcela se encuentra en una zona de monte separada por unas
-				montañas de esta estación, pero sus datos cruzados con los datos que
-				da <strong>OSC&alpha;r</strong> sí que son muy interesantes.
-			</p>
 		</li>
 		<li data-id="graficoPrecipitacionPorMesYAnio" data-button="Siguiente"
 			class="custom" data-options="tipLocation:bottom">
