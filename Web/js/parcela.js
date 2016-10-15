@@ -47,13 +47,12 @@ function cargaDatos() {
 	draw(cadastralParcelFeature);
 
 	if (!fixedData) {
-				 google.charts.load('current', {
-		 'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
-		 });
-		 document.getElementById("isGoogleChartsCorechartLoaded").innerHTML =
-		 "true";
+		google.charts.load('current', {
+			'packages' : [ 'table', 'bar', 'corechart', 'geochart' ]
+		});
+		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
 		//
-		 google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
+		google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 		// google.charts.setOnLoadCallback(graficoTemperaturasMediasDiurnas);
 		// google.charts.setOnLoadCallback(graficoHorasDeSolDiarias);
 		// google.charts.setOnLoadCallback(graficoRadiacionNetaDiaria);
@@ -540,7 +539,7 @@ function getPublicParcelInfoByNationalCadastralReference(
 	request.done(function(response, textStatus, jqXHR) {
 		cadastralParcelFeature = response.features[0];
 	});
-	
+
 	cadastralParcelFeature.properties.climate_aggregations = addGoogleFormatedTables(cadastralParcelFeature.properties.climate_aggregations);
 
 	return cadastralParcelFeature;
@@ -557,7 +556,7 @@ function draw(cadastralParcelFeature) {
 	drawCatastralCard(cadastralParcelFeature.properties.cadastralData);
 
 	drawLastYearClimateAggregationsWidgetBar(cadastralParcelFeature.properties.climate_aggregations.last_year);
-	
+
 	drawRainfallAggregationsCard(cadastralParcelFeature.properties.climate_aggregations);
 
 	drawCropDistributionCard(cadastralParcelFeature);
@@ -616,8 +615,8 @@ function drawLastYearClimateAggregationsWidgetBar(
 			.toFixed(2), "radiacion-widget");
 }
 
-function drawRainfallAggregationsCard(parcelclimate_aggregations){
-		//google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
+function drawRainfallAggregationsCard(parcelclimate_aggregations) {
+	// google.charts.setOnLoadCallback(graficoPrecipitacionPorMesYAnio);
 }
 
 function drawCropDistributionCard(cadastralParcelFeature) {
@@ -641,99 +640,56 @@ function openCropDistribution(crop) {
 	document.getElementById(crop).style.display = "block";
 }
 
-function addGoogleFormatedTables(parcelClimate_aggregations){
-	
+function addGoogleFormatedTables(parcelClimate_aggregations) {
+
 	var parcelClimate_aggregationsBy_month = parcelClimate_aggregations.by_month;
 	var cols = [];
-	cols["avg_temperature"] = [{label: "Mes", type: "string"}];
-	cols["rainfall"] = [{label: "Mes", type: "string"}];
-	cols["sun_hours"] = [{label: "Mes", type: "string"}];
-	cols["radiation"] = [{label: "Mes", type: "string"}];
-	
 	var rows = [];
-	rows["avg_temperature"] = [];
-	rows["rainfall"] = [];
-	rows["sun_hours"] = [];
-	rows["radiation"] = [];
-	
-	rows["avg_temperature"].push(["Enero"]);
-	rows["avg_temperature"].push(["Febrero"]);
-	rows["avg_temperature"].push(["Marzo"]);
-	rows["avg_temperature"].push(["Abril"]);
-	rows["avg_temperature"].push(["Mayo"]);
-	rows["avg_temperature"].push(["Junio"]);
-	rows["avg_temperature"].push(["Julio"]);
-	rows["avg_temperature"].push(["Agosto"]);
-	rows["avg_temperature"].push(["Septiembre"]);
-	rows["avg_temperature"].push(["Octubre"]);
-	rows["avg_temperature"].push(["Noviembre"]);
-	rows["avg_temperature"].push(["Diciembre"]);
-	
-	rows["rainfall"].push(["Enero"]);
-	rows["rainfall"].push(["Febrero"]);
-	rows["rainfall"].push(["Marzo"]);
-	rows["rainfall"].push(["Abril"]);
-	rows["rainfall"].push(["Mayo"]);
-	rows["rainfall"].push(["Junio"]);
-	rows["rainfall"].push(["Julio"]);
-	rows["rainfall"].push(["Agosto"]);
-	rows["rainfall"].push(["Septiembre"]);
-	rows["rainfall"].push(["Octubre"]);
-	rows["rainfall"].push(["Noviembre"]);
-	rows["rainfall"].push(["Diciembre"]);
-	
-	rows["sun_hours"].push(["Enero"]);
-	rows["sun_hours"].push(["Febrero"]);
-	rows["sun_hours"].push(["Marzo"]);
-	rows["sun_hours"].push(["Abril"]);
-	rows["sun_hours"].push(["Mayo"]);
-	rows["sun_hours"].push(["Junio"]);
-	rows["sun_hours"].push(["Julio"]);
-	rows["sun_hours"].push(["Agosto"]);
-	rows["sun_hours"].push(["Septiembre"]);
-	rows["sun_hours"].push(["Octubre"]);
-	rows["sun_hours"].push(["Noviembre"]);
-	rows["sun_hours"].push(["Diciembre"]);
-	
-	rows["radiation"].push(["Enero"]);
-	rows["radiation"].push(["Febrero"]);
-	rows["radiation"].push(["Marzo"]);
-	rows["radiation"].push(["Abril"]);
-	rows["radiation"].push(["Mayo"]);
-	rows["radiation"].push(["Junio"]);
-	rows["radiation"].push(["Julio"]);
-	rows["radiation"].push(["Agosto"]);
-	rows["radiation"].push(["Septiembre"]);
-	rows["radiation"].push(["Octubre"]);
-	rows["radiation"].push(["Noviembre"]);
-	rows["radiation"].push(["Diciembre"]);
-	
-	for(i=0; i<parcelClimate_aggregationsBy_month.length; i++){
+	var monthNames = [ "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+			"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre",
+			"Diciembre" ];
+
+	for (i = 0; i < parcelClimate_aggregationsBy_month.length; i++) {
 		var year = parcelClimate_aggregationsBy_month[i].year;
 		var monthly_measures = parcelClimate_aggregationsBy_month[i].monthly_measures;
-		for (j=0; j<monthly_measures.length; j++){
-			var avg_temperature = monthly_measures[j].avg_temperature;
-			var rainfall = monthly_measures[j].rainfall;
-			var sun_hours = monthly_measures[j].sun_hours;
-			var radiation = monthly_measures[j].radiation;
-			var month = monthly_measures[j].month;
-			rows["avg_temperature"][month-1].push(avg_temperature);
-			rows["rainfall"][month-1].push(rainfall);
-			rows["sun_hours"][month-1].push(sun_hours);
-			rows["radiation"][month-1].push(radiation);
+		for (j = 0; j < monthly_measures.length; j++) {
+			var measures = monthly_measures[j];
+			var month = measures.month;
+			for ( var measure in measures) {
+				if (measure != 'month') {
+					if (!cols.hasOwnProperty(measure)) {
+						cols[measure] = [ {
+							label : "Mes",
+							type : "string"
+						} ];
+					}
+					if (!rows.hasOwnProperty(measure)) {
+						rows[measure] = [];
+						for (monthName in monthNames) {
+							rows[measure].push([ monthNames[monthName] ]);
+						}
+					}
+				}
+				rows[measure][month - 1].push(measures[measure]);
+			}
 		}
-		cols["avg_temperature"].push({label: year, type: "number"});
-		cols["rainfall"].push({label: year, type: "number"});
-		cols["sun_hours"].push({label: year, type: "number"});
-		cols["radiation"].push({label: year, type: "number"});
+		for ( var col in cols) {
+			cools[col].push({
+				label : year,
+				type : "number"
+			});
+		}
+	}
+
+	var googleFormatedTable = [];
+	for(var measureType in cols){
+		googleFormatedTable[measureType] = {
+				cols : cols[measureType],
+				rows : rows[measureType]
+		}
 	}
 	
-	var googleFormatedTable = [];
-	googleFormatedTable["avg_temperature"] = {cols: cols["avg_temperature"], rows: rows["avg_temperature"]};
-	googleFormatedTable["rainfall"] = {cols: cols["rainfall"], rows: rows["rainfall"]};
-	googleFormatedTable["sun_hours"] = {cols: cols["sun_hours"], rows: rows["sun_hours"]};
-	googleFormatedTable["radiation"] = {cols: cols["radiation"], rows: rows["radiation"]};
-	parcelClimate_aggregations["googleFormatedTable"]=googleFormatedTable;
+	parcelClimate_aggregations["googleFormatedTable"] = googleFormatedTable;
 	tableee = googleFormatedTable;
 	return parcelClimate_aggregations;
 }
