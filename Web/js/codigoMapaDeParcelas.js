@@ -3,13 +3,13 @@ var parcelas = [
 			lat : 40.439983,
 			lng : -5.737026,
 			foto : "img/IMG_20160501_175931.jpg",
-			url : "parcela.html?latitud=40.439983&longitud=-5.737026&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
+			url : "parcela.html?cadastral_code=37284A00600098&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
 		},
 		{
 			lat : 41.080364,
 			lng : -4.588973,
 			foto : "img/IMG_0882.JPG",
-			url : "parcela.html?latitud=41.080364&longitud=-4.589025&nombre=La%20Nueva"
+			url : "parcela.html?cadastral_code=40066A00500025&longitud=-4.589025&nombre=La%20Nueva"
 		} ];
 
 var marcadores = [];
