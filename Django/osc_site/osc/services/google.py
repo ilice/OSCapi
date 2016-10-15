@@ -20,15 +20,19 @@ def obtain_elevation_from_google(centers):
     if centers is tuple:
         centers = [centers]
 
-    response = requests.get(url, params={'key': api_key,
-                                         'locations': compose_locations_param(centers)})
-    json_response = response.json()
+    elevations = []
+    if len(centers) > 0:
+        response = requests.get(url, params={'key': api_key,
+                                             'locations': compose_locations_param(centers)})
+        json_response = response.json()
 
-    if json_response['status'] != 'OK':
-        raise ConnectionError('GOOGLE MAPS',
-                              response['error_message'] if 'error_message' in response else json_response['status'])
+        if json_response['status'] != 'OK':
+            raise ConnectionError('GOOGLE MAPS',
+                                  response['error_message'] if 'error_message' in response else json_response['status'])
 
-    return json_response['results']
+        elevations = [result['elevation'] for result in json_response['results']]
+
+    return elevations
 
 
 def try_obtain_elevation_from_google(centers, sleep_time=3600, max_num_trials=10):
