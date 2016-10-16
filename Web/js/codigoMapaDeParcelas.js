@@ -146,84 +146,70 @@ function inicializaMapa() {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
 									&& cadastralParcelFeatureCollection.features.length > 0) {
-								mapa.data
-										.forEach(function(feature) {
-											var zoneType = feature
-													.getProperty("zoneType");
-											if (typeof zoneType == 'undefined'
-													|| zoneType != 'administrative') {
-												mapa.data.remove(feature);
-											} else {
-												mapa.data
-														.addListener(
-																'click',
-																function(event) {
-																	var latitude = event.feature.getProperty("reference_point").lat;
-																	var longitude = event.feature.getProperty("reference_point").lon;
-																	var nationalCadastralReference = event.feature.getProperty("nationalCadastralReference");
+								mapa.data.forEach(function(feature) {
+									var zoneType = feature
+											.getProperty("zoneType");
+									if (typeof zoneType == 'undefined'
+											|| zoneType != 'administrative') {
+										mapa.data.remove(feature);
+									} else {
 
-																	var bbox = new google.maps.LatLngBounds(
-																			google.maps.geometry.spherical
-																					.computeOffset(
-																							event.latLng,
-																							500,
-																							-135),
-																			google.maps.geometry.spherical
-																					.computeOffset(
-																							event.latLng,
-																							500,
-																							45));
-
-																	
-
-																		var image = 'img/OpenSmartCountry_marker_verde.png';
-
-																		var marcador = new google.maps.Marker(
-																				{
-																					position : {lat: latitude, lng: longitude},
-																					map : mapa,
-																					animation : google.maps.Animation.DROP,
-																					icon : image
-																				});
-
-																		var contenidoVentana = '<div id="content">'
-																				+ '<h3>Parcela</h3>'
-																				+ '<p>'
-																				+ latitude
-																				+ ' ,'
-																				+ longitude
-																				+ '</p>'															
-																				+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
-																				+ nationalCadastralReference
-																				+ '&nombre=Demo\'">Más detalles</button>';
-
-																		var ventanaInformacion = new google.maps.InfoWindow(
-																				{
-																					content : contenidoVentana
-																				});
-
-																		marcador
-																				.addListener(
-																						'click',
-																						function() {
-																							ventanaInformacion
-																									.open(
-																											mapa,
-																											marcador);
-																						});
-
-																		
-
-																	
-
-																})
-											}
-										});
+									}
+								});
 							}
 							mapa.data
 									.addGeoJson(cadastralParcelFeatureCollection);
 							aniadeListenerParaNuevasParcelas(mapa);
 						}
+
+					});
+	mapa.data
+			.addListener(
+					'click',
+					function(event) {
+						var latitude = event.feature
+								.getProperty("reference_point").lat;
+						var longitude = event.feature
+								.getProperty("reference_point").lon;
+						var nationalCadastralReference = event.feature
+								.getProperty("nationalCadastralReference");
+
+						var bbox = new google.maps.LatLngBounds(
+								google.maps.geometry.spherical.computeOffset(
+										event.latLng, 500, -135),
+								google.maps.geometry.spherical.computeOffset(
+										event.latLng, 500, 45));
+
+						var image = 'img/OpenSmartCountry_marker_verde.png';
+
+						var marcador = new google.maps.Marker({
+							position : {
+								lat : latitude,
+								lng : longitude
+							},
+							map : mapa,
+							animation : google.maps.Animation.DROP,
+							icon : image
+						});
+
+						var contenidoVentana = '<div id="content">'
+								+ '<h3>Parcela</h3>'
+								+ '<p>'
+								+ latitude
+								+ ' ,'
+								+ longitude
+								+ '</p>'
+								+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
+								+ nationalCadastralReference
+								+ '&nombre=Demo\'">Más detalles</button>';
+
+						var ventanaInformacion = new google.maps.InfoWindow({
+							content : contenidoVentana
+						});
+
+						marcador.addListener('click', function() {
+							ventanaInformacion.open(mapa, marcador);
+						});
 
 					});
 
@@ -494,4 +480,3 @@ function computeArea(bbox) {
 
 	return area;
 }
-
