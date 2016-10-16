@@ -3,13 +3,13 @@ var parcelas = [
 			lat : 40.439983,
 			lng : -5.737026,
 			foto : "img/IMG_20160501_175931.jpg",
-			url : "parcela.html?latitud=40.439983&longitud=-5.737026&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
+			url : "parcela.html?cadastral_code=37284A00600098&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
 		},
 		{
 			lat : 41.080364,
 			lng : -4.588973,
 			foto : "img/IMG_0882.JPG",
-			url : "parcela.html?latitud=41.080364&longitud=-4.589025&nombre=La%20Nueva"
+			url : "parcela.html?cadastral_code=40066A00500025&longitud=-4.589025&nombre=La%20Nueva"
 		} ];
 
 var marcadores = [];
@@ -117,44 +117,112 @@ function inicializaMapa() {
 				+ address);
 		infowindow.open(mapa, marker);
 	});
-	
-	 mapa.data.setStyle(function(feature) {
-		    var zoneType = feature.getProperty('zoneType');
-		    var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
-		    var weight = typeof zoneType != 'undefined' ? 2 : 1;
-		    return {
-		    	fillColor: color,
-			    fillOpacity: 0.1,
-			    strokeColor: color,
-			    strokeWeight: weight
-		    };
+
+	mapa.data.setStyle(function(feature) {
+		var zoneType = feature.getProperty('zoneType');
+		var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
+		var weight = typeof zoneType != 'undefined' ? 2 : 1;
+		var opacity = typeof zoneType != 'undefined' ? 0.1 : 0.3;
+		return {
+			fillColor : color,
+			fillOpacity : opacity,
+			strokeColor : color,
+			strokeWeight : weight
+		};
 	});
 
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
 	mapa.data.addGeoJson(castillaYLeonCoords);
-	aniadeListenerParaNuevasParcelas(mapa);
 
 	mapa
 			.addListener(
-					'bounds_changed',
+					'idle',
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 4000000) {
+						if (area <= 2000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
-							if (cadastralParcelFeatureCollection.features.length > 0) {
+							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
+									&& cadastralParcelFeatureCollection.features.length > 0) {
 								mapa.data.forEach(function(feature) {
-									var zoneType = feature.getProperty("zoneType");
-									if(typeof zoneType == 'undefined' || zoneType != 'administrative'){
+									var zoneType = feature
+											.getProperty("zoneType");
+									if (typeof zoneType == 'undefined'
+											|| zoneType != 'administrative') {
 										mapa.data.remove(feature);
+									} else {
+
 									}
 								});
 							}
+
 							mapa.data
 									.addGeoJson(cadastralParcelFeatureCollection);
+						
+
 						}
 
+					});
+	mapa.data
+			.addListener(
+					'click',
+					function(event) {
+						if (typeof (event.feature
+								.getProperty("reference_point")) == 'undefined') {
+							document.getElementById('textoDelAviso').innerHTML = '<p>Seleccione una de las <strong>parcelas dibujadas</strong>.</p>'
+									+ '<p> Para que se vean las parcelas debe hacer zoom hasta que aparezcan marcadas en rojo, en ese momento simplemente seleccione una de ellas para añadir un marcador.</p>'
+									+ '<p> Una vez esté el marcador en la parcela pulse sobre él para poder ver datos básicos o para ver su <strong>perfil</strong> </p>'
+									+ '<p> Si no consigue <strong>marcar su parcela </strong> contacte con nosotros. </p>';
+							document.getElementById('aviso').style.display = 'block';
+						} else {
+							var latitude = event.feature
+									.getProperty("reference_point").lat;
+							var longitude = event.feature
+									.getProperty("reference_point").lon;
+							var nationalCadastralReference = event.feature
+									.getProperty("nationalCadastralReference");
+
+							var bbox = new google.maps.LatLngBounds(
+									google.maps.geometry.spherical
+											.computeOffset(event.latLng, 500,
+													-135),
+									google.maps.geometry.spherical
+											.computeOffset(event.latLng, 500,
+													45));
+
+							var image = 'img/OpenSmartCountry_marker_verde.png';
+
+							var marcador = new google.maps.Marker({
+								position : {
+									lat : latitude,
+									lng : longitude
+								},
+								map : mapa,
+								animation : google.maps.Animation.DROP,
+								icon : image
+							});
+
+							var contenidoVentana = '<div id="content">'
+									+ '<h3>Parcela</h3>'
+									+ '<p>'
+									+ latitude
+									+ ' ,'
+									+ longitude
+									+ '</p>'
+									+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
+									+ nationalCadastralReference
+									+ '&nombre=Demo\'">Más detalles</button>';
+
+							var ventanaInformacion = new google.maps.InfoWindow(
+									{
+										content : contenidoVentana
+									});
+
+							marcador.addListener('click', function() {
+								ventanaInformacion.open(mapa, marcador);
+							});
+						}
 					});
 
 }
@@ -353,9 +421,12 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 }
 
 function getBoundaries(idProvincia) {
-	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection", ' 
-			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
-			+ '}]}');
+	var geoJSONBoundaries = JSON
+			.parse('{ "type": "FeatureCollection", '
+					+ '"features": ['
+					+ '{ "type": "Feature",'
+					+ '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
+					+ '}]}');
 
 	var url = "php/api_rest.php/crappyzone/bullshit/" + idProvincia;
 
@@ -380,9 +451,10 @@ function getBoundaries(idProvincia) {
 
 function getCadastralParcelFeatureCollection(bbox) {
 	var cadastralParcelFeatureCollection;
-
-	// 41.401658195918856,-3.7401386077600485,41.402228979075865,-3.74004553075701
-	var url = "php/django_server_wrapper.php/osc/cadastral/parcel?bbox="
+	
+	bbox = getOptimalBbox(bbox);
+	
+	var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
 			+ bbox.toUrlValue();
 
 	var request = jQuery.ajax({
@@ -399,147 +471,6 @@ function getCadastralParcelFeatureCollection(bbox) {
 	return cadastralParcelFeatureCollection;
 }
 
-function aniadeListenerParaNuevasParcelas(mapa) {
-
-	mapa.data
-			.forEach(function(feature) {
-
-				mapa.data
-						.addListener(
-								'click',
-								function(event) {
-									var latitude = event.latLng.lat();
-									var longitude = event.latLng.lng();
-
-									if (perteneceAParcela(latitude, longitude)) {
-
-										var image = 'img/OpenSmartCountry_marker_verde.png';
-
-										var marcador = new google.maps.Marker(
-												{
-													position : event.latLng,
-													map : mapa,
-													animation : google.maps.Animation.DROP,
-													icon : image
-												});
-
-										var contenidoVentana = '<div id="content">'
-												+ '<h3>Parcela</h3>'
-												+ '<p>'
-												+ latitude
-												+ ' ,'
-												+ longitude
-												+ '</p>'
-												+ '</div><button type="button" onclick="location.href=\'parcela.html?latitud='
-												+ latitude
-												+ '&longitud='
-												+ longitude
-												+ '&nombre=Demo\'">Más detalles</button>';
-
-										var ventanaInformacion = new google.maps.InfoWindow(
-												{
-													content : contenidoVentana
-												});
-
-										marcador.addListener('click',
-												function() {
-													ventanaInformacion.open(
-															mapa, marcador);
-												});
-
-										// Center of map
-										mapa.panTo(new google.maps.LatLng(
-												latitude, longitude));
-										if (mapa.getZoom() < 14) {
-											mapa.setZoom(14);
-										}
-
-									}
-
-								})
-			});
-
-}
-
-function perteneceAParcela(latitude, longitude) {
-
-	var esCarretera = false;
-	var usos = [];
-	var usosNoAgricolasYOtros = [ "AG", "ED", "CA", "ZU", "ZV", "ZC" ];
-	var descripcionesUsos = {
-		AG : "Corrientes y superficies de aguas",
-		ED : "Edificaciones",
-		CA : "Viales",
-		ZU : "Zona urbana",
-		ZV : "Zona censurada",
-		ZC : "Zona concentrada"
-	};
-
-	var url = "php/api_rest.php/plots" + "/sigpac/_search";
-
-	var input = '{                                    '
-			+ '   "query": {                        '
-			+ '      "geo_shape": {                 '
-			+ '         "points": {                 '
-			+ '            "relation": "intersects",'
-			+ '            "shape": {               '
-			+ '                "type": "point",     '
-			+ '               "coordinates": [      ' + '                  '
-			+ latitude + ',         ' + '                  ' + longitude
-			+ '          ' + '               ]                     '
-			+ '            }                        '
-			+ '         }                           '
-			+ '      }                              '
-			+ '   }                                 '
-			+ '}                                    ';
-
-	var coordenadasLinde = [];
-
-	var request = jQuery.ajax({
-		crossDomain : true,
-		async : false,
-		url : url,
-		data : input,
-		type : 'POST',
-		dataType : "json"
-	});
-
-	request
-			.done(function(response, textStatus, jqXHR) {
-				var hayCoordenadasLinde = false;
-				if (typeof response["hits"] != 'undefined') {
-					var hits = response["hits"]["hits"];
-
-					for (var i = 0; i < hits.length; i++) {
-
-						var hit = hits[i];
-
-						hayCoordenadasLinde = true;
-
-						var uso = hit["_source"]["uso_sigpac"];
-						usos.push(uso);
-
-						if (usosNoAgricolasYOtros.indexOf(uso) > -1) {
-							if (!esCarretera) {
-								// Se comprueba que es el primer uso que no es
-								// apto para dar un perfil
-								document.getElementById('textoDelAviso').innerHTML = '<p>El lugar que ha selecionado <strong>no es una parcela</strong>, según el catastro es <strong>'
-										+ descripcionesUsos[uso]
-										+ '</strong> por tanto no podemos generar un perfil.</p>';
-								document.getElementById('aviso').style.display = 'block';
-							}
-							esCarretera = true;
-
-						}
-
-					}
-
-				}
-			});
-
-	return !esCarretera;
-}
-
 function computeArea(bbox) {
 	var area = 0;
 
@@ -554,4 +485,19 @@ function computeArea(bbox) {
 					northWestCorner, southWestCorner);
 
 	return area;
+}
+
+function getOptimalBbox(bbox) {
+	var reducedBbox = bbox;
+	if (computeArea(bbox) > 500000) {
+		var distance = google.maps.geometry.spherical.computeDistanceBetween(bbox.getSouthWest(), bbox
+				.getNorthEast());
+		var offsetdistance = distance * 0.1;
+		reducedBbox = new google.maps.LatLngBounds(
+				google.maps.geometry.spherical.computeOffset(bbox
+						.getSouthWest(), offsetdistance, 45),
+				google.maps.geometry.spherical.computeOffset(bbox
+						.getNorthEast(), offsetdistance, -135));
+	}
+	return reducedBbox;
 }
