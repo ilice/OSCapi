@@ -31,7 +31,7 @@ $ring_coordinates = array($sw_coordinates, $se_coordinates,$ne_coordinates, $nw_
 $polygon_coordinates = array($ring_coordinates);
 
 $input = '{
-	"size" : 1000,
+	"size" : 10000,
    "filter": {
       "bool": {
          "must_not": 

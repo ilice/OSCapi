@@ -141,7 +141,7 @@ function inicializaMapa() {
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 16000000) {
+						if (area <= 32000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof(cadastralParcelFeatureCollection)!= 'undefined' && cadastralParcelFeatureCollection.features.length > 0) {
 								mapa.data.forEach(function(feature) {
