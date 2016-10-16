@@ -174,15 +174,13 @@ function inicializaMapa() {
 																							500,
 																							45));
 
-																	if (perteneceAParcela(
-																			latitude,
-																			longitude)) {
+																	
 
 																		var image = 'img/OpenSmartCountry_marker_verde.png';
 
 																		var marcador = new google.maps.Marker(
 																				{
-																					position : event.latLng,
+																					position : {lat: latitude, lng: longitude},
 																					map : mapa,
 																					animation : google.maps.Animation.DROP,
 																					icon : image
@@ -216,7 +214,7 @@ function inicializaMapa() {
 
 																		
 
-																	}
+																	
 
 																})
 											}
@@ -576,21 +574,3 @@ function computeArea(bbox) {
 	return area;
 }
 
-function reduceToArea(bbox, area) {
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical
-			.computeOffset(bbox.getCenter(), 500, -135),
-			google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500,
-					45));
-}
-
-function getDrawableBbox(center) {
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical
-			.computeOffset(center, 500, -135), google.maps.geometry.spherical
-			.computeOffset(center, 500, 45));
-}
-
-function getMinimunBbox(center) {
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical
-			.computeOffset(center, 1, -135), google.maps.geometry.spherical
-			.computeOffset(center, 1, 45));
-}
