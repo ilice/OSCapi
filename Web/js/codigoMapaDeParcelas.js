@@ -141,7 +141,7 @@ function inicializaMapa() {
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 1000000) {
+						if (area <= 16000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof(cadastralParcelFeatureCollection)!= 'undefined' && cadastralParcelFeatureCollection.features.length > 0) {
 								mapa.data.forEach(function(feature) {
@@ -381,13 +381,7 @@ function getBoundaries(idProvincia) {
 function getCadastralParcelFeatureCollection(bbox) {
 	var cadastralParcelFeatureCollection;
 	
-	if(computeArea(bbox) > 1000000){
-		bbox = reduceToArea(bbox, 1000000);
-	}
-		
-
-	// 41.401658195918856,-3.7401386077600485,41.402228979075865,-3.74004553075701
-	var url = "php/django_server_wrapper.php/osc/cadastral/parcel?bbox="
+	var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
 		+ bbox.toUrlValue() ;
 	
 	var request = jQuery.ajax({
@@ -437,10 +431,8 @@ function aniadeListenerParaNuevasParcelas(mapa) {
 												+ ' ,'
 												+ longitude
 												+ '</p>'
-												+ '</div><button type="button" onclick="location.href=\'parcela.html?latitud='
-												+ latitude
-												+ '&longitud='
-												+ longitude
+												+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
+												+ getNationalCadastralReference(event.latLng)
 												+ '&nombre=Demo\'">Más detalles</button>';
 
 										var ventanaInformacion = new google.maps.InfoWindow(
@@ -562,5 +554,18 @@ function computeArea(bbox) {
 }
 
 function reduceToArea(bbox, area){
-	return new google.maps.LatLngBounds(bbox.getCenter(), 500, -135, bbox.getCenter(), 500, 45);
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500, -135), google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500, 45));
+}
+
+function getDrawableBbox(center){
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(center, 500, -135), google.maps.geometry.spherical.computeOffset(center, 500, 45));
+}
+
+function getMinimunBbox(center){
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(center, 1, -135), google.maps.geometry.spherical.computeOffset(center, 1, 45));
+}
+
+function getNationalCadastralReference(point){
+	//Esperemos tener suerte XD
+	return getCadastralParcelFeatureCollection(getMinimunBbox(point)).features[0].properties.nationalCadastralReference;
 }
