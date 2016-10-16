@@ -1,6 +1,6 @@
 from django.http import JsonResponse
-from osc.services.importer import get_cadastral_parcels_by_code, get_cadastral_parcels_by_bbox, get_public_cadastre_info
-from osc.services.elastic import get_closest_station, get_aggregated_climate_measures
+from osc.services import get_cadastral_parcels_by_code, get_cadastral_parcels_by_bbox, get_public_cadastre_info
+from osc.services.climate import get_closest_station, get_aggregated_climate_measures
 from osc.services.google import obtain_elevation_from_google
 
 
@@ -68,7 +68,7 @@ def obtain_catastral_parcels(request):
 
         if elevations is not None:
             for item in zip(elevations, parcels):
-                item[1]['properties']['reference_point']['elevation'] = item[0]
+                item[1]['properties']['elevation'] = item[0]
 
     except KeyError:
         pass

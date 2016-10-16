@@ -1,2 +1,4 @@
 from .google import *
-from .elastic import *
+from .climate import *
+from .cadastre import *
+from .feed import *

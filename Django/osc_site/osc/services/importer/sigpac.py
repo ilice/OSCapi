@@ -497,13 +497,13 @@ def save_plots_to_elasticsearch(zip_codes,
             records_to_save.append(rec)
 
         if len(records_to_save) >= chunk_size:
-            util.elastic_bulk_save(records_to_save)
+            util.elastic_bulk_save_dsl(records_to_save)
             records_to_save = []
 
             last_rest_time = util.try_rest(last_rest_time, 20, 10)
 
     if len(records_to_save) > 0:
-        util.elastic_bulk_save(records_to_save)
+        util.elastic_bulk_save_dsl(records_to_save)
 
 
 def compose_locations_param(points):
@@ -559,7 +559,7 @@ def add_altitude_info(provincia, municipio=None):
             try:
                 records = obtain_elevation(records, centers)
                 print (" ... Obtained info from google")
-                util.elastic_bulk_update(records)
+                util.elastic_bulk_update_dsl(records)
                 print (" ...success")
             except ConnectionError as e:
                 print (" ...error")
@@ -574,7 +574,7 @@ def add_altitude_info(provincia, municipio=None):
     if len(records) > 0:
         try:
             records = obtain_elevation(records, centers)
-            util.elastic_bulk_update(records)
+            util.elastic_bulk_update_dsl(records)
         except ConnectionError as e:
             util.error_handler.error('SIGPAC',
                                      __name__,

@@ -19,3 +19,12 @@ class Error(models.Model):
     severity = models.CharField(max_length=1, choices=SEVERITIES)
     message = models.TextField()
     actionable_info = models.TextField()
+
+
+class Feed(models.Model):
+    url = models.CharField(max_length=255)
+    date_launched = models.DateTimeField()
+    date_finished = models.DateTimeField(null=True)
+    update_date = models.DateTimeField()
+    success = models.BooleanField()
+    info = models.TextField(null=True)

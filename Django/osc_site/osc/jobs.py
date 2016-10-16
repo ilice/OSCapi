@@ -4,12 +4,13 @@ from django.db.models import Max
 from datetime import datetime, timedelta
 
 import osc.services.importer.inforiego as inforiego
+import osc.services.importer.cadastre as cadastre
 
 
 class UpdateInforiegoDaily(CronJobBase):
-    RUN_AT_TIMES = ['23:30']
+    RUN_EVERY_MINS = 24*60
 
-    schedule = Schedule(run_at_times=RUN_AT_TIMES)
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'jobs.update_inforiego_daily'
 
     def do(self, last_update_date=None):
@@ -24,3 +25,13 @@ class UpdateInforiegoDaily(CronJobBase):
             last_update_date = default_date.strftime('%d/%m/%Y')
 
         inforiego.insert_all_stations_inforiego_daily(fecha_ultima_modificacion=last_update_date)
+
+
+class UpdateCadastreParcels(CronJobBase):
+    # RUN_EVERY_MINS = 24*60*30
+    #
+    # schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'jobs.update_cadastre_parcels'
+
+    def do(self, force_update=False, provinces=None):
+        cadastre.update_cadastral_information(force_update=force_update, provinces=provinces)

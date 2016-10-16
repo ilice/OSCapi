@@ -90,7 +90,7 @@ def wait_for_yellow_cluster_status():
             print ('Cluster status is red. Waiting for yellow status')
 
 
-def elastic_bulk_update(process_name, records, retry=True):
+def elastic_bulk_update_dsl(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -103,16 +103,16 @@ def elastic_bulk_update(process_name, records, retry=True):
     except Exception as e:
         for record in records:
             if retry:
-                elastic_bulk_update([record], retry=False)
+                elastic_bulk_update_dsl([record], retry=False)
             else:
                 conf.error_handler.error(process_name,
                                          __name__,
-                                         'elastic_bulk_save',
+                                         'elastic_bulk_update_dsl',
                                          str(type(e)),
                                          str(record.to_dict()))
 
 
-def elastic_bulk_save(process_name, records, retry=True):
+def elastic_bulk_save_dsl(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
         wait_for_yellow_cluster_status()
@@ -124,13 +124,62 @@ def elastic_bulk_save(process_name, records, retry=True):
     except Exception as e:
         for record in records:
             if retry:
-                elastic_bulk_save([record], retry=False)
+                elastic_bulk_save_dsl([record], retry=False)
+            else:
+                conf.error_handler.error(process_name,
+                                         __name__,
+                                         'elastic_bulk_save_dsl',
+                                         str(type(e)),
+                                         str(record.to_dict()))
+
+
+def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=True):
+    try:
+        if ids is None:
+            ids = [None] * len(records)
+
+        connection = connections.get_connection()
+        wait_for_yellow_cluster_status()
+        es.helpers.bulk(connection,
+                        ({'_op_type': 'update',
+                          '_index': index,
+                          '_id': idx,
+                          '_type': doc_type,
+                          'doc': r} for (r, idx) in zip(records, ids)))
+    except Exception as e:
+        for (r, idx) in zip(records, ids):
+            if retry:
+                elastic_bulk_update(process_name, index, doc_type, [r], [idx], retry=False)
+            else:
+                conf.error_handler.error(process_name,
+                                         __name__,
+                                         'elastic_bulk_update',
+                                         str(type(e)),
+                                         str(r))
+
+
+def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=True):
+    try:
+        if ids is None:
+            ids = [None] * len(records)
+
+        connection = connections.get_connection()
+        wait_for_yellow_cluster_status()
+        es.helpers.bulk(connection,
+                        ({'_index': index,
+                          '_id': idx,
+                          '_type': doc_type,
+                          'doc': r} for (r, idx) in zip(records, ids)))
+    except Exception as e:
+        for (r, idx) in zip(records, ids):
+            if retry:
+                elastic_bulk_update(process_name, index, doc_type, [r], [idx], retry=False)
             else:
                 conf.error_handler.error(process_name,
                                          __name__,
                                          'elastic_bulk_save',
                                          str(type(e)),
-                                         str(record.to_dict()))
+                                         str(r))
 
 
 def num(s):
@@ -155,3 +204,7 @@ def xml_to_json(element):
                 json_element = element.text
 
     return json_element
+
+
+def contains_any(text, text_list):
+    return len([t for t in text_list if t.lower() in text.lower()]) >= 1

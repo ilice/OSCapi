@@ -1,5 +1,7 @@
 from django.test import TestCase
-import osc.services.importer.cadastre as cadastre
+
+import osc.services.cadastre as cadastre
+import osc.services.importer.cadastre as impcadastre
 
 
 class CadastreServiceTest(TestCase):
@@ -11,3 +13,6 @@ class CadastreServiceTest(TestCase):
 
     def test_public_cadastre_info(self):
         cadastre.get_public_cadastre_info('40167A00805001')
+
+    def test_update_cadastral_information(self):
+        impcadastre.update_cadastral_information()
