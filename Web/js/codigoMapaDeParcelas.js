@@ -134,7 +134,6 @@ function inicializaMapa() {
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
 	mapa.data.addGeoJson(castillaYLeonCoords);
-	// aniadeListenerParaNuevasParcelas(mapa);
 
 	mapa
 			.addListener(
@@ -142,7 +141,8 @@ function inicializaMapa() {
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 16000000) {
+						alert("Area:" + area);
+						if (area <= 1000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
 									&& cadastralParcelFeatureCollection.features.length > 0) {
@@ -157,9 +157,11 @@ function inicializaMapa() {
 									}
 								});
 							}
+
 							mapa.data
 									.addGeoJson(cadastralParcelFeatureCollection);
-							aniadeListenerParaNuevasParcelas(mapa);
+						
+
 						}
 
 					});
@@ -167,50 +169,61 @@ function inicializaMapa() {
 			.addListener(
 					'click',
 					function(event) {
-						var latitude = event.feature
-								.getProperty("reference_point").lat;
-						var longitude = event.feature
-								.getProperty("reference_point").lon;
-						var nationalCadastralReference = event.feature
-								.getProperty("nationalCadastralReference");
+						if (typeof (event.feature
+								.getProperty("reference_point")) == 'undefined') {
+							document.getElementById('textoDelAviso').innerHTML = '<p>Seleccione una de las <strong>parcelas dibujadas</strong>.</p>'
+									+ '<p> Para que se vean las parcelas debe hacer zoom hasta que aparezcan marcadas en rojo, en ese momento simplemente seleccione una de ellas para añadir un marcador.</p>'
+									+ '<p> Una vez esté el marcador en la parcela pulse sobre él para poder ver datos básicos o para ver su <strong>perfil</strong> </p>'
+									+ '<p> Si no consigue <strong>marcar su parcela </strong> contacte con nosotros. </p>';
+							document.getElementById('aviso').style.display = 'block';
+						} else {
+							var latitude = event.feature
+									.getProperty("reference_point").lat;
+							var longitude = event.feature
+									.getProperty("reference_point").lon;
+							var nationalCadastralReference = event.feature
+									.getProperty("nationalCadastralReference");
 
-						var bbox = new google.maps.LatLngBounds(
-								google.maps.geometry.spherical.computeOffset(
-										event.latLng, 500, -135),
-								google.maps.geometry.spherical.computeOffset(
-										event.latLng, 500, 45));
+							var bbox = new google.maps.LatLngBounds(
+									google.maps.geometry.spherical
+											.computeOffset(event.latLng, 500,
+													-135),
+									google.maps.geometry.spherical
+											.computeOffset(event.latLng, 500,
+													45));
 
-						var image = 'img/OpenSmartCountry_marker_verde.png';
+							var image = 'img/OpenSmartCountry_marker_verde.png';
 
-						var marcador = new google.maps.Marker({
-							position : {
-								lat : latitude,
-								lng : longitude
-							},
-							map : mapa,
-							animation : google.maps.Animation.DROP,
-							icon : image
-						});
+							var marcador = new google.maps.Marker({
+								position : {
+									lat : latitude,
+									lng : longitude
+								},
+								map : mapa,
+								animation : google.maps.Animation.DROP,
+								icon : image
+							});
 
-						var contenidoVentana = '<div id="content">'
-								+ '<h3>Parcela</h3>'
-								+ '<p>'
-								+ latitude
-								+ ' ,'
-								+ longitude
-								+ '</p>'
-								+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
-								+ nationalCadastralReference
-								+ '&nombre=Demo\'">Más detalles</button>';
+							var contenidoVentana = '<div id="content">'
+									+ '<h3>Parcela</h3>'
+									+ '<p>'
+									+ latitude
+									+ ' ,'
+									+ longitude
+									+ '</p>'
+									+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
+									+ nationalCadastralReference
+									+ '&nombre=Demo\'">Más detalles</button>';
 
-						var ventanaInformacion = new google.maps.InfoWindow({
-							content : contenidoVentana
-						});
+							var ventanaInformacion = new google.maps.InfoWindow(
+									{
+										content : contenidoVentana
+									});
 
-						marcador.addListener('click', function() {
-							ventanaInformacion.open(mapa, marcador);
-						});
-
+							marcador.addListener('click', function() {
+								ventanaInformacion.open(mapa, marcador);
+							});
+						}
 					});
 
 }
@@ -439,7 +452,9 @@ function getBoundaries(idProvincia) {
 
 function getCadastralParcelFeatureCollection(bbox) {
 	var cadastralParcelFeatureCollection;
-
+	
+	bbox = getOptimalBbox(bbox);
+	
 	var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
 			+ bbox.toUrlValue();
 
@@ -457,14 +472,6 @@ function getCadastralParcelFeatureCollection(bbox) {
 	return cadastralParcelFeatureCollection;
 }
 
-function aniadeListenerParaNuevasParcelas(mapa, feature) {
-
-	mapa.data.forEach(function(feature) {
-
-	});
-
-}
-
 function computeArea(bbox) {
 	var area = 0;
 
@@ -479,4 +486,19 @@ function computeArea(bbox) {
 					northWestCorner, southWestCorner);
 
 	return area;
+}
+
+function getOptimalBbox(bbox) {
+	var reducedBbox = bbox;
+	if (computeArea(bbox) > 500000) {
+		var distance = google.maps.geometry.spherical.computeDistanceBetween(bbox.getSouthWest(), bbox
+				.getNorthEast());
+		var offsetdistance = distance * 0.1;
+		reducedBbox = new google.maps.LatLngBounds(
+				google.maps.geometry.spherical.computeOffset(bbox
+						.getSouthWest(), offsetdistance, 45),
+				google.maps.geometry.spherical.computeOffset(bbox
+						.getNorthEast(), offsetdistance, -135));
+	}
+	return reducedBbox;
 }
