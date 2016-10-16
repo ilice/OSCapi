@@ -117,23 +117,23 @@ function inicializaMapa() {
 				+ address);
 		infowindow.open(mapa, marker);
 	});
-	
-	 mapa.data.setStyle(function(feature) {
-		    var zoneType = feature.getProperty('zoneType');
-		    var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
-		    var weight = typeof zoneType != 'undefined' ? 2 : 1;
-		    return {
-		    	fillColor: color,
-			    fillOpacity: 0.1,
-			    strokeColor: color,
-			    strokeWeight: weight
-		    };
+
+	mapa.data.setStyle(function(feature) {
+		var zoneType = feature.getProperty('zoneType');
+		var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
+		var weight = typeof zoneType != 'undefined' ? 2 : 1;
+		return {
+			fillColor : color,
+			fillOpacity : 0.1,
+			strokeColor : color,
+			strokeWeight : weight
+		};
 	});
 
 	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
 
 	mapa.data.addGeoJson(castillaYLeonCoords);
-	aniadeListenerParaNuevasParcelas(mapa);
+	// aniadeListenerParaNuevasParcelas(mapa);
 
 	mapa
 			.addListener(
@@ -143,16 +143,88 @@ function inicializaMapa() {
 						var area = computeArea(bbox);
 						if (area <= 32000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
-							if (typeof(cadastralParcelFeatureCollection)!= 'undefined' && cadastralParcelFeatureCollection.features.length > 0) {
-								mapa.data.forEach(function(feature) {
-									var zoneType = feature.getProperty("zoneType");
-									if(typeof zoneType == 'undefined' || zoneType != 'administrative'){
-										mapa.data.remove(feature);
-									}
-								});
+							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
+									&& cadastralParcelFeatureCollection.features.length > 0) {
+								mapa.data
+										.forEach(function(feature) {
+											var zoneType = feature
+													.getProperty("zoneType");
+											if (typeof zoneType == 'undefined'
+													|| zoneType != 'administrative') {
+												mapa.data.remove(feature);
+											} else {
+												mapa.data
+														.addListener(
+																'click',
+																function(event) {
+																	var latitude = event.latLng
+																			.lat();
+																	var longitude = event.latLng
+																			.lng();
+
+																	var bbox = new google.maps.LatLngBounds(
+																			google.maps.geometry.spherical
+																					.computeOffset(
+																							event.latLng,
+																							500,
+																							-135),
+																			google.maps.geometry.spherical
+																					.computeOffset(
+																							event.latLng,
+																							500,
+																							45));
+
+																	if (perteneceAParcela(
+																			latitude,
+																			longitude)) {
+
+																		var image = 'img/OpenSmartCountry_marker_verde.png';
+
+																		var marcador = new google.maps.Marker(
+																				{
+																					position : event.latLng,
+																					map : mapa,
+																					animation : google.maps.Animation.DROP,
+																					icon : image
+																				});
+
+																		var contenidoVentana = '<div id="content">'
+																				+ '<h3>Parcela</h3>'
+																				+ '<p>'
+																				+ latitude
+																				+ ' ,'
+																				+ longitude
+																				+ '</p>'
+																				+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
+																				+ getNationalCadastralReference(event.latLng)
+																				+ '&nombre=Demo\'">Más detalles</button>';
+
+																		var ventanaInformacion = new google.maps.InfoWindow(
+																				{
+																					content : contenidoVentana
+																				});
+
+																		marcador
+																				.addListener(
+																						'click',
+																						function() {
+																							ventanaInformacion
+																									.open(
+																											mapa,
+																											marcador);
+																						});
+
+																		
+
+																	}
+
+																})
+											}
+										});
 							}
 							mapa.data
 									.addGeoJson(cadastralParcelFeatureCollection);
+							aniadeListenerParaNuevasParcelas(mapa);
 						}
 
 					});
@@ -353,9 +425,12 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 }
 
 function getBoundaries(idProvincia) {
-	var geoJSONBoundaries = JSON.parse('{ "type": "FeatureCollection", ' 
-			+ '"features": [' + '{ "type": "Feature",' + '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
-			+ '}]}');
+	var geoJSONBoundaries = JSON
+			.parse('{ "type": "FeatureCollection", '
+					+ '"features": ['
+					+ '{ "type": "Feature",'
+					+ '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
+					+ '}]}');
 
 	var url = "php/api_rest.php/crappyzone/bullshit/" + idProvincia;
 
@@ -380,10 +455,10 @@ function getBoundaries(idProvincia) {
 
 function getCadastralParcelFeatureCollection(bbox) {
 	var cadastralParcelFeatureCollection;
-	
+
 	var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
-		+ bbox.toUrlValue() ;
-	
+			+ bbox.toUrlValue();
+
 	var request = jQuery.ajax({
 		url : url,
 		type : 'GET',
@@ -398,63 +473,11 @@ function getCadastralParcelFeatureCollection(bbox) {
 	return cadastralParcelFeatureCollection;
 }
 
-function aniadeListenerParaNuevasParcelas(mapa) {
+function aniadeListenerParaNuevasParcelas(mapa, feature) {
 
-	mapa.data
-			.forEach(function(feature) {
+	mapa.data.forEach(function(feature) {
 
-				mapa.data
-						.addListener(
-								'click',
-								function(event) {
-									var latitude = event.latLng.lat();
-									var longitude = event.latLng.lng();
-									
-									var bbox = new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(event.latLng, 500, -135), google.maps.geometry.spherical.computeOffset(event.latLng, 500, 45));
-
-									if (perteneceAParcela(latitude, longitude)) {
-
-										var image = 'img/OpenSmartCountry_marker_verde.png';
-
-										var marcador = new google.maps.Marker(
-												{
-													position : event.latLng,
-													map : mapa,
-													animation : google.maps.Animation.DROP,
-													icon : image
-												});
-
-										var contenidoVentana = '<div id="content">'
-												+ '<h3>Parcela</h3>'
-												+ '<p>'
-												+ latitude
-												+ ' ,'
-												+ longitude
-												+ '</p>'
-												+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
-												+ getNationalCadastralReference(event.latLng)
-												+ '&nombre=Demo\'">Más detalles</button>';
-
-										var ventanaInformacion = new google.maps.InfoWindow(
-												{
-													content : contenidoVentana
-												});
-
-										marcador.addListener('click',
-												function() {
-													ventanaInformacion.open(
-															mapa, marcador);
-												});
-
-										// Center of map
-										mapa.panTo(new google.maps.LatLng(
-												latitude, longitude));
-										mapa.fitBounds(bbox);
-
-									}
-
-								})
-			});
+	});
 
 }
 
@@ -553,19 +576,26 @@ function computeArea(bbox) {
 	return area;
 }
 
-function reduceToArea(bbox, area){
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500, -135), google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500, 45));
+function reduceToArea(bbox, area) {
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical
+			.computeOffset(bbox.getCenter(), 500, -135),
+			google.maps.geometry.spherical.computeOffset(bbox.getCenter(), 500,
+					45));
 }
 
-function getDrawableBbox(center){
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(center, 500, -135), google.maps.geometry.spherical.computeOffset(center, 500, 45));
+function getDrawableBbox(center) {
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical
+			.computeOffset(center, 500, -135), google.maps.geometry.spherical
+			.computeOffset(center, 500, 45));
 }
 
-function getMinimunBbox(center){
-	return new google.maps.LatLngBounds(google.maps.geometry.spherical.computeOffset(center, 1, -135), google.maps.geometry.spherical.computeOffset(center, 1, 45));
+function getMinimunBbox(center) {
+	return new google.maps.LatLngBounds(google.maps.geometry.spherical
+			.computeOffset(center, 1, -135), google.maps.geometry.spherical
+			.computeOffset(center, 1, 45));
 }
 
-function getNationalCadastralReference(point){
-	//Esperemos tener suerte XD
+function getNationalCadastralReference(point) {
+	// Esperemos tener suerte XD
 	return getCadastralParcelFeatureCollection(getMinimunBbox(point)).features[0].properties.nationalCadastralReference;
 }
