@@ -141,7 +141,6 @@ function inicializaMapa() {
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						alert("Area:" + area);
 						if (area <= 1000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
