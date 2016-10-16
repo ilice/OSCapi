@@ -65,7 +65,7 @@ foreach ($hits as $hit){
 	$reference_point = $hit["_source"]["bbox_center"];
 	$areaValue = $hit["_source"]["superficie"] / 1000000;
 	$properties = array(
-			"nationalCadastralReference" => $nationalCadastralReference,
+			"nationalCadastralReference" => substr($nationalCadastralReference,0,5).'A'.substr($nationalCadastralReference,10,8),
 			"bounded_by" => $bounded_by,
 			"reference_point" => $reference_point,
 			"areaValue" => $areaValue

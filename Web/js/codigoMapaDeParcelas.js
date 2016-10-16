@@ -122,9 +122,10 @@ function inicializaMapa() {
 		var zoneType = feature.getProperty('zoneType');
 		var color = typeof zoneType != 'undefined' ? 'Gold' : 'Tomato';
 		var weight = typeof zoneType != 'undefined' ? 2 : 1;
+		var opacity = typeof zoneType != 'undefined' ? 0.1 : 0.3;
 		return {
 			fillColor : color,
-			fillOpacity : 0.1,
+			fillOpacity : opacity,
 			strokeColor : color,
 			strokeWeight : weight
 		};
@@ -141,7 +142,7 @@ function inicializaMapa() {
 					function() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
-						if (area <= 32000000) {
+						if (area <= 16000000) {
 							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
 							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
 									&& cadastralParcelFeatureCollection.features.length > 0) {
@@ -157,10 +158,9 @@ function inicializaMapa() {
 														.addListener(
 																'click',
 																function(event) {
-																	var latitude = event.latLng
-																			.lat();
-																	var longitude = event.latLng
-																			.lng();
+																	var latitude = event.feature.getProperty("reference_point").lat;
+																	var longitude = event.feature.getProperty("reference_point").lon;
+																	var nationalCadastralReference = event.feature.getProperty("nationalCadastralReference");
 
 																	var bbox = new google.maps.LatLngBounds(
 																			google.maps.geometry.spherical
@@ -194,9 +194,9 @@ function inicializaMapa() {
 																				+ latitude
 																				+ ' ,'
 																				+ longitude
-																				+ '</p>'
+																				+ '</p>'															
 																				+ '</div><button type="button" onclick="location.href=\'parcela.html?cadastral_code='
-																				+ getNationalCadastralReference(event.latLng)
+																				+ nationalCadastralReference
 																				+ '&nombre=Demo\'">Más detalles</button>';
 
 																		var ventanaInformacion = new google.maps.InfoWindow(
@@ -593,9 +593,4 @@ function getMinimunBbox(center) {
 	return new google.maps.LatLngBounds(google.maps.geometry.spherical
 			.computeOffset(center, 1, -135), google.maps.geometry.spherical
 			.computeOffset(center, 1, 45));
-}
-
-function getNationalCadastralReference(point) {
-	// Esperemos tener suerte XD
-	return getCadastralParcelFeatureCollection(getMinimunBbox(point)).features[0].properties.nationalCadastralReference;
 }
