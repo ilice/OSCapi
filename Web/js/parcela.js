@@ -82,14 +82,10 @@ function initMap(cadastralParcelFeature) {
 	var mapa = new google.maps.Map(document.getElementById('mapa'), mapOptions);
 
 	// TODO: me extraña que esto no se pueda hacer más limpio
-	var parcelEnvelopeCoordinates = cadastralParcelFeature.bbox;
-	var parcelBounds = new google.maps.LatLngBounds({
-		lng : parcelEnvelopeCoordinates[0],
-		lat : parcelEnvelopeCoordinates[1]
-	}, {
-		lng : parcelEnvelopeCoordinates[2],
-		lat : parcelEnvelopeCoordinates[3]
-	})
+	var parcelEnvelope = cadastralParcelFeature.bbox;
+	var sw = {lat: parcelEnvelope.coordinates[0][1], lng: parcelEnvelope.coordinates[0][0]};
+	var ne = {lat: parcelEnvelope.coordinates[1][1], lng: parcelEnvelope.coordinates[1][0]};
+	var parcelBounds = new google.maps.LatLngBounds(sw,ne);
 	mapa.fitBounds(parcelBounds);
 
 	var centerControlDiv = document.createElement('div');
@@ -420,15 +416,15 @@ function drawLocationCard(cadastralParcelFeature) {
 			"latitud");
 	setValueInField(cadastralParcelFeature.properties.reference_point.lon,
 			"longitud");
-	setValueInField(cadastralParcelFeature.properties.reference_point.elevation
+	setValueInField(cadastralParcelFeature.properties.elevation
 			.toFixed(2)
 			+ " m", "altitud");
-	setValueInField(cadastralParcelFeature.properties.reference_point.elevation
+	setValueInField(cadastralParcelFeature.properties.elevation
 			.toFixed(2)
 			+ " m", "altitud_idea");
 
 	var urlbusqueda = "location.href='cultivos.html?altitud="
-			+ cadastralParcelFeature.properties.reference_point.elevation
+			+ cadastralParcelFeature.properties.elevation
 					.toFixed() + "'";
 	document.getElementById('cultivos_por_altitud').setAttribute('onclick',
 			urlbusqueda);
