@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 
 from osc.util import xml_to_json, elastic_bulk_save
 from osc.util import config
+from osc.exceptions import CadastreException
 
 import elasticsearch_dsl as dsl
 
@@ -18,8 +19,37 @@ ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'gmd': 'http://www.isotc211.org/2005/gmd',
       'ogc': 'http://www.opengis.net/ogc',
       'xlink': 'http://www.w3.org/1999/xlink',
-      'cp': 'urn:x-inspire:specification:gmlas:CadastralParcels:3.0'
+      'cp': 'urn:x-inspire:specification:gmlas:CadastralParcels:3.0',
+      'ows': 'http://www.opengis.net/ows/1.1',
+      'ct': 'http://www.catastro.meh.es/'
       }
+
+
+def parse_inspire_exception(elem):
+    exception = elem.find('ows:Exception', ns)
+    exception_text_elem = elem.find('./ows:Exception/ows:ExceptionText', ns)
+
+    message = ''
+    if exception is not None and exception.attrib is not None and 'exceptionCode' in exception.attrib:
+        message += exception.attrib['exceptionCode']
+    message += ' - '
+
+    if exception_text_elem is not None:
+        message += exception_text_elem.text
+
+    return message
+
+
+def parse_cadastre_exception(elem):
+    message = ''
+
+    err_cod = elem.find('./ct:lerr/ct:err/ct:cod', ns)
+    err_msg = elem.find('./ct:lerr/ct:err/ct:des', ns)
+
+    if err_cod is not None and err_msg is not None:
+        message = 'code: ' + err_cod + ' message: ' + err_msg
+
+    return message
 
 
 def create_parcel_mapping(index, mapping_name='parcel'):
@@ -146,6 +176,9 @@ def parse_inspire_response(xml_text):
 
     root = ET.fromstring(xml_text)
 
+    if 'ExceptionReport' in root.tag:
+        raise CadastreException(parse_inspire_exception(root))
+
     for cadastral_parcel_elem in root.findall('./gml:featureMember/cp:CadastralParcel', ns):
         parcel = parse_cadastral_parcel(cadastral_parcel_elem)
 
@@ -185,6 +218,7 @@ def get_inspire_data_by_code(code):
     """
     Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
     """
+    parcels = []
 
     response = requests.get(url_inspire, params={'service': 'wfs',
                                                  'request': 'getfeature',
@@ -194,10 +228,9 @@ def get_inspire_data_by_code(code):
 
     if response.ok:
         parcels = parse_inspire_response(response.text)
-
-        return parcels
-
-    return []
+    else:
+        raise CadastreException('Error connecting to ' + url_inspire + '. Status code: ' + response.status_code)
+    return parcels
 
 
 def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
@@ -215,6 +248,13 @@ def get_cadastral_parcels_by_code(code):
     return parcels
 
 
+def parse_public_cadastre_response(elem):
+    if elem.find('./ct:control/ct:cuerr', ns) is not None:
+        raise CadastreException(parse_public_cadastre_response(elem))
+
+    return xml_to_json(elem)
+
+
 def get_public_cadastre_info(code):
     response = requests.get(url_public_cadastral_info, params={'Provincia': '',
                                                                'Municipio': '',
@@ -222,7 +262,9 @@ def get_public_cadastre_info(code):
 
     if response.ok:
         root = ET.fromstring(response.text.encode('utf-8'))
-        return xml_to_json(root)
+        return parse_public_cadastre_response(root)
+    else:
+        raise CadastreException('Error connecting to ' + url_public_cadastral_info + '. Status code: ' + response.status_code)
 
 
 def store_parcels(parcels):

@@ -7,7 +7,7 @@ def altitud(request):
     param = request.GET.get('locations', '')
 
     if param == '':
-        return JsonResponse('{}')
+        return JsonResponse({'error': 'Altitude Request should bring locations'})
 
     if param != '':
         locations_param = map(lambda x: float(x), param.split(','))

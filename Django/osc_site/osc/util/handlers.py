@@ -1,7 +1,7 @@
 from slacker import Slacker
 from osc.models import Error
 from django.utils import timezone
-import datetime
+
 
 class SlackErrorHandler:
 
