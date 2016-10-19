@@ -11,3 +11,4 @@ utm
 pandas
 pyshp
 feedparser
+geopy
