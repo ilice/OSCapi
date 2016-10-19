@@ -43,6 +43,7 @@ def obtain_cadastral_parcels(request):
                     closest_station = \
                         get_closest_station(parcel['properties']['reference_point']['lat'],
                                             parcel['properties']['reference_point']['lon'])
+                    parcel['properties']['closest_station'] = closest_station
                     climate_agg = get_aggregated_climate_measures(closest_station['IDESTACION'],
                                                                   closest_station['IDPROVINCIA'],
                                                                   3)

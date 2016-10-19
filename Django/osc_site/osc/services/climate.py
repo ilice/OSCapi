@@ -3,6 +3,7 @@
 from elasticsearch_dsl import Search
 from elasticsearch import ElasticsearchException
 from osc.exceptions import ElasticException
+from geopy.distance import great_circle
 
 
 def get_closest_station(lat, lon):
@@ -29,7 +30,15 @@ def get_closest_station(lat, lon):
         result = s.execute()
         hit = result.hits[0] if len(result.hits) == 1 else {}
 
-        return hit.to_dict()
+        closest_station = hit.to_dict()
+
+        this_loc = (lat, lon)
+        station_loc = (closest_station['lat_lon']['lat'], closest_station['lat_lon']['lon'])
+
+        closest_station['distance_to_parcel'] = great_circle(this_loc, station_loc).kilometers
+
+        return closest_station
+
     except ElasticsearchException as e:
         raise ElasticException(str(type(e)) + ': ' + e.message, e)
 
@@ -51,6 +60,28 @@ def parse_by_month(bymonth):
             month['sun_hours'] = month_info['sun_hours']['value']
 
             year['monthly_measures'].append(month)
+
+        result.append(year)
+
+    return result
+
+
+def parse_by_day(byday):
+    result = []
+
+    for year_info in byday:
+        year = dict()
+        year['year'] = year_info['key']
+        year['daily_measures'] = []
+
+        for day_info in year_info['measure']['buckets']:
+            day = dict()
+            day['day'] = day_info['key_as_string']
+            day['avg_temperature'] = day_info['avg_temperature']['value']
+            day['radiation'] = day_info['radiation']['value']
+            day['sun_hours'] = day_info['sun_hours']['value']
+
+            year['daily_measures'].append(day)
 
         result.append(year)
 
@@ -79,140 +110,177 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
     try:
         s = Search(index='inforiego', doc_type='info_riego_daily')
         s.update_from_dict({
-                           "size": 0,
-                           "query": {
-                              "constant_score": {
-                                 "filter": {
-                                    "bool": {
-                                       "must": [
-                                          {
-                                             "term": {
-                                                "IDESTACION": station_id
-                                             }
-                                          },
-                                          {
-                                             "term": {
-                                                "IDPROVINCIA": province_id
-                                             }
-                                          }
-                                       ]
+                            "size": 0,
+                            "query": {
+                                "constant_score": {
+                                    "filter": {
+                                        "bool": {
+                                            "must": [
+                                                {
+                                                    "term": {
+                                                        "IDESTACION": station_id
+                                                    }
+                                                },
+                                                {
+                                                    "term": {
+                                                        "IDPROVINCIA": province_id
+                                                    }
+                                                }
+                                            ]
+                                        }
                                     }
-                                 }
-                              }
-                           },
-                           "aggs": {
-                              "last_year": {
-                                 "terms": {
-                                    "field": u'AÑO',
-                                    "order": {
-                                       "_term": "desc"
+                                }
+                            },
+                            "aggs": {
+                                "last_year": {
+                                    "terms": {
+                                        "field": u'AÑO',
+                                        "order": {
+                                            "_term": "desc"
+                                        },
+                                        "size": 1
                                     },
-                                    "size": 1
-                                 },
-                                 "aggs": {
-                                    "sum_rainfall": {
-                                       "sum": {
-                                          "field": "PRECIPITACION"
-                                       }
-                                    },
-                                    "max_temperature": {
-                                       "max": {
-                                          "field": "TEMPMAX"
-                                       }
-                                    },
-                                    "min_temperature": {
-                                       "min": {
-                                          "field": "TEMPMIN"
-                                       }
-                                    },
-                                    "avg_temperature": {
-                                       "avg": {
-                                          "field": "TEMPMEDIA"
-                                       }
-                                    },
-                                    "avg_sun_hours": {
-                                       "avg": {
-                                          "field": "N"
-                                       }
-                                    },
-                                    "max_sun_hours": {
-                                       "max": {
-                                          "field": "N"
-                                       }
-                                    },
-                                    "sum_sun_hours": {
-                                       "sum": {
-                                          "field": "N"
-                                       }
-                                    },
-                                    "avg_radiation": {
-                                       "avg": {
-                                          "field": "RADIACION"
-                                       }
-                                    },
-                                    "max_radiation": {
-                                       "max": {
-                                          "field": "RADIACION"
-                                       }
-                                    },
-                                    "sum_radiation": {
-                                       "sum": {
-                                          "field": "RADIACION"
-                                       }
-                                    }
-
-                                 }
-                              },
-                              "by_month": {
-                                 "terms": {
-                                    "field": u'AÑO',
-                                    "order": {
-                                       "_term": "desc"
-                                    },
-                                    "size": num_years_back
-                                 },
-                                 "aggs": {
-                                    "measure": {
-                                       "date_histogram": {
-                                          "field": "FECHA",
-                                          "interval": "month",
-                                          "format": "M"
-                                       },
-                                       "aggs": {
-                                          "rainfall": {
-                                             "sum": {
+                                    "aggs": {
+                                        "sum_rainfall": {
+                                            "sum": {
                                                 "field": "PRECIPITACION"
-                                             }
-                                          },
-                                          "avg_temperature": {
-                                             "avg": {
+                                            }
+                                        },
+                                        "max_temperature": {
+                                            "max": {
+                                                "field": "TEMPMAX"
+                                            }
+                                        },
+                                        "min_temperature": {
+                                            "min": {
+                                                "field": "TEMPMIN"
+                                            }
+                                        },
+                                        "avg_temperature": {
+                                            "avg": {
                                                 "field": "TEMPMEDIA"
-                                             }
-                                          },
-                                          "sun_hours": {
-                                             "sum": {
+                                            }
+                                        },
+                                        "avg_sun_hours": {
+                                            "avg": {
                                                 "field": "N"
-                                             }
-                                          },
-                                          "radiation": {
-                                             "sum": {
+                                            }
+                                        },
+                                        "max_sun_hours": {
+                                            "max": {
+                                                "field": "N"
+                                            }
+                                        },
+                                        "sum_sun_hours": {
+                                            "sum": {
+                                                "field": "N"
+                                            }
+                                        },
+                                        "avg_radiation": {
+                                            "avg": {
                                                 "field": "RADIACION"
-                                             }
-                                          }
-                                       }
+                                            }
+                                        },
+                                        "max_radiation": {
+                                            "max": {
+                                                "field": "RADIACION"
+                                            }
+                                        },
+                                        "sum_radiation": {
+                                            "sum": {
+                                                "field": "RADIACION"
+                                            }
+                                        }
+
                                     }
-                                 }
-                              }
-                           }
+                                },
+                                "by_month": {
+                                    "terms": {
+                                        "field": u'AÑO',
+                                        "order": {
+                                            "_term": "desc"
+                                        },
+                                        "size": num_years_back
+                                    },
+                                    "aggs": {
+                                        "measure": {
+                                            "date_histogram": {
+                                                "field": "FECHA",
+                                                "interval": "month",
+                                                "format": "M"
+                                            },
+                                            "aggs": {
+                                                "rainfall": {
+                                                    "sum": {
+                                                        "field": "PRECIPITACION"
+                                                    }
+                                                },
+                                                "avg_temperature": {
+                                                    "avg": {
+                                                        "field": "TEMPMEDIA"
+                                                    }
+                                                },
+                                                "sun_hours": {
+                                                    "sum": {
+                                                        "field": "N"
+                                                    }
+                                                },
+                                                "radiation": {
+                                                    "sum": {
+                                                        "field": "RADIACION"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "by_day": {
+                                    "terms": {
+                                        "field": u'AÑO',
+                                        "order": {
+                                            "_term": "desc"
+                                        },
+                                        "size": num_years_back
+                                    },
+                                    "aggs": {
+                                        "measure": {
+                                            "date_histogram": {
+                                                "field": "FECHA",
+                                                "interval": "day",
+                                                "format": "dd-MM-yyyy"
+                                            },
+                                            "aggs": {
+                                                "avg_temperature": {
+                                                    "avg": {
+                                                        "field": "TEMPMEDIA"
+                                                    }
+                                                },
+                                                "sun_hours": {
+                                                    "sum": {
+                                                        "field": "N"
+                                                    }
+                                                },
+                                                "radiation": {
+                                                    "sum": {
+                                                        "field": "RADIACION"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                            })
 
         result = s.execute()
         hit = result.aggregations.to_dict()
 
         by_month = parse_by_month(hit['by_month']['buckets'])
+        by_day = parse_by_day(hit['by_day']['buckets'])
         last_year = parse_last_year(hit['last_year']['buckets'])
 
         return {'by_month': by_month,
+                'by_day': by_day,
                 'last_year': last_year}
     except ElasticsearchException as e:
         raise ElasticException(str(type(e)) + ': ' + e.message, e)
