@@ -27,7 +27,7 @@ INFORIEGO = {
 }
 
 SLACK = {
-    'token': 'xoxb-59407964018-w5PcoTnCMt9A023kgE7BxCul',
+    'token': secrets.get('slack', 'token'),
     'flush_bucket': 200
 }
 
