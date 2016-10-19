@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from osc.util import xml_to_json, elastic_bulk_save
 from osc.util import config
 from osc.exceptions import CadastreException
+from osc.util import error_managed
 
 import elasticsearch_dsl as dsl
 
@@ -171,6 +172,7 @@ def parse_cadastral_parcel(cadastral_parcel_elem):
     return parcel
 
 
+@error_managed(default_answer=[])
 def parse_inspire_response(xml_text):
     parcels = []
 
@@ -187,6 +189,7 @@ def parse_inspire_response(xml_text):
     return parcels
 
 
+@error_managed(default_answer=[])
 def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
     """
     Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
@@ -208,12 +211,13 @@ def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
 
     if response.ok:
         parcels = parse_inspire_response(response.text)
+    else:
+        raise CadastreException('Error connecting to ' + url_inspire + '. Status code: ' + response.status_code)
 
-        return parcels
-
-    return []
+    return parcels
 
 
+@error_managed(default_answer=[])
 def get_inspire_data_by_code(code):
     """
     Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
@@ -248,6 +252,7 @@ def get_cadastral_parcels_by_code(code):
     return parcels
 
 
+@error_managed(default_answer={})
 def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
         raise CadastreException(parse_public_cadastre_response(elem))
@@ -255,6 +260,7 @@ def parse_public_cadastre_response(elem):
     return xml_to_json(elem)
 
 
+@error_managed(default_answer={})
 def get_public_cadastre_info(code):
     response = requests.get(url_public_cadastral_info, params={'Provincia': '',
                                                                'Municipio': '',

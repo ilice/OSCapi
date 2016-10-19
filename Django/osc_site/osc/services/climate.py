@@ -4,8 +4,10 @@ from elasticsearch_dsl import Search
 from elasticsearch import ElasticsearchException
 from osc.exceptions import ElasticException
 from geopy.distance import great_circle
+from osc.util import error_managed
 
 
+@error_managed(default_answer={})
 def get_closest_station(lat, lon):
     try:
         s = Search(index='inforiego', doc_type='info_riego_station')
@@ -106,6 +108,7 @@ def parse_last_year(last_year):
     return result
 
 
+@error_managed(default_answer={})
 def get_aggregated_climate_measures(station_id, province_id, num_years_back):
     try:
         s = Search(index='inforiego', doc_type='info_riego_daily')

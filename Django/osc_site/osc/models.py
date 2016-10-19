@@ -18,7 +18,7 @@ class Error(models.Model):
     function_name = models.CharField(max_length=255)
     severity = models.CharField(max_length=1, choices=SEVERITIES)
     message = models.TextField()
-    actionable_info = models.TextField()
+    actionable_info = models.TextField(null=True)
 
 
 class Feed(models.Model):

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from elasticsearch_dsl.connections import connections
 import elasticsearch as es
 import config as conf
+import error_handling as err_handling
 import datetime
 import time
 
@@ -105,11 +106,11 @@ def elastic_bulk_update_dsl(process_name, records, retry=True):
             if retry:
                 elastic_bulk_update_dsl([record], retry=False)
             else:
-                conf.error_handler.error(process_name,
-                                         __name__,
-                                         'elastic_bulk_update_dsl',
-                                         str(type(e)),
-                                         str(record.to_dict()))
+                err_handling.error_handler.error(process_name,
+                                                 __name__,
+                                                 'elastic_bulk_update_dsl',
+                                                 str(type(e)),
+                                                 str(record.to_dict()))
 
 
 def elastic_bulk_save_dsl(process_name, records, retry=True):
@@ -126,7 +127,7 @@ def elastic_bulk_save_dsl(process_name, records, retry=True):
             if retry:
                 elastic_bulk_save_dsl([record], retry=False)
             else:
-                conf.error_handler.error(process_name,
+                err_handling.error_handler.error(process_name,
                                          __name__,
                                          'elastic_bulk_save_dsl',
                                          str(type(e)),
@@ -151,7 +152,7 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
             if retry:
                 elastic_bulk_update(process_name, index, doc_type, [r], [idx], retry=False)
             else:
-                conf.error_handler.error(process_name,
+                err_handling.error_handler.error(process_name,
                                          __name__,
                                          'elastic_bulk_update',
                                          str(type(e)),
@@ -175,7 +176,7 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=Tr
             if retry:
                 elastic_bulk_update(process_name, index, doc_type, [r], [idx], retry=False)
             else:
-                conf.error_handler.error(process_name,
+                err_handling.error_handler.error(process_name,
                                          __name__,
                                          'elastic_bulk_save',
                                          str(type(e)),
