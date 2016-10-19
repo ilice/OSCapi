@@ -2,16 +2,18 @@ import feedparser
 import requests
 import zipfile
 import StringIO
-from osc.util import error_handler
 from osc.util import contains_any
 from datetime import datetime
 from osc.services import start_feed_read, finish_feed_read, get_last_successful_update_date, store_parcels
+from osc.util import error_managed
 
 from osc.services.cadastre import parse_inspire_response
+from osc.exceptions import CadastreException
 
 url_atom_inspire = 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml'
 
 
+@error_managed(default_answer=[])
 def get_parcels_from_url(zipfile_url):
     parcels = []
 
@@ -26,11 +28,7 @@ def get_parcels_from_url(zipfile_url):
             parcels = parse_inspire_response(xml_text)
 
     else:
-        error_handler.error('UPDATE_CADASTRE',
-                            __name__,
-                            update_catastral_province,
-                            'error accessing url',
-                            zipfile_url)
+        raise CadastreException('Error connecting to ' + zipfile_url + '. Status code: ' + r.status_code)
     return parcels
 
 

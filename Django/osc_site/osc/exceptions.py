@@ -1,5 +1,6 @@
 class OSCException(Exception):
     def __init__(self, service, message, cause=None, actionable_info=None):
+        self.service = service
         self.message = message
         self.cause = cause
         self.actionable_info = actionable_info
@@ -27,8 +28,8 @@ class CadastreException(ConnectionError):
 
 
 class ElasticException(ConnectionError):
-    def __init__(self, message, cause=None, actionable_info=None):
-        super(ElasticException, self).__init__('ELASTIC', message, cause, actionable_info)
+    def __init__(self, service, message, cause=None, actionable_info=None):
+        super(ElasticException, self).__init__(service, message, cause, actionable_info)
         self.message = message
 
     def __str__(self):

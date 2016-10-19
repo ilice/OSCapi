@@ -12,6 +12,8 @@ import requests
 import calendar
 
 import osc.util as util
+from osc.util import error_managed
+from osc.exceptions import ElasticException
 
 __all__ = ['insert_all_stations_inforiego_daily',
            'insert_all_stations_inforiego_hourly',
@@ -71,6 +73,7 @@ def get_inforiego_daily_year(provincia,
     return response.json()
 
 
+@error_managed
 def store_daily_document(document,
                          lat_lon,
                          altitud,
@@ -103,11 +106,7 @@ def store_daily_document(document,
         util.wait_for_yellow_cluster_status()
         connection.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
-        util.error_handler.error('INFORIEGO',
-                                 __name__,
-                                 "store_daily_document",
-                                 str(type(e)),
-                                 str(document))
+        raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))
 
 
 def insert_inforiego_daily_years(provincia,
@@ -214,6 +213,7 @@ def get_inforiego_hourly_month(provincia,
     return response.json()
 
 
+@error_managed
 def store_hourly_document(document,
                           lat_lon,
                           altitud,
@@ -235,11 +235,7 @@ def store_hourly_document(document,
         util.wait_for_yellow_cluster_status()
         connection.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
-        util.error_handler.error('INFORIEGO',
-                                 __name__,
-                                 "store_hourly_document",
-                                 str(type(e)),
-                                 str(document))
+        raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))
 
 
 def insert_inforiego_hourly_years(provincia,
