@@ -1,0 +1,14 @@
+Django
+django_cron
+requests
+polyline
+elasticsearch_dsl
+slacker
+psycopg2
+setuptools
+matplotlib
+utm
+pandas
+pyshp
+feedparser
+geopy
