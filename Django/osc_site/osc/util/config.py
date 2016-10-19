@@ -1,25 +1,15 @@
-import ConfigParser
 import os
 
 from elasticsearch_dsl.connections import connections
+from django.conf import settings
 
-__all__ = ['config', 'get_data_dir', 'get_tmp_dir', 'get_error_dir', 'get_dataframes_dir']
-
-config = ConfigParser.ConfigParser(defaults={'data_dir': '../data',
-                                             'tmp_dir': '../tmp',
-                                             'errors_dir': '../errors',
-                                             'token': '',
-                                             'port': None,
-                                             'chunk_size': '100',
-                                             'flush_bucket': '1000'})
-
-config.read([os.path.expanduser('~/opensmartcountry.ini')])
+__all__ = ['get_data_dir', 'get_tmp_dir', 'get_error_dir', 'get_dataframes_dir']
 
 # Directories
-data_dir = config.get('importer', 'data_dir')
-tmp_dir = config.get('importer', 'tmp_dir')
-error_dir = config.get('importer', 'errors_dir')
-dataframes_dir = config.get('importer', 'dataframes_dir')
+data_dir = settings.AUX_DIRS['data_dir']
+tmp_dir = settings.AUX_DIRS['tmp_dir']
+error_dir = settings.AUX_DIRS['errors_dir']
+dataframes_dir = settings.AUX_DIRS['dataframes_dir']
 
 
 def get_data_dir():
@@ -45,11 +35,8 @@ def get_dataframes_dir():
         os.makedirs(dataframes_dir)
     return dataframes_dir
 
-#web
-url = config.get('web', 'url')
-
 # Elastic Search
 connections.create_connection('default', hosts=[
-    {'host': config.get('elasticsearch', 'host'),
-     'port': config.get('elasticsearch', 'port')}])
+    {'host': settings.ELASTICSEARCH['host'],
+     'port': settings.ELASTICSEARCH['port']}])
 

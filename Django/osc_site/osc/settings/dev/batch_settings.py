@@ -1,0 +1,1 @@
+from osc.settings.dev.app_settings import *

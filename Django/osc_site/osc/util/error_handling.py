@@ -1,8 +1,9 @@
 from slacker import Slacker
 from osc.models import Error
 from django.utils import timezone
-from osc.util.config import config
 import atexit
+
+from django.conf import settings
 
 from osc.exceptions import OSCException
 
@@ -116,9 +117,9 @@ class CompositeErrorHandler:
             handler.flush()
 
 error_handler = CompositeErrorHandler([DBErrorHandler(),
-                                       SlackErrorHandler(config.get('slack', 'token'),
-                                                         config.getint('slack', 'flush_bucket'),
-                                                         config.get('web', 'url'))])
+                                       SlackErrorHandler(settings.SLACK['token'],
+                                                         settings.SLACK['flush_bucket'],
+                                                         settings.WEB['url'])])
 
 
 def flush_handlers():

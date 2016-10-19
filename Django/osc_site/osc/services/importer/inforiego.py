@@ -15,18 +15,20 @@ import osc.util as util
 from osc.util import error_managed
 from osc.exceptions import ElasticException
 
+from django.conf import settings
+
 __all__ = ['insert_all_stations_inforiego_daily',
            'insert_all_stations_inforiego_hourly',
            'get_stations_from_elastic']
 
 logger = logging.Logger(__name__)
 
-daily_url = util.config.get('inforiego', 'url.daily')
-user = util.config.get('inforiego', 'user')
-password = util.config.get('inforiego', 'passwd')
-es_index = util.config.get('inforiego', 'index')
-es_daily_mapping = util.config.get('inforiego', 'daily.mapping')
-es_station_mapping = util.config.get('inforiego', 'station.mapping')
+daily_url = settings.INFORIEGO['url.daily']
+user = settings.INFORIEGO['user']
+password = settings.INFORIEGO['passwd']
+es_index = settings.INFORIEGO['index']
+es_daily_mapping = settings.INFORIEGO['daily.mapping']
+es_station_mapping = settings.INFORIEGO['station.mapping']
 
 
 def get_stations_from_elastic(index=es_index,

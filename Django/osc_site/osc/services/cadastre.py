@@ -1,8 +1,9 @@
 import requests
 import xml.etree.ElementTree as ET
 
+from django.conf import settings
+
 from osc.util import xml_to_json, elastic_bulk_save
-from osc.util import config
 from osc.exceptions import CadastreException
 from osc.util import error_managed
 
@@ -276,7 +277,7 @@ def get_public_cadastre_info(code):
 def store_parcels(parcels):
     create_parcel_mapping('parcels')
 
-    chunk_size = config.getint('elasticsearch', 'chunk_size')
+    chunk_size = settings.ELASTICSEARCH['chunk_size']
 
     for i in range(0, len(parcels), chunk_size):
         records = parcels[i:i+chunk_size]

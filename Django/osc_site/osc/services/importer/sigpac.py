@@ -26,6 +26,8 @@ import datetime
 from osc.exceptions import ConnectionError
 from osc.services import try_obtain_elevation_from_google
 
+from django.conf import settings
+
 __all__ = ['save_plots_to_elasticsearch', 'all_sigpac_zipcodes']
 
 logger = logging.Logger(__name__)
@@ -470,7 +472,7 @@ def save_plots_to_elasticsearch(zip_codes,
                                 url='ftp.itacyl.es',
                                 root_dir='/Meteorologia/Datos_observacion_Red_InfoRiego/DatosHorarios',
                                 force_download=False):
-    chunk_size = util.config.getint('elasticsearch', 'chunk_size')
+    chunk_size = settings.ELASTICSEARCH['chunk_size']
 
     def init_and_wait():
         sigpac_record.init()
@@ -524,7 +526,7 @@ def obtain_elevation(records, centers):
 
 
 def add_altitude_info(provincia, municipio=None):
-    chunk_size = util.config.getint('Google Elevation', 'chunk_size')
+    chunk_size = settings.GOOGLE_ELEVATION['chunk_size']
     print ("Chunk Size = " + str(chunk_size))
 
     try:
