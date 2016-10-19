@@ -432,7 +432,7 @@ function drawLocationCard(cadastralParcelFeature) {
 }
 
 function drawCatastralCard(parcelCadastralData) {
-
+	if(typeof (parcelCadastralData.bico) != 'undefined'){
 	setValueInField(parcelCadastralData.bico.bi.idbi.cn, "cn");
 	setValueInField(parcelCadastralData.control.cucons, "cucons");
 	setValueInField(parcelCadastralData.control.cucul, "cucul");
@@ -442,6 +442,10 @@ function drawCatastralCard(parcelCadastralData) {
 	setValueInField(parcelCadastralData.bico.lspr.spr.dspr.ssp, "ssp");
 	setValueInField(parcelCadastralData.bico.lspr.spr.dspr.czc, "czc");
 	setValueInField(parcelCadastralData.bico.bi.ldt, "direccion");
+	}else{
+		document.getElementById('datosCatastroErrorBadge').style.display='block';
+		document.getElementById('datosCatastroTextoError').innerHTML = '<p>Error en los datos del catastro. Contacte con nosotros.</p>';
+	}
 
 }
 
