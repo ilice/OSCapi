@@ -4,6 +4,7 @@ class OSCException(Exception):
         self.message = message
         self.cause = cause
         self.actionable_info = actionable_info
+        self.processed = False
 
     def __str__(self):
         return 'OSCException: ' + self.message

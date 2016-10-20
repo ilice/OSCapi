@@ -32,6 +32,7 @@ def get_parcels_from_url(zipfile_url):
     return parcels
 
 
+@error_managed()
 def update_catastral_municipality(municipality, force_update=False):
     last_update_date = get_last_successful_update_date(municipality.link)
 
@@ -45,8 +46,10 @@ def update_catastral_municipality(municipality, force_update=False):
             finish_feed_read(feed_id, True)
         except Exception as e:
             finish_feed_read(feed_id, False, e.message)
+            raise
 
 
+@error_managed()
 def update_catastral_province(province, force_update=False):
     last_update_date = get_last_successful_update_date(province.link)
 
@@ -61,6 +64,7 @@ def update_catastral_province(province, force_update=False):
             finish_feed_read(feed_id, True)
         except Exception as e:
             finish_feed_read(feed_id, False, e.message)
+            raise
 
 
 def get_update_date(feed):
@@ -74,6 +78,7 @@ def get_update_date(feed):
                     second=updated_parsed.tm_sec)
 
 
+@error_managed
 def update_cadastral_information(force_update=False, provinces=None):
     feed = feedparser.parse(url_atom_inspire)
 
@@ -89,5 +94,6 @@ def update_cadastral_information(force_update=False, provinces=None):
             finish_feed_read(feed_id, True)
         except Exception as e:
             finish_feed_read(feed_id, False, e.message)
+            raise
 
 

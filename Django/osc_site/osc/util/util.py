@@ -92,7 +92,7 @@ def wait_for_yellow_cluster_status():
             print ('Cluster status is red. Waiting for yellow status')
 
 
-@error_managed
+@error_managed()
 def elastic_bulk_update_dsl(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
@@ -111,7 +111,7 @@ def elastic_bulk_update_dsl(process_name, records, retry=True):
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(record))
 
 
-@error_managed
+@error_managed()
 def elastic_bulk_save_dsl(process_name, records, retry=True):
     try:
         connection = connections.get_connection()
@@ -129,7 +129,7 @@ def elastic_bulk_save_dsl(process_name, records, retry=True):
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(record))
 
 
-@error_managed
+@error_managed()
 def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=True):
     try:
         if ids is None:
@@ -151,7 +151,7 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r))
 
 
-@error_managed
+@error_managed()
 def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=True):
     try:
         if ids is None:

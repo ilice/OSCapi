@@ -75,7 +75,7 @@ def get_inforiego_daily_year(provincia,
     return response.json()
 
 
-@error_managed
+@error_managed()
 def store_daily_document(document,
                          lat_lon,
                          altitud,
@@ -215,7 +215,7 @@ def get_inforiego_hourly_month(provincia,
     return response.json()
 
 
-@error_managed
+@error_managed()
 def store_hourly_document(document,
                           lat_lon,
                           altitud,

@@ -27,6 +27,7 @@ class error_managed(object):
         service = e.service if isinstance(e, OSCException) else 'UNKNOWN'
 
         error_handler.error(service, f.__module__, f.__name__, str(type(e)) + ': ' + e.message, actionable_info)
+
         raise e
 
 
