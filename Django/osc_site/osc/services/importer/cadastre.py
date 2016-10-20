@@ -78,7 +78,7 @@ def get_update_date(feed):
                     second=updated_parsed.tm_sec)
 
 
-@error_managed
+@error_managed()
 def update_cadastral_information(force_update=False, provinces=None):
     feed = feedparser.parse(url_atom_inspire)
 
