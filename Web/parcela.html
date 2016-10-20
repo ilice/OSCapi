@@ -60,6 +60,18 @@
 			<li><a id="openNav" href="javascript:void(0)"
 				class="w3-padding-large w3-text-grey" onclick="w3_open()">MENU</a></li>
 			<li class="w3-padding-large w3-right"><span id="rc"></span></li>
+			<li class="w3-padding-large w3-right"><button id="ErrorBadge"
+					class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+					style="display: none"
+					onclick="document.getElementById('ErrorData').style.display='block'">
+					<i class="fa fa-exclamation-triangle"></i>
+				</button></li>
+			<li class="w3-padding-large w3-right"><div id="ErrorData"
+					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="ErrorText"></span>
+				</div></li>
 		</ul>
 		<div class="w3-hide-medium w3-hide-large">
 			<div class="w3-padding-large w3-opacity"
@@ -186,22 +198,26 @@
 		<!-- Línea de localización y datos genéricos-->
 		<div class="w3-container w3-section w3-row-padding">
 			<div class="w3-third">
-				<div id="tarjetaMapa" class="w3-card-8" style="min-height:451px;">
+				<div id="LocationCard" class="w3-card-8" style="min-height: 451px;">
 					<span id="botonCerrar"
 						onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
 						<h5>
 							Localización
-							<button id="datosLindeErrorBadge"
+							<button id="LocationCardErrorBadge"
 								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
 								style="display: none"
-								onclick="document.getElementById('datosLinde').style.display='block'">
-								<i class="fa fa-ban"></i>
+								onclick="document.getElementById('LocationErrorData').style.display='block'">
+								<i class="fa fa-exclamation-triangle"></i>
 							</button>
 						</h5>
-						<div id="datosLinde" class="w3-col w3-panel w3-red w3-card-8"
-							style="display: none"></div>
+						<div id="LocationErrorData"
+							class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+							<span onclick="this.parentElement.style.display='none'"
+								class="w3-closebtn w3-padding">&times;</span><span
+								id="LocationCardErrorText"></span>
+						</div>
 						<div id="mapa"></div>
 						<div class="w3-responsive">
 							<table class="w3-table w3-striped w3-bordered">
@@ -220,7 +236,7 @@
 											class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn"
 											onclick="document.getElementById('idea_modal').style.display='block'">
 											<i class="fa fa fa-lightbulb-o w3-spin"></i>
-									</button></td>
+										</button></td>
 								</tr>
 							</table>
 						</div>
@@ -229,23 +245,26 @@
 				</div>
 			</div>
 			<div class="w3-twothird">
-				<div id="catastro" class="w3-card-8" style="min-height:451px;">
+				<div id="catastro" class="w3-card-8" style="min-height: 451px;">
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span>
 					<div class="w3-container">
 						<h5>
 							Información del catastro
-							<button id="datosCatastroErrorBadge"
+							<button id="CatastralCardErrorBadge"
 								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
 								style="display: none">
 								<i
-									onclick="document.getElementById('datosCatastro').style.display='block'"
-									class="fa fa-ban"></i>
+									onclick="document.getElementById('CatastralCardErrorData').style.display='block'"
+									class="fa fa-exclamation-triangle"></i>
 							</button>
 						</h5>
-						<div id="datosCatastro" class="w3-col w3-panel w3-red w3-card-8"
-							style="display: none"><span id="datosCatastroTextoError"></span><span onclick="this.parentElement.style.display='none'"
-						class="w3-closebtn w3-padding">&times;</span></div>
+						<div id="CatastralCardErrorData"
+							class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+							<span onclick="this.parentElement.style.display='none'"
+								class="w3-closebtn w3-padding">&times;</span> <span
+								id="CatastralCardErrorText"></span>
+						</div>
 						<table
 							class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white w3-text-grey">
 							<tr>
@@ -351,7 +370,20 @@
 					<em>*Los datos que se muestran son los de la estación
 						meteorológica más cercana: <span id="estacionLluvia"> </span>
 					</em>
+					<button id="RainfallCardErrorBadge"
+						class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+						style="display: none">
+						<i
+							onclick="document.getElementById('RainfallErrorData').style.display='block'"
+							class="fa fa-exclamation-triangle"></i>
+					</button>
 				</p>
+				<div id="RainfallErrorData" class="w3-col w3-panel w3-red w3-card-8"
+					style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="RainfallCardErrorText"></span>
+				</div>
 				<div class="w3-row-padding">
 					<div class="w3-twothird grafica"
 						id="graficoPrecipitacionPorMesYAnio"></div>
@@ -387,7 +419,20 @@
 						meteorológica más cercana: <span id="estacionTemperatura">
 					</span>
 					</em>
+					<button id="TemperatureCardErrorBadge"
+						class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+						style="display: none">
+						<i
+							onclick="document.getElementById('TemperatureErrorData').style.display='block'"
+							class="fa fa-exclamation-triangle"></i>
+					</button>
 				</p>
+				<div id="TemperatureErrorData"
+					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="TemperatureCardErrorText"></span>
+				</div>
 				<div class="w3-row-padding">
 					<div class="w3-third w3-center">
 						<table>
@@ -427,7 +472,20 @@
 					<em>*Los datos que se muestran son los de la estación
 						meteorológica más cercana: <span id="estacionSol"> </span>
 					</em>
+					<button id="SunHoursCardErrorBadge"
+						class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+						style="display: none">
+						<i
+							onclick="document.getElementById('SunHoursErrorData').style.display='block'"
+							class="fa fa-exclamation-triangle"></i>
+					</button>
 				</p>
+				<div id="SunHoursErrorData" class="w3-col w3-panel w3-red w3-card-8"
+					style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="SunHoursCardErrorText"></span>
+				</div>
 				<div class="w3-row-padding">
 					<div class="w3-twothird grafica" id="graficoHorasDeSolDiarias"></div>
 					<div class="w3-third w3-center">
@@ -467,7 +525,20 @@
 					<em>*Los datos que se muestran son los de la estación
 						meteorológica más cercana: <span id="estacionRadiacion"> </span>
 					</em>
+					<button id="RadiationCardErrorBadge"
+						class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+						style="display: none">
+						<i
+							onclick="document.getElementById('RadiationErrorData').style.display='block'"
+							class="fa fa-exclamation-triangle"></i>
+					</button>
 				</p>
+				<div id="RadiationErrorData"
+					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="RadiationCardErrorText"></span>
+				</div>
 				<div class="w3-row-padding">
 					<div class="w3-third w3-center">
 						<table>
@@ -509,6 +580,19 @@
 				<p id="datosEstacion" class="w3-padding">
 					<em>Distribución de los diferentes usos del suelo </em>
 				</p>
+				<button id="CropDistributionCardErrorBadge"
+					class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+					style="display: none">
+					<i
+						onclick="document.getElementById('CropDistributionErrorData').style.display='block'"
+						class="fa fa-exclamation-triangle"></i>
+				</button>
+				<div id="CropDistributionErrorData"
+					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+					<span onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span><span
+						id="CropDistributionCardErrorText"></span>
+				</div>
 				<div id="w3-row">
 					<div class="w3-col" style="width: 150px">
 						<ul class="w3-ul w3-hoverable w3-large">
@@ -519,13 +603,16 @@
 							<!-- <li><a href="#fixed" onclick="openCropDistribution('Viales')">Viales</a></li>
   					<li><a href="#fixed" onclick="openCropDistribution('Viales')">Edificaciones</a></li> -->
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('FL')">FS y olivar</a></li>
+								href="#fixed" onclick="openCropDistribution('FL')">FS y
+									olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('FO')">Forestal</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('FS')">Frutos secos</a></li>
+								href="#fixed" onclick="openCropDistribution('FS')">Frutos
+									secos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('FV')">FS y Viñedos</a></li>
+								href="#fixed" onclick="openCropDistribution('FV')">FS y
+									Viñedos</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('FY')">Frutales</a></li>
 							<li><a style="display: block; text-decoration: none;"
@@ -533,13 +620,16 @@
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('IV')">Invernaderos</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('OF')">Olivar - Frutal</a></li>
+								href="#fixed" onclick="openCropDistribution('OF')">Olivar -
+									Frutal</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('OV')">Olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('PA')">Pasto con arb.</a></li>
+								href="#fixed" onclick="openCropDistribution('PA')">Pasto con
+									arb.</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('PR')">Pasto arbustivo</a></li>
+								href="#fixed" onclick="openCropDistribution('PR')">Pasto
+									arbustivo</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('PS')">Pastizal</a></li>
 							<li><a style="display: block; text-decoration: none;"
@@ -547,11 +637,13 @@
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('TH')">Huerta</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('VF')">Viñedo - Frutal</a></li>
+								href="#fixed" onclick="openCropDistribution('VF')">Viñedo -
+									Frutal</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('VI')">Viñedo</a></li>
 							<li><a style="display: block; text-decoration: none;"
-								href="#fixed" onclick="openCropDistribution('VO')">Viñedo - Olivar</a></li>
+								href="#fixed" onclick="openCropDistribution('VO')">Viñedo -
+									Olivar</a></li>
 							<li><a style="display: block; text-decoration: none;"
 								href="#fixed" onclick="openCropDistribution('ZC')">Concentración</a></li>
 							<li><a style="display: block; text-decoration: none;"
@@ -567,133 +659,133 @@
 
 						</div>
 
-						<div id="Agua" class="w3-container city">
+						<div id="Agua" class="w3-container city" style="display: none">
 							<h2>Corrientes y superficies de agua</h2>
 							<img src="img/distribucion/37_AG.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="Viales" class="w3-container city">
+						<div id="Viales" class="w3-container city" style="display: none">
 							<h2>Viales</h2>
 							<img src="img/distribucion/37_CA.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="ED" class="w3-container city">
+						<div id="ED" class="w3-container city" style="display: none">
 							<h2>Edificaciones</h2>
 							<img src="img/distribucion/37_ED.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="FL" class="w3-container city">
+						<div id="FL" class="w3-container city" style="display: none">
 							<h2>Frutos secos y olivar</h2>
 							<img src="img/distribucion/37_FL.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="FO" class="w3-container city">
+						<div id="FO" class="w3-container city" style="display: none">
 							<h2>Forestal</h2>
 							<img src="img/distribucion/37_FO.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="FS" class="w3-container city">
+						<div id="FS" class="w3-container city" style="display: none">
 							<h2>Frutos secos</h2>
 							<img src="img/distribucion/37_FL.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="FV" class="w3-container city">
+						<div id="FV" class="w3-container city" style="display: none">
 							<h2>Frutos secos y Viñedos</h2>
 							<img src="img/distribucion/37_FV.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="FY" class="w3-container city">
+						<div id="FY" class="w3-container city" style="display: none">
 							<h2>Frutales</h2>
 							<img src="img/distribucion/37_FY.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="IM" class="w3-container city">
+						<div id="IM" class="w3-container city" style="display: none">
 							<h2>Improductivos</h2>
 							<img src="img/distribucion/37_IM.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="IV" class="w3-container city">
+						<div id="IV" class="w3-container city" style="display: none">
 							<h2>Invernaderos y cultivos bajo plástico</h2>
 							<img src="img/distribucion/37_IV.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="OF" class="w3-container city">
+						<div id="OF" class="w3-container city" style="display: none">
 							<h2>Olivar frutal</h2>
 							<img src="img/distribucion/37_OF.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="OV" class="w3-container city">
+						<div id="OV" class="w3-container city" style="display: none">
 							<h2>Olivar</h2>
 							<img src="img/distribucion/37_OV.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="PA" class="w3-container city">
+						<div id="PA" class="w3-container city" style="display: none">
 							<h2>Pasto con arbolado</h2>
 							<img src="img/distribucion/37_PA.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="PR" class="w3-container city">
+						<div id="PR" class="w3-container city" style="display: none">
 							<h2>Pasto arbustivo</h2>
 							<img src="img/distribucion/37_PR.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="PS" class="w3-container city">
+						<div id="PS" class="w3-container city" style="display: none">
 							<h2>Pastizal</h2>
 							<img src="img/distribucion/37_PS.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="TA" class="w3-container city">
+						<div id="TA" class="w3-container city" style="display: none">
 							<h2>Tierras arables</h2>
 							<img src="img/distribucion/37_TA.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="TH" class="w3-container city">
+						<div id="TH" class="w3-container city" style="display: none">
 							<h2>Huerta</h2>
 							<img src="img/distribucion/37_TH.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="VF" class="w3-container city">
+						<div id="VF" class="w3-container city" style="display: none">
 							<h2>Viñedo - Frutal</h2>
 							<img src="img/distribucion/37_VF.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="VI" class="w3-container city">
+						<div id="VI" class="w3-container city" style="display: none">
 							<h2>Viñedo</h2>
 							<img src="img/distribucion/37_VI.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="VO" class="w3-container city">
+						<div id="VO" class="w3-container city" style="display: none">
 							<h2>Viñedo - Olivar</h2>
 							<img src="img/distribucion/37_VO.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="ZC" class="w3-container city">
+						<div id="ZC" class="w3-container city" style="display: none">
 							<h2>Zona concentrada</h2>
 							<img src="img/distribucion/37_ZC.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
 						</div>
 
-						<div id="ZU" class="w3-container city">
+						<div id="ZU" class="w3-container city" style="display: none">
 							<h2>Zona urbana</h2>
 							<img src="img/distribucion/37_ZU.png"
 								alt="Todos los cultivos de Salamanca" style="width: 100%">
@@ -771,8 +863,9 @@
 				parcelas.</p>
 			<p>Si sigues el Tour te mostraré el tipo de información
 				disponible y cómo se consigue.</p>
-			<p>Utilizamos como fuentes de información datos disponibles como Open Data. Datos que normalmente el gobierno
-					publica para uso de cualquier persona
+			<p>Utilizamos como fuentes de información datos disponibles como
+				Open Data. Datos que normalmente el gobierno publica para uso de
+				cualquier persona
 			<p>¿Quieres que te los enseñe?</p>
 		</li>
 		<li data-id="openNav" data-button="Siguiente" class="custom"
@@ -820,7 +913,7 @@
 				simplemente tienes que seleccionarla de nuevo en el menú lateral que
 				se abre al pulsar el botón "MENU".</p>
 		</li>
-		<li data-id="tarjetaMapa" data-button="Siguiente" class="custom"
+		<li data-id="LocationCard" data-button="Siguiente" class="custom"
 			data-options="tipLocation:bottom">
 			<h2>Mapa interactivo</h2>
 			<p>Las coordenadas geográficas están representadas en un mapa de
