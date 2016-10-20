@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from django.test import TestCase
 
 import osc.services.cadastre as cadastre
@@ -18,4 +20,4 @@ class CadastreServiceTest(TestCase):
         impcadastre.update_cadastral_information()
 
     def test_get_zip_file(self):
-        impcadastre.get_parcels_from_url('http://www.catastro.minhap.es/INSPIRE/CadastralParcels/17/17147-PORTBOU/A.ES.SDGC.CP.17147.zip')
+        impcadastre.get_parcels_from_url('http://www.catastro.minhap.es/INSPIRE/CadastralParcels/18/18006-ALBUÑAN/A.ES.SDGC.CP.18006.zip')
