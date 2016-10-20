@@ -37,7 +37,7 @@ def get_parcels_from_url(zipfile_url):
 
 @error_managed()
 def update_catastral_municipality(municipality, force_update=False):
-    print ('Importing municipality: ' + municipality.link)
+    print ('Importing municipality: ' + municipality.link.encode('utf-8'))
     last_update_date = get_last_successful_update_date(municipality.link)
     print ('Importing municipality: ' + municipality.link)
 
