@@ -8,7 +8,7 @@ secrets.read(SECRETS_PATH)
 
 ELASTICSEARCH = {
     'chunk_size': 100,
-    'host': '94.76.229.213',
+    'host': '82.158.80.73',
     'port': 9200
 }
 

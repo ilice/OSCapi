@@ -8,8 +8,13 @@ def get_last_successful_update_date(feed_url):
 
 
 def start_feed_read(feed_url, update_date):
-    feed = Feed(url=feed_url, date_launched=timezone.now(), update_date=update_date, success=False)
-    feed.save()
+    feeds_for_url = Feed.objects.filter(url=feed_url)
+
+    if len(feeds_for_url) > 0:
+        feed = feeds_for_url[0]
+    else:
+        feed = Feed(url=feed_url, date_launched=timezone.now(), update_date=update_date, success=False)
+        feed.save()
 
     return feed.id
 
