@@ -54,6 +54,7 @@ function inicializaMapa() {
 	mapa = new google.maps.Map(document.getElementById("mapa"),
 			configuracionMapa);
 
+	
 	var input = /** @type {!HTMLInputElement} */
 	(document.getElementById('buscador'));
 
@@ -142,27 +143,26 @@ function inicializaMapa() {
 						var bbox = mapa.getBounds();
 						var area = computeArea(bbox);
 						if (area <= 2000000) {
-							var cadastralParcelFeatureCollection = getCadastralParcelFeatureCollection(bbox);
-							if (typeof (cadastralParcelFeatureCollection) != 'undefined'
-									&& cadastralParcelFeatureCollection.features.length > 0) {
-								mapa.data.forEach(function(feature) {
-									var zoneType = feature
-											.getProperty("zoneType");
-									if (typeof zoneType == 'undefined'
-											|| zoneType != 'administrative') {
-										mapa.data.remove(feature);
-									} else {
+							document.getElementById("loader").style.display = "block";
+							mapa.data.forEach(function(feature) {
+								var zoneType = feature.getProperty("zoneType");
+								if (typeof zoneType == 'undefined'
+										|| zoneType != 'administrative') {
+									mapa.data.remove(feature);
+								} else {
 
-									}
-								});
-							}
+								}
+							});
 
-							mapa.data
-									.addGeoJson(cadastralParcelFeatureCollection);
-						
+							var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
+									+ getOptimalBbox(bbox).toUrlValue();
+
+							mapa.data.loadGeoJson(url, null, function (features) {
+								document.getElementById("loader").style.display = "none";
+							});
 
 						}
-
+						
 					});
 	mapa.data
 			.addListener(
@@ -449,28 +449,6 @@ function getBoundaries(idProvincia) {
 	return geoJSONBoundaries;
 }
 
-function getCadastralParcelFeatureCollection(bbox) {
-	var cadastralParcelFeatureCollection;
-	
-	bbox = getOptimalBbox(bbox);
-	
-	var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
-			+ bbox.toUrlValue();
-
-	var request = jQuery.ajax({
-		url : url,
-		type : 'GET',
-		dataType : "json",
-		async : false
-	});
-
-	request.done(function(response, textStatus, jqXHR) {
-		cadastralParcelFeatureCollection = response;
-	});
-
-	return cadastralParcelFeatureCollection;
-}
-
 function computeArea(bbox) {
 	var area = 0;
 
@@ -490,8 +468,8 @@ function computeArea(bbox) {
 function getOptimalBbox(bbox) {
 	var reducedBbox = bbox;
 	if (computeArea(bbox) > 500000) {
-		var distance = google.maps.geometry.spherical.computeDistanceBetween(bbox.getSouthWest(), bbox
-				.getNorthEast());
+		var distance = google.maps.geometry.spherical.computeDistanceBetween(
+				bbox.getSouthWest(), bbox.getNorthEast());
 		var offsetdistance = distance * 0.1;
 		reducedBbox = new google.maps.LatLngBounds(
 				google.maps.geometry.spherical.computeOffset(bbox

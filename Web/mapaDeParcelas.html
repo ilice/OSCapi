@@ -44,180 +44,75 @@
 <body onload="dibujaMarcadores()">
 
 	<!-- Navbar (sit on top) -->
-	<div >
+	<div>
 		<ul class="w3-navbar w3-card-2 w3-left-align w3-hide-small">
 			<li><a href="index.html" class="w3-padding-large w3-opacity"><img
 					src="img/OpenSmartCountry_logo_25x26.png"
 					alt="Open Smart Country logo"></img></a></li>
+			<li><div class="w3-padding-large w3-opacity" id="loader"
+					style="display: none">
+					<img src="img/OpenSmartCountry_gif_animado_25x25.gif"
+						alt="Open Smart Country logo"></img>Buscando parcelas
+				</div></li>
 			<li class="w3-right"><a
 				class="w3-padding-large w3-hover-dark-grey w3-text-grey" id="buscar"><i
 					class="fa fa-search"></i></a></li>
 			<li class="w3-right" style="width: 50%"><input
-				class="w3-input  w3-text-grey w3-hover-light-grey"
-				id="buscador" type="text"
+				class="w3-input  w3-text-grey w3-hover-light-grey" id="buscador"
+				type="text"
 				placeholder="Inserta un lugar o dirección para centrar el mapa"></li>
 		</ul>
-		<div class="w3-navbar w3-card-2 w3-left-align w3-hide-medium w3-hide-large">
-			<div >
-			<div class="w3-padding-large w3-opacity" style="width:15%; float: left;"><a href="index.html" ><img
-					src="img/OpenSmartCountry_logo_25x26.png"
-					alt="Open Smart Country logo"></img></a></div>
-			<div style="width:70%; float: left; margin-top: 1%;"><input
-				class="w3-input  w3-text-grey w3-hover-light-grey w3-small"
-				id="buscador" type="text"
-				placeholder="Inserta un lugar o dirección para centrar el mapa"></div>
-			<div class="w3-padding-large w3-hover-dark-grey w3-text-grey" style="width:15%; float: left;"><a
-				 id="buscar"><i
-					class="fa fa-search"></i></a></div>
+		<div
+			class="w3-navbar w3-card-2 w3-left-align w3-hide-medium w3-hide-large">
+			<div>
+				<div class="w3-padding-large w3-opacity"
+					style="width: 15%; float: left;">
+					<a href="index.html"><img
+						src="img/OpenSmartCountry_logo_25x26.png"
+						alt="Open Smart Country logo"></img></a>
+				</div>
+				<div style="width: 70%; float: left; margin-top: 1%;">
+					<input class="w3-input  w3-text-grey w3-hover-light-grey w3-small"
+						id="buscador" type="text"
+						placeholder="Inserta un lugar o dirección para centrar el mapa">
+				</div>
+				<div class="w3-padding-large w3-hover-dark-grey w3-text-grey"
+					style="width: 15%; float: left;">
+					<a id="buscar"><i class="fa fa-search"></i></a>
+				</div>
 			</div>
 		</div>
 	</div>
 
 
 	<div id="mapa"></div>
-	
+
 	<div id="aviso" class="w3-modal">
-    <div class="w3-modal-content w3-card-8">
-      <header class="w3-container w3-light-grey">
-        <span onclick="document.getElementById('aviso').style.display='none'"
-        class="w3-closebtn">&times;</span>
-        <h2>Aviso</h2>
-      </header>
-      <div id="textoDelAviso" class="w3-container">
-      </div>
-      <footer class="w3-container w3-light-grey">
-     	<p class="w3-small w3-left">Si no es correcto, por favor, contacte con nosotros para que podamos arreglarlo.</p>
-		<div class="w3-large w3-padding w3-right">
-			<a href="https://www.facebook.com/opnsc"
-				class="w3-hover-text-indigo w3-show-inline-block"><i
-				class="fa fa-facebook-official"></i></a> <a
-				href="https://twitter.com/opnsc"
-				class="w3-hover-text-light-blue w3-show-inline-block"><i
-				class="fa fa-twitter"></i></a><a
-				href="https://github.com/teanocrata/OpenSmartCountry"
-				class="w3-hover-text-grey w3-show-inline-block"><i
-				class="fa fa-github"></i></a>
-		</div>
-      </footer>
-    </div>
-  </div>
-
-
-
-	<!-- Botón FAB al estilo material design-->
-	<div class="contenedor w3-container">
-		<ul class="w3-ul w3-center">
-			<li class="sinBorde"><button
-					class="btn botonF5 w3-btn-floating w3-dark-grey"
-					onclick="document.getElementById('suscripcion').style.display='block'">
-					<i class="fa fa-envelope-o"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="btn botonF5 w3-btn-floating w3-dark-grey"
-					onclick="location.href='mapaDeParcelas.html'">
-					<i class="fa fa-map-marker"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="btn botonF4 w3-btn-floating w3-dark-grey"
-					onclick="location.href='oscar.html'">
-					<i class="fa fa-wifi"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="btn botonF3 w3-btn-floating w3-dark-grey"
-					onclick="location.href='parcela.html'">
-					<i class="fa fa-unlock-alt"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="btn botonF2 w3-btn-floating w3-dark-grey"
-					onclick="document.getElementById('analytics').style.display='block'">
-					<i class="fa fa-line-chart"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="btn botonF5 w3-btn-floating w3-dark-grey"
-					onclick="location.href='cultivos.html'">
-					<i class="fa fa-leaf"></i>
-				</button></li>
-			<li class="sinBorde"><button
-					class="botonF1 w3-btn-floating-large w3-dark-grey" id="botonMas">
-					<i class="fa fa-plus"></i>
-				</button></li>
-		</ul>
-	</div>
-	<script src="js\codigoFAB.js"></script>
-	<!-- Ventana modal con el contenido de analitycs hasta que tengamos algo que mostrar -->
-	<div id="analytics" class="w3-modal">
-		<div class="w3-modal-content">
-			<div class="w3-container">
+		<div class="w3-modal-content w3-card-8">
+			<header class="w3-container w3-light-grey">
 				<span
-					onclick="document.getElementById('analytics').style.display='none'"
+					onclick="document.getElementById('aviso').style.display='none'"
 					class="w3-closebtn">&times;</span>
-				<p class="w3-center">Para esto vamos a necesitar un poco más de
-					tiempo, pero esperamos tener una primera versión en breve para que
-					puedas hacerte una idea del potencial que tiene.</p>
-				<p class="w3-center">
-					Si quieres más información, tienes curiosidad o te apetece
-					participar, no dudes en contactar con <a
-						href="mailto:isabel@opensmartcountry.com">nosotros</a>.
-				</p>
-			</div>
+				<h2>Aviso</h2>
+			</header>
+			<div id="textoDelAviso" class="w3-container"></div>
+			<footer class="w3-container w3-light-grey">
+				<p class="w3-small w3-left">Si no es correcto, por favor,
+					contacte con nosotros para que podamos arreglarlo.</p>
+				<div class="w3-large w3-padding w3-right">
+					<a href="https://www.facebook.com/opnsc"
+						class="w3-hover-text-indigo w3-show-inline-block"><i
+						class="fa fa-facebook-official"></i></a> <a
+						href="https://twitter.com/opnsc"
+						class="w3-hover-text-light-blue w3-show-inline-block"><i
+						class="fa fa-twitter"></i></a><a
+						href="https://github.com/teanocrata/OpenSmartCountry"
+						class="w3-hover-text-grey w3-show-inline-block"><i
+						class="fa fa-github"></i></a>
+				</div>
+			</footer>
 		</div>
 	</div>
-	<!--Ventana de suscripción -->
-	<div id="suscripcion" class="w3-modal">
-		<div class="w3-modal-content">
-			<div class="w3-container w3-padding w3-center">
-				<span
-					onclick="document.getElementById('suscripcion').style.display='none'"
-					class="w3-closebtn">&times;</span>
-				<p>Si quieres que te avisemos con los avances que realicemos,
-					déjanos tu correo y te informaremos.</p>
-				<p>
-					Sólo lo utilizaremos para eso, <strong>nada de Spam</strong>, y
-					puedes darte de baja cuando quieras.
-				</p>
-				<p>Rellene el siguiente formulario para suscribirse.</p>
-				<form class="w3-container"
-					enctype="application/x-www-form-urlencoded"
-					action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o"
-					method="post">
-					<dl class="zend_form">
-						<dt id="groups-label"></dt>
-						<dd id="groups-element">
-							<input class="w3-input" type="hidden" name="groups[]" value="1" />
-						</dd>
-
-						<dt id="name-label">
-							<label for="name" class="optional w3-label w3-text-grey">Nombre</label>
-						</dt>
-						<dd id="name-element">
-							<input type="text" class="w3-input" name="name" id="name"
-								value="" />
-						</dd>
-
-						<dt id="email-label">
-							<label for="email"
-								class="required w3-label w3-validate w3-text-grey">Email</label>
-						</dt>
-						<dd id="email-element">
-							<input type="email" class="w3-input" name="email" id="email"
-								value="" required />
-						</dd>
-
-						<dt id="submit-label"></dt>
-						<dd id="submit-element">
-							<button type="submit" name="submit" id="submit"
-								class="w3-btn w3-dark-grey w3-margin-top"
-								onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme
-								al tanto</button>
-						</dd>
-
-					</dl>
-				</form>
-			</div>
-		</div>
-	</div>
-	<!-- Fin bloque botón FAB al estilo material design-->
-
 
 </body>
 </html>
