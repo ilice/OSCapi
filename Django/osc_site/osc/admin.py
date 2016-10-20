@@ -15,7 +15,7 @@ admin.site.register(Error, ErrorAdmin)
 
 class FeedAdmin(admin.ModelAdmin):
     # define which columns displayed in changelist
-    list_display = ('url', 'date_launched', 'update_date', 'success')
+    list_display = ('success', 'update_date', )
     # add filtering by date
     list_filter = ('url',)
 
