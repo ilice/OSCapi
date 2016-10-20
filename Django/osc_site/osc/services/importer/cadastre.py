@@ -42,6 +42,8 @@ def update_catastral_municipality(municipality, force_update=False):
     if force_update or last_update_date is None or last_update_date < get_update_date(municipality):
         feed_id = start_feed_read(municipality.link, get_update_date(municipality))
 
+        print ('Importing municipality: ' + municipality.link)
+
         try:
             parcels = get_parcels_from_url(municipality.link)
 
