@@ -9,9 +9,10 @@ from osc.exceptions import OSCException
 
 
 class error_managed(object):
-    def __init__(self, default_answer=None):
+    def __init__(self, default_answer=None, inhibit_exception=False):
         self.default_answer = default_answer
         self.error_handlers = [DBErrorHandler]
+        self.inhibit_exception = inhibit_exception
 
     def __call__(self, f):
         def wrapper(*args, **kwargs):
@@ -28,7 +29,8 @@ class error_managed(object):
 
         error_handler.error(service, f.__module__, f.__name__, str(type(e)) + ': ' + e.message, actionable_info)
 
-        raise e
+        if not self.inhibit_exception:
+            raise e
 
 
 class SlackErrorHandler:

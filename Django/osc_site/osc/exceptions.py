@@ -12,8 +12,7 @@ class OSCException(Exception):
 
 class ConnectionError(OSCException):
     def __init__(self, service, message, cause=None, actionable_info=None):
-        super(ConnectionError, self).__init__(message, cause, actionable_info)
-        self.service = service
+        super(ConnectionError, self).__init__(service, message, cause, actionable_info)
 
     def __str__(self):
         return 'ConnectionError (' + self.service + '): ' + self.message
