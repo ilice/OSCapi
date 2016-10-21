@@ -69,8 +69,7 @@
 			<li class="w3-padding-large w3-right"><div id="ErrorData"
 					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-						class="w3-closebtn w3-padding">&times;</span><span
-						id="ErrorText"></span>
+						class="w3-closebtn w3-padding">&times;</span><span id="ErrorText"></span>
 				</div></li>
 		</ul>
 		<div class="w3-hide-medium w3-hide-large">
@@ -119,79 +118,320 @@
 		</header>
 
 		<!-- Línea de widgets de colores iniciales -->
-		<div class="w3-row-padding w3-margin-bottom">
+		<div class="w3-row-padding">
 
-			<div class="w3-quarter w3-hover-opacity"
-				onclick="location.href='#precipitacion'">
-				<div class="w3-container w3-blue w3-padding-16 w3-margin">
-					<div id="un-widget">
-						<div class="w3-left">
-							<i class="fa fa-tint w3-xxxlarge"></i>
+
+			<div class="w3-half w3-container">
+
+				<div class="w3-row-padding w3-margin-bottom">
+
+					<div class="w3-half w3-hover-opacity w3-small"
+						onclick="location.href='#precipitacion'">
+						<div class="w3-container w3-blue w3-padding w3-margin">
+							<div id="un-widget">
+								<div class="w3-left">
+									<i class="fa fa-tint w3-xxlarge"></i>
+								</div>
+								<div class="w3-right">
+									<h5>
+										<span id="precipitacion-widget"></span> mm
+									</h5>
+								</div>
+								<div class="w3-clear"></div>
+								<h6>Precipitación</h6>
+							</div>
 						</div>
-						<div class="w3-right">
-							<h3>
-								<span id="precipitacion-widget"></span> mm
-							</h3>
+					</div>
+
+
+					<div class="w3-half w3-hover-opacity"
+						onclick="location.href='#temperatura'">
+						<div class="w3-container  w3-red w3-padding w3-margin">
+							<div class="w3-left">
+								<i class="fa fa-eyedropper w3-xxlarge"></i>
+							</div>
+							<div class="w3-right">
+								<h5>
+									<span id="temperatura-widget"></span> ºC
+								</h5>
+							</div>
+							<div class="w3-clear"></div>
+							<h6>Temperatura</h6>
 						</div>
-						<div class="w3-clear"></div>
-						<h4>Precipitación</h4>
 					</div>
+
 				</div>
+				<div class="w3-row-padding w3-margin-bottom">
+
+					<div class="w3-half w3-hover-opacity"
+						onclick="location.href='#sol'">
+						<div class="w3-container w3-yellow w3-padding w3-margin">
+							<div class="w3-left">
+								<i class="fa fa-sun-o w3-xxlarge"></i>
+							</div>
+							<div class="w3-right">
+								<h5>
+									<span id="horasSol-widget"></span> h
+								</h5>
+							</div>
+							<div class="w3-clear"></div>
+							<h6>Sol</h6>
+						</div>
+					</div>
+
+
+					<div class="w3-half w3-hover-opacity"
+						onclick="location.href='#radiacion'">
+						<div
+							class="w3-container w3-orange w3-text-white w3-padding w3-margin">
+							<div class="w3-left">
+								<i class="fa fa-rss w3-xxlarge"></i>
+							</div>
+							<div class="w3-right">
+								<h5>
+									<span id="radiacion-widget"></span> <sup>MJ</sup>&frasl;<sub>m<sup>2</sup></sub>
+								</h5>
+							</div>
+							<div class="w3-clear"></div>
+							<h6>Radiación</h6>
+						</div>
+					</div>
+
+				</div>
+
+
 			</div>
 
 
-			<div class="w3-quarter w3-hover-opacity"
-				onclick="location.href='#temperatura'">
-				<div class="w3-container  w3-red w3-padding-16 w3-margin">
-					<div class="w3-left">
-						<i class="fa fa-eyedropper w3-xxxlarge"></i>
+			<div class="w3-half">
+				<div id="AlternativesCard" class="w3-card-8 w3-opacity-max">
+					<span id="botonCerrar"
+						onclick="this.parentElement.style.display='none'"
+						class="w3-closebtn w3-padding">&times;</span>
+					<div class="w3-container">
+						<h5>
+							Alternativas de uso según características <a
+								class="w3-hover-opacity" href="javascript:void(0)"
+								onclick="document.getElementById('AlternativesInfo').style.display='block'">
+								<i class="fa fa-info-circle w3-text-blue"></i>
+							</a>
+							<button id="AlternativesCardErrorBadge"
+								class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+								style="display: none"
+								onclick="document.getElementById('AlternativesErrorData').style.display='block'">
+								<i class="fa fa-exclamation-triangle"></i>
+							</button>
+						</h5>
+						<div id="AlternativesErrorData"
+							class="w3-col w3-panel w3-red w3-card-8" style="display: none">
+							<span onclick="this.parentElement.style.display='none'"
+								class="w3-closebtn w3-padding">&times;</span><span
+								id="AlternativesCardErrorText"></span>
+						</div>
+						<div class="w3-row">
+							<ul class="w3-navbar">
+								<li class="w3-right w3-grey w3-text-white"><a
+									href="javascript:void(0)" onclick="openCity('London')">Agrícolas</a></li>
+								<li class="w3-right"><a href="javascript:void(0)"
+									onclick="openCity('Paris')">Energéticas</a></li>
+								<li class="w3-right"><a href="javascript:void(0)"
+									onclick="openCity('Tokyo')">Forestales</a></li>
+								<li class="w3-right"><a href="javascript:void(0)"
+									onclick="openCity('Tokyo')">Sociales</a></li>
+							</ul>
+						</div>
+						<div class="w3-row mySlides">
+							<div class="w3-third">
+								<h6>Impacto</h6>
+								Social <i class="fa fa-group"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-orange" style="width: 25%">
+										<div class="w3-center w3-text-white">25%</div>
+									</div>
+								</div>
+
+
+								Económico <i class="fa fa fa-money"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-blue" style="width: 80%">
+										<div class="w3-center w3-text-white">80%</div>
+									</div>
+								</div>
+
+
+								Mediambiental <i class="fa fa-leaf"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-green" style="width: 75%">
+										<div class="w3-center w3-text-white">75%</div>
+									</div>
+								</div>
+
+								<button
+									class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small">
+									Obtener informe <i class="fa fa-file-text"></i>
+								</button>
+
+							</div>
+							<div class="w3-twothird w3-padding-large">
+								<img src="img/cultivos/1.jpg" style="width: 100%">
+							</div>
+
+						</div>
+
+						<div class="w3-row mySlides">
+							<div class="w3-third">
+								<h6>Impacto</h6>
+								Social <i class="fa fa-group"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-green" style="width: 83%">
+										<div class="w3-center w3-text-white">83%</div>
+									</div>
+								</div>
+
+
+								Económico <i class="fa fa fa-money"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-blue w3-opacity"
+										style="width: 10%">
+										<div class="w3-center w3-text-white">10%</div>
+									</div>
+								</div>
+
+
+								Mediambiental <i class="fa fa-leaf"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-light-green" style="width: 60%">
+										<div class="w3-center w3-text-white">60%</div>
+									</div>
+								</div>
+
+								<button
+									class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small">
+									Obtener informe <i class="fa fa-file-text"></i>
+								</button>
+
+							</div>
+							<div class="w3-twothird w3-padding-large">
+								<img src="img/cultivos/2.jpg" style="width: 100%">
+							</div>
+
+						</div>
+
+						<div class="w3-row mySlides">
+							<div class="w3-third">
+								<h6>Impacto</h6>
+								Social <i class="fa fa-group"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-red" style="width: 12%">
+										<div class="w3-center w3-text-white">12%</div>
+									</div>
+								</div>
+
+
+								Económico <i class="fa fa fa-money"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-light-blue" style="width: 50%">
+										<div class="w3-center w3-text-white">50%</div>
+									</div>
+								</div>
+
+
+								Medioambiental <i class="fa fa-leaf"></i>
+								<div class="w3-progress-container">
+									<div class="w3-progressbar w3-lime" style="width: 40%">
+										<div class="w3-center w3-text-white">40%</div>
+									</div>
+								</div>
+
+								<button
+									class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small">
+									Obtener informe <i class="fa fa-file-text"></i>
+								</button>
+
+							</div>
+							<div class="w3-twothird w3-padding-large">
+								<img src="img/cultivos/3.jpg" style="width: 100%">
+							</div>
+
+
+
+						</div>
+
+
+						<script>
+							var myIndex = 0;
+							carousel();
+
+							function carousel() {
+								var i;
+								var x = document
+										.getElementsByClassName("mySlides");
+								for (i = 0; i < x.length; i++) {
+									x[i].style.display = "none";
+								}
+								myIndex++;
+								if (myIndex > x.length) {
+									myIndex = 1
+								}
+								x[myIndex - 1].style.display = "block";
+								setTimeout(carousel, 4000); // Change image every 2 seconds
+							}
+						</script>
+
 					</div>
-					<div class="w3-right">
-						<h3>
-							<span id="temperatura-widget"></span> ºC
-						</h3>
-					</div>
-					<div class="w3-clear"></div>
-					<h4>Temperatura</h4>
 				</div>
 			</div>
-
-
-			<div class="w3-quarter w3-hover-opacity"
-				onclick="location.href='#sol'">
-				<div class="w3-container w3-yellow w3-padding-16 w3-margin">
-					<div class="w3-left">
-						<i class="fa fa-sun-o w3-xxxlarge"></i>
-					</div>
-					<div class="w3-right">
-						<h3>
-							<span id="horasSol-widget"></span> h
-						</h3>
-					</div>
-					<div class="w3-clear"></div>
-					<h4>Sol</h4>
-				</div>
-			</div>
-
-
-			<div class="w3-quarter w3-hover-opacity"
-				onclick="location.href='#radiacion'">
-				<div
-					class="w3-container w3-orange w3-text-white w3-padding-16 w3-margin">
-					<div class="w3-left">
-						<i class="fa fa-rss w3-xxxlarge"></i>
-					</div>
-					<div class="w3-right">
-						<h3>
-							<span id="radiacion-widget"></span> <sup>MJ</sup>&frasl;<sub>m<sup>2</sup></sub>
-						</h3>
-					</div>
-					<div class="w3-clear"></div>
-					<h4>Radiación</h4>
-				</div>
-			</div>
-
 		</div>
+
+		<!-- The Modal -->
+		<div id="AlternativesInfo" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span
+						onclick="document.getElementById('AlternativesInfo').style.display='none'"
+						class="w3-closebtn">&times;</span>
+					<p>
+						Actualmente sólo filtramos cultivos <strong>según la
+							altitud de la parcela</strong> y los valores de Impacto no tienen en
+						cuenta los datos de la misma.
+					</p>
+					<p>Por el momento tenemos datos de algunos cultivos, iremos
+						incorporando más cultivos, aprovechamientos energéticos y otros.</p>
+					<p>
+						Estamos <strong>trabajando para obtener las alternativas
+							según el resto de datos</strong> de la parcela y la <strong>información
+							de impacto específica</strong> para la parcela.
+					</p>
+					<p>
+						Si quieres saber <strong>cuándo estará</strong> y que te avisemos
+						de los avances puedes ponerte en contacto con nosotros en la
+						sección de contacto.
+					</p>
+					<a href="http://localhost/Web/propietario.html#contacto"
+						target="_blank">Contacto</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- The Modal -->
+		<div id="ReportInfo" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span
+						onclick="document.getElementById('AlternativesInfo').style.display='none'"
+						class="w3-closebtn">&times;</span>
+					<p>
+						Si quieres obtener un <strong>informe detallado</strong> sobre tu parcela, con sus
+						características y alternativas de uso, además de los datos,
+						cálculos e <strong>información económica y de viabilidad</strong> sobre cada una de
+						las alternativas, ponte en contacto con nosotros a través de la <a
+							href="http://localhost/Web/propietario.html#contacto"
+							target="_blank">sección de contacto</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+
 		<!-- FIN Línea de widgets de colores iniciales -->
 
 
@@ -231,12 +471,7 @@
 								</tr>
 								<tr>
 									<th>Altitud</th>
-									<td><span id="altitud"></span>
-										<button id="idea"
-											class="w3-badge w3-yellow w3-hover-opacity w3-small w3-btn"
-											onclick="document.getElementById('idea_modal').style.display='block'">
-											<i class="fa fa fa-lightbulb-o w3-spin"></i>
-										</button></td>
+									<td><span id="altitud"></span></td>
 								</tr>
 							</table>
 						</div>
