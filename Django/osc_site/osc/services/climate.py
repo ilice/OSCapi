@@ -42,7 +42,7 @@ def get_closest_station(lat, lon):
         return closest_station
 
     except ElasticsearchException as e:
-        raise ElasticException(str(type(e)) + ': ' + e.message, e)
+        raise ElasticException('CLIMATE', 'ElasticSearch Error getting closest station', e)
 
 
 def parse_by_month(bymonth):
@@ -286,4 +286,4 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                 'by_day': by_day,
                 'last_year': last_year}
     except ElasticsearchException as e:
-        raise ElasticException(str(type(e)) + ': ' + e.message, e)
+        raise ElasticException('CLIMATE', 'ElasticSearch error getting climate aggregates', e)
