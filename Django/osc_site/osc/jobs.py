@@ -2,6 +2,7 @@ from django_cron import CronJobBase, Schedule
 from django_cron.models import CronJobLog
 from django.db.models import Max
 from datetime import datetime, timedelta
+from django.core.management import call_command
 
 import osc.services.importer.inforiego as inforiego
 import osc.services.importer.cadastre as cadastre
@@ -33,5 +34,5 @@ class UpdateCadastreParcels(CronJobBase):
     # schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'jobs.update_cadastre_parcels'
 
-    def do(self, force_update=False, provinces=None):
-        cadastre.update_cadastral_information(force_update=force_update, provinces=provinces)
+    def do(self):
+        call_command('import_parcels')
