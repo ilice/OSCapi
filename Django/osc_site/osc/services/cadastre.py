@@ -149,26 +149,30 @@ def get_gml_bbox(cadastral_parcel):
             'coordinates': [lower_corner, upper_corner]}
 
 
+@error_managed(default_answer=None, inhibit_exception=True)
 def parse_cadastral_parcel(cadastral_parcel_elem):
     parcel = dict()
 
-    parcel['properties'] = dict()
+    try:
+        parcel['properties'] = dict()
 
-    area_text = cadastral_parcel_elem.find('cp:areaValue', ns).text
-    parcel['properties']['areaValue'] = float(area_text) if area_text is not None else None
-    parcel['properties']['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
-    parcel['properties']['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
-    parcel['properties']['label'] = cadastral_parcel_elem.find('cp:label', ns).text
-    parcel['properties']['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
+        area_text = cadastral_parcel_elem.find('cp:areaValue', ns).text
+        parcel['properties']['areaValue'] = float(area_text) if area_text is not None else None
+        parcel['properties']['beginLifespanVersion'] = cadastral_parcel_elem.find('cp:beginLifespanVersion', ns).text
+        parcel['properties']['endLifespanVersion'] = cadastral_parcel_elem.find('cp:endLifespanVersion', ns).text
+        parcel['properties']['label'] = cadastral_parcel_elem.find('cp:label', ns).text
+        parcel['properties']['nationalCadastralReference'] = cadastral_parcel_elem.find('cp:nationalCadastralReference', ns).text
 
-    # read Reference point
-    parcel['properties']['reference_point'] = get_reference_point(cadastral_parcel_elem)
+        # read Reference point
+        parcel['properties']['reference_point'] = get_reference_point(cadastral_parcel_elem)
 
-    # read BBOX
-    parcel['bbox'] = get_gml_bbox(cadastral_parcel_elem)
+        # read BBOX
+        parcel['bbox'] = get_gml_bbox(cadastral_parcel_elem)
 
-    # read geometry
-    parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
+        # read geometry
+        parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
+    except Exception as e:
+        raise CadastreException('Error parsing parcel element', cause=e, actionable_info=str(parcel))
 
     return parcel
 
@@ -185,7 +189,8 @@ def parse_inspire_response(xml_text):
     for cadastral_parcel_elem in root.findall('./gml:featureMember/cp:CadastralParcel', ns):
         parcel = parse_cadastral_parcel(cadastral_parcel_elem)
 
-        parcels.append(parcel)
+        if parcel is not None:
+            parcels.append(parcel)
 
     return parcels
 

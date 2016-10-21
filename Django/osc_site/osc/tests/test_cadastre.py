@@ -20,4 +20,4 @@ class CadastreServiceTest(TestCase):
         impcadastre.update_cadastral_information()
 
     def test_get_zip_file(self):
-        impcadastre.get_parcels_from_url('http://www.catastro.minhap.es/INSPIRE/CadastralParcels/18/18006-ALBUÑAN/A.ES.SDGC.CP.18006.zip')
+        impcadastre.get_parcels_from_url('http://www.catastro.minhap.es/INSPIRE/CadastralParcels/39/39012-CABEZON DE LA SAL/A.ES.SDGC.CP.39012.zip')
