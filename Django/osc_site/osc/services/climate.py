@@ -104,6 +104,7 @@ def parse_last_year(last_year):
         result['sum_rainfall'] = last_year[0]['sum_rainfall']['value']
         result['min_temperature'] = last_year[0]['min_temperature']['value']
         result['max_radiation'] = last_year[0]['max_radiation']['value']
+        result['rainy_days'] = last_year[0]['rainy_days']['doc_count']
 
     return result
 
@@ -193,8 +194,16 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                             "sum": {
                                                 "field": "RADIACION"
                                             }
+                                        },
+                                        "rainy_days": {
+                                            "filter": {
+                                                "range": {
+                                                    "PRECIPITACION": {
+                                                        "gt": 0
+                                                    }
+                                                }
+                                            }
                                         }
-
                                     }
                                 },
                                 "by_month": {
