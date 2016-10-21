@@ -172,7 +172,7 @@ def parse_cadastral_parcel(cadastral_parcel_elem):
         # read geometry
         parcel['geometry'] = get_gml_geometry(cadastral_parcel_elem)
     except Exception as e:
-        raise CadastreException('Error parsing parcel element', cause=e, actionable_info=str(parcel))
+        raise CadastreException(e.message, cause=e, actionable_info=str(parcel))
 
     return parcel
 
