@@ -10,6 +10,9 @@ from osc.util import error_managed
 from osc.services.cadastre import parse_inspire_response
 from osc.exceptions import CadastreException
 
+import pytz
+from django.conf import settings
+
 url_atom_inspire = 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml'
 
 
@@ -70,12 +73,14 @@ def update_catastral_province(province, force_update=False):
 def get_update_date(feed):
     updated_parsed = feed.updated_parsed
 
-    return datetime(year=updated_parsed.tm_year,
+    date = datetime(year=updated_parsed.tm_year,
                     month=updated_parsed.tm_mon,
                     day=updated_parsed.tm_mday,
                     hour=updated_parsed.tm_hour,
                     minute=updated_parsed.tm_min,
                     second=updated_parsed.tm_sec)
+
+    return pytz.timezone(settings.TIME_ZONE).localize(date)
 
 
 @error_managed()
