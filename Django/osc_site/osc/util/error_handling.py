@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from slacker import Slacker
 from osc.models import Error
 from django.utils import timezone
@@ -27,7 +29,7 @@ class error_managed(object):
         actionable_info = e.actionable_info if isinstance(e, OSCException) else None
         service = e.service if isinstance(e, OSCException) else 'UNKNOWN'
 
-        error_handler.error(service, f.__module__, f.__name__, str(type(e)) + ': ' + e.message, actionable_info)
+        error_handler.error(service, f.__module__, f.__name__, str(type(e)) + ': ' + str(e), actionable_info)
 
         if not self.inhibit_exception:
             raise e

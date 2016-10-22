@@ -42,7 +42,7 @@ def get_closest_station(lat, lon):
         return closest_station
 
     except ElasticsearchException as e:
-        raise ElasticException(str(type(e)) + ': ' + e.message, e)
+        raise ElasticException('CLIMATE', 'ElasticSearch Error getting closest station', e)
 
 
 def parse_by_month(bymonth):
@@ -104,6 +104,7 @@ def parse_last_year(last_year):
         result['sum_rainfall'] = last_year[0]['sum_rainfall']['value']
         result['min_temperature'] = last_year[0]['min_temperature']['value']
         result['max_radiation'] = last_year[0]['max_radiation']['value']
+        result['rainy_days'] = last_year[0]['rainy_days']['doc_count']
 
     return result
 
@@ -193,8 +194,16 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                                             "sum": {
                                                 "field": "RADIACION"
                                             }
+                                        },
+                                        "rainy_days": {
+                                            "filter": {
+                                                "range": {
+                                                    "PRECIPITACION": {
+                                                        "gt": 0
+                                                    }
+                                                }
+                                            }
                                         }
-
                                     }
                                 },
                                 "by_month": {
@@ -286,4 +295,4 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                 'by_day': by_day,
                 'last_year': last_year}
     except ElasticsearchException as e:
-        raise ElasticException(str(type(e)) + ': ' + e.message, e)
+        raise ElasticException('CLIMATE', 'ElasticSearch error getting climate aggregates', e)

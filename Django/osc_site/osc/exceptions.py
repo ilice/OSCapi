@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class OSCException(Exception):
     def __init__(self, service, message, cause=None, actionable_info=None):
         self.service = service
@@ -7,7 +9,7 @@ class OSCException(Exception):
         self.processed = False
 
     def __str__(self):
-        return 'OSCException: ' + self.message
+        return 'OSCException: ' + self.message + 'cause = ' + str(self.cause)
 
 
 class ConnectionError(OSCException):
@@ -15,7 +17,7 @@ class ConnectionError(OSCException):
         super(ConnectionError, self).__init__(service, message, cause, actionable_info)
 
     def __str__(self):
-        return 'ConnectionError (' + self.service + '): ' + self.message
+        return 'ConnectionError (' + self.service + '): ' + self.message + 'cause = ' + str(self.cause)
 
 
 class CadastreException(ConnectionError):
@@ -24,7 +26,7 @@ class CadastreException(ConnectionError):
         self.message = message
 
     def __str__(self):
-        return 'CadastreException (' + self.service + '): ' + self.message
+        return 'CadastreException (' + self.service + '): ' + self.message + 'cause = ' + str(self.cause)
 
 
 class ElasticException(ConnectionError):
@@ -33,4 +35,4 @@ class ElasticException(ConnectionError):
         self.message = message
 
     def __str__(self):
-        return 'ElasticException (' + self.service + '): ' + self.message
+        return 'ElasticException (' + self.service + '): ' + self.message + 'cause = ' + str(self.cause)
