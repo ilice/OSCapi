@@ -33,6 +33,9 @@ COPY elasticsearch.yml /usr/share/elasticsearch/config/
 
 RUN bin/plugin install delete-by-query
 
+RUN plugin install license \
+    && plugin install marvel-agent
+
 USER elasticsearch
 
 ENV PATH=$PATH:/usr/share/elasticsearch/bin
