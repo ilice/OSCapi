@@ -263,7 +263,8 @@ def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
         raise CadastreException(parse_public_cadastre_response(elem))
 
-    return xml_to_json(elem)
+    # The 'lists' come from the xsd: http://www.catastro.meh.es/ws/esquemas/consulta_dnp.xsd
+    return xml_to_json(elem, lists=['cons', 'spr', 'rcdnp', 'calle'])
 
 
 @error_managed(default_answer={})

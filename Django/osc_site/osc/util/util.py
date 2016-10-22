@@ -179,17 +179,22 @@ def num(s):
         return float(s)
 
 
-def xml_to_json(element):
+def xml_to_json(element, lists=()):
     json_element = dict()
     for child in element:
         tag = child.tag.split('}')[-1]
-        json_element[tag] = xml_to_json(child)
+        json_child = xml_to_json(child, lists)
+
+        if tag in lists:
+            json_element[tag] = (json_element[tag] if tag in json_element else []) + [json_child]
+        else:
+            json_element[tag] = json_child
 
     if len(json_element) == 0:
         json_element = None
         if element.text is not None:
             try:
-                json_element = num(element.text)
+                json_element = num(element.text) if len(str(num(element.text))) == len(element.text) else element.text
             except ValueError:
                 json_element = element.text
 
