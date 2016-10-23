@@ -11,7 +11,9 @@ def is_valid_parcel(parcel):
     try:
         public_info = get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
         if public_info is not None:
-            is_valid = public_info['bico']['lspr']['spr']['dspr']['ccc'] not in ['VT', 'OT', 'FF']
+            is_valid = not len(public_info['bico']['lspr']['spr'])
+            for spr in public_info['bico']['lspr']['spr']:
+                is_valid = is_valid or (spr['dspr']['ccc'] not in ['VT', 'OT', 'FF'])
     except KeyError:
         # As it does not have information about the type, we assume that it is OK
         is_valid = True
