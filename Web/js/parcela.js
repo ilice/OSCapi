@@ -14,25 +14,6 @@ $(window).resize(function() {
 	onBodyLoad();
 });
 
-$(window).load(function() {
-
-	// Si voy a un sitio determinado de la página, no cargo el tour, por ejemplo
-	// cuando voy directamente al cacharrito o bien si estoy cargando datos
-	// fijos
-	if (!location.hash && (window.location.search.substring(1).length > 0)) {
-		$('#chooseID').joyride({
-			autoStart : true,
-			postStepCallback : function(index, tip) {
-				if (index == 15) {
-					$(this).joyride('set_li', false, 1);
-				}
-			},
-			modal : true,
-			expose : true
-		});
-	}
-});
-
 function onBodyLoad() {
 
 	var nationalCadastralReference = getNationalCadastreReference();
@@ -469,11 +450,21 @@ function drawCatastralCard(parcelCadastralData) {
 		setValueInField(parcelCadastralData.bico.bi.idbi.cn, "cn");
 		setValueInField(parcelCadastralData.control.cucons, "cucons");
 		setValueInField(parcelCadastralData.control.cucul, "cucul");
-		setValueInField(parcelCadastralData.bico.lspr.spr.dspr.ccc
-				+ parcelCadastralData.bico.lspr.spr.dspr.dcc, "ccc");
-		setValueInField(parcelCadastralData.bico.lspr.spr.dspr.ip, "ip");
-		setValueInField(parcelCadastralData.bico.lspr.spr.dspr.ssp, "ssp");
-		setValueInField(parcelCadastralData.bico.lspr.spr.dspr.czc, "czc");
+		var subparcels = parcelCadastralData.bico.lspr.spr;
+		for (subparcel in subparcels) {
+			document.getElementById("cropTypeTable").innerHTML += '<td><i>'
+					+ subparcels[subparcel].dspr.ccc
+					+ subparcels[subparcel].dspr.dcc + '</i></td></tr>';
+
+			document.getElementById("productionLevelTable").innerHTML += '<tr><td><i>'
+					+ subparcels[subparcel].dspr.ip
+					+ '</i> intensidad productiva</td></tr>';
+
+			document.getElementById("cropAreaTable").innerHTML += '<tr><td>'
+					+ subparcels[subparcel].dspr.ssp
+					+ ' </span> m<sup>2</sup></i></td>	</tr>';
+
+		}
 		setValueInField(parcelCadastralData.bico.bi.ldt, "direccion");
 	} else {
 		
@@ -515,7 +506,7 @@ function drawRainfallAggregationsCard(parcelPorperties) {
 				+ parcelPorperties.closest_station.distance_to_parcel.toFixed()
 				+ " km de distancia  (lineal)", "estacionLluvia");
 
-		setValueInField(parcelclimate_aggregations.last_year.rainfall_days,
+		setValueInField(parcelclimate_aggregations.last_year.rainy_days,
 				"diasDeLluvia");
 		setValueInField(parcelclimate_aggregations.last_year.sum_rainfall
 				.toFixed(2), "pecipitacionacumulada");
