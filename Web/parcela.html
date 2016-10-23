@@ -419,10 +419,11 @@
 						onclick="document.getElementById('AlternativesInfo').style.display='none'"
 						class="w3-closebtn">&times;</span>
 					<p>
-						Si quieres obtener un <strong>informe detallado</strong> sobre tu parcela, con sus
-						características y alternativas de uso, además de los datos,
-						cálculos e <strong>información económica y de viabilidad</strong> sobre cada una de
-						las alternativas, ponte en contacto con nosotros a través de la <a
+						Si quieres obtener un <strong>informe detallado</strong> sobre tu
+						parcela, con sus características y alternativas de uso, además de
+						los datos, cálculos e <strong>información económica y de
+							viabilidad</strong> sobre cada una de las alternativas, ponte en contacto
+						con nosotros a través de la <a
 							href="http://localhost/Web/propietario.html#contacto"
 							target="_blank">sección de contacto</a>.
 					</p>
@@ -517,27 +518,47 @@
 								<td><i><span id="cucul"></span></i></td>
 							</tr>
 							<tr>
-								<td><i class="fa fa-leaf w3-green w3-padding-tiny"></i></td>
-								<td>Clase de cultivo</td>
-								<td><i><span id="ccc"
-										style="text-transform: lowercase;"></span></i></td>
+								<td>
+									<table id="cropTypeTable" class="w3-table-all w3-hoverable">
+										<thead>
+											<tr>
+												<th><i class="fa fa-leaf w3-green w3-padding-tiny"></i>
+													Clase de cultivo</th>
+											</tr>
+										</thead>
+										
+									</table>
+								</td>
+								<td>
+									<table id="productionLevelTable" class="w3-table-all w3-hoverable">
+										<thead>
+											<tr>
+												<th><i
+													class="fa fa-battery-empty w3-light-blue w3-padding-tiny"></i>
+													Producción</th>
+											</tr>
+										</thead>
+										
+									</table>
+
+								</td>
+								
+								<td>
+									<table id="cropAreaTable" class="w3-table-all w3-hoverable">
+										<thead>
+											<tr>
+												<th><i
+													class="fa fa-gavel w3-brown w3-padding-tiny"></i>
+													Superficie</th>
+											</tr>
+										</thead>
+										
+									</table>
+
+								</td>
+					
 							</tr>
-							<tr>
-								<td><i
-									class="fa fa-battery-empty w3-light-blue w3-padding-tiny"></i></td>
-								<td>Producción</td>
-								<td><i><span id="ip"></span></i> intensidad productiva</td>
-							</tr>
-							<tr>
-								<td><i class="fa fa-gavel w3-brown w3-padding-tiny"></i></td>
-								<td>Superficie</td>
-								<td><i><span id="ssp"> </span> m<sup>2</sup></i></td>
-							</tr>
-							<tr>
-								<td><i class="fa fa-arrows w3-khaki w3-padding-tiny"></i></td>
-								<td>Zona de concentración</td>
-								<td><i><span id="czc"> </span></i></td>
-							</tr>
+							
 						</table>
 						<br /> <a class="w3-btn w3-margin-bottom w3-dark-grey"
 							href="http://www1.sedecatastro.gob.es/">Más información  <i
