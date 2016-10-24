@@ -502,6 +502,10 @@ function drawAlternatives(cadastralParcelFeatures){
 		
 		for (var i = 0; i < hits.length; i++) {
 			
+			var socialImpact = (Math.random() * 100).toFixed();
+			var economicImpact = (Math.random() * 100).toFixed();
+			var environmentalImpact = (Math.random() * 100).toFixed();
+			
 			var hit = hits[i];
 			var contenido = ''
 			+ '<div class="w3-row mySlides">'
@@ -509,29 +513,30 @@ function drawAlternatives(cadastralParcelFeatures){
 			+ '		<h6>Impacto</h6>'
 			+ '		Social <i class="fa fa-group"></i>'
 			+ '		<div class="w3-progress-container">'
-			+ '			<div class="w3-progressbar w3-orange" style="width: 25%">'
-			+ '				<div class="w3-center w3-text-white">25%</div>'
+			+ '			<div class="w3-progressbar w3-orange" style="width: '+socialImpact+'%">'
+			+ '				<div class="w3-center w3-text-white">'+socialImpact+'%</div>'
 			+ '			</div>'
 			+ '		</div>'
 			+ ''
 			+ ''
 			+ '		Económico <i class="fa fa fa-money"></i>'
 			+ '		<div class="w3-progress-container">'
-			+ '			<div class="w3-progressbar w3-blue" style="width: 80%">'
-			+ '				<div class="w3-center w3-text-white">80%</div>'
+			+ '			<div class="w3-progressbar w3-blue" style="width: '+economicImpact+'%">'
+			+ '				<div class="w3-center w3-text-white">'+economicImpact+'%</div>'
 			+ '			</div>'
 			+ '		</div>'
 			+ ''
 			+ ''
-			+ '		Mediambiental <i class="fa fa-leaf"></i>'
+			+ '		Medioambiental <i class="fa fa-leaf"></i>'
 			+ '		<div class="w3-progress-container">'
-			+ '			<div class="w3-progressbar w3-green" style="width: 75%">'
-			+ '				<div class="w3-center w3-text-white">75%</div>'
+			+ '			<div class="w3-progressbar w3-green" style="width: '+environmentalImpact+'%">'
+			+ '				<div class="w3-center w3-text-white">'+environmentalImpact+'%</div>'
 			+ '			</div>'
 			+ '		</div>'
 			+ ''
 			+ '		<button'
-			+ '			class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small">'
+			+ '			class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small"'
+			+ '			onclick="document.getElementById(\'ReportInfo\').style.display=\'block\'">'
 			+ '			Obtener informe <i class="fa fa-file-text"></i>'
 			+ '		</button>'
 			+ ''
