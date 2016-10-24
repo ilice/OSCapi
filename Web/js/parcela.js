@@ -1,6 +1,9 @@
 /**
  * 
  */
+
+var myIndex = 0;
+
 Date.prototype.getDOY = function() {
 	var onejan = new Date(this.getFullYear(), 0, 1);
 	return Math.ceil((this - onejan) / 86400000) + 1;
@@ -401,6 +404,8 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 
 	setValueInField(
 			cadastralParcelFeature.properties.nationalCadastralReference, "rc");
+	
+	drawAlternatives(cadastralParcelFeature);
 
 	drawLocationCard(cadastralParcelFeature);
 
@@ -602,6 +607,172 @@ function drawCropDistributionCard(cadastralParcelFeature) {
 	}
 }
 
+function drawAlternatives(cadastralParcelFeatures){
+	
+	var altitud = cadastralParcelFeatures.properties.elavation;
+	var textoBusqueda;
+	var query;
+	var match = textoBusqueda;
+	var _all = textoBusqueda;
+	var queryType;
+	var numeroCultivoInicial = 0;
+	var numeroCultivosACargar = 100;
+
+	if (encodeURIComponent(altitud) != "undefined"){
+		query = {
+				"constant_score" : {
+		            "filter" : {
+		                "bool": {
+		                "must": [
+		                   {"range" : {
+		                    "altitude.min" : {
+		                        "lte"  : altitud
+		                    }
+		                }},
+		                {"range" : {
+		                    "altitude.max" : {
+		                        "gte" : altitud
+		                    }
+		                }}
+		                
+		                ]
+		                }
+		            }
+		        }
+		};
+	} else if (encodeURIComponent(textoBusqueda) == "undefined") {
+		query = {
+			"match_all" : {}
+		};
+	} else {
+		if (queryType == "match") {
+
+			query = {
+				"match" : {
+					_all
+				}
+			};
+		} else {
+			query = {
+				"match_phrase" : {
+					_all
+				}
+			};
+		}
+	}
+
+	var data = {
+		"from" : numeroCultivoInicial,
+		"size" : numeroCultivosACargar,
+		query
+
+	};
+
+	var url = "php/api_rest.php/osc";
+
+	var request = jQuery.ajax({
+			crossDomain : true,
+			url : url,
+			data : JSON.stringify(data),
+			type : 'POST',
+			dataType : "json"
+		});
+
+	request.done(function (response, textStatus, jqXHR) {
+		var hits = response["hits"]["hits"];
+		var rowIndex = 0;
+		
+		for (var i = 0; i < hits.length; i++) {
+			
+			var hit = hits[i];
+			var contenido = ''
+			+ '<div class="w3-row mySlides">'
+			+ '	<div class="w3-third">'
+			+ '		<h6>Impacto</h6>'
+			+ '		Social <i class="fa fa-group"></i>'
+			+ '		<div class="w3-progress-container">'
+			+ '			<div class="w3-progressbar w3-orange" style="width: 25%">'
+			+ '				<div class="w3-center w3-text-white">25%</div>'
+			+ '			</div>'
+			+ '		</div>'
+			+ ''
+			+ ''
+			+ '		Económico <i class="fa fa fa-money"></i>'
+			+ '		<div class="w3-progress-container">'
+			+ '			<div class="w3-progressbar w3-blue" style="width: 80%">'
+			+ '				<div class="w3-center w3-text-white">80%</div>'
+			+ '			</div>'
+			+ '		</div>'
+			+ ''
+			+ ''
+			+ '		Mediambiental <i class="fa fa-leaf"></i>'
+			+ '		<div class="w3-progress-container">'
+			+ '			<div class="w3-progressbar w3-green" style="width: 75%">'
+			+ '				<div class="w3-center w3-text-white">75%</div>'
+			+ '			</div>'
+			+ '		</div>'
+			+ ''
+			+ '		<button'
+			+ '			class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small">'
+			+ '			Obtener informe <i class="fa fa-file-text"></i>'
+			+ '		</button>'
+			+ ''
+			+ '	</div>'
+			+ '	<div class="w3-twothird w3-padding-large">'
+
+			+ '			<img onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'" src="img/cultivos/' + hit["_source"]["Foto"] + '" style="width: 100%">'
+
+			+ '	</div>'
+			+ '</div>' ;
+				
+				
+				
+
+			var modal = '<div id="' + hit["_id"] + '_modal" class="w3-modal">' +
+				' <div class="w3-modal-content">' +
+				'<div class="w3-container">' +
+				'<div class="w3-row w3-right">' +
+				' <div class="w3-col w3-right">' +
+				'<a href="cultivo.html?cultivo_id=' + hit["_id"] + '" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
+				'<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge" onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'none\'"><i class="fa fa-remove"></i></a>' +
+				'</div>' +
+				'</div>' +
+				'<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">' +
+				'<tr><td>Origen</td><td>' + hit["_source"]["Origen"] + '</td></tr>' +
+				'<tr><td>Distribución</td><td>' + hit["_source"]["Distribución"] + '</td></tr>' +
+				'<tr><td>Adaptación</td><td>' + hit["_source"]["Adaptación"] + '</td></tr>' +
+				'<tr><td>Ciclo vegetativo</td><td>' + hit["_source"]["Ciclo vegetativo"] + '</td></tr>' +
+				'<tr><td>Tipo Fotosintético</td><td>' + hit["_source"]["Tipo Fotosintético"] + '</td></tr>' +
+				'<tr><td>Fotoperíodo</td><td>' + hit["_source"]["Fotoperíodo"] + '</td></tr>' +
+				'<tr><td>Altitud</td><td>' + hit["_source"]["Altitud"] + '</td></tr>' +
+				'<tr><td>Precipitación</td><td>' + hit["_source"]["Precipitación"] + '</td></tr>' +
+				'<tr><td>Humedad ambiental</td><td>' + hit["_source"]["Humedad ambiental"] + '</td></tr>' +
+				'<tr><td>Temperatura</td><td>' + hit["_source"]["Temperatura"] + '</td></tr>' +
+				'<tr><td>Luz</td><td>' + hit["_source"]["Luz"] + '</td></tr>' +
+				'<tr><td>Textura de suelo</td><td>' + hit["_source"]["Textura de suelo"] + '</td></tr>' +
+				'<tr><td>Profundidad de suelo</td><td>' + hit["_source"]["Profundidad de suelo"] + '</td></tr>' +
+				'<tr><td>Salinidad</td><td>' + hit["_source"]["Salinidad"] + '</td></tr>' +
+				'<tr><td>pH</td><td>' + hit["_source"]["pH"] + '</td></tr>' +
+				'<tr><td>Drenaje</td><td>' + hit["_source"]["Drenaje"] + '</td></tr>' +
+				'<tr><td>Otros</td><td>' + hit["_source"]["Otros"] + '</td></tr>' +
+				'</table>' +
+				'</div>' +
+				'</div>' +
+				'</div>';
+
+			document.getElementById('alternativesContainer').innerHTML += contenido;
+			//document.getElementById('alternativesContainer').innerHTML += modal;
+
+
+		}
+		carousel("mySlides");
+	});
+
+	
+	
+	
+}
+
 function setValueInField(value, field) {
 	document.getElementById(field).innerHTML = typeof (value) != 'undefined' ? value
 			: "";
@@ -767,4 +938,19 @@ function showErrorInCard(error, card) {
 	document.getElementById('ErrorText').innerHTML += "<p>"
 			+ error.message + "</p>";
 	
+}
+
+function carousel(seats) {
+	var i;
+	var x = document
+			.getElementsByClassName(seats);
+	for (i = 0; i < x.length; i++) {
+		x[i].style.display = "none";
+	}
+	myIndex++;
+	if (myIndex > x.length) {
+		myIndex = 1
+	}
+	x[myIndex - 1].style.display = "block";
+	setTimeout(carousel, 4000, seats); // Change image every 2 seconds
 }
