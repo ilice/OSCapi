@@ -536,10 +536,8 @@ function drawAlternatives(cadastralParcelFeatures){
 			+ '		</button>'
 			+ ''
 			+ '	</div>'
-			+ '	<div class="w3-twothird w3-padding-large">'
-
+			+ '	<div class="w3-twothird">'
 			+ '			<img onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'" src="img/cultivos/' + hit["_source"]["Foto"] + '" style="width: 100%">'
-
 			+ '	</div>'
 			+ '</div>' ;
 				
@@ -556,6 +554,7 @@ function drawAlternatives(cadastralParcelFeatures){
 				'</div>' +
 				'</div>' +
 				'<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">' +
+				'<tr class="w3-grey w3-text-light-grey"><th></th><th>' + hit["_source"]["Nombres Comunes"] + ' ('+ hit["_source"]["Nombre Científico"] + ')</th></tr>' +
 				'<tr><td>Origen</td><td>' + hit["_source"]["Origen"] + '</td></tr>' +
 				'<tr><td>Distribución</td><td>' + hit["_source"]["Distribución"] + '</td></tr>' +
 				'<tr><td>Adaptación</td><td>' + hit["_source"]["Adaptación"] + '</td></tr>' +
@@ -579,7 +578,7 @@ function drawAlternatives(cadastralParcelFeatures){
 				'</div>';
 
 			document.getElementById('alternativesContainer').innerHTML += contenido;
-			//document.getElementById('alternativesContainer').innerHTML += modal;
+			document.getElementById('AlternativesCard').innerHTML += modal;
 
 
 		}
