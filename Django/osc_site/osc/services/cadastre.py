@@ -8,6 +8,8 @@ from osc.exceptions import CadastreException
 from osc.util import error_managed
 
 import elasticsearch_dsl as dsl
+from elasticsearch import ElasticsearchException
+from osc.exceptions import ElasticException
 
 import utm
 
@@ -281,7 +283,7 @@ def get_public_cadastre_info(code):
 
 
 def store_parcels(parcels):
-    create_parcel_mapping('parcels')
+    create_parcel_mapping('parcel')
 
     chunk_size = settings.ELASTICSEARCH['chunk_size']
 
@@ -289,6 +291,59 @@ def store_parcels(parcels):
         records = parcels[i:i+chunk_size]
         ids = [r['properties']['nationalCadastralReference'] for r in records]
 
-        elastic_bulk_save('STORE_PARCELS', 'parcels', 'parcel', records, ids)
+        elastic_bulk_save('STORE_PARCELS', 'parcel', 'parcel', records, ids)
 
 
+@error_managed(default_answer=None)
+def get_parcel_by_cadastral_code(cadastralCode):
+    try:
+        s = dsl.Search(index='parcel', doc_type='parcel')
+        s.update_from_dict({
+                                "query": {
+                                    "bool": {
+                                        "must": [
+                                           {
+                                               "match": {
+                                                  "properties.nationalCadastralReference": cadastralCode
+                                               }
+                                           }
+                                        ]
+                                    }
+                                }
+                            })
+
+        result = s.execute()
+        parcel = result.hits[0]['doc'].to_dict() if len(result.hits) == 1 else None
+
+        return parcel
+
+    except ElasticsearchException as e:
+        raise ElasticException('PARCEL', e.message, e)
+
+"""
+@error_managed(default_answer={})
+def get_parcels_by_bbox():
+    {
+        "query": {
+            "bool": {
+                "must": {
+                    "match_all": {}
+                },
+                "filter": {
+                    "geo_bounding_box": {
+                        "doc.properties.reference_point": {
+                            "top_left": {
+                                "lat": 40.73,
+                                "lon": -5.1
+                            },
+                            "bottom_right": {
+                                "lat": 40.01,
+                                "lon": -5.12
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+"""
