@@ -151,7 +151,7 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r))
 
 
-@error_managed()
+@error_managed(inhibit_exception=True)
 def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=True):
     try:
         if ids is None:
@@ -169,7 +169,7 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=Tr
             if retry:
                 elastic_bulk_save(process_name, index, doc_type, [r], [idx], retry=False)
             else:
-                raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r))
+                raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r), cause=e)
 
 
 def num(s):
