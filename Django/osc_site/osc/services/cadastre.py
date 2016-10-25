@@ -13,7 +13,10 @@ from osc.exceptions import ElasticException
 
 import utm
 
-__all__ = ['get_cadastral_parcels_by_bbox', 'get_cadastral_parcels_by_code', 'get_public_cadastre_info', 'store_parcels']
+__all__ = ['get_cadastral_parcels_by_bbox',
+           'get_public_cadastre_info',
+           'store_parcels',
+           'get_parcels_by_cadastral_code']
 
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
@@ -59,7 +62,7 @@ def parse_cadastre_exception(elem):
 def create_parcel_mapping(index, mapping_name='parcel'):
     m = dsl.Mapping(mapping_name)
 
-    properties = dsl.Nested()
+    properties = dsl.Object()
     properties.field('areaValue', dsl.Float())
     properties.field('beginLifespanVersion', dsl.Date())
     properties.field('endLifespanVersion', dsl.Date())
@@ -254,12 +257,6 @@ def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
     return parcels
 
 
-def get_cadastral_parcels_by_code(code):
-    parcels = get_inspire_data_by_code(code)
-
-    return parcels
-
-
 @error_managed(default_answer={})
 def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
@@ -294,31 +291,28 @@ def store_parcels(parcels):
         elastic_bulk_save('STORE_PARCELS', 'parcel', 'parcel', records, ids)
 
 
-@error_managed(default_answer=None)
-def get_parcel_by_cadastral_code(cadastralCode):
+@error_managed(default_answer=[])
+def get_parcels_by_cadastral_code(cadastral_code):
     try:
         s = dsl.Search(index='parcel', doc_type='parcel')
         s.update_from_dict({
-                                "query": {
-                                    "bool": {
-                                        "must": [
-                                           {
-                                               "match": {
-                                                  "properties.nationalCadastralReference": cadastralCode
-                                               }
-                                           }
-                                        ]
-                                    }
-                                }
-                            })
+            "query": {
+                "match": {
+                    "properties.nationalCadastralReference": cadastral_code
+                }
+            }
+        })
 
         result = s.execute()
-        parcel = result.hits[0]['doc'].to_dict() if len(result.hits) == 1 else None
+        parcels = [h.to_dict() for h in result.hits]
 
-        return parcel
+        if not parcels:
+            parcels = get_inspire_data_by_code(cadastral_code)
 
+        return parcels
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
+
 
 """
 @error_managed(default_answer={})

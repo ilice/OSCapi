@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from osc.services import get_cadastral_parcels_by_code, get_cadastral_parcels_by_bbox, get_public_cadastre_info
+from osc.services import get_cadastral_parcels_by_bbox, get_public_cadastre_info, get_parcels_by_cadastral_code
 from osc.services.climate import get_closest_station, get_aggregated_climate_measures
 from osc.services.google import obtain_elevation_from_google
 from osc.exceptions import OSCException
@@ -31,13 +31,14 @@ def obtain_cadastral_parcels(request):
         parcels = []
 
         if cadastral_code_param is not None:
-            parcels = get_cadastral_parcels_by_code(cadastral_code_param)
+            parcels = get_parcels_by_cadastral_code(cadastral_code_param)
 
             # Add public info
             if retrieve_public_info_param == 'True':
                 for parcel in parcels:
-                    public_info = get_public_cadastre_info(cadastral_code_param)
-                    parcel['properties']['cadastralData'] = public_info
+                    if not 'cadastralData' in parcel['properties']:
+                        public_info = get_public_cadastre_info(cadastral_code_param)
+                        parcel['properties']['cadastralData'] = public_info
 
             # Add climate info
             if retrieve_climate_info_param == 'True':
