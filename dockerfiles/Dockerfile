@@ -38,6 +38,8 @@ RUN bin/plugin install license \
 
 RUN bin/plugin install https://github.com/elastic/elasticsearch-migration/releases/download/v2.0.1/elasticsearch-migration-2.0.1.zip
 
+RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/backups
+
 USER elasticsearch
 
 ENV PATH=$PATH:/usr/share/elasticsearch/bin
