@@ -23,7 +23,7 @@ RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 46095ACC8548582C1A2699A9D27D
 
 WORKDIR /usr/share/elasticsearch
 
-RUN set -ex && for path in data logs config config/scripts; do \
+RUN set -ex && for path in data logs config repo config/scripts; do \
         mkdir -p "$path"; \
         chown -R elasticsearch:elasticsearch "$path"; \
     done
@@ -37,8 +37,6 @@ RUN bin/plugin install license \
     && bin/plugin install marvel-agent
 
 RUN bin/plugin install https://github.com/elastic/elasticsearch-migration/releases/download/v2.0.1/elasticsearch-migration-2.0.1.zip
-
-RUN chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/backups
 
 USER elasticsearch
 
