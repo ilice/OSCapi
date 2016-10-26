@@ -102,7 +102,7 @@ def elastic_bulk_update_dsl(process_name, records, retry=True):
                           '_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
                           '_type': r._doc_type.name,
-                          'doc': r.to_dict()} for r in records))
+                          '_source': r.to_dict()} for r in records))
     except Exception as e:
         for record in records:
             if retry:
@@ -142,7 +142,7 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
                           '_index': index,
                           '_id': idx,
                           '_type': doc_type,
-                          'doc': r} for (r, idx) in zip(records, ids)))
+                          '_source': r} for (r, idx) in zip(records, ids)))
     except Exception as e:
         for (r, idx) in zip(records, ids):
             if retry:
@@ -151,7 +151,7 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r))
 
 
-@error_managed()
+@error_managed(inhibit_exception=True)
 def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=True):
     try:
         if ids is None:
@@ -163,13 +163,13 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=Tr
                         ({'_index': index,
                           '_id': idx,
                           '_type': doc_type,
-                          'doc': r} for (r, idx) in zip(records, ids)))
+                          '_source': r} for (r, idx) in zip(records, ids)))
     except Exception as e:
         for (r, idx) in zip(records, ids):
             if retry:
-                elastic_bulk_update(process_name, index, doc_type, [r], [idx], retry=False)
+                elastic_bulk_save(process_name, index, doc_type, [r], [idx], retry=False)
             else:
-                raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r))
+                raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r), cause=e)
 
 
 def num(s):
