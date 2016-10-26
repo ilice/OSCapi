@@ -23,7 +23,7 @@ RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 46095ACC8548582C1A2699A9D27D
 
 WORKDIR /usr/share/elasticsearch
 
-RUN set -ex && for path in data logs config repo config/scripts; do \
+RUN set -ex && for path in data logs config backups config/scripts; do \
         mkdir -p "$path"; \
         chown -R elasticsearch:elasticsearch "$path"; \
     done
