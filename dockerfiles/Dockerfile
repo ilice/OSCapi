@@ -35,10 +35,8 @@ RUN bin/plugin install delete-by-query
 
 RUN bin/plugin install license \
     && bin/plugin install marvel-agent
-	
-RUN bin/plugin install https://github.com/elastic/elasticsearch-migration/releases/download/v2.0.1/elasticsearch-migration-2.0.1.zip
 
-RUN chown -R elasticsearch:elasticsearch /mount/backups
+RUN bin/plugin install https://github.com/elastic/elasticsearch-migration/releases/download/v2.0.1/elasticsearch-migration-2.0.1.zip
 
 USER elasticsearch
 
