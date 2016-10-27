@@ -35,12 +35,13 @@ node.name: ${HOSTNAME}
 # Path to log files:
 #
 # path.logs: /path/to/logs
+path.repo: ["/usr/share/elasticsearch/backups"]
 #
 # ----------------------------------- Memory -----------------------------------
 #
 # Lock the memory on startup:
 #
-# bootstrap.memory_lock: true
+bootstrap.memory_lock: true
 #
 # Make sure that the `ES_HEAP_SIZE` environment variable is set to about half the memory
 # available on the system and that the owner of the process is allowed to use this limit.
@@ -92,3 +93,23 @@ network.host: 0.0.0.0
 # Require explicit names when deleting indices:
 #
 # action.destructive_requires_name: true
+# 
+# 
+# -------------------------------- XPack ------------------------------------
+#
+# For more information, see documentation at:
+# <https://www.elastic.co/guide/en/x-pack/current/index.html>
+#
+# Also in kibana.yml
+xpack.security.enabled: "false"
+#
+# Also in kibana.yml
+xpack.monitoring.enabled: true
+#
+# 
+# xpack.graph.enabled: false
+#
+# Only here
+xpack.watcher.enabled: "false"
+#
+
