@@ -6,14 +6,12 @@ from osc.exceptions import OSCException
 
 
 def is_valid_parcel(parcel):
-    is_valid = True
-
     try:
-        public_info = get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
-        if public_info is not None:
-            is_valid = not len(public_info['bico']['lspr']['spr'])
-            for spr in public_info['bico']['lspr']['spr']:
-                is_valid = is_valid or (spr['dspr']['ccc'] not in ['VT', 'OT', 'FF'])
+        public_info = parcel['properties']['cadastralData']
+
+        is_valid = not len(public_info['bico']['lspr']['spr'])
+        for spr in public_info['bico']['lspr']['spr']:
+            is_valid = is_valid or (spr['dspr']['ccc'] not in ['VT', 'OT', 'FF'])
     except KeyError:
         # As it does not have information about the type, we assume that it is OK
         is_valid = True
@@ -31,14 +29,7 @@ def obtain_cadastral_parcels(request):
         parcels = []
 
         if cadastral_code_param is not None:
-            parcels = get_parcels_by_cadastral_code(cadastral_code_param)
-
-            # Add public info
-            if retrieve_public_info_param == 'True':
-                for parcel in parcels:
-                    if not 'cadastralData' in parcel['properties']:
-                        public_info = get_public_cadastre_info(cadastral_code_param)
-                        parcel['properties']['cadastralData'] = public_info
+            parcels = get_parcels_by_cadastral_code(cadastral_code_param, retrieve_public_info_param)
 
             # Add climate info
             if retrieve_climate_info_param == 'True':
@@ -64,21 +55,6 @@ def obtain_cadastral_parcels(request):
         # Convert into geojson
         for parcel in parcels:
             parcel['type'] = 'Feature'
-
-
-        # Add elevation from google
-        try:
-            centers = [(parcel['properties']['reference_point']['lat'],
-                        parcel['properties']['reference_point']['lon']) for parcel in parcels]
-
-            elevations = obtain_elevation_from_google(centers)
-
-            if elevations is not None:
-                for item in zip(elevations, parcels):
-                    item[1]['properties']['elevation'] = item[0]
-
-        except KeyError:
-            pass
 
         parcels_geojson = {'type': 'FeatureCollection',
                            'features': parcels}

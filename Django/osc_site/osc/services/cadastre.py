@@ -12,6 +12,8 @@ from elasticsearch.client import IndicesClient
 
 from osc.exceptions import ElasticException
 
+from .google import obtain_elevation_from_google
+
 import utm
 
 __all__ = ['get_cadastral_parcels_by_bbox',
@@ -295,6 +297,9 @@ def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
     parcels = get_inspire_data_by_bbox(min_x, min_y, max_x, max_y)
 
+    add_public_cadastral_info(parcels)
+    add_elevation_from_google(parcels)
+
     return parcels
 
 
@@ -333,7 +338,7 @@ def store_parcels(parcels):
 
 
 @error_managed(default_answer=[])
-def get_parcels_by_cadastral_code(cadastral_code):
+def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
     try:
         query = {
             "query": {
@@ -347,7 +352,51 @@ def get_parcels_by_cadastral_code(cadastral_code):
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
+        if not parcels:
+            parcels = get_inspire_data_by_code(cadastral_code)
+
+        if include_public_info:
+            add_public_cadastral_info(parcels)
+
+        add_elevation_from_google(parcels)
+
         return parcels
+    except ElasticsearchException as e:
+        raise ElasticException('PARCEL', e.message, e)
+
+
+@error_managed()
+def add_public_cadastral_info(parcels):
+    try:
+        for parcel in parcels:
+            if 'cadastralData' not in parcel['properties']:
+                parcel['properties']['cadastralData'] = \
+                    get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
+                # add to elastic
+                es.index(index=parcel_index, doc_type=parcel_mapping, body=parcel)
+    except ElasticsearchException as e:
+        raise ElasticException('PARCEL', e.message, e)
+
+
+@error_managed()
+def add_elevation_from_google(parcels):
+    try:
+        pending_elevations = \
+            filter(lambda x: 'elevation' not in x['properties'] and 'reference_point' in x['properties'], parcels)
+
+        if pending_elevations:
+            centers = [(parcel['properties']['reference_point']['lat'],
+                        parcel['properties']['reference_point']['lon']) for parcel in pending_elevations]
+
+            elevations = obtain_elevation_from_google(centers)
+
+            if elevations is not None:
+                for item in zip(elevations, parcels):
+                    elevation = item[0]
+                    parcel = item[1]
+
+                    parcel['properties']['elevation'] = elevation
+                    es.index(index=parcel_index, doc_type=parcel_mapping, body=parcel)
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
 
@@ -382,6 +431,9 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
+
+        add_public_cadastral_info(parcels)
+        add_elevation_from_google(parcels)
 
         return parcels
     except ElasticsearchException as e:
