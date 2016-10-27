@@ -60,6 +60,8 @@ RUN set -x \
 ENV PATH /usr/share/kibana/bin:$PATH
 
 COPY docker-entrypoint.sh /
+COPY kibana.yml /etc/kibana/
+
 RUN chmod +x docker-entrypoint.sh
 
 RUN kibana-plugin install x-pack

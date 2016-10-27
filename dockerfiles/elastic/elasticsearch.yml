@@ -93,3 +93,23 @@ network.host: 0.0.0.0
 # Require explicit names when deleting indices:
 #
 # action.destructive_requires_name: true
+# 
+# 
+# -------------------------------- XPack ------------------------------------
+#
+# For more information, see documentation at:
+# <https://www.elastic.co/guide/en/x-pack/current/index.html>
+#
+# Also in kibana.yml
+xpack.security.enabled: "false"
+#
+# Also in kibana.yml
+xpack.monitoring.enabled: true
+#
+# 
+# xpack.graph.enabled: false
+#
+# Only here
+xpack.watcher.enabled: "false"
+#
+
