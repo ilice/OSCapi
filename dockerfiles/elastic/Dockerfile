@@ -2,18 +2,18 @@ FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN groupadd -g 1000 elasticsearch && useradd elasticsearch -u 1000 -g 1000
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common && add-apt-repository -y ppa:webupd8team/java && \
     apt-get update && \
+    apt-get -y install sudo &&  useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo && \
     (echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections) && \
-    apt-get install --no-install-recommends -y oracle-java8-installer && \
-    rm -rf /var/cache/oracle-jdk8-installer && \
+    apt-get install --no-install-recommends -y oracle-java8-installer && rm -rf /var/cache/oracle-jdk8-installer && \
     echo "networkaddress.cache.ttl=60" >> /usr/lib/jvm/java-8-oracle/jre/lib/security/java.security && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-
-RUN groupadd -g 1000 elasticsearch && useradd elasticsearch -u 1000 -g 1000
 
 # https://artifacts.elastic.co/GPG-KEY-elasticsearch
 RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4 
@@ -47,8 +47,10 @@ RUN set -ex \
 		chown -R elasticsearch:elasticsearch "$path"; \
 	done
 
-COPY logging.yml /usr/share/elasticsearch/config/
 COPY elasticsearch.yml /usr/share/elasticsearch/config/
+COPY log4j2.properties /usr/share/elasticsearch/config/
+
+RUN sudo bin/elasticsearch-plugin install x-pack
 
 USER elasticsearch
 
