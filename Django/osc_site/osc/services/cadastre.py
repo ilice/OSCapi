@@ -103,7 +103,7 @@ def create_parcel_mapping():
                         "index": "not_analyzed"
                     },
                     "nationalCadastralReference": {
-                        "type": "text"
+                        "type": "keyword"
                     },
                     "reference_point": {
                         "type": "geo_point"
