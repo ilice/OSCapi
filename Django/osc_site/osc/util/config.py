@@ -1,9 +1,9 @@
 import os
 
-from elasticsearch_dsl.connections import connections
+from elasticsearch import Elasticsearch
 from django.conf import settings
 
-__all__ = ['get_data_dir', 'get_tmp_dir', 'get_error_dir', 'get_dataframes_dir']
+__all__ = ['get_data_dir', 'get_tmp_dir', 'get_error_dir', 'get_dataframes_dir', 'es']
 
 # Directories
 data_dir = settings.AUX_DIRS['data_dir']
@@ -36,7 +36,5 @@ def get_dataframes_dir():
     return dataframes_dir
 
 # Elastic Search
-connections.create_connection('default', hosts=[
-    {'host': settings.ELASTICSEARCH['host'],
-     'port': settings.ELASTICSEARCH['port']}])
+es = Elasticsearch('http://{}:{}'.format(settings.ELASTICSEARCH['host'], settings.ELASTICSEARCH['port']))
 

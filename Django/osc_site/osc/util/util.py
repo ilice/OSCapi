@@ -2,12 +2,10 @@ import os
 import logging
 import zipfile
 import matplotlib.pyplot as plt
-from elasticsearch_dsl.connections import connections
-import elasticsearch as es
-import error_handling as err_handling
+import elasticsearch.helpers as es_helpers
 import datetime
 import time
-from osc.util import error_managed
+from osc.util import error_managed, es
 from osc.exceptions import ElasticException
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
@@ -82,10 +80,9 @@ def try_times(f, max_trials, time_wait):
 
 
 def wait_for_yellow_cluster_status():
-    connection = connections.get_connection()
     while True:
         try:
-            cluster_status = connection.cluster.health(wait_for_status='yellow')
+            cluster_status = es.cluster.health(wait_for_status='yellow')
             if cluster_status['status'] != 'red':
                 break
         except Exception as e:
@@ -95,9 +92,8 @@ def wait_for_yellow_cluster_status():
 @error_managed()
 def elastic_bulk_update_dsl(process_name, records, retry=True):
     try:
-        connection = connections.get_connection()
         wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
+        es_helpers.bulk(es,
                         ({'_op_type': 'update',
                           '_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
@@ -114,9 +110,8 @@ def elastic_bulk_update_dsl(process_name, records, retry=True):
 @error_managed()
 def elastic_bulk_save_dsl(process_name, records, retry=True):
     try:
-        connection = connections.get_connection()
         wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
+        es_helpers.bulk(es,
                         ({'_index': getattr(r.meta, 'index', r._doc_type.index),
                           '_id': getattr(r.meta, 'id', None),
                           '_type': r._doc_type.name,
@@ -135,9 +130,8 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
         if ids is None:
             ids = [None] * len(records)
 
-        connection = connections.get_connection()
         wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
+        es_helpers.bulk(es,
                         ({'_op_type': 'update',
                           '_index': index,
                           '_id': idx,
@@ -157,9 +151,8 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=Tr
         if ids is None:
             ids = [None] * len(records)
 
-        connection = connections.get_connection()
         wait_for_yellow_cluster_status()
-        es.helpers.bulk(connection,
+        es_helpers.bulk(es,
                         ({'_index': index,
                           '_id': idx,
                           '_type': doc_type,
