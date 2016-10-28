@@ -23,7 +23,6 @@ __all__ = ['get_cadastral_parcels_by_bbox',
 
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
-zone_number = 30
 
 parcel_index = 'parcels_v1'
 parcel_mapping = 'parcel'
@@ -37,6 +36,24 @@ ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'ows': 'http://www.opengis.net/ows/1.1',
       'ct': 'http://www.catastro.meh.es/'
       }
+
+
+@error_managed()
+def get_zone_number(node):
+    zone_number = None
+    if 'srsName' in node.attrib:
+        srs_name = node.attrib['srsName']
+
+        if 'urn:ogc:def:crs:EPSG::258' in srs_name:
+            try:
+                zone_number = int(srs_name[-2:])
+            except ValueError:
+                zone_number = None
+
+    if zone_number is None:
+        raise CadastreException("No zone in srsName", actionable_info=str(srs_name))
+
+    return zone_number
 
 
 def parse_inspire_exception(elem):
@@ -121,15 +138,15 @@ def create_parcel_mapping():
     idx_client.put_mapping(doc_type=parcel_mapping, index=[parcel_index], body=mapping)
 
 
-def latlon_2_utm(lat, lon):
+def latlon_2_utm(lat, lon, zone_number):
     return utm.from_latlon(lat, lon, force_zone_number=zone_number)
 
 
-def utm_2_latlon(x, y):
-    return utm.to_latlon(x, y, zone_number, zone_letter='N')
+def utm_2_latlon(x, y, zone_number):
+    return utm.to_latlon(x, y, zone_number, northern=True)
 
 
-def get_gml_linear_ring(linear_ring_elem):
+def get_gml_linear_ring(linear_ring_elem, zone_number):
     linear_ring = []
 
     pos_list = linear_ring_elem.find('./gml:posList', ns)
@@ -140,37 +157,44 @@ def get_gml_linear_ring(linear_ring_elem):
         if linear_ring_text is not None:
             linear_ring_coords = linear_ring_text.split()
             for c in range(0, len(linear_ring_coords), 2):
-                lat, lon = utm_2_latlon(*map(lambda x: float(x), linear_ring_coords[c:(c+2)]))
+                lat, lon = utm_2_latlon(*map(lambda x: float(x), linear_ring_coords[c:(c+2)]), zone_number=zone_number)
 
                 linear_ring.append([lon, lat])
 
     return linear_ring
 
 
+@error_managed()
 def get_gml_geometry(cadastral_parcel):
     geometry = []
 
-    linear_ring_elem = cadastral_parcel.find('./cp:geometry/gml:MultiSurface/gml:surfaceMember/gml:Surface/'
-                                             'gml:patches/gml:PolygonPatch/gml:exterior/gml:LinearRing', ns)
+    surface_elem = cadastral_parcel.find('./cp:geometry/gml:MultiSurface/gml:surfaceMember/gml:Surface', ns)
+    zone_number = get_zone_number(surface_elem)
 
-    exterior_linear_ring = get_gml_linear_ring(linear_ring_elem) if linear_ring_elem is not None else []
+    linear_ring_elem = surface_elem.find('./gml:patches/gml:PolygonPatch/gml:exterior/gml:LinearRing', ns)
+
+    exterior_linear_ring = get_gml_linear_ring(linear_ring_elem, zone_number=zone_number) if linear_ring_elem is not None else []
     geometry.append(exterior_linear_ring)
 
     for interior_elem in cadastral_parcel.findall('./cp:geometry/gml:MultiSurface/gml:surfaceMember/gml:Surface/'
                                                   'gml:patches/gml:PolygonPatch/gml:interior/gml:LinearRing', ns):
-        geometry.append(get_gml_linear_ring(interior_elem))
+        geometry.append(get_gml_linear_ring(interior_elem, zone_number=zone_number))
 
     return {'type': 'polygon',
             'coordinates': geometry}
 
 
 def get_reference_point(cadastral_parcel):
-    point_text = cadastral_parcel.find('./cp:referencePoint/gml:Point/gml:pos', ns).text
+    point_node = cadastral_parcel.find('./cp:referencePoint/gml:Point', ns)
+
+    zone_number = get_zone_number(point_node)
+
+    point_text = point_node.find('./gml:pos', ns).text
 
     reference_point = None
 
     if point_text is not None:
-        lat, lon = utm_2_latlon(*map(lambda x: float(x), point_text.split()))
+        lat, lon = utm_2_latlon(*map(lambda x: float(x), point_text.split()), zone_number=zone_number)
 
         reference_point = {'lat': lat,
                            'lon': lon}
@@ -180,17 +204,20 @@ def get_reference_point(cadastral_parcel):
 
 def get_gml_bbox(cadastral_parcel):
     envelope = cadastral_parcel.find('./gml:boundedBy/gml:Envelope', ns)
+
+    zone_number = get_zone_number(envelope)
+
     lower_corner_txt = envelope.find('gml:lowerCorner', ns).text
     upper_corner_txt = envelope.find('gml:upperCorner', ns).text
 
     lower_corner = []
     if lower_corner_txt is not None:
-        lat, lon = utm_2_latlon(*map(lambda x: float(x), lower_corner_txt.split()))
+        lat, lon = utm_2_latlon(*map(lambda x: float(x), lower_corner_txt.split()), zone_number=zone_number)
         lower_corner = [lon, lat]
 
     upper_corner = []
     if upper_corner_txt is not None:
-        lat, lon = utm_2_latlon(*map(lambda x: float(x), upper_corner_txt.split()))
+        lat, lon = utm_2_latlon(*map(lambda x: float(x), upper_corner_txt.split()), zone_number=zone_number)
         upper_corner = [lon, lat]
 
     return {'type': 'envelope',
@@ -291,9 +318,9 @@ def get_inspire_data_by_code(code):
     return parcels
 
 
-def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
-    min_x, min_y, zn, zl = latlon_2_utm(min_lat, min_lon)
-    max_x, max_y, zn, zl = latlon_2_utm(max_lat, max_lon)
+def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_number=30):
+    min_x, min_y, zn, zl = latlon_2_utm(min_lat, min_lon, zone_number=zone_number)
+    max_x, max_y, zn, zl = latlon_2_utm(max_lat, max_lon, zone_number=zone_number)
 
     parcels = get_inspire_data_by_bbox(min_x, min_y, max_x, max_y)
 
@@ -365,6 +392,15 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
         raise ElasticException('PARCEL', e.message, e)
 
 
+def index_parcel(parcel):
+    create_parcel_mapping()
+
+    es.index(index=parcel_index,
+             doc_type=parcel_mapping,
+             body=parcel,
+             id=parcel['properties']['nationalCadastralReference'])
+
+
 @error_managed()
 def add_public_cadastral_info(parcels):
     try:
@@ -373,7 +409,7 @@ def add_public_cadastral_info(parcels):
                 parcel['properties']['cadastralData'] = \
                     get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
                 # add to elastic
-                es.index(index=parcel_index, doc_type=parcel_mapping, body=parcel)
+                # JLG ATTENTION: Need to previously create mapping --> index_parcel(parcel)
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
 
@@ -396,7 +432,8 @@ def add_elevation_from_google(parcels):
                     parcel = item[1]
 
                     parcel['properties']['elevation'] = elevation
-                    es.index(index=parcel_index, doc_type=parcel_mapping, body=parcel)
+
+                    index_parcel(parcel)
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
 

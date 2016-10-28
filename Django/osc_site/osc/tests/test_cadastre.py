@@ -11,7 +11,8 @@ class CadastreServiceTest(TestCase):
         pass
 
     def test_get_inspire_data(self):
-        cadastre.get_inspire_data(436567.6, 4581935.2, 436626.71, 4582031.17)
+        parcels = cadastre.get_inspire_data_by_code('11015A01400009')
+        print str(parcels)
 
     def test_public_cadastre_info(self):
         cadastre.get_public_cadastre_info('40167A00805001')
