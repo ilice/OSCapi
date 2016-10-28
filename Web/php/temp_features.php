@@ -21,37 +21,10 @@ $sw_lng = explode ( ",", $bbox ) [1];
 $ne_lat = explode ( ",", $bbox ) [2];
 $ne_lng = explode ( ",", $bbox ) [3];
 
-$sw_coordinates = array (
-		$sw_lat,
-		$sw_lng 
-);
-$nw_coordinates = array (
-		$ne_lat,
-		$sw_lng 
-);
-$ne_coordinates = array (
-		$ne_lat,
-		$ne_lng 
-);
-$se_coordinates = array (
-		$sw_lat,
-		$ne_lng 
-);
-
-$ring_coordinates = array (
-		$sw_coordinates,
-		$se_coordinates,
-		$ne_coordinates,
-		$nw_coordinates,
-		$sw_coordinates 
-);
-$polygon_coordinates = array (
-		$ring_coordinates 
-);
 // "AG", "ED", "CA", "ZU", "ZV", "ZC"
 $input = '{
 	"size" : 10000,
-   "filter": {
+   "query": {
       "bool": {
          "must_not": 
             {
@@ -95,13 +68,16 @@ $input = '{
                }
             }
          ,
-         "filter": {
-            "geo_shape": {
-               "points": {
-                  "relation": "intersects",
-                  "shape": {
-                     "type": "polygon",
-                     "coordinates": ' . json_encode ( $polygon_coordinates ) . '
+         "must": {
+            "geo_bounding_box": {
+               "bbox_center": {
+                  "bottom_left": {
+                     "lat": '.$sw_lat.',
+                     "lon": '.$sw_lng.'
+                  },
+                  "top_right": {
+                     "lat": '.$ne_lat.',
+                     "lon": '.$ne_lng.'
                   }
                }
             }

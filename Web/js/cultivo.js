@@ -5,90 +5,107 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "php/api_rest.php/osc?q=_id:" + cultivo_id;
+	var url = "php/django_server_wrapper.php/osc/crops/elastic"
+			+ cultivo_id;
+
+	var data = {
+		"query" : {
+			"constant_score" : {
+				"filter" : {
+					"term" : {
+						"_id" : cultivo_id
+					}
+				}
+			}
+		}
+	};
 
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
-		type : 'GET',
-		dataType : "json"
+		type : 'POST',
+		dataType : "json",
+		data : JSON.stringify(data)
 	});
 
 	request
 			.done(function(response, textStatus, jqXHR) {
-				var hits = response["hits"]["hits"];
+				if (response.status == "SUCCESS") {
+					var result = response.result;
+					for (crop in result) {
+						crop = result[crop];
+						document.title += crop.Nombre;
+						document.getElementById("pagina").innerHTML = crop.Nombre;
 
-				for (var i = 0; i < hits.length; i++) {
+						// Widgets iniciales: como el texto es largo se recorta
+						// y
+						// ponen unos puntos para ver más
+						document.getElementById("precipitacion").innerHTML = recorta(
+								"precipitacion", crop["Precipitación"], 120);
+						document.getElementById("temperatura").innerHTML = recorta(
+								"temperatura", crop["Temperatura"], 120);
+						document.getElementById("sol").innerHTML = recorta(
+								"sol", crop["Luz"], 120);
+						document.getElementById("humedad_ambiental").innerHTML = recorta(
+								"humedad_ambiental", crop["Humedad ambiental"],
+								120);
 
-					var hit = hits[i];
-					
-					document.title += hit["_source"]["Nombre"];
+						// Ficha básica del cultivo
+						document.getElementById('ficha').innerHTML = crop["Nombre"];
+						document.getElementById('nombre').innerHTML = crop["Nombre"];
+						document.getElementById('nombre_cientifico').innerHTML = crop["Nombre Científico"];
+						document.getElementById('familia').innerHTML = crop["Familia"];
+						document.getElementById('nombres_comunes').innerHTML = crop["Nombres Comunes"];
+						document.getElementById('imagen').innerHTML = '<img src="img/cultivos/'
+								+ crop["Foto"]
+								+ '" style="width:100%"/>';
 
-					document.getElementById("pagina").innerHTML = hit["_source"]["Nombre"];
-					
-					//Widgets iniciales: como el texto es largo se recorta y ponen unos puntos para ver más
-					document.getElementById("precipitacion").innerHTML = recorta(
-							"precipitacion", hit["_source"]["Precipitación"], 120);
-					document.getElementById("temperatura").innerHTML = recorta(
-							"temperatura", hit["_source"]["Temperatura"], 120);
-					document.getElementById("sol").innerHTML = recorta(
-							"sol", hit["_source"]["Luz"], 120);
-					document.getElementById("humedad_ambiental").innerHTML = recorta(
-							"humedad_ambiental",
-							hit["_source"]["Humedad ambiental"], 120);
+						document.getElementById('buscar_imagen').innerHTML = '<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'
+								+ 'onclick="location.href=\'https://www.google.es/search?q='
+								+ crop["Nombre Científico"]
+								+ '&tbm=isch\'">'
+								+ '<i class="fa fa-search"></i> Buscar otras imágenes en la Web'
+								+ '</button>';
 
-					//Ficha básica del cultivo
-					document.getElementById('ficha').innerHTML = hit["_source"]["Nombre"];
-					document.getElementById('nombre').innerHTML = hit["_source"]["Nombre"];
-					document.getElementById('nombre_cientifico').innerHTML = hit["_source"]["Nombre Científico"];
-					document.getElementById('familia').innerHTML = hit["_source"]["Familia"];
-					document.getElementById('nombres_comunes').innerHTML = hit["_source"]["Nombres Comunes"];
-					document.getElementById('imagen').innerHTML = '<img src="img/cultivos/'
-							+ hit["_source"]["Foto"] + '" style="width:100%"/>';
+						// Ficha sobre origen y distribución
+						document.getElementById('origen').innerHTML = crop["Origen"];
+						document.getElementById('distribucion').innerHTML = crop["Distribución"];
+						document.getElementById('adaptacion').innerHTML = crop["Adaptación"];
+						document.getElementById('altitud').innerHTML = crop["Altitud"];
 
-					document.getElementById('buscar_imagen').innerHTML = '<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'
-							+ 'onclick="location.href=\'https://www.google.es/search?q='
-							+ hit["_source"]["Nombre Científico"]
-							+ '&tbm=isch\'">'
-							+ '<i class="fa fa-search"></i> Buscar otras imágenes en la Web'
-							+ '</button>';
+						// Ficha sobre los periodos
+						document.getElementById('ciclo_vegetativo').innerHTML = recorta(
+								"ciclo_vegetativo",
+								crop["Ciclo vegetativo"], 35);
+						document.getElementById('fotoperiodo').innerHTML = recorta(
+								"fotoperiodo", crop["Fotoperíodo"],
+								35);
+						destacaTipoFotosintetico(crop["Tipo Fotosintético"]);
 
-					//Ficha sobre origen y distribución
-					document.getElementById('origen').innerHTML = hit["_source"]["Origen"];
-					document.getElementById('distribucion').innerHTML = hit["_source"]["Distribución"];
-					document.getElementById('adaptacion').innerHTML = hit["_source"]["Adaptación"];
-					document.getElementById('altitud').innerHTML = hit["_source"]["Altitud"];
-					
-					
-					//Ficha sobre los periodos
-					document.getElementById('ciclo_vegetativo').innerHTML = recorta("ciclo_vegetativo", hit["_source"]["Ciclo vegetativo"], 35);
-					document.getElementById('fotoperiodo').innerHTML = recorta("fotoperiodo", hit["_source"]["Fotoperíodo"], 35);
-					destacaTipoFotosintetico(hit["_source"]["Tipo Fotosintético"]);
+						// Observaciones
+						var observaciones = crop["Otros"];
+						if (observaciones.length > 0) {
 
-					//Observaciones
-					var observaciones = hit["_source"]["Otros"];
-					if(observaciones.length > 0){
-						
-						observaciones = '<div class="w3-orange w3-text-dark-grey w3-row-padding">' +
-							'<span onclick="this.parentElement.style.display=\'none\'"' +
-							'class="w3-closebtn w3-padding">&times;</span>' +
-							'<h3>Observaciones</h3>' +
-							' <p>' + observaciones + '</p>' +
-							'</div>';
-					
-						document.getElementById('observaciones').innerHTML = observaciones;
+							observaciones = '<div class="w3-orange w3-text-dark-grey w3-row-padding">'
+									+ '<span onclick="this.parentElement.style.display=\'none\'"'
+									+ 'class="w3-closebtn w3-padding">&times;</span>'
+									+ '<h3>Observaciones</h3>'
+									+ ' <p>'
+									+ observaciones + '</p>' + '</div>';
+
+							document.getElementById('observaciones').innerHTML = observaciones;
+						}
+
+						// Suelo
+						document.getElementById('textura').innerHTML = crop["Textura de suelo"];
+						document.getElementById('profundidad').innerHTML = crop["Profundidad de suelo"];
+						document.getElementById('drenaje').innerHTML = crop["Drenaje"];
+
+						document.getElementById('salinidad').innerHTML = crop["Salinidad"];
+						document.getElementById('ph').innerHTML = crop["pH"];
+
 					}
-
-					//Suelo
-					document.getElementById('textura').innerHTML = hit["_source"]["Textura de suelo"];
-					document.getElementById('profundidad').innerHTML = hit["_source"]["Profundidad de suelo"];
-					document.getElementById('drenaje').innerHTML = hit["_source"]["Drenaje"];
-
-					document.getElementById('salinidad').innerHTML = hit["_source"]["Salinidad"];
-					document.getElementById('ph').innerHTML = hit["_source"]["pH"];
-
 				}
-
 			});
 
 }
@@ -151,15 +168,16 @@ var QueryString = function() {
 
 function recorta(tipo, texto, caracteres) {
 	var recorte = texto.substring(0, 120);
-	var tipoCamelCase = tipo.substr( 0, 1 ).toUpperCase() + tipo.substr( 1 );
+	var tipoCamelCase = tipo.substr(0, 1).toUpperCase() + tipo.substr(1);
 
-	var modal = '<div id="'+ tipo+ '_modal" class="w3-modal">'
+	var modal = '<div id="' + tipo + '_modal" class="w3-modal">'
 			+ ' <div class="w3-modal-content">'
 			+ ' <div class="w3-container w3-text-grey">'
 			+ ' <span onclick="document.getElementById(\'' + tipo
 			+ '_modal\').style.display=\'none\'" '
-			+ '  class="w3-closebtn">&times;</span> ' + '  <p><h4>'+ tipoCamelCase +':</h4> '
-			+ texto + '</p>' + '  </div> ' + '  </div> ' + '  </div>';
+			+ '  class="w3-closebtn">&times;</span> ' + '  <p><h4>'
+			+ tipoCamelCase + ':</h4> ' + texto + '</p>' + '  </div> '
+			+ '  </div> ' + '  </div>';
 
 	if (texto.length > caracteres) {
 		recorte = recorte
@@ -171,7 +189,7 @@ function recorta(tipo, texto, caracteres) {
 	return recorte;
 }
 
-function destacaTipoFotosintetico(tipoFotosintetico){
+function destacaTipoFotosintetico(tipoFotosintetico) {
 	switch (tipoFotosintetico) {
 	case "C3":
 		document.getElementById("c3").style.opacity = 1;

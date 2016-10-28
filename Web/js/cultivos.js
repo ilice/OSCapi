@@ -70,7 +70,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	};
 
-	var url = "php/api_rest.php/osc";
+	var url = "php/django_server_wrapper.php/osc/crops/elastic";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
@@ -81,50 +81,55 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 		});
 
 	request.done(function (response, textStatus, jqXHR) {
-		var hits = response["hits"]["hits"];
+		if (response.status == "SUCCESS") {
+			
+			
+		var crops = response.result;
 		var rowIndex = 0;
 		document.getElementById('photoGrid').innerHTML = "";
-		for (var i = 0; i < hits.length; i++) {
-			if ((i % 3) == 0) {
+		for (cropNumber in crops) {
+			var crop = crops[cropNumber];
+			var id = crop.Foto.substring(0,crop.Foto.indexOf('.'));
+			
+			if ((cropNumber % 3) == 0) {
 				document.getElementById('photoGrid').innerHTML += '<div class="w3-row">';
 			}
 
-			var hit = hits[i];
-			var contenido = '<div onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'block\'" class="w3-third w3-container">' +
-				'<div id="' + hit["_id"] + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
-				'<img src="img/cultivos/' + hit["_source"]["Foto"] + '" style="width:100%"/>' +
+			var contenido = '<div onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" class="w3-third w3-container">' +
+				'<div id="' + id + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
+				'<img src="img/cultivos/' + crop.Foto + '" style="width:100%"/>' +
 				'<div class="w3-container">' +
-				'<h4>' + hit["_source"]["Nombres Comunes"] + "</h4>" +
-				'<h5 align="right"><em>' + hit["_source"]["Nombre Científico"] + '</em></h5>' +
+				'<h4>' + crop["Nombres Comunes"] + "</h4>" +
+				'<h5 align="right"><em>' + crop["Nombre Científico"] + '</em></h5>' +
 				'</div></div></div>';
 
-			var modal = '<div id="' + hit["_id"] + '_modal" class="w3-modal">' +
+			var modal = '<div id="' + id + '_modal" class="w3-modal">' +
 				' <div class="w3-modal-content">' +
 				'<div class="w3-container">' +
 				'<div class="w3-row w3-right">' +
 				' <div class="w3-col w3-right">' +
-				'<a href="cultivo.html?cultivo_id=' + hit["_id"] + '" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
-				'<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge" onclick="document.getElementById(\'' + hit["_id"] + '_modal\').style.display=\'none\'"><i class="fa fa-remove"></i></a>' +
+				'<a href="cultivo.html?cultivo_id=' + id + '" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
+				'<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'none\'"><i class="fa fa-remove"></i></a>' +
 				'</div>' +
 				'</div>' +
 				'<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">' +
-				'<tr><td>Origen</td><td>' + hit["_source"]["Origen"] + '</td></tr>' +
-				'<tr><td>Distribución</td><td>' + hit["_source"]["Distribución"] + '</td></tr>' +
-				'<tr><td>Adaptación</td><td>' + hit["_source"]["Adaptación"] + '</td></tr>' +
-				'<tr><td>Ciclo vegetativo</td><td>' + hit["_source"]["Ciclo vegetativo"] + '</td></tr>' +
-				'<tr><td>Tipo Fotosintético</td><td>' + hit["_source"]["Tipo Fotosintético"] + '</td></tr>' +
-				'<tr><td>Fotoperíodo</td><td>' + hit["_source"]["Fotoperíodo"] + '</td></tr>' +
-				'<tr><td>Altitud</td><td>' + hit["_source"]["Altitud"] + '</td></tr>' +
-				'<tr><td>Precipitación</td><td>' + hit["_source"]["Precipitación"] + '</td></tr>' +
-				'<tr><td>Humedad ambiental</td><td>' + hit["_source"]["Humedad ambiental"] + '</td></tr>' +
-				'<tr><td>Temperatura</td><td>' + hit["_source"]["Temperatura"] + '</td></tr>' +
-				'<tr><td>Luz</td><td>' + hit["_source"]["Luz"] + '</td></tr>' +
-				'<tr><td>Textura de suelo</td><td>' + hit["_source"]["Textura de suelo"] + '</td></tr>' +
-				'<tr><td>Profundidad de suelo</td><td>' + hit["_source"]["Profundidad de suelo"] + '</td></tr>' +
-				'<tr><td>Salinidad</td><td>' + hit["_source"]["Salinidad"] + '</td></tr>' +
-				'<tr><td>pH</td><td>' + hit["_source"]["pH"] + '</td></tr>' +
-				'<tr><td>Drenaje</td><td>' + hit["_source"]["Drenaje"] + '</td></tr>' +
-				'<tr><td>Otros</td><td>' + hit["_source"]["Otros"] + '</td></tr>' +
+				'<tr><td>Origen</td><td>' + crop["Origen"] + '</td></tr>' +
+				'<tr><td>Distribución</td><td>' + crop["Distribución"] + '</td></tr>' +
+				'<tr><td>Adaptación</td><td>' + crop["Adaptación"] + '</td></tr>' +
+				'<tr><td>Ciclo vegetativo</td><td>' + crop["Ciclo vegetativo"] + '</td></tr>' +
+				'<tr><td>Tipo Fotosintético</td><td>' + crop["Tipo Fotosintético"] + '</td></tr>' +
+				'<tr><td>Fotoperíodo</td><td>' + crop["Fotoperíodo"] + '</td></tr>' +
+				'<tr><td>Altitud</td><td>' + crop["Altitud"] + '</td></tr>' +
+				'<tr><td>Precipitación</td><td>' + crop["Precipitación"] + '</td></tr>' +
+				'<tr><td>Humedad ambiental</td><td>' + crop["Humedad ambiental"] + '</td></tr>' +
+				'<tr><td>Temperatura</td><td>' + crop["Temperatura"] + '</td></tr>' +
+				'<tr><td>Luz</td><td>' + crop["Luz"] + '</td></tr>' +
+				'<tr><td>Textura de suelo</td><td>' + crop["Textura de suelo"] + '</td></tr>' +
+				'<tr><td>Profundidad de suelo</td><td>' + crop["Profundidad de suelo"] + '</td></tr>' +
+				'<tr><td>Salinidad</td><td>' + crop["Salinidad"] + '</td></tr>' +
+				'<tr><td>pH</td><td>' + crop["pH"] + '</td></tr>' +
+				'<tr><td>Drenaje</td><td>' + crop["Drenaje"] + '</td></tr>' +
+				'<tr><td>Otros</td><td>' + crop["Otros"] + '</td></tr>' +
 				'</table>' +
 				'</div>' +
 				'</div>' +
@@ -133,15 +138,15 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 			document.getElementById('photoGrid').innerHTML += contenido;
 			document.getElementById('photoGrid').innerHTML += modal;
 
-			if (((i + 1) % 3) == 0 || (i + 1) == hits.length) {
+			if (((cropNumber + 1) % 3) == 0 || (cropNumber + 1) == crops.length) {
 				document.getElementById('photoGrid').innerHTML += '</div>';
 			}
 
 		}
-		elementosEncontrados = response["hits"].total;
+		elementosEncontrados = crops.total;
 		ultimoCultivoCargado = numeroCultivoInicial + numeroCultivosACargar;
 		document.getElementById('pagina').innerHTML = (ultimoCultivoCargado / numeroCultivosPorPagina) + " / " + Math.ceil((elementosEncontrados / numeroCultivosPorPagina));
-	});
+	}});
 
 }
 
