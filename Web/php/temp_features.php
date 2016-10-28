@@ -51,7 +51,7 @@ $polygon_coordinates = array (
 // "AG", "ED", "CA", "ZU", "ZV", "ZC"
 $input = '{
 	"size" : 10000,
-   "filter": {
+   "query": {
       "bool": {
          "must_not": 
             {
@@ -95,13 +95,16 @@ $input = '{
                }
             }
          ,
-         "filter": {
-            "geo_shape": {
-               "points": {
-                  "relation": "intersects",
-                  "shape": {
-                     "type": "polygon",
-                     "coordinates": ' . json_encode ( $polygon_coordinates ) . '
+         "must": {
+            "geo_bounding_box": {
+               "bbox_center": {
+                  "bottom_left": {
+                     "lat": '.$sw_lat.',
+                     "lon": '.$sw_lng.'
+                  },
+                  "top_right": {
+                     "lat": '.$ne_lat.',
+                     "lon": '.$ne_lng.'
                   }
                }
             }
