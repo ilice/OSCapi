@@ -5,7 +5,7 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "php/django_server_wrapper.php/osc/crops/elastic?q=_id:"
+	var url = "php/django_server_wrapper.php/osc/crops/elastic"
 			+ cultivo_id;
 
 	var data = {
