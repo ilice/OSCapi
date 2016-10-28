@@ -30,9 +30,10 @@ function cargaDatos() {
 	request
 			.done(function(response, textStatus, jqXHR) {
 				if (response.status == "SUCCESS") {
-					var result = response.result;
+					var result = response.result.crops;
 					for (crop in result) {
-						crop = result[crop];
+						var cropId = result[crop]._id;
+						crop = result[crop]._source;
 						document.title += crop.Nombre;
 						document.getElementById("pagina").innerHTML = crop.Nombre;
 
@@ -303,11 +304,11 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfSecondColumn.appendChild(textOflabelOflabelOfSecondColumn);
 
 	var inputOfSecondColumn = document.createElement("input");
-	inputOfSecondColumn.setAttribute("id", "min" + type + "_"
+	inputOfSecondColumn.setAttribute("id", "min_" + type + "_"
 			+ number);
 	inputOfSecondColumn.setAttribute("class",
 			"w3-input w3-border w3-light-grey");
-	inputOfSecondColumn.setAttribute("name", "min" + type + "_"
+	inputOfSecondColumn.setAttribute("name", "min_" + type + "_"
 			+ number);
 	inputOfSecondColumn.setAttribute("type", "number");
 	inputOfSecondColumn.setAttribute("placeholder", type + " mínima");
@@ -335,11 +336,11 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfThirdColumn.appendChild(textOflabelOflabelOfThirdColumn);
 
 	var inputOfThirdColumn = document.createElement("input");
-	inputOfThirdColumn.setAttribute("id", "max" + type + "_"
+	inputOfThirdColumn.setAttribute("id", "max_" + type + "_"
 			+ number);
 	inputOfThirdColumn
 			.setAttribute("class", "w3-input w3-border w3-light-grey");
-	inputOfThirdColumn.setAttribute("name", "max" + type +"_"
+	inputOfThirdColumn.setAttribute("name", "max_" + type +"_"
 			+ number);
 	inputOfThirdColumn.setAttribute("type", "number");
 	inputOfThirdColumn.setAttribute("placeholder", type + " máxima");
@@ -367,11 +368,11 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfFourthColumn.appendChild(textOflabelOflabelOfFourthColumn);
 
 	var inputOfFourthColumn = document.createElement("input");
-	inputOfFourthColumn.setAttribute("id", type + "Obs_"
+	inputOfFourthColumn.setAttribute("id", "obs_" + type  
 			+ number);
 	inputOfFourthColumn.setAttribute("class",
 			"w3-input w3-border w3-light-grey");
-	inputOfFourthColumn.setAttribute("name", type + "Obs_"
+	inputOfFourthColumn.setAttribute("name", "obs_" + type
 			+ number);
 	inputOfFourthColumn.setAttribute("type", "text");
 	inputOfFourthColumn.setAttribute("placeholder",
@@ -387,6 +388,7 @@ function updateCrop(form) {
     for(element in form)
     {
     	var id = form[element].id;
+    	var requirement = getRequirement(id);
     	var type = getType(id);
     	var value = form[element].value;
     	
@@ -394,7 +396,11 @@ function updateCrop(form) {
 }
 
 function getType(id){
-	return id.substring(0,3);
+	return id.split("_")[0];
+}
+
+function getRequirement(id){
+	return id.split("_")[1];
 }
 
 function reloadPage(){
