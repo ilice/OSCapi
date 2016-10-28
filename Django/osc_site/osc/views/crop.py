@@ -6,7 +6,11 @@ from django.http import JsonResponse
 def obtain_crops_elastic_query(request):
     query = ast.literal_eval(request.body)
 
-    crops = retrieve_crops_from_elastic(query)
+    try:
+        crops = retrieve_crops_from_elastic(query)
+        return JsonResponse({'status': 'SUCCESS',
+                             'result': crops})
+    except Exception as e:
+        return JsonResponse({'status': 'FAILURE',
+                             'message': e.message})
 
-    return JsonResponse({'status': 'SUCCESS',
-                         'result': crops})

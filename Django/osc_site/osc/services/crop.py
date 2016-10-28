@@ -8,14 +8,15 @@ crop_mapping = 'requirements'
 __all__ = ['retrieve_crops_from_elastic']
 
 
-@error_managed(default_answer=[])
 def retrieve_crops_from_elastic(query):
     try:
         result = es.search(index=crop_index, doc_type=crop_mapping, body=query)
 
-        crops = [hits['_source'] for hits in result['hits']['hits']]
+        crops = [{'_id': hits['_id'],
+                  '_source': hits['_source']} for hits in result['hits']['hits']]
 
-        return crops
+        return {'total': result['hits']['total'],
+                'crops': crops}
     except ElasticsearchException as e:
         raise ElasticException('CROPS', 'ElasticSearch Error from query: ' + str(query), e)
 
