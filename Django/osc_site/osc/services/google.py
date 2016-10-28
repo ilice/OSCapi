@@ -1,7 +1,7 @@
 import requests
 import polyline
-import time
 from osc.exceptions import ConnectionError
+from osc.util import error_managed
 
 __all__ = ['obtain_elevation_from_google', 'try_obtain_elevation_from_google']
 
@@ -14,6 +14,7 @@ def compose_locations_param(points):
     return 'enc:'+param
 
 
+@error_managed(default_answer=[])
 def obtain_elevation_from_google(centers):
     url = 'https://maps.googleapis.com/maps/api/elevation/json'
 

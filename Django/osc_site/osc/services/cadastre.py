@@ -5,10 +5,11 @@ from django.conf import settings
 
 from osc.util import xml_to_json, elastic_bulk_save
 from osc.exceptions import CadastreException
-from osc.util import error_managed
+from osc.util import error_managed, es
 
-import elasticsearch_dsl as dsl
 from elasticsearch import ElasticsearchException
+from elasticsearch.client import IndicesClient
+
 from osc.exceptions import ElasticException
 
 import utm
@@ -21,6 +22,10 @@ __all__ = ['get_cadastral_parcels_by_bbox',
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 zone_number = 30
+
+parcel_index = 'parcels_v1'
+parcel_mapping = 'parcel'
+
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'gmd': 'http://www.isotc211.org/2005/gmd',
@@ -59,23 +64,59 @@ def parse_cadastre_exception(elem):
     return message
 
 
-def create_parcel_mapping(index, mapping_name='parcel'):
-    m = dsl.Mapping(mapping_name)
+def create_parcel_mapping():
 
-    properties = dsl.Object()
-    properties.field('areaValue', dsl.Float())
-    properties.field('beginLifespanVersion', dsl.Date())
-    properties.field('endLifespanVersion', dsl.Date())
-    properties.field('label', dsl.String())
-    properties.field('nationalCadastralReference', dsl.String())
-    properties.field('reference_point', dsl.GeoPoint(lat_lon=True))
-    properties.field('elevation', dsl.Float())
+    idx_client = IndicesClient(es)
 
-    m.field('properties', properties)
-    m.field('bbox', dsl.GeoShape())
-    m.field('geometry', dsl.GeoShape())
+    mapping = {
+        "properties": {
+            "bbox": {
+                "type": "geo_shape"
+            },
+            "geometry": {
+                "properties": {
+                    "coordinates": {
+                        "type": "float"
+                    },
+                    "type": {
+                        "type": "keyword",
+                        "index": "no"
+                    }
+                }
+            },
+            "properties": {
+                "properties": {
+                    "areaValue": {
+                        "type": "float"
+                    },
+                    "beginLifespanVersion": {
+                        "type": "date"
+                    },
+                    "elevation": {
+                        "type": "float"
+                    },
+                    "endLifespanVersion": {
+                        "type": "date"
+                    },
+                    "label": {
+                        "type": "keyword",
+                        "index": "not_analyzed"
+                    },
+                    "nationalCadastralReference": {
+                        "type": "text"
+                    },
+                    "reference_point": {
+                        "type": "geo_point"
+                    }
+                }
+            }
+        }
+    }
 
-    m.save(index)
+    if not idx_client.exists(index=parcel_index):
+        idx_client.create(index=parcel_index)
+
+    idx_client.put_mapping(doc_type=parcel_mapping, index=[parcel_index], body=mapping)
 
 
 def latlon_2_utm(lat, lon):
@@ -280,7 +321,7 @@ def get_public_cadastre_info(code):
 
 
 def store_parcels(parcels):
-    create_parcel_mapping('parcel')
+    create_parcel_mapping()
 
     chunk_size = settings.ELASTICSEARCH['chunk_size']
 
@@ -288,56 +329,60 @@ def store_parcels(parcels):
         records = parcels[i:i+chunk_size]
         ids = [r['properties']['nationalCadastralReference'] for r in records]
 
-        elastic_bulk_save('STORE_PARCELS', 'parcel', 'parcel', records, ids)
+        elastic_bulk_save('STORE_PARCELS', parcel_index, parcel_mapping, records, ids)
 
 
 @error_managed(default_answer=[])
 def get_parcels_by_cadastral_code(cadastral_code):
     try:
-        s = dsl.Search(index='parcel', doc_type='parcel')
-        s.update_from_dict({
+        query = {
             "query": {
                 "match": {
                     "properties.nationalCadastralReference": cadastral_code
                 }
             }
-        })
+        }
 
-        result = s.execute()
-        parcels = [h.to_dict() for h in result.hits]
+        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
 
-        if not parcels:
-            parcels = get_inspire_data_by_code(cadastral_code)
+        parcels = [hits['_source'] for hits in result['hits']['hits']]
 
         return parcels
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
 
 
-"""
 @error_managed(default_answer={})
-def get_parcels_by_bbox():
-    {
-        "query": {
-            "bool": {
-                "must": {
-                    "match_all": {}
-                },
-                "filter": {
-                    "geo_bounding_box": {
-                        "doc.properties.reference_point": {
-                            "top_left": {
-                                "lat": 40.73,
-                                "lon": -5.1
-                            },
-                            "bottom_right": {
-                                "lat": 40.01,
-                                "lon": -5.12
+def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
+    try:
+        query = {
+                "query": {
+                    "bool": {
+                        "must": {
+                            "match_all": {}
+                        },
+                        "filter": {
+                            "geo_bounding_box": {
+                                "properties.reference_point": {
+                                    "top_left": {
+                                        "lat": max_lat,
+                                        "lon": min_lon
+                                    },
+                                    "bottom_right": {
+                                        "lat": min_lat,
+                                        "lon": max_lon
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-    }
-"""
+
+        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
+
+        parcels = [hits['_source'] for hits in result['hits']['hits']]
+
+        return parcels
+    except ElasticsearchException as e:
+        raise ElasticException('PARCEL', e.message, e)

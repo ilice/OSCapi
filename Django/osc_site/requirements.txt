@@ -2,7 +2,7 @@ Django
 django_cron
 requests
 polyline
-elasticsearch_dsl
+elasticsearch
 slacker
 psycopg2
 setuptools

@@ -21,3 +21,6 @@ class CadastreServiceTest(TestCase):
 
     def test_get_zip_file(self):
         impcadastre.get_parcels_from_url('http://www.catastro.minhap.es/INSPIRE/CadastralParcels/39/39012-CABEZON DE LA SAL/A.ES.SDGC.CP.39012.zip')
+
+    def test_create_mapping(self):
+        cadastre.create_parcel_mapping()

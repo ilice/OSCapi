@@ -6,13 +6,11 @@ Created on Sat Jul 02 18:27:40 2016
 """
 
 import logging
-import elasticsearch_dsl as dsl
-from elasticsearch_dsl.connections import connections
 import requests
 import calendar
 
 import osc.util as util
-from osc.util import error_managed
+from osc.util import error_managed, es
 from osc.exceptions import ElasticException
 
 from django.conf import settings
@@ -33,11 +31,9 @@ es_station_mapping = settings.INFORIEGO['station.mapping']
 
 def get_stations_from_elastic(index=es_index,
                               mapping=es_station_mapping):
-    stations = []
-    s = dsl.Search(index=index, doc_type=mapping)
-    s.execute()
-    for station in s.scan():
-        stations.append(station.to_dict())
+    result = es.search(index=index, doc_type=mapping)
+
+    stations = [hits['_source'] for hits in result['hits']['hits']]
 
     return stations
 
@@ -81,8 +77,6 @@ def store_daily_document(document,
                          altitud,
                          index=es_index,
                          mapping=es_daily_mapping):
-    connection = connections.get_connection()
-
     document['lat_lon'] = lat_lon
     document['altitud'] = altitud
     try:
@@ -106,7 +100,7 @@ def store_daily_document(document,
              document[u'IDESTACION']
 
         util.wait_for_yellow_cluster_status()
-        connection.index(index=index, doc_type=mapping, id=id, body=document)
+        es.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
         raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))
 
@@ -221,8 +215,6 @@ def store_hourly_document(document,
                           altitud,
                           index=es_index,
                           mapping=es_daily_mapping):
-    connection = connections.get_connection()
-
     document['lat_lon'] = lat_lon
     document['altitud'] = altitud
     try:
@@ -235,7 +227,7 @@ def store_hourly_document(document,
              document[u'IDESTACION']
 
         util.wait_for_yellow_cluster_status()
-        connection.index(index=index, doc_type=mapping, id=id, body=document)
+        es.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
         raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))
 
