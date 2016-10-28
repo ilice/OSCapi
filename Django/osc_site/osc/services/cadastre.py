@@ -24,8 +24,8 @@ __all__ = ['get_cadastral_parcels_by_bbox',
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
-parcel_index = 'parcels_v1'
-parcel_mapping = 'parcel'
+parcel_index = 'jlg'
+parcel_mapping = 'jlg'
 
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
@@ -393,12 +393,14 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
 
 
 def index_parcel(parcel):
-    create_parcel_mapping()
-
-    es.index(index=parcel_index,
-             doc_type=parcel_mapping,
-             body=parcel,
-             id=parcel['properties']['nationalCadastralReference'])
+    pass
+    # Until we create an appropriate mapping, we don't persist the parcel data
+    # create_parcel_mapping()
+    #
+    # es.index(index=parcel_index,
+    #          doc_type=parcel_mapping,
+    #          body=parcel,
+    #          id=parcel['properties']['nationalCadastralReference'])
 
 
 @error_managed()
@@ -409,7 +411,7 @@ def add_public_cadastral_info(parcels):
                 parcel['properties']['cadastralData'] = \
                     get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
                 # add to elastic
-                # JLG ATTENTION: Need to previously create mapping --> index_parcel(parcel)
+                index_parcel(parcel)
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
 
