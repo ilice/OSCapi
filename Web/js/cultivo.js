@@ -5,8 +5,7 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "php/django_server_wrapper.php/osc/crops/elastic"
-			+ cultivo_id;
+	var url = "php/django_server_wrapper.php/osc/crops/elastic" + cultivo_id;
 
 	var data = {
 		"query" : {
@@ -57,8 +56,7 @@ function cargaDatos() {
 						document.getElementById('familia').innerHTML = crop["Familia"];
 						document.getElementById('nombres_comunes').innerHTML = crop["Nombres Comunes"];
 						document.getElementById('imagen').innerHTML = '<img src="img/cultivos/'
-								+ crop["Foto"]
-								+ '" style="width:100%"/>';
+								+ crop["Foto"] + '" style="width:100%"/>';
 
 						document.getElementById('buscar_imagen').innerHTML = '<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'
 								+ 'onclick="location.href=\'https://www.google.es/search?q='
@@ -75,11 +73,10 @@ function cargaDatos() {
 
 						// Ficha sobre los periodos
 						document.getElementById('ciclo_vegetativo').innerHTML = recorta(
-								"ciclo_vegetativo",
-								crop["Ciclo vegetativo"], 35);
-						document.getElementById('fotoperiodo').innerHTML = recorta(
-								"fotoperiodo", crop["Fotoperíodo"],
+								"ciclo_vegetativo", crop["Ciclo vegetativo"],
 								35);
+						document.getElementById('fotoperiodo').innerHTML = recorta(
+								"fotoperiodo", crop["Fotoperíodo"], 35);
 						destacaTipoFotosintetico(crop["Tipo Fotosintético"]);
 
 						// Observaciones
@@ -103,6 +100,17 @@ function cargaDatos() {
 
 						document.getElementById('salinidad').innerHTML = crop["Salinidad"];
 						document.getElementById('ph').innerHTML = crop["pH"];
+
+						var id = crop.Foto.substring(0, crop.Foto.indexOf('.'));
+						document.getElementById('cropId').value = id;
+
+						var altitudeRequirements = crop.altitude;
+						for (altitudeRequirementNumber in altitudeRequirements) {
+							var altitude = altitudeRequirements[altitudeRequirementNumber];
+
+							addMinMaxRequirementsRow("Altitud", altitude);
+
+						}
 
 					}
 				}
@@ -221,4 +229,174 @@ function destacaTipoFotosintetico(tipoFotosintetico) {
 		document.getElementById("cam").style.opacity = 0.2;
 
 	}
+}
+
+function removeRequirementsRow(id){
+	var item = document.getElementById(id);
+	item.parentNode.removeChild(item);
+}
+
+function addMinMaxRequirementsRow(type, requirement)
+
+{
+	var number = document.getElementsByClassName(type).length + 1;
+
+	var rowContainer = document.createElement("div");
+	rowContainer.setAttribute("id", type + "_requirement_" + number);
+	document.getElementById("requirementsRows").appendChild(rowContainer);
+	
+	var removeButton = document.createElement("a");
+	removeButton.setAttribute("href", "javascript:void(0)");
+	removeButton.setAttribute("class", "w3-closebtn");
+	removeButton.setAttribute("onclick","removeRequirementsRow(\"" + type + "_requirement_" + number + "\")");
+	rowContainer.appendChild(removeButton);
+	
+	var removeButtonIcon = document.createElement("i");
+	removeButtonIcon.setAttribute("class", "fa fa-remove");
+	removeButton.appendChild(removeButtonIcon);
+	
+	
+	
+	var row = document.createElement("div");
+	row.setAttribute("class", "w3-row-padding " + type);
+	//row.setAttribute("id", type + "_requirement_" + number);
+	rowContainer.appendChild(row);
+	row.style = "margin-right: 50px;";
+	
+	
+	
+	
+	
+	
+	//First column: Label
+
+	var firstColumn = document.createElement("div");
+	firstColumn.setAttribute("class", "w3-quarter")
+	row.appendChild(firstColumn);
+	
+	var requirementName = document.createElement("h3");
+	requirementName.setAttribute("class", "w3-text-right");
+	firstColumn.appendChild(requirementName);
+
+	var nameLabelText = document.createTextNode(type);
+	requirementName.appendChild(nameLabelText);
+	
+	
+	
+	
+	
+	//Second column: Minimum
+
+	var secondColumn = document.createElement("div");
+	secondColumn.setAttribute("class", "w3-quarter");
+	row.appendChild(secondColumn);
+
+	var labelOfSecondColumn = document.createElement("label");
+	labelOfSecondColumn.setAttribute("class",
+			"w3-label w3-text-grey w3-validate");
+	secondColumn.appendChild(labelOfSecondColumn);
+
+	var labelOflabelOfSecondColumn = document.createElement("b");
+	labelOfSecondColumn.appendChild(labelOflabelOfSecondColumn);
+
+	var textOflabelOflabelOfSecondColumn = document.createTextNode("Mínima");
+	labelOflabelOfSecondColumn.appendChild(textOflabelOflabelOfSecondColumn);
+
+	var inputOfSecondColumn = document.createElement("input");
+	inputOfSecondColumn.setAttribute("id", "min" + type + "_"
+			+ number);
+	inputOfSecondColumn.setAttribute("class",
+			"w3-input w3-border w3-light-grey");
+	inputOfSecondColumn.setAttribute("name", "min" + type + "_"
+			+ number);
+	inputOfSecondColumn.setAttribute("type", "number");
+	inputOfSecondColumn.setAttribute("placeholder", type + " mínima");
+	if (!(requirement=== undefined) &&!(requirement.min === undefined)) {
+		inputOfSecondColumn.setAttribute("value", requirement.min);
+	}
+	secondColumn.appendChild(inputOfSecondColumn);
+	
+	
+	//Third column: Maximum
+
+	var thirdColumn = document.createElement("div");
+	thirdColumn.setAttribute("class", "w3-quarter");
+	row.appendChild(thirdColumn);
+
+	var labelOfThirdColumn = document.createElement("label");
+	labelOfThirdColumn.setAttribute("class",
+			"w3-label w3-text-grey w3-validate");
+	thirdColumn.appendChild(labelOfThirdColumn);
+
+	var labelOflabelOfThirdColumn = document.createElement("b");
+	labelOfThirdColumn.appendChild(labelOflabelOfThirdColumn);
+
+	var textOflabelOflabelOfThirdColumn = document.createTextNode("Máxima");
+	labelOflabelOfThirdColumn.appendChild(textOflabelOflabelOfThirdColumn);
+
+	var inputOfThirdColumn = document.createElement("input");
+	inputOfThirdColumn.setAttribute("id", "max" + type + "_"
+			+ number);
+	inputOfThirdColumn
+			.setAttribute("class", "w3-input w3-border w3-light-grey");
+	inputOfThirdColumn.setAttribute("name", "max" + type +"_"
+			+ number);
+	inputOfThirdColumn.setAttribute("type", "number");
+	inputOfThirdColumn.setAttribute("placeholder", type + " máxima");
+	if (!(requirement=== undefined) &&!(requirement.max === undefined)) {
+		inputOfThirdColumn.setAttribute("value", requirement.max);
+	}
+	thirdColumn.appendChild(inputOfThirdColumn);
+	
+	//Fourth column: Comments
+
+	var fourthColumn = document.createElement("div");
+	fourthColumn.setAttribute("class", "w3-quarter");
+	row.appendChild(fourthColumn);
+
+	var labelOfFourthColumn = document.createElement("label");
+	labelOfFourthColumn.setAttribute("class",
+			"w3-label w3-text-grey w3-validate");
+	fourthColumn.appendChild(labelOfFourthColumn);
+
+	var labelOflabelOfFourthColumn = document.createElement("b");
+	labelOfFourthColumn.appendChild(labelOflabelOfFourthColumn);
+
+	var textOflabelOflabelOfFourthColumn = document
+			.createTextNode("Observaciones");
+	labelOflabelOfFourthColumn.appendChild(textOflabelOflabelOfFourthColumn);
+
+	var inputOfFourthColumn = document.createElement("input");
+	inputOfFourthColumn.setAttribute("id", type + "Obs_"
+			+ number);
+	inputOfFourthColumn.setAttribute("class",
+			"w3-input w3-border w3-light-grey");
+	inputOfFourthColumn.setAttribute("name", type + "Obs_"
+			+ number);
+	inputOfFourthColumn.setAttribute("type", "text");
+	inputOfFourthColumn.setAttribute("placeholder",
+			"Observaciones sobre la Altitud");
+	if (!(requirement=== undefined) &&!(requirement.obs === undefined)) {
+		inputOfFourthColumn.setAttribute("value", requirement.obs);
+	}
+	fourthColumn.appendChild(inputOfFourthColumn);
+}
+
+function updateCrop(form) {
+    
+    for(element in form)
+    {
+    	var id = form[element].id;
+    	var type = getType(id);
+    	var value = form[element].value;
+    	
+    }
+}
+
+function getType(id){
+	return id.substring(0,3);
+}
+
+function reloadPage(){
+	location.reload(true);
 }

@@ -58,10 +58,13 @@
 	<div class="w3-main">
 
 		<!-- Header -->
-		<header class="w3-container" style="padding-top: 65px">
-			<h5>
+		<header class="w3-container w3-clear" style="padding-top: 65px">
+			<h5 class="w3-left">
 				<i class="fa fa-dashboard"></i> <span id="pagina"></span>
 			</h5>
+			<a href="javascript:void(0)"
+				onclick="document.getElementById('editModal').style.display='block'"><i
+				class="fa fa-edit w3-right"></i></a>
 		</header>
 		<!-- Línea de widgets de colores iniciales -->
 		<div class="w3-row-padding w3-margin-bottom">
@@ -422,6 +425,39 @@
 			src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
 		</a>
 	</footer>
+
+	<!-- The Modal -->
+	<div id="editModal" class="w3-modal">
+		<div class="w3-modal-content">
+
+			<form onsubmit="updateCrop(this)" method="post">
+				<div class="w3-card-4">
+					<div class="w3-container w3-light-grey">
+						<span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+						<h2 class="w3-text-dark-grey">
+							Valores de filtrado para el cultivo <input id="cropId"
+								class="w3-light-grey w3-border-0" name="cultivo_id"
+								type="number" readonly="readonly">
+						</h2>
+					</div>
+
+					<div class=w3-container>
+						<div id="requirementsRows" class="w3-row-padding"></div>
+
+						<div class="w3-clear">
+							<button class="w3-btn w3-left w3-light-grey">Modificar</button>
+							<a class="w3-btn-floating w3-right w3-grey w3-text-light-grey"
+								onclick="addMinMaxRequirementsRow('Altitud')">+</a>
+						</div>
+
+
+					</div>
+
+				</div>
+			</form>
+		</div>
+	</div>
+
 
 </body>
 </html>
