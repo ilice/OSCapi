@@ -21,33 +21,6 @@ $sw_lng = explode ( ",", $bbox ) [1];
 $ne_lat = explode ( ",", $bbox ) [2];
 $ne_lng = explode ( ",", $bbox ) [3];
 
-$sw_coordinates = array (
-		$sw_lat,
-		$sw_lng 
-);
-$nw_coordinates = array (
-		$ne_lat,
-		$sw_lng 
-);
-$ne_coordinates = array (
-		$ne_lat,
-		$ne_lng 
-);
-$se_coordinates = array (
-		$sw_lat,
-		$ne_lng 
-);
-
-$ring_coordinates = array (
-		$sw_coordinates,
-		$se_coordinates,
-		$ne_coordinates,
-		$nw_coordinates,
-		$sw_coordinates 
-);
-$polygon_coordinates = array (
-		$ring_coordinates 
-);
 // "AG", "ED", "CA", "ZU", "ZV", "ZC"
 $input = '{
 	"size" : 10000,
