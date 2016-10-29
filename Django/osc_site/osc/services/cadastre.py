@@ -90,12 +90,22 @@ def create_parcel_mapping():
     mapping = {
         "properties": {
             "bbox": {
-                "type": "geo_shape"
+                "properties": {
+                    "coordinates": {
+                        "type": "float",
+                        "index": "no"
+                    },
+                    "type": {
+                        "type": "keyword",
+                        "index": "no"
+                    }
+                }
             },
             "geometry": {
                 "properties": {
                     "coordinates": {
-                        "type": "float"
+                        "type": "float",
+                        "index": "no"
                     },
                     "type": {
                         "type": "keyword",
@@ -119,10 +129,9 @@ def create_parcel_mapping():
                     },
                     "label": {
                         "type": "keyword",
-                        "index": "not_analyzed"
                     },
                     "nationalCadastralReference": {
-                        "type": "text"
+                        "type": "keyword"
                     },
                     "reference_point": {
                         "type": "geo_point"
@@ -353,8 +362,6 @@ def get_public_cadastre_info(code):
 
 
 def store_parcels(parcels):
-    create_parcel_mapping()
-
     chunk_size = settings.ELASTICSEARCH['chunk_size']
 
     for i in range(0, len(parcels), chunk_size):
