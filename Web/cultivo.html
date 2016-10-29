@@ -430,7 +430,7 @@
 	<div id="editModal" class="w3-modal">
 		<div class="w3-modal-content">
 
-			<form onsubmit="updateCrop(this)" method="post">
+			<div id="cropForm">
 				<div class="w3-card-4">
 					<div class="w3-container w3-light-grey">
 						<span onclick="reloadPage()" class="w3-closebtn">&times;</span>
@@ -445,7 +445,8 @@
 						<div id="requirementsRows" class="w3-row-padding"></div>
 
 						<div class="w3-clear">
-							<button class="w3-btn w3-left w3-light-grey">Modificar</button>
+							<button onclick="updateCrop()"
+								class="w3-btn w3-left w3-light-grey">Modificar</button>
 							<a class="w3-btn-floating w3-right w3-grey w3-text-light-grey"
 								onclick="addMinMaxRequirementsRow()">+</a>
 						</div>
@@ -455,13 +456,31 @@
 
 				</div>
 				<datalist id="measures">
-					<option value="Altitud">
+					<option value="Altitud" label="En metros">
 					<option value="pH">
-					<option value="Latitud">
+					<option value="Latitud" label="Número positivo indica latitud norte y negativo latitud sur">
+					<option value="Precipitación" label="Anual">
 				</datalist>
-			</form>
+			</div>
 		</div>
 	</div>
+
+	<!-- The Result Modal -->
+	<div id="result" class="w3-modal">
+		<div class="w3-modal-content w3-card-4">
+			<header class="w3-container w3-light-grey">
+				<span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+				<h2 class="w3-text-dark-grey">Actualización del cultivo</h2>
+			</header>
+			<div class="w3-container ">
+				<div id="resultText" class=w3-container></div>
+			</div>
+			<footer class="w3-container w3-light-grey w3-padding-large">
+				<button onclick="reloadPage()" class="w3-btn w3-left w3-grey">Continar</button>
+			</footer>
+		</div>
+	</div>
+
 
 </body>
 </html>
