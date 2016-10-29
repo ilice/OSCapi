@@ -15,12 +15,18 @@ class Command(BaseCommand):
                             dest='force_update',
                             help='Force Update the parcels, even if the date does not fit')
 
+        parser.add_argument('--import_zip_url',
+                            dest='import_zip_url',
+                            help='imports just a particular zip file pointed by the zip url')
+
         parser.add_argument('provinces', nargs='*', type=int)
 
     def handle(self, *args, **options):
-        logging.info('Importing parcels')
-
         force_update = options['force_update']
         provinces = None if not options['provinces'] else options['provinces']
+        import_zip_url = options['import_zip_url']
 
-        cadastre.update_cadastral_information(force_update=force_update, provinces=provinces)
+        if import_zip_url:
+            cadastre.store_parcels_from_url(import_zip_url)
+        else:
+            cadastre.update_cadastral_information(force_update=force_update, provinces=provinces)
