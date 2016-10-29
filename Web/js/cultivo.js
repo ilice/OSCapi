@@ -113,6 +113,22 @@ function cargaDatos() {
 
 						}
 
+						var pHRequirements = crop.ph;
+						for (pHRequirementNumber in pHRequirements) {
+							var pH = pHRequirements[pHRequirementNumber];
+
+							addMinMaxRequirementsRow("pH", pH);
+
+						}
+						
+						var latitudeRequirements = crop.latitude;
+						for (latitudeRequirementsNumber in latitudeRequirements) {
+							var latitude = latitudeRequirements[latitudeRequirementsNumber];
+
+							addMinMaxRequirementsRow("Latitud", latitude);
+
+						}
+
 					}
 				}
 			});
@@ -387,13 +403,12 @@ function addMinMaxRequirementsRow(type, requirement)
 	fourthColumn.appendChild(inputOfFourthColumn);
 }
 
-function updateCrop(form) {
+function updateCrop() {
 
+	var form = document.getElementById("cropForm");
 	var doc = {};
 	doc["altitude"] = [];
 	var cropId = form.getElementsByTagName("input").cropId.value;
-
-	var elements = form.elements;
 
 	var fieldsets = document.getElementsByTagName("fieldset");
 	var fieldsetNumber;
@@ -460,9 +475,11 @@ function updateCrop(form) {
 
 	}
 
-	var data = { doc : doc};
-	var url = "php/api_rest.php/osc/requirements/"+cropId+"/_update";
-	
+	var data = {
+		doc : doc
+	};
+	var url = "php/api_rest.php/osc/requirements/" + cropId + "/_update";
+
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
@@ -470,6 +487,38 @@ function updateCrop(form) {
 		dataType : "json",
 		data : JSON.stringify(data)
 	});
+
+	request
+			.done(function(response, textStatus, jqXHR) {
+				if (response.result == "updated") {
+
+					document.getElementById('resultText').innerHTML = '<p><i class="fa fa-check-square-o w3-text-green"></i> ¡Estupendo! El cultivo se ha actualizado. <i class="fa fa-smile-o"></i></p>';
+					document.getElementById('result').style.display = 'block';
+
+				} else {
+					document.getElementById('resultText').innerHTML = '<p>La hemos liao. '
+							+ '<i class="fa fa fa-meh-o w3-text-red"></i> '
+							+ ' Aquí va algo de información por si ayuda. '
+							+ '<i class="fa fa-fire-extinguisher w3-text-red"></i></p>'
+							+ '<h4>Datos del request a la url:</h4> '
+							+ '<p>'
+							+ url
+							+ '</p>'
+							+ '<div class="w3-panel w3-pale-blue w3-leftbar w3-border-blue">'
+							+ '<pre style="white-space: pre-wrap;"><code>'
+							+ JSON.stringify(data)
+							+ '</code></pre>'
+							+ '</div>'
+							+ '<div class="w3-panel w3-pale-red w3-leftbar w3-border-red">'
+							+ '<pre style="white-space: pre-wrap;"><code>'
+							+ JSON.stringify(response)
+							+ '</code></pre>' + '</div>';
+					;
+					document.getElementById('result').style.display = 'block';
+
+				}
+
+			});
 
 }
 
