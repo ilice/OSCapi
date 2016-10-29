@@ -318,6 +318,7 @@ function addMinMaxRequirementsRow(type, requirement)
 			"w3-input w3-border w3-light-grey");
 	inputOfSecondColumn.setAttribute("name", "min_" + type + "_" + number);
 	inputOfSecondColumn.setAttribute("type", "number");
+	inputOfSecondColumn.setAttribute("step", "0.01");
 	inputOfSecondColumn.setAttribute("placeholder", type + " mínima");
 	if (!(requirement === undefined) && !(requirement.min === undefined)) {
 		inputOfSecondColumn.setAttribute("value", requirement.min);
@@ -347,6 +348,7 @@ function addMinMaxRequirementsRow(type, requirement)
 			.setAttribute("class", "w3-input w3-border w3-light-grey");
 	inputOfThirdColumn.setAttribute("name", "max_" + type + "_" + number);
 	inputOfThirdColumn.setAttribute("type", "number");
+	inputOfThirdColumn.setAttribute("step", "0.01");
 	inputOfThirdColumn.setAttribute("placeholder", type + " máxima");
 	if (!(requirement === undefined) && !(requirement.max === undefined)) {
 		inputOfThirdColumn.setAttribute("value", requirement.max);
