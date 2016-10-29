@@ -5,7 +5,7 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "php/django_server_wrapper.php/osc/crops/elastic" + cultivo_id;
+	var url = "php/django_server_wrapper.php/osc/crops/elastic";
 
 	var data = {
 		"query" : {
@@ -232,7 +232,7 @@ function destacaTipoFotosintetico(tipoFotosintetico) {
 	}
 }
 
-function removeRequirementsRow(id){
+function removeRequirementsRow(id) {
 	var item = document.getElementById(id);
 	item.parentNode.removeChild(item);
 }
@@ -242,51 +242,60 @@ function addMinMaxRequirementsRow(type, requirement)
 {
 	var number = document.getElementsByClassName(type).length + 1;
 
-	var rowContainer = document.createElement("div");
+	var rowContainer = document.createElement("fieldset");
 	rowContainer.setAttribute("id", type + "_requirement_" + number);
+	rowContainer.setAttribute("class", "w3-border-0");
 	document.getElementById("requirementsRows").appendChild(rowContainer);
-	
+
 	var removeButton = document.createElement("a");
 	removeButton.setAttribute("href", "javascript:void(0)");
 	removeButton.setAttribute("class", "w3-closebtn");
-	removeButton.setAttribute("onclick","removeRequirementsRow(\"" + type + "_requirement_" + number + "\")");
+	removeButton.setAttribute("onclick", "removeRequirementsRow(\"" + type
+			+ "_requirement_" + number + "\")");
 	rowContainer.appendChild(removeButton);
-	
+
 	var removeButtonIcon = document.createElement("i");
 	removeButtonIcon.setAttribute("class", "fa fa-remove");
 	removeButton.appendChild(removeButtonIcon);
-	
-	
-	
+
 	var row = document.createElement("div");
 	row.setAttribute("class", "w3-row-padding " + type);
-	//row.setAttribute("id", type + "_requirement_" + number);
+	// row.setAttribute("id", type + "_requirement_" + number);
 	rowContainer.appendChild(row);
 	row.style = "margin-right: 50px;";
-	
-	
-	
-	
-	
-	
-	//First column: Label
+
+	// First column: Label
 
 	var firstColumn = document.createElement("div");
 	firstColumn.setAttribute("class", "w3-quarter")
 	row.appendChild(firstColumn);
-	
-	var requirementName = document.createElement("h3");
-	requirementName.setAttribute("class", "w3-text-right");
-	firstColumn.appendChild(requirementName);
 
-	var nameLabelText = document.createTextNode(type);
-	requirementName.appendChild(nameLabelText);
-	
-	
-	
-	
-	
-	//Second column: Minimum
+	var labelOfFirstColumn = document.createElement("label");
+	labelOfFirstColumn.setAttribute("class",
+			"w3-label w3-text-grey w3-validate");
+	firstColumn.appendChild(labelOfFirstColumn);
+
+	var labelOflabelOfFirstColumn = document.createElement("b");
+	labelOfFirstColumn.appendChild(labelOflabelOfFirstColumn);
+
+	var textOflabelOflabelOfFirstColumn = document
+			.createTextNode("Restricción");
+	labelOflabelOfFirstColumn.appendChild(textOflabelOflabelOfFirstColumn);
+
+	var inputOfFirstColumn = document.createElement("input");
+	inputOfFirstColumn.setAttribute("id", "measure_" + type + "_" + number);
+	inputOfFirstColumn
+			.setAttribute("class", "w3-input w3-border w3-light-grey");
+	inputOfFirstColumn.setAttribute("name", "measure_" + type + "_" + number);
+	inputOfFirstColumn.setAttribute("type", "text");
+	inputOfFirstColumn.setAttribute("placeholder", "Medida");
+	inputOfFirstColumn.setAttribute("list", "measures");
+	if (!(type === undefined)) {
+		inputOfFirstColumn.setAttribute("value", type);
+	}
+	firstColumn.appendChild(inputOfFirstColumn);
+
+	// Second column: Minimum
 
 	var secondColumn = document.createElement("div");
 	secondColumn.setAttribute("class", "w3-quarter");
@@ -304,21 +313,18 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfSecondColumn.appendChild(textOflabelOflabelOfSecondColumn);
 
 	var inputOfSecondColumn = document.createElement("input");
-	inputOfSecondColumn.setAttribute("id", "min_" + type + "_"
-			+ number);
+	inputOfSecondColumn.setAttribute("id", "min_" + type + "_" + number);
 	inputOfSecondColumn.setAttribute("class",
 			"w3-input w3-border w3-light-grey");
-	inputOfSecondColumn.setAttribute("name", "min_" + type + "_"
-			+ number);
+	inputOfSecondColumn.setAttribute("name", "min_" + type + "_" + number);
 	inputOfSecondColumn.setAttribute("type", "number");
 	inputOfSecondColumn.setAttribute("placeholder", type + " mínima");
-	if (!(requirement=== undefined) &&!(requirement.min === undefined)) {
+	if (!(requirement === undefined) && !(requirement.min === undefined)) {
 		inputOfSecondColumn.setAttribute("value", requirement.min);
 	}
 	secondColumn.appendChild(inputOfSecondColumn);
-	
-	
-	//Third column: Maximum
+
+	// Third column: Maximum
 
 	var thirdColumn = document.createElement("div");
 	thirdColumn.setAttribute("class", "w3-quarter");
@@ -336,20 +342,18 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfThirdColumn.appendChild(textOflabelOflabelOfThirdColumn);
 
 	var inputOfThirdColumn = document.createElement("input");
-	inputOfThirdColumn.setAttribute("id", "max_" + type + "_"
-			+ number);
+	inputOfThirdColumn.setAttribute("id", "max_" + type + "_" + number);
 	inputOfThirdColumn
 			.setAttribute("class", "w3-input w3-border w3-light-grey");
-	inputOfThirdColumn.setAttribute("name", "max_" + type +"_"
-			+ number);
+	inputOfThirdColumn.setAttribute("name", "max_" + type + "_" + number);
 	inputOfThirdColumn.setAttribute("type", "number");
 	inputOfThirdColumn.setAttribute("placeholder", type + " máxima");
-	if (!(requirement=== undefined) &&!(requirement.max === undefined)) {
+	if (!(requirement === undefined) && !(requirement.max === undefined)) {
 		inputOfThirdColumn.setAttribute("value", requirement.max);
 	}
 	thirdColumn.appendChild(inputOfThirdColumn);
-	
-	//Fourth column: Comments
+
+	// Fourth column: Comments
 
 	var fourthColumn = document.createElement("div");
 	fourthColumn.setAttribute("class", "w3-quarter");
@@ -368,41 +372,117 @@ function addMinMaxRequirementsRow(type, requirement)
 	labelOflabelOfFourthColumn.appendChild(textOflabelOflabelOfFourthColumn);
 
 	var inputOfFourthColumn = document.createElement("input");
-	inputOfFourthColumn.setAttribute("id", "obs_" + type  
-			+ number);
+	inputOfFourthColumn.setAttribute("id", "obs_" + type + "_" + number);
 	inputOfFourthColumn.setAttribute("class",
 			"w3-input w3-border w3-light-grey");
-	inputOfFourthColumn.setAttribute("name", "obs_" + type
-			+ number);
+	inputOfFourthColumn.setAttribute("name", "obs_" + type + "_" + number);
 	inputOfFourthColumn.setAttribute("type", "text");
 	inputOfFourthColumn.setAttribute("placeholder",
 			"Observaciones sobre la Altitud");
-	if (!(requirement=== undefined) &&!(requirement.obs === undefined)) {
+	if (!(requirement === undefined) && !(requirement.obs === undefined)) {
 		inputOfFourthColumn.setAttribute("value", requirement.obs);
 	}
 	fourthColumn.appendChild(inputOfFourthColumn);
 }
 
 function updateCrop(form) {
-    
-    for(element in form)
-    {
-    	var id = form[element].id;
-    	var requirement = getRequirement(id);
-    	var type = getType(id);
-    	var value = form[element].value;
-    	
-    }
+
+	var doc = {};
+	doc["altitude"] = [];
+	var cropId = form.getElementsByTagName("input").cropId.value;
+
+	var elements = form.elements;
+
+	var fieldsets = document.getElementsByTagName("fieldset");
+	var fieldsetNumber;
+	for (fieldsetNumber = 0; fieldsetNumber < fieldsets.length; fieldsetNumber++) {
+		var fieldset = fieldsets[fieldsetNumber];
+		var inputs = fieldset.getElementsByTagName("input");
+		var label;
+		var requirement = {};
+		var inputNumber;
+		for (inputNumber = 0; inputNumber < inputs.length; inputNumber++) {
+			var input = inputs[inputNumber];
+			var type = getType(input.id);
+			var value = input.value;
+			if (type != "measure") {
+				requirement[type] = value;
+			} else {
+				label = value;
+			}
+		}
+		switch (label) {
+		case "Altitud":
+			label = "altitude";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		case "Latitud":
+			label = "altitude";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		case "pH":
+			label = "ph";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		case "Temperatura":
+			label = "temperatura";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		case "Precipitación anual en mm":
+			label = "rainfall";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	var data = { doc : doc};
+	var url = "php/api_rest.php/osc/requirements/"+cropId+"/_update";
+	
+	var request = jQuery.ajax({
+		crossDomain : true,
+		url : url,
+		type : 'POST',
+		dataType : "json",
+		data : JSON.stringify(data)
+	});
+
 }
 
-function getType(id){
+function getType(id) {
 	return id.split("_")[0];
 }
 
-function getRequirement(id){
+function getRequirement(id) {
 	return id.split("_")[1];
 }
 
-function reloadPage(){
+function getRequirementId(id) {
+	return id.split("_")[2];
+}
+
+function reloadPage() {
 	location.reload(true);
 }
