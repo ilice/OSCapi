@@ -84,12 +84,12 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 		if (response.status == "SUCCESS") {
 			
 			
-		var crops = response.result;
+		var crops = response.result.crops;
 		var rowIndex = 0;
 		document.getElementById('photoGrid').innerHTML = "";
 		for (cropNumber in crops) {
-			var crop = crops[cropNumber];
-			var id = crop.Foto.substring(0,crop.Foto.indexOf('.'));
+			var crop = crops[cropNumber]["_source"];
+			var id = crops[cropNumber]._id;
 			
 			if ((cropNumber % 3) == 0) {
 				document.getElementById('photoGrid').innerHTML += '<div class="w3-row">';
@@ -143,7 +143,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 			}
 
 		}
-		elementosEncontrados = crops.total;
+		elementosEncontrados = response.result.total;
 		ultimoCultivoCargado = numeroCultivoInicial + numeroCultivosACargar;
 		document.getElementById('pagina').innerHTML = (ultimoCultivoCargado / numeroCultivosPorPagina) + " / " + Math.ceil((elementosEncontrados / numeroCultivosPorPagina));
 	}});
