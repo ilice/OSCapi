@@ -2,7 +2,7 @@ import feedparser
 import requests
 import zipfile
 import StringIO
-from osc.util import contains_any
+from osc.util import contains_any, localize_datetime
 from datetime import datetime
 from osc.services import start_feed_read, finish_feed_read, get_last_successful_update_date, store_parcels
 from osc.util import error_managed
@@ -38,21 +38,21 @@ def partition_inspire_xml_file(xml_file, chunk_size):
             xml_chunk = join(chunk, footer, header)
             chunk = []
             yield xml_chunk
-
-        # distinguish between header and chunk
-        if header_read:
-            chunk.append(line)
         else:
-            header += line
+            # distinguish between header and chunk
+            if header_read:
+                chunk.append(line)
+            else:
+                header += line
 
-        # check wether parcel has ended
-        if parcel_end in line:
-            parcels += 1
-            if parcels >= chunk_size:
-                xml_chunk = join(chunk, footer, header)
-                chunk = []
-                parcels = 0
-                yield xml_chunk
+            # check wether parcel has ended
+            if parcel_end in line:
+                parcels += 1
+                if parcels >= chunk_size:
+                    xml_chunk = join(chunk, footer, header)
+                    chunk = []
+                    parcels = 0
+                    yield xml_chunk
 
 
 def join(chunk, footer, header):
@@ -96,20 +96,10 @@ def update_catastral_municipality(municipality, force_update=False):
 
 @error_managed()
 def update_catastral_province(province, force_update=False):
-    last_update_date = get_last_successful_update_date(province.link)
+    feed = feedparser.parse(province.link)
 
-    if force_update or last_update_date is None or last_update_date < get_update_date(province):
-        feed_id = start_feed_read(province.link, get_update_date(province))
-        feed = feedparser.parse(province.link)
-
-        try:
-            for municipality in feed.entries:
-                update_catastral_municipality(municipality, force_update)
-
-            finish_feed_read(feed_id, True)
-        except Exception as e:
-            finish_feed_read(feed_id, False, e.message)
-            raise
+    for municipality in feed.entries:
+        update_catastral_municipality(municipality, force_update)
 
 
 def get_update_date(feed):
@@ -129,18 +119,8 @@ def get_update_date(feed):
 def update_cadastral_information(force_update=False, provinces=None):
     feed = feedparser.parse(url_atom_inspire)
 
-    last_update_date = get_last_successful_update_date(url_atom_inspire)
-
-    if force_update or last_update_date is None or last_update_date < get_update_date(feed):
-        feed_id = start_feed_read(url_atom_inspire, get_update_date(feed))
-
-        try:
-            for province in feed.entries:
-                if provinces is None or contains_any(feed.title, provinces):
-                    update_catastral_province(province, force_update)
-            finish_feed_read(feed_id, True)
-        except Exception as e:
-            finish_feed_read(feed_id, False, e.message)
-            raise
+    for province in feed.entries:
+        if provinces is None or contains_any(feed.title, provinces):
+            update_catastral_province(province, force_update)
 
 

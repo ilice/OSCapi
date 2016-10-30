@@ -7,10 +7,16 @@ import datetime
 import time
 from osc.util import error_managed, es
 from osc.exceptions import ElasticException
+import pytz
+from django.conf import settings
 
 FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
+
+
+def localize_datetime(datetime):
+    return pytz.timezone(settings.TIME_ZONE).localize(datetime)
 
 
 def as_list(param):
