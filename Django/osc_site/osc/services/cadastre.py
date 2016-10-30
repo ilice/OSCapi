@@ -146,12 +146,13 @@ def create_parcel_mapping():
 
 def latlon_2_utm(lat, lon, zone_number):
     p = Proj(init=zone_number)
-    return p(lat, lon)
+    return p(lon, lat)
 
 
 def utm_2_latlon(x, y, zone_number):
     p = Proj(init=zone_number)
-    return p(x, y, inverse=True)
+    lon, lat = p(x, y, inverse=True)
+    return lat, lon
 
 
 def get_gml_linear_ring(linear_ring_elem, zone_number):
