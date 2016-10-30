@@ -38,21 +38,21 @@ def partition_inspire_xml_file(xml_file, chunk_size):
             xml_chunk = join(chunk, footer, header)
             chunk = []
             yield xml_chunk
-
-        # distinguish between header and chunk
-        if header_read:
-            chunk.append(line)
         else:
-            header += line
+            # distinguish between header and chunk
+            if header_read:
+                chunk.append(line)
+            else:
+                header += line
 
-        # check wether parcel has ended
-        if parcel_end in line:
-            parcels += 1
-            if parcels >= chunk_size:
-                xml_chunk = join(chunk, footer, header)
-                chunk = []
-                parcels = 0
-                yield xml_chunk
+            # check wether parcel has ended
+            if parcel_end in line:
+                parcels += 1
+                if parcels >= chunk_size:
+                    xml_chunk = join(chunk, footer, header)
+                    chunk = []
+                    parcels = 0
+                    yield xml_chunk
 
 
 def join(chunk, footer, header):

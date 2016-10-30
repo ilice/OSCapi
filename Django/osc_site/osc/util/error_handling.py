@@ -48,14 +48,17 @@ class SlackErrorHandler:
         self.num_errors = 0
 
     def flush(self):
-        self.slack.chat.post_message('#errors', 'Messages detected', attachments=[
-            {
-                "title": "Download the errors list",
-                "title_link": self.url + '/admin/osc/error/',
-                "text": 'click title to see errors',
-                "color": "#FF0000"
-            }
-        ], as_user=True)
+        try:
+            self.slack.chat.post_message('#errors', 'Messages detected', attachments=[
+                {
+                    "title": "Download the errors list",
+                    "title_link": self.url + '/admin/osc/error/',
+                    "text": 'click title to see errors',
+                    "color": "#FF0000"
+                }
+            ], as_user=True)
+        except Exception:
+            pass
 
     def error(self, process_name, module_name, function_name, message, actionable_info=None):
         self.num_errors += 1
