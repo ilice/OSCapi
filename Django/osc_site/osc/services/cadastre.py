@@ -12,9 +12,9 @@ from elasticsearch.client import IndicesClient
 
 from osc.exceptions import ElasticException
 
-from .google import obtain_elevation_from_google
+from pyproj import Proj
 
-import utm
+from .google import obtain_elevation_from_google
 
 __all__ = ['get_cadastral_parcels_by_bbox',
            'get_public_cadastre_info',
@@ -26,7 +26,7 @@ url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
 parcel_index = 'parcels_v2'
 parcel_mapping = 'parcel'
-
+zone_for_queries = 'EPSG::25830'
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'gmd': 'http://www.isotc211.org/2005/gmd',
@@ -44,12 +44,9 @@ def get_zone_number(node):
     if 'srsName' in node.attrib:
         srs_name = node.attrib['srsName']
 
-        if 'urn:ogc:def:crs:EPSG::258' in srs_name:
-            try:
-                zone_number = int(srs_name[-2:])
-            except ValueError:
-                zone_number = None
-
+        pos = srs_name.find('EPSG')
+        if pos > 0:
+            zone_number = srs_name[pos:].replace('::', ':')
     if zone_number is None:
         raise CadastreException("No zone in srsName", actionable_info=str(srs_name))
 
@@ -148,11 +145,13 @@ def create_parcel_mapping():
 
 
 def latlon_2_utm(lat, lon, zone_number):
-    return utm.from_latlon(lat, lon, force_zone_number=zone_number)
+    p = Proj(init=zone_number)
+    return p(lat, lon)
 
 
 def utm_2_latlon(x, y, zone_number):
-    return utm.to_latlon(x, y, zone_number, northern=True)
+    p = Proj(init=zone_number)
+    return p(x, y, inverse=True)
 
 
 def get_gml_linear_ring(linear_ring_elem, zone_number):
@@ -296,7 +295,7 @@ def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
     response = requests.get(url_inspire, params={'service': 'wfs',
                                                  'request': 'getfeature',
                                                  'Typenames': 'cp.cadastralparcel',
-                                                 'SRSname': 'EPSG::25830',
+                                                 'SRSname': zone_for_queries,
                                                  'bbox': bbox_text})
 
     if response.ok:
@@ -317,7 +316,7 @@ def get_inspire_data_by_code(code):
     response = requests.get(url_inspire, params={'service': 'wfs',
                                                  'request': 'getfeature',
                                                  'STOREDQUERIE_ID': 'GetParcel',
-                                                 'srsname': 'EPSG::25830',
+                                                 'srsname': zone_for_queries,
                                                  'REFCAT': code})
 
     if response.ok:
@@ -327,7 +326,7 @@ def get_inspire_data_by_code(code):
     return parcels
 
 
-def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_number=30):
+def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_number=zone_for_queries.replace('::', ':')):
     min_x, min_y, zn, zl = latlon_2_utm(min_lat, min_lon, zone_number=zone_number)
     max_x, max_y, zn, zl = latlon_2_utm(max_lat, max_lon, zone_number=zone_number)
 

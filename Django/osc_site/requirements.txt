@@ -7,7 +7,7 @@ slacker
 psycopg2
 setuptools
 matplotlib
-utm
+pyproj
 pandas
 pyshp
 feedparser
