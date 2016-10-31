@@ -1,0 +1,27 @@
+@CHARSET "ISO-8859-1";
+
+body, html {
+    height: 100%;
+
+}
+/* First image (Logo. Full height) */
+.bgimg-1 {
+	opacity: 0.7;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('../img/14469337569_fe1a849240_o.jpg');
+    height: 100%;
+}
+
+/* Adjust the position of the parallax image text */
+
+
+@media screen and (min-width: 480px) {
+    .w3-display-middle {
+        bottom: 45%;
+    }
+}
+
+.w3-wide {letter-spacing: 10px;}
