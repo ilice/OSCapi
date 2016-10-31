@@ -17,7 +17,6 @@ from pyproj import Proj
 from .google import obtain_elevation_from_google
 
 __all__ = ['get_parcels_by_bbox',
-           'get_cadastral_parcels_by_bbox',
            'get_public_cadastre_info',
            'store_parcels',
            'get_parcels_by_cadastral_code']
@@ -25,8 +24,8 @@ __all__ = ['get_parcels_by_bbox',
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
-parcel_index = 'jlg'
-parcel_mapping = 'jlg'
+parcel_index = 'parcels_v3'
+parcel_mapping = 'parcel'
 zone_for_queries = 'EPSG::25830'
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
@@ -786,35 +785,32 @@ def add_elevation_from_google(parcels):
 def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
     try:
         query = {
-                "query": {
-                    "bool": {
-                        "must": {
-                            "match_all": {}
-                        },
-                        "filter": {
-                            "geo_bounding_box": {
-                                "properties.reference_point": {
-                                    "top_left": {
-                                        "lat": max_lat,
-                                        "lon": min_lon
-                                    },
-                                    "bottom_right": {
-                                        "lat": min_lat,
-                                        "lon": max_lon
-                                    }
+            "query": {
+                "bool": {
+                    "must": {
+                        "match_all": {}
+                    },
+                    "filter": {
+                        "geo_shape": {
+                            "bbox": {
+                                "shape": {
+                                    "type": "envelope",
+                                    "coordinates": [[min_lon, min_lat], [max_lon, max_lat]]
                                 }
                             }
                         }
                     }
                 }
             }
+        }
 
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
-        add_public_cadastral_info(parcels)
-        add_elevation_from_google(parcels)
+        # JLG ATTENTION
+        # add_public_cadastral_info(parcels)
+        # add_elevation_from_google(parcels)
 
         return parcels
     except ElasticsearchException as e:
