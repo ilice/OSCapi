@@ -16,7 +16,8 @@ from pyproj import Proj
 
 from .google import obtain_elevation_from_google
 
-__all__ = ['get_cadastral_parcels_by_bbox',
+__all__ = ['get_parcels_by_bbox',
+           'get_cadastral_parcels_by_bbox',
            'get_public_cadastre_info',
            'store_parcels',
            'get_parcels_by_cadastral_code']
@@ -328,8 +329,8 @@ def get_inspire_data_by_code(code):
 
 
 def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_number=zone_for_queries.replace('::', ':')):
-    min_x, min_y, zn, zl = latlon_2_utm(min_lat, min_lon, zone_number=zone_number)
-    max_x, max_y, zn, zl = latlon_2_utm(max_lat, max_lon, zone_number=zone_number)
+    min_x, min_y = latlon_2_utm(min_lat, min_lon, zone_number=zone_number)
+    max_x, max_y = latlon_2_utm(max_lat, max_lon, zone_number=zone_number)
 
     parcels = get_inspire_data_by_bbox(min_x, min_y, max_x, max_y)
 

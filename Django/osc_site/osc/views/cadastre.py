@@ -1,7 +1,7 @@
 from django.http import JsonResponse
-from osc.services import get_cadastral_parcels_by_bbox, get_public_cadastre_info, get_parcels_by_cadastral_code
+from osc.services import get_parcels_by_bbox, get_cadastral_parcels_by_bbox, get_parcels_by_cadastral_code
 from osc.services.climate import get_closest_station, get_aggregated_climate_measures
-from osc.services.google import obtain_elevation_from_google
+
 from osc.exceptions import OSCException
 
 
@@ -47,6 +47,7 @@ def obtain_cadastral_parcels(request):
             lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))
 
             parcels = get_cadastral_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
+            # parcels = get_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
 
             # Filter the parcels that are roads, ways, etc.
             # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
