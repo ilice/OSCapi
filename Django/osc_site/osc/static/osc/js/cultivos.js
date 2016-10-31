@@ -70,7 +70,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	};
 
-	var url = "/osc/crops/elastic/search";
+	var url = "/osc/crops/elastic/search/";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
