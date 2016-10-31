@@ -38,9 +38,14 @@ WEB = {
 AUX_DIRS = {
     'data_dir': '/code/tmp/data',
     'tmp_dir': '/code/tmp/tmp',
+    'log_dir': '/code/tmp/logs',
     'errors_dir': '/code/tmp/errors',
     'dataframes_dir': '/code/tmp/dataframes'
 }
+
+for dir_name in AUX_DIRS:
+    if not os.path.exists(AUX_DIRS[dir_name]):
+        os.makedirs(AUX_DIRS[dir_name])
 
 DATABASES = {
      'default': {
@@ -50,4 +55,38 @@ DATABASES = {
          'HOST': 'db',
          'PORT': 5432,
      }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'WARN',
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'osc': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    }
 }

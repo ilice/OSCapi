@@ -16,6 +16,7 @@ class Command(BaseCommand):
                             dest='from')
 
     def handle(self, *args, **options):
+        logger.info("Deleting Tables")
         tables = options['tables']
         date_from = options['from']
         for table in tables:

@@ -10,8 +10,6 @@ from osc.exceptions import ElasticException
 import pytz
 from django.conf import settings
 
-FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-logging.basicConfig(format=FORMAT)
 logger = logging.Logger(__name__)
 
 
