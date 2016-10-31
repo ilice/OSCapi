@@ -9,6 +9,8 @@ from django.conf import settings
 
 from osc.exceptions import OSCException
 
+__all__ = ['error_managed']
+
 
 class error_managed(object):
     def __init__(self, default_answer=None, inhibit_exception=False):

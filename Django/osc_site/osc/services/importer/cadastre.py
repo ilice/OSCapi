@@ -12,6 +12,9 @@ from osc.exceptions import CadastreException
 
 import pytz
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 url_atom_inspire = 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml'
 
@@ -63,6 +66,7 @@ def join(chunk, footer, header):
 
 @error_managed(default_answer=[])
 def store_parcels_from_url(zipfile_url, chunk_size=1000):
+    logging.info('Importing parcels from %s', zipfile_url)
     r = requests.get(zipfile_url, stream=True)
     if r.ok:
         z = zipfile.ZipFile(StringIO.StringIO(r.content))
@@ -77,9 +81,12 @@ def store_parcels_from_url(zipfile_url, chunk_size=1000):
     else:
         raise CadastreException('Error connecting to ' + zipfile_url + '. Status code: ' + r.status_code)
 
+    logging.debug('        ... Finished!!')
+
 
 @error_managed()
 def update_catastral_municipality(municipality, force_update=False):
+    logger.info("Updating Municipality: %s", municipality.title)
     last_update_date = get_last_successful_update_date(municipality.link)
 
     if force_update or last_update_date is None or last_update_date < get_update_date(municipality):
@@ -93,13 +100,18 @@ def update_catastral_municipality(municipality, force_update=False):
             finish_feed_read(feed_id, False, e.message)
             raise
 
+    logging.debug('        ... Finished!!')
+
 
 @error_managed()
 def update_catastral_province(province, force_update=False):
+    logger.info('Updating Province: %s', province.title)
     feed = feedparser.parse(province.link)
 
     for municipality in feed.entries:
         update_catastral_municipality(municipality, force_update)
+
+    logging.debug('        ... Finished!!')
 
 
 def get_update_date(feed):
@@ -116,11 +128,10 @@ def get_update_date(feed):
 
 
 @error_managed()
-def update_cadastral_information(force_update=False, provinces=None):
+def update_cadastral_information(force_update=False):
     feed = feedparser.parse(url_atom_inspire)
 
     for province in feed.entries:
-        if provinces is None or contains_any(feed.title, provinces):
-            update_catastral_province(province, force_update)
+        update_catastral_province(province, force_update)
 
 

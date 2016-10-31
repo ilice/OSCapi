@@ -25,8 +25,8 @@ __all__ = ['get_parcels_by_bbox',
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
-parcel_index = 'parcels_v2'
-parcel_mapping = 'parcel'
+parcel_index = 'jlg'
+parcel_mapping = 'jlg'
 zone_for_queries = 'EPSG::25830'
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
