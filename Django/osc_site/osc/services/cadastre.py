@@ -732,16 +732,17 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
 
 @error_managed(inhibit_exception=True)
 def index_parcel(parcel):
+    pass
     # Until we create an appropriate mapping, we don't persist the parcel data
     # create_parcel_mapping()
 
-    try:
-        es.index(index=parcel_index,
-                 doc_type=parcel_mapping,
-                 body=parcel,
-                 id=parcel['properties']['nationalCadastralReference'])
-    except ElasticsearchException as e:
-        raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
+    # try:
+    #     es.index(index=parcel_index,
+    #              doc_type=parcel_mapping,
+    #              body=parcel,
+    #              id=parcel['properties']['nationalCadastralReference'])
+    # except ElasticsearchException as e:
+    #     raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
 
 
 @error_managed()
