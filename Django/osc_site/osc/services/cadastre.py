@@ -88,16 +88,7 @@ def create_parcel_mapping():
     mapping = {
         "properties": {
             "bbox": {
-                "properties": {
-                    "coordinates": {
-                        "type": "float",
-                        "index": "no"
-                    },
-                    "type": {
-                        "type": "keyword",
-                        "index": "no"
-                    }
-                }
+                "type": "geo_shape"
             },
             "geometry": {
                 "properties": {
@@ -133,7 +124,344 @@ def create_parcel_mapping():
                     },
                     "reference_point": {
                         "type": "geo_point"
+                    },
+                    "cadastralData": {
+                        "properties": {
+                            "bico": {
+                                "properties": {
+                                    "bi": {
+                                        "properties": {
+                                            "debi": {
+                                                "properties": {
+                                                    "ant": {
+                                                        "type": "short"
+                                                    },
+                                                    "cpt": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "luso": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "sfc": {
+                                                        "type": "keyword"
+                                                    }
+                                                }
+                                            },
+                                            "dt": {
+                                                "properties": {
+                                                    "cmc": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "locs": {
+                                                        "properties": {
+                                                            "lors": {
+                                                                "properties": {
+                                                                    "lorus": {
+                                                                        "properties": {
+                                                                            "cpaj": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "cpp": {
+                                                                                "properties": {
+                                                                                    "cpa": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "cpo": {
+                                                                                        "type": "keyword"
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "czc": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "npa": {
+                                                                                "type": "keyword"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "lous": {
+                                                                "properties": {
+                                                                    "lourb": {
+                                                                        "properties": {
+                                                                            "dir": {
+                                                                                "properties": {
+                                                                                    "cv": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "nv": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "pnp": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "snp": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "tv": {
+                                                                                        "type": "keyword"
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "dm": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "dp": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "loint": {
+                                                                                "properties": {
+                                                                                    "es": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "pt": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "pu": {
+                                                                                        "type": "keyword"
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "loine": {
+                                                        "properties": {
+                                                            "cm": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "cp": {
+                                                                "type": "keyword"
+                                                            }
+                                                        }
+                                                    },
+                                                    "nm": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "np": {
+                                                        "type": "keyword"
+                                                    }
+                                                }
+                                            },
+                                            "idbi": {
+                                                "properties": {
+                                                    "cn": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "rc": {
+                                                        "properties": {
+                                                            "car": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "cc1": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "cc2": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "pc1": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "pc2": {
+                                                                "type": "keyword"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "ldt": {
+                                                "type": "text"
+                                            }
+                                        }
+                                    },
+                                    "lcons": {
+                                        "properties": {
+                                            "cons": {
+                                                "type": "nested",
+                                                "properties": {
+                                                    "dfcons": {
+                                                        "properties": {
+                                                            "stl": {
+                                                                "type": "keyword"
+                                                            }
+                                                        }
+                                                    },
+                                                    "dt": {
+                                                        "properties": {
+                                                            "lourb": {
+                                                                "properties": {
+                                                                    "loint": {
+                                                                        "properties": {
+                                                                            "es": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "pt": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "pu": {
+                                                                                "type": "keyword"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "lcd": {
+                                                        "type": "keyword"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "lspr": {
+                                        "properties": {
+                                            "spr": {
+                                                "type": "nested",
+                                                "properties": {
+                                                    "cspr": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "dspr": {
+                                                        "properties": {
+                                                            "ccc": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "dcc": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "ip": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "ssp": {
+                                                                "type": "keyword"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "control": {
+                                "properties": {
+                                    "cucons": {
+                                        "type": "long"
+                                    },
+                                    "cucul": {
+                                        "type": "long"
+                                    },
+                                    "cudnp": {
+                                        "type": "long"
+                                    }
+                                }
+                            },
+                            "lrcdnp": {
+                                "properties": {
+                                    "rcdnp": {
+                                        "type": "nested",
+                                        "properties": {
+                                            "dt": {
+                                                "properties": {
+                                                    "cmc": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "locs": {
+                                                        "properties": {
+                                                            "lous": {
+                                                                "properties": {
+                                                                    "lourb": {
+                                                                        "properties": {
+                                                                            "dir": {
+                                                                                "properties": {
+                                                                                    "cv": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "nv": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "pnp": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "snp": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "tv": {
+                                                                                        "type": "keyword"
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            "dm": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "dp": {
+                                                                                "type": "keyword"
+                                                                            },
+                                                                            "loint": {
+                                                                                "properties": {
+                                                                                    "pt": {
+                                                                                        "type": "keyword"
+                                                                                    },
+                                                                                    "pu": {
+                                                                                        "type": "keyword"
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "loine": {
+                                                        "properties": {
+                                                            "cm": {
+                                                                "type": "keyword"
+                                                            },
+                                                            "cp": {
+                                                                "type": "keyword"
+                                                            }
+                                                        }
+                                                    },
+                                                    "nm": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "np": {
+                                                        "type": "keyword"
+                                                    }
+                                                }
+                                            },
+                                            "rc": {
+                                                "properties": {
+                                                    "car": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "cc1": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "cc2": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "pc1": {
+                                                        "type": "keyword"
+                                                    },
+                                                    "pc2": {
+                                                        "type": "keyword"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+
                 }
             }
         }
@@ -346,7 +674,9 @@ def parse_public_cadastre_response(elem):
         raise CadastreException(parse_public_cadastre_response(elem))
 
     # The 'lists' come from the xsd: http://www.catastro.meh.es/ws/esquemas/consulta_dnp.xsd
-    return xml_to_json(elem, lists=['cons', 'spr', 'rcdnp', 'calle'])
+    return xml_to_json(elem,
+                       lists=['cons', 'spr', 'rcdnp', 'calle'],
+                       forced_int=['cumun', 'cuca', 'cunum', 'cudnp', 'cucons', 'cucul', 'cuerr'])
 
 
 @error_managed(default_answer={})
@@ -400,15 +730,18 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
         raise ElasticException('PARCEL', e.message, e)
 
 
+@error_managed(inhibit_exception=True)
 def index_parcel(parcel):
-    pass
     # Until we create an appropriate mapping, we don't persist the parcel data
     # create_parcel_mapping()
-    #
-    # es.index(index=parcel_index,
-    #          doc_type=parcel_mapping,
-    #          body=parcel,
-    #          id=parcel['properties']['nationalCadastralReference'])
+
+    try:
+        es.index(index=parcel_index,
+                 doc_type=parcel_mapping,
+                 body=parcel,
+                 id=parcel['properties']['nationalCadastralReference'])
+    except ElasticsearchException as e:
+        raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
 
 
 @error_managed()
