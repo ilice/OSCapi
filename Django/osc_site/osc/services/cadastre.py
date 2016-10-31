@@ -808,7 +808,7 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
-        # JLG ATTENTION
+        # JLG ATTENTION: To be added when we persist the public cadastral info
         # add_public_cadastral_info(parcels)
         # add_elevation_from_google(parcels)
 

@@ -46,7 +46,6 @@ def obtain_cadastral_parcels(request):
         elif bbox_param is not None:
             lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))
 
-            # parcels = get_cadastral_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
             parcels = get_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
 
             # Filter the parcels that are roads, ways, etc.

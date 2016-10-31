@@ -5,7 +5,7 @@ function cargaDatos() {
 
 	var cultivo_id = QueryString.cultivo_id;
 
-	var url = "/osc/crops/elastic";
+	var url = "/osc/crops/elastic/search";
 
 	var data = {
 		"query" : {
@@ -478,7 +478,7 @@ function updateCrop() {
 	var data = {
 		doc : doc
 	};
-	var url = "php/api_rest.php/osc/requirements/" + cropId + "/_update";
+	var url = "/osc/crops/elastic/update/" + cropId;
 
 	var request = jQuery.ajax({
 		crossDomain : true,

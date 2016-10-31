@@ -154,7 +154,7 @@ function inicializaMapa() {
 								}
 							});
 
-							var url = "php/temp_features.php/osc/cadastral/parcel?bbox="
+							var url = "/osc/cadastral/parcel?bbox="
 									+ getOptimalBbox(bbox).toUrlValue();
 
 							mapa.data.loadGeoJson(url, null, function (features) {
