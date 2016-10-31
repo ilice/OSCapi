@@ -17,9 +17,9 @@
 <link rel="stylesheet"
 	href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
 <link rel="stylesheet" href="{% static 'osc/css/estilo.css' %}" />
-<link href="OpenSmartCountry_logo_192x192.png" rel="icon"
+<link href="{% static 'osc/img/OpenSmartCountry_logo_192x192.png' %}" rel="icon"
 	sizes="192x192" />
-<link href="OpenSmartCountry_logo_128x128.png" rel="icon"
+<link href="{% static 'osc/img/OpenSmartCountry_logo_128x128.png' %}" rel="icon"
 	sizes="128x128" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -53,7 +53,7 @@
 	<!-- Navbar (sit on top) -->
 	<div class="w3-top">
 		<ul class="w3-navbar w3-card-2 w3-left-align w3-hide-small">
-			<li><a class="w3-padding-large w3-opacity" href="index.html">
+			<li><a class="w3-padding-large w3-opacity" href="/osc">
 					<img src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
 					alt="Open Smart Country logo" />
 			</a></li>
@@ -75,7 +75,7 @@
 		<div class="w3-hide-medium w3-hide-large">
 			<div class="w3-padding-large w3-opacity"
 				style="width: 15%; float: left;">
-				<a href="index.html"><img id="logo"
+				<a href="/osc"><img id="logo"
 					src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
 					alt="Open Smart Country logo"></img></a>
 			</div>

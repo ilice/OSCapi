@@ -4,7 +4,7 @@ function cargaBarraLateral() {
 	document.getElementById('mySidenav').innerHTML += " <div class=\"w3-container  \">";
 	document.getElementById('mySidenav').innerHTML += "			<div class=\"w3-row w3-right\">";
 	document.getElementById('mySidenav').innerHTML += "				<div class=\"w3-col w3-right\">";
-	document.getElementById('mySidenav').innerHTML += "					<a href=\"index.html\" class=\"w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge\"><i class=\"fa fa-home\"></i></a>";
+	document.getElementById('mySidenav').innerHTML += "					<a href=\"/osc/index.html\" class=\"w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge\"><i class=\"fa fa-home\"></i></a>";
 	document.getElementById('mySidenav').innerHTML += "					<a href=\"/osc/mapaDeParcelas\" class=\"w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge\"><i class=\"fa fa-globe\"></i></a>";
 	document.getElementById('mySidenav').innerHTML += "					<a href=\"#\" class=\"w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge\" onclick=\"w3_close()\"><i class=\"fa fa-remove\"></i></a>";
 	document.getElementById('mySidenav').innerHTML += "				</div>";
@@ -14,7 +14,7 @@ function cargaBarraLateral() {
 
 	document.getElementById('mySidenav').innerHTML += "		<div class=\"w3-container w3-row w3-padding-16\">";
 	document.getElementById('mySidenav').innerHTML += "			<div class=\"w3-col s4\">";
-	document.getElementById('mySidenav').innerHTML += "				<img id=\"avatar\" src=\"img/"+getAvatar()+"\" class=\"w3-circle w3-margin-right\" style=\"width:46px\" alt=\"Avatar Viña de la Estación\"/>";
+	document.getElementById('mySidenav').innerHTML += "				<img id=\"avatar\" src=\"/static/osc/img/"+getAvatar()+"\" class=\"w3-circle w3-margin-right\" style=\"width:46px\" alt=\"Avatar Viña de la Estación\"/>";
 	document.getElementById('mySidenav').innerHTML += "			</div>";
 	document.getElementById('mySidenav').innerHTML += "			<div class=\"w3-col s8\">";
 	document.getElementById('mySidenav').innerHTML += "				<span>Bienvenidos a <strong>"+ document.getElementById('pagina').innerHTML+"</strong></span><br/>";

@@ -97,7 +97,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 			var contenido = '<div onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" class="w3-third w3-container">' +
 				'<div id="' + id + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
-				'<img src="img/cultivos/' + crop.Foto + '" style="width:100%"/>' +
+				'<img src="/static/osc/img/cultivos/' + crop.Foto + '" style="width:100%"/>' +
 				'<div class="w3-container">' +
 				'<h4>' + crop["Nombres Comunes"] + "</h4>" +
 				'<h5 align="right"><em>' + crop["Nombre Científico"] + '</em></h5>' +

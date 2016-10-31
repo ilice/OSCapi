@@ -56,7 +56,7 @@ function cargaDatos() {
 						document.getElementById('nombre_cientifico').innerHTML = crop["Nombre Científico"];
 						document.getElementById('familia').innerHTML = crop["Familia"];
 						document.getElementById('nombres_comunes').innerHTML = crop["Nombres Comunes"];
-						document.getElementById('imagen').innerHTML = '<img src="img/cultivos/'
+						document.getElementById('imagen').innerHTML = '<img src="/static/osc/img/cultivos/'
 								+ crop["Foto"] + '" style="width:100%"/>';
 
 						document.getElementById('buscar_imagen').innerHTML = '<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'

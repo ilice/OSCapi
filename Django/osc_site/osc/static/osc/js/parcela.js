@@ -548,7 +548,7 @@ function drawAlternatives(cadastralParcelFeatures){
 			+ ''
 			+ '	</div>'
 			+ '	<div class="w3-twothird">'
-			+ '			<img onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="img/cultivos/' + crop.Foto + '" style="width: 100%">'
+			+ '			<img onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%">'
 			+ '	</div>'
 			+ '</div>' ;
 				
