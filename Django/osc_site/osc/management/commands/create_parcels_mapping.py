@@ -13,4 +13,5 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        logger.info('Creating the parcels mapping')
         create_parcel_mapping()

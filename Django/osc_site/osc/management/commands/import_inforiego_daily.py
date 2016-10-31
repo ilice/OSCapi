@@ -17,4 +17,8 @@ class Command(BaseCommand):
         years = options['years']
         last_update_date = options['last_update_date']
 
+        logger.info('Importing Inforiego Daily for years %s with last update date %s', years, last_update_date)
+
         insert_all_stations_inforiego_daily(years, last_update_date)
+
+        logger.info('Finished Importing Inforiego Daily')

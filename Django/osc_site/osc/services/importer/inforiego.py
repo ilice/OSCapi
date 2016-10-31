@@ -117,7 +117,7 @@ def insert_inforiego_daily_years(provincia,
                                  user=user,
                                  passwd=password):
     for year in years:
-        logger.info('Inserting year ' + year + ' province ' + provincia + ' station ' + estacion)
+        logger.info('Inserting year ' + year)
         response = get_inforiego_daily_year(provincia,
                                             estacion,
                                             anno=year,
@@ -129,7 +129,7 @@ def insert_inforiego_daily_years(provincia,
         for document in response:
             store_daily_document(document, lat_lon, altitud, index, mapping)
 
-        logger.info('Inserted year ' + year + ' province ' + provincia + ' station ' + estacion)
+        logger.debug('        ... Finished!!')
 
 
 def insert_inforiego_daily_recent(provincia,
@@ -165,10 +165,14 @@ def insert_all_stations_inforiego_daily(years=None, fecha_ultima_modificacion=No
         lat_lon = station['lat_lon']
         altitud = station['ALTITUD']
 
+        logger.info('Processing Inforiego Daily Station: %s', station)
         if years is None:
             insert_inforiego_daily_recent(provincia, estacion, lat_lon, altitud, fecha_ultima_modificacion)
         else:
             insert_inforiego_daily_years(provincia, estacion, years, lat_lon, altitud, fecha_ultima_modificacion)
+
+        logger.debug('         ...finished!!')
+
 
 
 ###############################################################
@@ -245,7 +249,7 @@ def insert_inforiego_hourly_years(provincia,
                                   passwd=password):
     for year in years:
         for month in range(1, 13):
-            logger.info('Inserting year ' + year + ' month ' + str(month) + ' province ' + provincia + ' station ' + estacion)
+            logger.info('Inserting year ' + year + ' month ' + str(month))
             response = get_inforiego_daily_year(provincia,
                                                 estacion,
                                                 anno=year,
@@ -257,7 +261,7 @@ def insert_inforiego_hourly_years(provincia,
             for document in response:
                 store_daily_document(document, lat_lon, altitud, index, mapping)
 
-            logger.info('Inserted year ' + year + ' month ' + str(month) + ' province ' + provincia + ' station ' + estacion)
+            logger.debug('    ...Finished!!')
 
 
 def insert_inforiego_hourly_recent(provincia,
@@ -293,7 +297,10 @@ def insert_all_stations_inforiego_hourly(years=None, fecha_ultima_modificacion=N
         lat_lon = station['lat_lon']
         altitud = station['ALTITUD']
 
+        logger.info('Processing Inforiego Hourly Station: %s', station)
         if years is None:
             insert_inforiego_hourly_recent(provincia, estacion, lat_lon, altitud, fecha_ultima_modificacion)
         else:
             insert_inforiego_hourly_years(provincia, estacion, years, lat_lon, altitud, fecha_ultima_modificacion)
+
+        logger.debug('     ...Finised!!!')

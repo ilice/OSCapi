@@ -66,7 +66,7 @@ def join(chunk, footer, header):
 
 @error_managed(default_answer=[])
 def store_parcels_from_url(zipfile_url, chunk_size=1000):
-    logging.info('Importing parcels from %s', zipfile_url)
+    logger.info('Importing parcels from %s', zipfile_url)
     r = requests.get(zipfile_url, stream=True)
     if r.ok:
         z = zipfile.ZipFile(StringIO.StringIO(r.content))
@@ -81,7 +81,7 @@ def store_parcels_from_url(zipfile_url, chunk_size=1000):
     else:
         raise CadastreException('Error connecting to ' + zipfile_url + '. Status code: ' + r.status_code)
 
-    logging.debug('        ... Finished!!')
+    logger.debug('        ... Finished!!')
 
 
 @error_managed()
@@ -100,7 +100,7 @@ def update_catastral_municipality(municipality, force_update=False):
             finish_feed_read(feed_id, False, e.message)
             raise
 
-    logging.debug('        ... Finished!!')
+    logger.debug('        ... Finished!!')
 
 
 @error_managed()
@@ -111,7 +111,7 @@ def update_catastral_province(province, force_update=False):
     for municipality in feed.entries:
         update_catastral_municipality(municipality, force_update)
 
-    logging.debug('        ... Finished!!')
+    logger.debug('        ... Finished!!')
 
 
 def get_update_date(feed):

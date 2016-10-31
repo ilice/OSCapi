@@ -16,9 +16,11 @@ class Command(BaseCommand):
                             dest='from')
 
     def handle(self, *args, **options):
-        logger.info("Deleting Tables")
         tables = options['tables']
         date_from = options['from']
+
+        logger.info("Deleting Tables %s from %s", tables, date_from)
+
         for table in tables:
             if table == 'errors':
                 if date_from:
@@ -32,3 +34,5 @@ class Command(BaseCommand):
                     Feed.objects.filter(date_launched__gte=localize_datetime(datetime.datetime(int(year), int(month), int(day)))).delete()
                 else:
                     Feed.objects.all().delete()
+
+        logger.info("Finished Deleting Tables")
