@@ -31,3 +31,4 @@ class Command(BaseCommand):
             cadastre.store_parcels_from_url(import_zip_url)
         else:
             cadastre.update_cadastral_information(force_update=force_update)
+        logger.info('    ... Finished!!!')
