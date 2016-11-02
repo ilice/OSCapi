@@ -54,7 +54,6 @@ function inicializaMapa() {
 	mapa = new google.maps.Map(document.getElementById("mapa"),
 			configuracionMapa);
 
-	
 	var input = /** @type {!HTMLInputElement} */
 	(document.getElementById('buscador'));
 
@@ -136,34 +135,31 @@ function inicializaMapa() {
 
 	mapa.data.addGeoJson(castillaYLeonCoords);
 
-	mapa
-			.addListener(
-					'idle',
-					function() {
-						var bbox = mapa.getBounds();
-						var area = computeArea(bbox);
-						if (area <= 2000000) {
-							document.getElementById("loader").style.display = "block";
-							mapa.data.forEach(function(feature) {
-								var zoneType = feature.getProperty("zoneType");
-								if (typeof zoneType == 'undefined'
-										|| zoneType != 'administrative') {
-									mapa.data.remove(feature);
-								} else {
+	mapa.addListener('idle', function() {
+		var bbox = mapa.getBounds();
+		var area = computeArea(bbox);
+		if (area <= 2000000) {
+			document.getElementById("loader").style.display = "block";
+			mapa.data.forEach(function(feature) {
+				var zoneType = feature.getProperty("zoneType");
+				if (typeof zoneType == 'undefined'
+						|| zoneType != 'administrative') {
+					mapa.data.remove(feature);
+				} else {
 
-								}
-							});
+				}
+			});
 
-							var url = "/osc/cadastral/parcel?bbox="
-									+ getOptimalBbox(bbox).toUrlValue();
+			var url = "/osc/cadastral/parcel?bbox="
+					+ getOptimalBbox(bbox).toUrlValue();
 
-							mapa.data.loadGeoJson(url, null, function (features) {
-								document.getElementById("loader").style.display = "none";
-							});
+			mapa.data.loadGeoJson(url, null, function(features) {
+				document.getElementById("loader").style.display = "none";
+			});
 
-						}
-						
-					});
+		}
+
+	});
 	mapa.data
 			.addListener(
 					'click',
@@ -277,41 +273,46 @@ function limpiaMarcadores() {
 
 function geocodeAddress(geocoder, resultsMap) {
 	var address = document.getElementById('buscador').value;
-	geocoder.geocode({
-		'address' : address
-	}, function(results, status) {
-		if (status === google.maps.GeocoderStatus.OK) {
-			resultsMap.setCenter(results[0].geometry.location);
-			resultsMap.setZoom(15);
-			var marker = new google.maps.Marker({
-				map : resultsMap,
-				position : results[0].geometry.location
-			});
-			marker.setVisible(false);
-			var infowindow = new google.maps.InfoWindow();
-			infowindow.setContent('<div>Localización aproximada: <strong>'
-					+ address + '</strong></div>');
-			infowindow.open(mapa, marker);
-		} else {
-			var location = buscaLocalizacionPorReferenciaCatastral(address);
-			if (!jQuery.isEmptyObject(location)) {
-				resultsMap.setCenter(location);
-				resultsMap.setZoom(15);
-				var marker = new google.maps.Marker({
-					map : resultsMap,
-					position : location
-				});
-				marker.setVisible(false);
-				var infowindow = new google.maps.InfoWindow();
-				infowindow.setContent('<div>Referencia catastral: <strong>'
-						+ address + '</strong></div>');
-				infowindow.open(mapa, marker);
-			}
-		}
-	});
+	geocoder
+			.geocode(
+					{
+						'address' : address
+					},
+					function(results, status) {
+						if (status === google.maps.GeocoderStatus.OK) {
+							resultsMap.setCenter(results[0].geometry.location);
+							resultsMap.setZoom(15);
+							var marker = new google.maps.Marker({
+								map : resultsMap,
+								position : results[0].geometry.location
+							});
+							marker.setVisible(false);
+							var infowindow = new google.maps.InfoWindow();
+							infowindow
+									.setContent('<div>Localización aproximada: <strong>'
+											+ address + '</strong></div>');
+							infowindow.open(mapa, marker);
+						} else {
+							var location = getCoodinatesFromNationalCadastralReference(address);
+							if (!jQuery.isEmptyObject(location)) {
+								resultsMap.setCenter(location);
+								resultsMap.setZoom(15);
+								var marker = new google.maps.Marker({
+									map : resultsMap,
+									position : location
+								});
+								marker.setVisible(false);
+								var infowindow = new google.maps.InfoWindow();
+								infowindow
+										.setContent('<div>Referencia catastral: <strong>'
+												+ address + '</strong></div>');
+								infowindow.open(mapa, marker);
+							}
+						}
+					});
 }
 
-function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
+function getCoodinatesFromNationalCadastralReference(nationalCadastralReference) {
 	var location = {};
 	var base = 10;
 	var provinciasConDatos = [ 5, 9, 24, 34, 37, 40, 42, 47, 49 ];
@@ -345,76 +346,32 @@ function buscaLocalizacionPorReferenciaCatastral(referenciaCatastral) {
 
 	} else {
 
-		var url = "php/api_rest.php/plots" + "/sigpac/_search";
-
-		var input = '{' + '   "query": {' + '      "constant_score": {'
-				+ '         "filter": {' + '            "bool": {'
-				+ '               "must": [' + '                  {'
-				+ '                     "term": {'
-				+ '                        "provincia": '
-				+ provincia
-				+ '                     }'
-				+ '                  }, '
-				+ '                  {'
-				+ '                     "term": {'
-				+ '                        "municipio": '
-				+ municipio
-				+ '                     }'
-				+ '                  }, '
-				+ '                  {'
-				+ '                     "term": {'
-				+ '                        "poligono": '
-				+ poligono
-				+ '                     }'
-				+ '                  }, '
-				+ '                  {'
-				+ '                     "term": {'
-				+ '                        "parcela": '
-				+ parcela
-				+ '                     }'
-				+ '                  }'
-				+ '               ],'
-				+ '               "must_not": '
-				+ '                  {'
-				+ '                      "match": {'
-				+ '                         "uso_sigpac": "CA"'
-				+ '                      }'
-				+ '                  }'
-				+ '               '
-				+ '            }'
-				+ '         }'
-				+ '      }' + '   }' + '}';
-
-		var coordenadasLinde = [];
+		var url = '/osc/cadastral/parcel?cadastral_code='
+				+ nationalCadastralReference
+				+ '&retrieve_public_info=True&retrieve_climate_info=True';
 
 		var request = jQuery.ajax({
-			crossDomain : true,
-			async : false,
 			url : url,
-			data : input,
-			type : 'POST',
+			type : 'GET',
 			dataType : "json"
 		});
 
 		request.done(function(response, textStatus, jqXHR) {
-			var hayCoordenadasLinde = false;
-			if (typeof response["hits"] != 'undefined') {
-				var hits = response["hits"]["hits"];
 
-				for (var i = 0; i < hits.length; i++) {
-
-					var hit = hits[i];
-
-					// coordenadasLinde
-					// .push(arrayToPathLatLong(hit["_source"]["bbox_center"]["coordinates"][0]));
-					hayCoordenadasLinde = true;
-					location["lat"] = hit["_source"]["bbox_center"]["lat"];
-					location["lng"] = hit["_source"]["bbox_center"]["lon"];
-				}
-
+			var features = response.features;
+			for (feature in features) {
+				location["lat"] = feature.properties.reference_point.lat;
+				location["lng"] = feature.properties.reference_point.lon;
 			}
+
 		});
 
+		if (location.lat === undefined || location.lon === undefined) {
+			document.getElementById('textoDelAviso').innerHTML = '<p>No hemos encotrado datos para los criterios de búsqueda.</p>'
+					+ '<p>Estamos empezando por Castilla y León pero en breve ampliaremos a otras comunidades.</p>'
+					+ '<p>Si quiere que <strong>prioricemos su zona</strong> contacte con nosotros.</p>';
+			document.getElementById('aviso').style.display = 'block';
+		}
 	}
 
 	return location;
@@ -428,7 +385,7 @@ function getBoundaries(idProvincia) {
 					+ '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
 					+ '}]}');
 
-	var url = "php/api_rest.php/crappyzone/bullshit/" + idProvincia;
+	var url = "http://0.0.0.0:9200/crappyzone/bullshit/" + idProvincia;
 
 	var request = jQuery.ajax({
 		crossDomain : true,
