@@ -756,10 +756,13 @@ def add_public_cadastral_info(parcels):
 
     for parcel in parcels:
         if 'cadastralData' not in parcel['properties']:
-            parcel['properties']['cadastralData'] = \
-                get_public_cadastre_info(Parcel.get_cadastral_reference(parcel))
-            # add to elastic
-            to_update.append(Parcel.get_cadastral_reference(parcel))
+            public_info = get_public_cadastre_info(Parcel.get_cadastral_reference(parcel))
+
+            if public_info:
+                parcel['properties']['cadastralData'] = public_info
+
+                # add to elastic
+                to_update.append(Parcel.get_cadastral_reference(parcel))
 
     return to_update
 
