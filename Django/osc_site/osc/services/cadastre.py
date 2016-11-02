@@ -755,7 +755,7 @@ def add_public_cadastral_info(parcels):
     to_update = []
 
     for parcel in parcels:
-        if 'cadastralData' not in parcel['properties']:
+        if 'cadastralData' not in parcel['properties'] or not parcel['properties']['cadastralData']:
             public_info = get_public_cadastre_info(Parcel.get_cadastral_reference(parcel))
 
             if public_info:

@@ -50,7 +50,7 @@ def obtain_cadastral_parcels(request):
 
             # Filter the parcels that are roads, ways, etc.
             # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
-            # parcels = filter(is_valid_parcel, parcels)
+            parcels = filter(is_valid_parcel, parcels)
 
         # Convert into geojson
         for parcel in parcels:
