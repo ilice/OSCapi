@@ -1,14 +1,11 @@
-language: php
-sudo: false
-php:
-- 5.6
-matrix:
-  fast_finish: true
-before_script: composer require simpletest/simpletest
-script:
-- nohup php -S localhost:8080 > php-server.log 2>&1 &
-- php Web/php/test/all_test.php
-- cat php-server.log
+language: python
+python:
+  - "2.7"
+# command to install dependencies
+install: "pip install -r requirements.txt"
+# command to run tests
+script: nosetests
+
 notifications:
   email: false
   slack:
@@ -22,6 +19,3 @@ env:
   global:
   - secure: YQIYAMQ0tuN9PFkTp4OeCU2Iabgud7uX9YtMyQ/ATjzv3/wFnoha8ksvIWIAFY+maJFKhtChJF9isr2jl3T51iQX26/JHJg4u5eiPasj5hOi7yj779VKh9nICLr7Gp9xElINj68xzCQiDY75+YI47IW+wj+YJhN3CAaN6mHAwXfQ65LdFrgiwOLQAJ2qC7FO5kfoezwExJ+2ckFPzCYdo9pELxlIEDaaUZtI8MS0LcVyWavzI648sXwS8b1YtfpYejp92I5ARgNtcaS7qs97ThCRzLl4KW2SidxlUPg2AwOuf4Scr1AYW9esxLXNJSwjTORTnI7awdqqQpTJInSCFTyCzQuIQa5ANyEtvV0Skbhx+NsNxloYybBwciUCUt8lJPRwzdhi7Ly/t6HaTzDBSn6uuc9aRRMwT/OYkQmIw/Rnb7G8p4LUdZvrEV65JiT0Jv0+eTkpeAcmU0k0LTvkFrDHQEx5bTKU4qZIE8bxLIZLd1urUo/Q92h/QgRZjpHEQQigY+goo3NJQgmJbKdAmBvL0/0wqnvqGtHBN0YF8V1y8EsfIeFBIyMPI0MCkYULG5U9yhQGqcmqCAx7zU1JbP4fpO2ARyXVLVHJeBgUnPqqyQzE4N5RiWH/tUpiv6wYakw0WFHSM1AddFjEC//afMgjmevjkTIJQSodydObA0U=
   - secure: 1Eg76TDCO15ZFjtNAA7ajmb/mFujlXsEtaNheYrGa4PcBC2if8sWGXZWgdk6mAJOihIF0g1kMY34DpxRZkua1dUXMBvuYonjzG73pe2ZlFjIQqiKprmltjdOHT6CpQ2xtR5WTd7YEy2zhGl6HBbz0M8pcgvnGtY0LYmGsgzkCS7/Hx5YpY+CpeE4N+Nrw7rE2saqtodQUQ3Ke/SWQ7Pk1vuD1YwhWg4vNHnyirDuYse7JMWBRbFli0quSwkno2n8slSMSyFjiNL3rx+9uofz6zM9QMk4znlSPK32wVHbMDAPZARZLqS9uZQstEKj+SBhV51oaIMK7LN2bIZDv+tTqm5P0l8dPWl+67X4dpzeZ5qGIOH/mq+DfqPOxmydc6O2TVyjn4lMDXZsd7juCCpD8whHK7HWVVZ2zE35sqrF/Tg4cFgUnooPCavYSgAev9g61H0O9Y83CphG/OAvL9CosBHkqT+dWcdBk5kN8mWeK3GjU5I7E+cvlFO4MGLTBwTRhGbQJlCRZYbzPv7J9aQwa8WTzg6myXhAFdjLZM9M1goiTurbRxIgw43giHVFQ+HKalT4+kKnLYl73grdJgWJPpwtQb9Ka9YtJEu0kfgXr1X+YUym/MmRTm9TJF3L+JFBH2cn3y4PrWm000Hlx1Z2hZZ4wP3QCFvgS666SQTm/dk=
-deploy:
-  provider: script
-  script: php Web/git-deploy --FTP_USER $FTP_USER --FTP_PASSWORD $FTP_PASSWORD --repo Web/ Web/deploy.ini

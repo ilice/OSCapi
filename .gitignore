@@ -55,7 +55,5 @@ weathercrawler/.classpath
 weathercrawler/.project
 weathercrawler/data
 *.project
-Web/.settings
 *.stackdump
-vendor
 *.log
