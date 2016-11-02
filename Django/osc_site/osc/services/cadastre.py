@@ -37,6 +37,16 @@ ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'ct': 'http://www.catastro.meh.es/'
       }
 
+max_elastic_query_size = 1000
+
+class Parcel:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_cadastral_reference(parcel):
+        return parcel['properties']['nationalCadastralReference']
+
 
 @error_managed()
 def get_zone_number(node):
@@ -667,10 +677,10 @@ def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_numbe
     return parcels
 
 
-@error_managed(default_answer={})
+@error_managed(inhibit_exception=True, default_answer={})
 def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
-        raise CadastreException(parse_public_cadastre_response(elem))
+        raise CadastreException(ET.tostring(elem))
 
     # The 'lists' come from the xsd: http://www.catastro.meh.es/ws/esquemas/consulta_dnp.xsd
     return xml_to_json(elem,
@@ -696,7 +706,7 @@ def store_parcels(parcels):
 
     for i in range(0, len(parcels), chunk_size):
         records = parcels[i:i+chunk_size]
-        ids = [r['properties']['nationalCadastralReference'] for r in records]
+        ids = [Parcel.get_cadastral_reference(r) for r in records]
 
         elastic_bulk_save('STORE_PARCELS', parcel_index, parcel_mapping, records, ids)
 
@@ -731,54 +741,51 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
 
 @error_managed(inhibit_exception=True)
 def index_parcel(parcel):
-    pass
-    # Until we create an appropriate mapping, we don't persist the parcel data
-    # create_parcel_mapping()
-
-    # try:
-    #     es.index(index=parcel_index,
-    #              doc_type=parcel_mapping,
-    #              body=parcel,
-    #              id=parcel['properties']['nationalCadastralReference'])
-    # except ElasticsearchException as e:
-    #     raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
+    try:
+        es.index(index=parcel_index,
+                 doc_type=parcel_mapping,
+                 body=parcel,
+                 id=Parcel.get_cadastral_reference(parcel))
+    except ElasticsearchException as e:
+        raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
 
 
 @error_managed()
 def add_public_cadastral_info(parcels):
-    try:
-        for parcel in parcels:
-            if 'cadastralData' not in parcel['properties']:
-                parcel['properties']['cadastralData'] = \
-                    get_public_cadastre_info(parcel['properties']['nationalCadastralReference'])
-                # add to elastic
-                index_parcel(parcel)
-    except ElasticsearchException as e:
-        raise ElasticException('PARCEL', e.message, e)
+    to_update = []
+
+    for parcel in parcels:
+        if 'cadastralData' not in parcel['properties']:
+            parcel['properties']['cadastralData'] = \
+                get_public_cadastre_info(Parcel.get_cadastral_reference(parcel))
+            # add to elastic
+            to_update.append(Parcel.get_cadastral_reference(parcel))
+
+    return to_update
 
 
 @error_managed()
 def add_elevation_from_google(parcels):
-    try:
-        pending_elevations = \
-            filter(lambda x: 'elevation' not in x['properties'] and 'reference_point' in x['properties'], parcels)
+    to_update = []
+    pending_elevations = \
+        filter(lambda x: 'elevation' not in x['properties'] and 'reference_point' in x['properties'], parcels)
 
-        if pending_elevations:
-            centers = [(parcel['properties']['reference_point']['lat'],
-                        parcel['properties']['reference_point']['lon']) for parcel in pending_elevations]
+    if pending_elevations:
+        centers = [(parcel['properties']['reference_point']['lat'],
+                    parcel['properties']['reference_point']['lon']) for parcel in pending_elevations]
 
-            elevations = obtain_elevation_from_google(centers)
+        elevations = obtain_elevation_from_google(centers)
 
-            if elevations is not None:
-                for item in zip(elevations, parcels):
-                    elevation = item[0]
-                    parcel = item[1]
+        if elevations is not None:
+            for item in zip(elevations, pending_elevations):
+                elevation = item[0]
+                parcel = item[1]
 
-                    parcel['properties']['elevation'] = elevation
+                parcel['properties']['elevation'] = elevation
 
-                    index_parcel(parcel)
-    except ElasticsearchException as e:
-        raise ElasticException('PARCEL', e.message, e)
+                to_update.append(Parcel.get_cadastral_reference(parcel))
+
+    return to_update
 
 
 @error_managed(default_answer={})
@@ -804,13 +811,19 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
             }
         }
 
-        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
+        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, size=max_elastic_query_size)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
-        # JLG ATTENTION: To be added when we persist the public cadastral info
-        # add_public_cadastral_info(parcels)
-        # add_elevation_from_google(parcels)
+        to_update = list()
+        to_update += add_public_cadastral_info(parcels)
+        to_update += add_elevation_from_google(parcels)
+
+        to_update = set(to_update)
+
+        updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
+        for parcel in updatable_parcels:
+            index_parcel(parcel)
 
         return parcels
     except ElasticsearchException as e:
