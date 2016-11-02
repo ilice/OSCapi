@@ -499,12 +499,12 @@ function drawAlternatives(cadastralParcelFeatures){
 	request.done(function (response, textStatus, jqXHR) {
 		if (response.status == "SUCCESS") {
 		
-		var crops = response.result;
+		var crops = response.result.crops;
 		
 		var rowIndex = 0;
 		
 		for (cropNumber in crops) {
-			var crop = crops[cropNumber];
+			var crop = crops[cropNumber]._source;
 			
 			var id = crop.Foto.substring(0,crop.Foto.indexOf('.'));	
 			

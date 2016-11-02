@@ -131,10 +131,6 @@ function inicializaMapa() {
 		};
 	});
 
-	var castillaYLeonCoords = getBoundaries(idCastillaYLeon);
-
-	mapa.data.addGeoJson(castillaYLeonCoords);
-
 	mapa.addListener('idle', function() {
 		var bbox = mapa.getBounds();
 		var area = computeArea(bbox);
@@ -316,10 +312,10 @@ function getCoodinatesFromNationalCadastralReference(nationalCadastralReference)
 	var location = {};
 	var base = 10;
 	var provinciasConDatos = [ 5, 9, 24, 34, 37, 40, 42, 47, 49 ];
-	var provincia = parseInt(referenciaCatastral.substring(0, 2), base);
-	var municipio = parseInt(referenciaCatastral.substring(2, 5), base);
-	var poligono = parseInt(referenciaCatastral.substring(6, 9), base);
-	var parcela = parseInt(referenciaCatastral.substring(9, 14), base);
+	var provincia = parseInt(nationalCadastralReference.substring(0, 2), base);
+	var municipio = parseInt(nationalCadastralReference.substring(2, 5), base);
+	var poligono = parseInt(nationalCadastralReference.substring(6, 9), base);
+	var parcela = parseInt(nationalCadastralReference.substring(9, 14), base);
 
 	if (isNaN(provincia) || isNaN(municipio) || isNaN(poligono)
 			|| isNaN(parcela)) {
@@ -353,57 +349,28 @@ function getCoodinatesFromNationalCadastralReference(nationalCadastralReference)
 		var request = jQuery.ajax({
 			url : url,
 			type : 'GET',
-			dataType : "json"
+			dataType : "json",
+		        async : false
 		});
 
 		request.done(function(response, textStatus, jqXHR) {
 
 			var features = response.features;
 			for (feature in features) {
-				location["lat"] = feature.properties.reference_point.lat;
-				location["lng"] = feature.properties.reference_point.lon;
+				location["lat"] = features[feature].properties.reference_point.lat;
+				location["lng"] = features[feature].properties.reference_point.lon;
 			}
-
+                        if (location.lat === undefined || location.lng === undefined) {
+                                document.getElementById('textoDelAviso').innerHTML = '<p>No hemos encotrado datos para los criterios de búsqueda.</p>'
+                                        + '<p>Estamos empezando por Castilla y León pero en breve ampliaremos a otras comunidades.</p>'
+                                        + '<p>Si quiere que <strong>prioricemos su zona</strong> contacte con nosotros.</p>';
+                                document.getElementById('aviso').style.display = 'block';
+                        }
 		});
 
-		if (location.lat === undefined || location.lon === undefined) {
-			document.getElementById('textoDelAviso').innerHTML = '<p>No hemos encotrado datos para los criterios de búsqueda.</p>'
-					+ '<p>Estamos empezando por Castilla y León pero en breve ampliaremos a otras comunidades.</p>'
-					+ '<p>Si quiere que <strong>prioricemos su zona</strong> contacte con nosotros.</p>';
-			document.getElementById('aviso').style.display = 'block';
-		}
 	}
 
 	return location;
-}
-
-function getBoundaries(idProvincia) {
-	var geoJSONBoundaries = JSON
-			.parse('{ "type": "FeatureCollection", '
-					+ '"features": ['
-					+ '{ "type": "Feature",'
-					+ '"geometry": {}, "properties": {"zone": null, "zoneType": "administrative"}'
-					+ '}]}');
-
-	var url = "http://0.0.0.0:9200/crappyzone/bullshit/" + idProvincia;
-
-	var request = jQuery.ajax({
-		crossDomain : true,
-		url : url,
-		type : 'GET',
-		dataType : "json",
-		async : false
-	});
-
-	request.done(function(response, textStatus, jqXHR) {
-		coordinates = response["_source"]["boundaries"];
-		zone = response["_source"]["zone"];
-	});
-
-	geoJSONBoundaries["features"][0]["geometry"] = coordinates;
-	geoJSONBoundaries["features"][0]["properties"]["zone"] = zone;
-
-	return geoJSONBoundaries;
 }
 
 function computeArea(bbox) {

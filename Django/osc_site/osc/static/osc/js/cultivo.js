@@ -490,7 +490,7 @@ function updateCrop() {
 
 	request
 			.done(function(response, textStatus, jqXHR) {
-				if (response.result == "updated") {
+				if (response.status == "SUCCESS") {
 
 					document.getElementById('resultText').innerHTML = '<p><i class="fa fa-check-square-o w3-text-green"></i> ¡Estupendo! El cultivo se ha actualizado. <i class="fa fa-smile-o"></i></p>';
 					document.getElementById('result').style.display = 'block';
