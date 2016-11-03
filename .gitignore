@@ -57,3 +57,8 @@ weathercrawler/data
 *.project
 *.stackdump
 *.log
+Django/opensmartcountry.ini
+*.sqlite3
+Django/osc_site/osc/settings/teanocrata_dev
+#IDE metadata
+**.idea/**
