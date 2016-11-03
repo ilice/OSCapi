@@ -24,9 +24,13 @@ __all__ = ['get_parcels_by_bbox',
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
-parcel_index = 'parcels_v3'
-parcel_mapping = 'parcel'
-zone_for_queries = 'EPSG::25830'
+parcel_index = settings.CADASTRE['index']
+parcel_mapping = settings.CADASTRE['mapping']
+
+zone_for_queries = settings.CADASTRE['zone.for.queries']
+max_elastic_query_size = settings.CADASTRE['max.query.size']
+
+query_cadastre_when_bbox = settings.CADASTRE['query.cadastre.when.bbox']
 
 ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'gmd': 'http://www.isotc211.org/2005/gmd',
@@ -37,7 +41,6 @@ ns = {'gml': 'http://www.opengis.net/gml/3.2',
       'ct': 'http://www.catastro.meh.es/'
       }
 
-max_elastic_query_size = 1000
 
 class Parcel:
     def __init__(self):
@@ -818,15 +821,16 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
-        to_update = list()
-        to_update += add_public_cadastral_info(parcels)
-        to_update += add_elevation_from_google(parcels)
+        if query_cadastre_when_bbox:
+            to_update = list()
+            to_update += add_public_cadastral_info(parcels)
+            to_update += add_elevation_from_google(parcels)
 
-        to_update = set(to_update)
+            to_update = set(to_update)
 
-        updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
-        for parcel in updatable_parcels:
-            index_parcel(parcel)
+            updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
+            for parcel in updatable_parcels:
+                index_parcel(parcel)
 
         return parcels
     except ElasticsearchException as e:

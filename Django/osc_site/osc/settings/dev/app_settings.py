@@ -26,6 +26,14 @@ INFORIEGO = {
     'passwd': secrets.get('inforiego', 'passwd')
 }
 
+CADASTRE = {
+    'index': 'parcels',
+    'mapping': 'parcel',
+    'zone.for.queries': 'EPSG::25830',
+    'query.cadastre.when.bbox': True,
+    'max.query.size': 5000
+}
+
 SLACK = {
     'token': secrets.get('slack', 'token'),
     'flush_bucket': 200
