@@ -62,3 +62,4 @@ Django/opensmartcountry.ini
 Django/osc_site/osc/settings/teanocrata_dev
 #IDE metadata
 **.idea/**
+.idea/inspectionProfiles/*
