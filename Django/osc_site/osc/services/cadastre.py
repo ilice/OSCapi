@@ -677,7 +677,7 @@ def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_numbe
     return parcels
 
 
-@error_managed(inhibit_exception=True, default_answer={})
+@error_managed(default_answer={})
 def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
         raise CadastreException(ET.tostring(elem))
@@ -688,7 +688,7 @@ def parse_public_cadastre_response(elem):
                        forced_int=['cumun', 'cuca', 'cunum', 'cudnp', 'cucons', 'cucul', 'cuerr'])
 
 
-@error_managed(default_answer={})
+@error_managed(default_answer={}, inhibit_exception=True)
 def get_public_cadastre_info(code):
     response = requests.get(url_public_cadastral_info, params={'Provincia': '',
                                                                'Municipio': '',
@@ -767,7 +767,7 @@ def add_public_cadastral_info(parcels):
     return to_update
 
 
-@error_managed()
+@error_managed(inhibit_exception=True, default_answer=())
 def add_elevation_from_google(parcels):
     to_update = []
     pending_elevations = \
@@ -779,7 +779,7 @@ def add_elevation_from_google(parcels):
 
         elevations = obtain_elevation_from_google(centers)
 
-        if elevations is not None:
+        if elevations:
             for item in zip(elevations, pending_elevations):
                 elevation = item[0]
                 parcel = item[1]
