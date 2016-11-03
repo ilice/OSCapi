@@ -2,7 +2,7 @@ import feedparser
 import requests
 import zipfile
 import StringIO
-from osc.util import contains_any, localize_datetime
+
 from datetime import datetime
 from osc.services import start_feed_read, finish_feed_read, get_last_successful_update_date, store_parcels
 from osc.util import error_managed

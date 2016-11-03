@@ -1,7 +1,8 @@
-from django.core.management.base import BaseCommand
 import logging
 
-from osc.services.importer import cadastre
+from django.core.management.base import BaseCommand
+
+from osc.importer import cadastre
 
 logger = logging.getLogger(__name__)
 

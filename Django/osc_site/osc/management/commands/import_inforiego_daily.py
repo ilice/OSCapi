@@ -1,7 +1,8 @@
-from django.core.management.base import BaseCommand
 import logging
 
-from osc.services.importer import *
+from django.core.management.base import BaseCommand
+
+from osc.importer import *
 
 logger = logging.getLogger(__name__)
 

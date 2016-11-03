@@ -2,8 +2,8 @@
 
 from django.test import TestCase
 
+import osc.importer.cadastre as impcadastre
 import osc.services.cadastre as cadastre
-import osc.services.importer.cadastre as impcadastre
 
 
 class CadastreServiceTest(TestCase):
