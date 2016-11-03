@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 from django.conf import settings
 
-from osc.util import xml_to_json, elastic_bulk_save
+from osc.util import xml_to_json, elastic_bulk_save, elastic_bulk_update
 from osc.exceptions import CadastreException
 from osc.util import error_managed, es
 
@@ -714,6 +714,16 @@ def store_parcels(parcels):
         elastic_bulk_save('STORE_PARCELS', parcel_index, parcel_mapping, records, ids)
 
 
+def update_parcels(parcels):
+    chunk_size = settings.ELASTICSEARCH['chunk_size']
+
+    for i in range(0, len(parcels), chunk_size):
+        records = parcels[i:i+chunk_size]
+        ids = [Parcel.get_cadastral_reference(r) for r in records]
+
+        elastic_bulk_update('STORE_PARCELS', parcel_index, parcel_mapping, records, ids)
+
+
 @error_managed(default_answer=[])
 def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
     try:
@@ -829,8 +839,7 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
             to_update = set(to_update)
 
             updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
-            for parcel in updatable_parcels:
-                index_parcel(parcel)
+            store_parcels(updatable_parcels)
 
         return parcels
     except ElasticsearchException as e:

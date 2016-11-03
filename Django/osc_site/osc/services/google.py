@@ -3,6 +3,8 @@ import polyline
 from osc.exceptions import ConnectionError
 from osc.util import error_managed
 
+from django.conf import settings
+
 __all__ = ['obtain_elevation_from_google', 'try_obtain_elevation_from_google']
 
 api_key = 'AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M'
@@ -16,22 +18,34 @@ def compose_locations_param(points):
 
 @error_managed(default_answer=[])
 def obtain_elevation_from_google(centers):
-    url = 'https://maps.googleapis.com/maps/api/elevation/json'
 
     if centers is tuple:
         centers = [centers]
 
+    chunk_size = settings.GOOGLE_ELEVATION['chunk_size']
+
     elevations = []
-    if len(centers) > 0:
-        response = requests.get(url, params={'key': api_key,
-                                             'locations': compose_locations_param(centers)})
-        json_response = response.json()
+    for i in range(0, len(centers), chunk_size):
+        chunk = centers[i:i+chunk_size]
+        elevations += obtain_elevations_from_chunk(chunk)
 
-        if json_response['status'] != 'OK':
-            raise ConnectionError('GOOGLE MAPS',
-                                  response['error_message'] if 'error_message' in response else json_response['status'])
+    return elevations
 
-        elevations = [result['elevation'] for result in json_response['results']]
+
+def obtain_elevations_from_chunk(centers):
+    url = 'https://maps.googleapis.com/maps/api/elevation/json'
+
+    composed_locations = compose_locations_param(centers)
+    response = requests.get(url, params={'key': api_key,
+                                         'locations': composed_locations})
+    json_response = response.json()
+
+    if json_response['status'] != 'OK':
+        raise ConnectionError('GOOGLE MAPS',
+                              response['error_message'] if 'error_message' in response else json_response['status'],
+                              response.url)
+
+    elevations = [result['elevation'] for result in json_response['results']]
 
     return elevations
 
