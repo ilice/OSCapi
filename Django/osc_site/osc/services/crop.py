@@ -23,7 +23,7 @@ def retrieve_crops_from_elastic(query):
 
 def update_crops_in_elastic(crop_id, query):
     try:
-        es.index(index=crop_index, doc_type=crop_mapping, id=crop_id, body=query)
+        es.update(index=crop_index, doc_type=crop_mapping, id=crop_id, body=query)
     except ElasticsearchException as e:
         raise ElasticException('CROPS', 'ElasticSearch Error from query: ' + str(query), e)
 
