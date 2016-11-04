@@ -46,49 +46,45 @@ function cargaDatos() {
 						// Widgets iniciales: como el texto es largo se recorta
 						// y
 						// ponen unos puntos para ver más
-						document.getElementById("precipitacion").innerHTML = recorta(
-								"precipitacion", crop["Precipitación"], 120);
-						document.getElementById("Temperatura").innerHTML = recorta(
-								"Temperatura", crop["Temperatura"], 120);
-						document.getElementById("Luz").innerHTML = recorta(
-								"Luz", crop["Luz"], 120);
-						document.getElementById("Humedad ambiental").innerHTML = recorta(
-								"Humedad ambiental", crop["Humedad ambiental"],
-								120);
+						setValueInField(recorta("Precipitación", crop["Precipitación"], 120), "precipitacion");
+                        setValueInField(recorta("Temperatura", crop["Temperatura"], 120), "Temperatura");
+						setValueInField(recorta("Luz", crop["Luz"], 120), "Luz");
+						setValueInField(recorta("Humedad ambiental", crop["Humedad ambiental"], 120), "Luz");
 
 						// Ficha básica del cultivo
-						document.getElementById('ficha').innerHTML = crop["Nombre"];
-						document.getElementById('Nombre').innerHTML = crop["Nombre"];
-						document.getElementById('Nombre Científico').innerHTML = crop["Nombre Científico"];
-						document.getElementById('Familia').innerHTML = crop["Familia"];
-						document.getElementById('Nombres Comunes').innerHTML = crop["Nombres Comunes"];
-						document.getElementById('imagen').innerHTML = '<img src="/static/osc/img/cultivos/'
-								+ crop["Foto"] + '" style="width:100%"/>';
+						setValueInField(crop["Nombre"],'ficha');
+						setCropValue("Nombre", crop);
+						setCropValue("Nombre Científico",crop);
+						setCropValue("Familia", crop);
+						setCropValue('Nombres Comunes', crop);
+						if(!(crop["Foto"] === undefined)){
+						setValueInField('<img src="/static/osc/img/cultivos/'
+								+ crop["Foto"] + '" style="width:100%"/>', 'imagen');}
 
-						document.getElementById('buscar_imagen').innerHTML = '<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'
+						setValueInField('<button id="buscar_imagen" class="w3-btn w3-margin w3-dark-grey w3-center"'
 								+ 'onclick="location.href=\'https://www.google.es/search?q='
 								+ crop["Nombre Científico"]
 								+ '&tbm=isch\'">'
 								+ '<i class="fa fa-search"></i> Buscar otras imágenes en la Web'
-								+ '</button>';
+								+ '</button>', 'buscar_imagen');
 
 						// Ficha sobre origen y distribución
-						document.getElementById('Origen').innerHTML = crop["Origen"];
-						document.getElementById('Distribución').innerHTML = crop["Distribución"];
-						document.getElementById('Adaptación').innerHTML = crop["Adaptación"];
-						document.getElementById('Altitud').innerHTML = crop["Altitud"];
+						setCropValue('Origen', crop);
+						setCropValue('Distribución', crop);
+						setCropValue("Adaptación", crop);
+						setCropValue("Altitud", crop);
 
 						// Ficha sobre los periodos
-						document.getElementById('Ciclo vegetativo').innerHTML = recorta(
+						setValueInField(recorta(
 								"Ciclo vegetativo", crop["Ciclo vegetativo"],
-								35);
-						document.getElementById('Fotoperíodo').innerHTML = recorta(
-								"Fotoperíodo", crop["Fotoperíodo"], 35);
+								35), "Ciclo vegetativo");
+						setValueInField(recorta(
+								"Fotoperíodo", crop["Fotoperíodo"], 35), "Fotoperíodo");
 						destacaTipoFotosintetico(crop["Tipo Fotosintético"]);
 
 						// Observaciones
 						var observaciones = crop["Otros"];
-						if (observaciones.length > 0) {
+						if (!(observaciones === undefined) && observaciones.length > 0) {
 
 							observaciones = '<div class="w3-orange w3-text-dark-grey w3-row-padding">'
 									+ '<span onclick="this.parentElement.style.display=\'none\'"'
@@ -97,16 +93,16 @@ function cargaDatos() {
 									+ ' <p>'
 									+ observaciones + '</p>' + '</div>';
 
-							document.getElementById('observaciones').innerHTML = observaciones;
+							setValueInField(observaciones, 'observaciones');
 						}
 
 						// Suelo
-						document.getElementById('Textura de suelo').innerHTML = crop["Textura de suelo"];
-						document.getElementById('Profundidad de suelo').innerHTML = crop["Profundidad de suelo"];
-						document.getElementById('Drenaje').innerHTML = crop["Drenaje"];
+						setCropValue("Textura de suelo", crop);
+						setCropValue("Profundidad de suelo", crop);
+						setCropValue("Drenaje", crop);
 
-						document.getElementById('Salinidad').innerHTML = crop["Salinidad"];
-						document.getElementById('pH').innerHTML = crop["pH"];
+						setCropValue("Salinidad", crop);
+						setCropValue("pH", crop);
 
 						var altitudeRequirements = crop.altitude;
 						for (altitudeRequirementNumber in altitudeRequirements) {
@@ -221,25 +217,26 @@ var QueryString = function() {
 }();
 
 function recorta(tipo, texto, caracteres) {
-	var recorte = texto.substring(0, 120);
-	var tipoCamelCase = tipo.substr(0, 1).toUpperCase() + tipo.substr(1);
+    if(!texto === undefined){
+	    var recorte = texto.substring(0, 120);
+        var tipoCamelCase = tipo.substr(0, 1).toUpperCase() + tipo.substr(1);
 
-	var modal = '<div id="' + tipo + '_modal" class="w3-modal">'
-			+ ' <div class="w3-modal-content">'
-			+ ' <div class="w3-container w3-text-grey">'
-			+ ' <span onclick="document.getElementById(\'' + tipo
-			+ '_modal\').style.display=\'none\'" '
-			+ '  class="w3-closebtn">&times;</span> ' + '  <p><h4>'
-			+ tipoCamelCase + ':</h4> ' + texto + '</p>' + '  </div> '
-			+ '  </div> ' + '  </div>';
+        var modal = '<div id="' + tipo + '_modal" class="w3-modal">'
+                + ' <div class="w3-modal-content">'
+                + ' <div class="w3-container w3-text-grey">'
+                + ' <span onclick="document.getElementById(\'' + tipo
+                + '_modal\').style.display=\'none\'" '
+                + '  class="w3-closebtn">&times;</span> ' + '  <p><h4>'
+                + tipoCamelCase + ':</h4> ' + texto + '</p>' + '  </div> '
+                + '  </div> ' + '  </div>';
 
-	if (texto.length > caracteres) {
-		recorte = recorte
-				+ '<span class="w3-closebtn" onclick="document.getElementById(\''
-				+ tipo + '_modal\').style.display=\'block\'"">...</span>'
-				+ modal;
-	}
-
+        if (texto.length > caracteres) {
+            recorte = recorte
+                    + '<span class="w3-closebtn" onclick="document.getElementById(\''
+                    + tipo + '_modal\').style.display=\'block\'"">...</span>'
+                    + modal;
+        }
+    }
 	return recorte;
 }
 
@@ -654,7 +651,7 @@ function updatePropertyCrop(property){
 		doc : doc
 	};
 
-	data["doc_as_upsert"] = true;
+	data["doc_as_upsert"] = "true";
 
 	var url = "/osc/crops/elastic/update/" + document.getElementById("cropId").value + "/";
 
@@ -717,4 +714,15 @@ function makeEditable(){
     for(var makeEditableNumber = 0; makeEditableNumber < makeEditables.length; makeEditableNumber++){
         makeEditables[makeEditableNumber].style.display = makeEditable;
     }
+}
+
+function setValueInField(value, field) {
+    if(!(value === undefined)){
+	    document.getElementById(field).innerHTML = value;
+	}
+}
+
+function setCropValue(field, crop){
+    var value = crop[field];
+    setValueInField(value, field);
 }

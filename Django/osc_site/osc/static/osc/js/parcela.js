@@ -506,7 +506,7 @@ function drawAlternatives(cadastralParcelFeatures){
 		for (cropNumber in crops) {
 			var crop = crops[cropNumber]._source;
 			
-			var id = crop.Foto.substring(0,crop.Foto.indexOf('.'));	
+			var id = crops[cropNumber]._id;
 			
 			var socialImpact = (Math.random() * 100).toFixed();
 			var economicImpact = (Math.random() * 100).toFixed();
