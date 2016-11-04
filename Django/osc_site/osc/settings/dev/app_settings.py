@@ -34,6 +34,19 @@ CADASTRE = {
     'max.query.size': 5000
 }
 
+STATIONS = {
+    'index': 'stations_v1',
+    'mapping': 'stations',
+}
+
+WEATHER = {
+    'index': 'weather_v1',
+    'mapping': 'weather',
+    'owm_token': secrets.get('openweathermap', 'token'),
+    'owm_chunk_size': 60,
+    'owm_chunk_time': 60
+}
+
 SLACK = {
     'token': secrets.get('slack', 'token'),
     'flush_bucket': 200
@@ -96,3 +109,5 @@ LOGGING = {
         },
     }
 }
+
+TIME_ZONE = 'Europe/Madrid'

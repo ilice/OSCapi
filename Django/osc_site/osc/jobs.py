@@ -1,11 +1,11 @@
+from datetime import datetime, timedelta
+
+from django.core.management import call_command
+from django.db.models import Max
 from django_cron import CronJobBase, Schedule
 from django_cron.models import CronJobLog
-from django.db.models import Max
-from datetime import datetime, timedelta
-from django.core.management import call_command
 
-import osc.services.importer.inforiego as inforiego
-import osc.services.importer.cadastre as cadastre
+import osc.importer.inforiego as inforiego
 
 
 class UpdateInforiegoDaily(CronJobBase):
