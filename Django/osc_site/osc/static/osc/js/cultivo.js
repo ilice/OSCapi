@@ -129,6 +129,32 @@ function cargaDatos() {
 
 						}
 
+						var sunHoursRequirements = crop.sunHours;
+						for (sunHoursRequirementsNumber in sunHoursRequirements){
+						    var sunHours = sunHoursRequirements[sunHoursRequirementsNumber];
+
+						    addMinMaxRequirementsRow("Sol", sunHours);
+						}
+
+						var temperatureRequirements = crop.temperature;
+						for (temperatureRequirementsNumber in temperatureRequirements){
+						    var temperature = temperatureRequirements[temperatureRequirementsNumber];
+
+						    addMinMaxRequirementsRow("Temperatura", temperature);
+						}
+
+						var rainfallRequirements = crop.rainfall;
+						for (rainfallRequitementNumber in rainfallRequirements){
+						    var rainfall = rainfallRequirements[rainfallRequitementNumber];
+
+						    addMinMaxRequirementsRow("Precipitaciones", rainfall);
+						}
+
+						var tags = crop.labels;
+						for (tagNumber in tags){
+						    addTag(tags[tagNumber]);
+						    addEditableTag(tags[tagNumber]);
+						}
 					}
 				}
 			});
@@ -454,15 +480,23 @@ function updateCrop() {
 			}
 			break;
 		case "Temperatura":
-			label = "temperatura";
+			label = "temperature";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
 				doc[label].push(requirement);
 			}
 			break;
-		case "Precipitación anual en mm":
+		case "Precipitaciones":
 			label = "rainfall";
+			if (doc[label] === undefined) {
+				doc[label] = [ requirement ];
+			} else {
+				doc[label].push(requirement);
+			}
+			break;
+		case "Sol":
+			label = "sunHours";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -474,6 +508,14 @@ function updateCrop() {
 		}
 
 	}
+
+	var tags = document.getElementsByTagName("tag");
+	var tagsArray = [];
+	for (var tagNumber = 0; tagNumber < tags.length; tagNumber++){
+	    tagsArray.push(tags[tagNumber].innerHTML);
+	}
+	doc["labels"] = tagsArray;
+
 
 	var data = {
 		doc : doc
@@ -536,4 +578,50 @@ function getRequirementId(id) {
 
 function reloadPage() {
 	location.reload(true);
+}
+
+function addTag(tag){
+
+    var tagElement = document.createElement('span');
+    tagElement.setAttribute("class","w3-tag w3-light-grey w3-small w3-margin");
+    tagElement.appendChild(document.createTextNode(tag));
+    document.getElementById("tags").appendChild(tagElement);
+
+}
+
+function addEditableTag(tag){
+
+    if(tag === undefined)
+    {
+        tag = document.getElementById("newTag").value;
+        document.getElementById("newTag").value = "";
+    }
+
+    var tagElement = document.createElement('span');
+    tagElement.setAttribute("class","w3-tag w3-light-grey w3-margin");
+    tagElement.setAttribute("id","tag_" + tag);
+
+    var removeButton = document.createElement("a");
+	removeButton.setAttribute("href", "javascript:void(0)");
+	//removeButton.setAttribute("class", "w3-closebtn");
+	removeButton.setAttribute("class", "w3-margin-left");
+	removeButton.setAttribute("onclick", "removeTag(\"tag_" + tag + "\")");
+
+	var removeButtonIcon = document.createElement("i");
+	removeButtonIcon.setAttribute("class", "fa fa-remove w3-tiny");
+	removeButton.appendChild(removeButtonIcon);
+
+	var tagText = document.createElement('tag');
+	tagText.appendChild(document.createTextNode(tag));
+
+    tagElement.appendChild(tagText);
+    tagElement.appendChild(removeButton);
+
+	document.getElementById("tagsRow").appendChild(tagElement);
+
+}
+
+function removeTag(tag){
+	var item = document.getElementById(tag);
+	item.parentNode.removeChild(item);
 }
