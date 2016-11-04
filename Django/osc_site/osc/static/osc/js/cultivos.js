@@ -144,6 +144,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 		}
 		elementosEncontrados = response.result.total;
+		document.getElementById('cultivo_id').value = response.result.total + 1;
 		ultimoCultivoCargado = numeroCultivoInicial + numeroCultivosACargar;
 		document.getElementById('pagina').innerHTML = (ultimoCultivoCargado / numeroCultivosPorPagina) + " / " + Math.ceil((elementosEncontrados / numeroCultivosPorPagina));
 	}});
@@ -212,3 +213,4 @@ var QueryString = function () {
 	return query_string;
 }
 ();
+
