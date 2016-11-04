@@ -1,5 +1,5 @@
 import ast
-from osc.services import retrieve_crops_from_elastic, update_crops_in_elastic
+from osc.services import retrieve_crops_from_elastic, update_crops_in_elastic, index_crops_in_elastic
 from django.http import JsonResponse
 
 
@@ -24,4 +24,16 @@ def update_crops_elastic(request, crop_id):
     except Exception as e:
         return JsonResponse({'status': 'FAILURE',
                              'message': e.message})
+
+
+def index_crops_elastic(request, crop_id):
+    query = ast.literal_eval(request.body)
+
+    try:
+        index_crops_in_elastic(crop_id, query)
+        return JsonResponse({'status': 'SUCCESS'})
+    except Exception as e:
+        return JsonResponse({'status': 'FAILURE',
+                             'message': e.message})
+
 
