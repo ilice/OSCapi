@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^inforiego_daily/update/$', inforiego.update_inforiego_daily, name='update_inforiego_daily'),
     url(r'^cadastral/parcel/$', cadastre.obtain_cadastral_parcels, name='get_cadastral_parcels'),
     url(r'^crops/elastic/search/$', crop.obtain_crops_elastic_query, name='obtain_crops_elastic_query'),
-    url(r'^crops/elastic/update/(?P<crop_id>[0-9]+)/$', crop.update_crops_elastic, name='update_crops_elastic')
+    url(r'^crops/elastic/update/(?P<crop_id>[0-9]+)/$', crop.update_crops_elastic, name='update_crops_elastic'),
+    url(r'^crops/elastic/index/(?P<crop_id>[0-9]+)/$', crop.index_crops_elastic, name='index_crops_elastic')
 ]
