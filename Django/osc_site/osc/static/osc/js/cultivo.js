@@ -3,7 +3,13 @@
  */
 function cargaDatos() {
 
+    makeEditable();
+
 	var cultivo_id = QueryString.cultivo_id;
+
+	document.getElementById('cropId').value = cultivo_id;
+	document.getElementById('propertyCropId').value = cultivo_id;
+	document.getElementById('cultivo_id').value = cultivo_id;
 
 	var url = "/osc/crops/elastic/search/";
 
@@ -42,20 +48,20 @@ function cargaDatos() {
 						// ponen unos puntos para ver más
 						document.getElementById("precipitacion").innerHTML = recorta(
 								"precipitacion", crop["Precipitación"], 120);
-						document.getElementById("temperatura").innerHTML = recorta(
-								"temperatura", crop["Temperatura"], 120);
-						document.getElementById("sol").innerHTML = recorta(
-								"sol", crop["Luz"], 120);
-						document.getElementById("humedad_ambiental").innerHTML = recorta(
-								"humedad_ambiental", crop["Humedad ambiental"],
+						document.getElementById("Temperatura").innerHTML = recorta(
+								"Temperatura", crop["Temperatura"], 120);
+						document.getElementById("Luz").innerHTML = recorta(
+								"Luz", crop["Luz"], 120);
+						document.getElementById("Humedad ambiental").innerHTML = recorta(
+								"Humedad ambiental", crop["Humedad ambiental"],
 								120);
 
 						// Ficha básica del cultivo
 						document.getElementById('ficha').innerHTML = crop["Nombre"];
-						document.getElementById('nombre').innerHTML = crop["Nombre"];
-						document.getElementById('nombre_cientifico').innerHTML = crop["Nombre Científico"];
-						document.getElementById('familia').innerHTML = crop["Familia"];
-						document.getElementById('nombres_comunes').innerHTML = crop["Nombres Comunes"];
+						document.getElementById('Nombre').innerHTML = crop["Nombre"];
+						document.getElementById('Nombre Científico').innerHTML = crop["Nombre Científico"];
+						document.getElementById('Familia').innerHTML = crop["Familia"];
+						document.getElementById('Nombres Comunes').innerHTML = crop["Nombres Comunes"];
 						document.getElementById('imagen').innerHTML = '<img src="/static/osc/img/cultivos/'
 								+ crop["Foto"] + '" style="width:100%"/>';
 
@@ -67,17 +73,17 @@ function cargaDatos() {
 								+ '</button>';
 
 						// Ficha sobre origen y distribución
-						document.getElementById('origen').innerHTML = crop["Origen"];
-						document.getElementById('distribucion').innerHTML = crop["Distribución"];
-						document.getElementById('adaptacion').innerHTML = crop["Adaptación"];
-						document.getElementById('altitud').innerHTML = crop["Altitud"];
+						document.getElementById('Origen').innerHTML = crop["Origen"];
+						document.getElementById('Distribución').innerHTML = crop["Distribución"];
+						document.getElementById('Adaptación').innerHTML = crop["Adaptación"];
+						document.getElementById('Altitud').innerHTML = crop["Altitud"];
 
 						// Ficha sobre los periodos
-						document.getElementById('ciclo_vegetativo').innerHTML = recorta(
-								"ciclo_vegetativo", crop["Ciclo vegetativo"],
+						document.getElementById('Ciclo vegetativo').innerHTML = recorta(
+								"Ciclo vegetativo", crop["Ciclo vegetativo"],
 								35);
-						document.getElementById('fotoperiodo').innerHTML = recorta(
-								"fotoperiodo", crop["Fotoperíodo"], 35);
+						document.getElementById('Fotoperíodo').innerHTML = recorta(
+								"Fotoperíodo", crop["Fotoperíodo"], 35);
 						destacaTipoFotosintetico(crop["Tipo Fotosintético"]);
 
 						// Observaciones
@@ -95,15 +101,12 @@ function cargaDatos() {
 						}
 
 						// Suelo
-						document.getElementById('textura').innerHTML = crop["Textura de suelo"];
-						document.getElementById('profundidad').innerHTML = crop["Profundidad de suelo"];
-						document.getElementById('drenaje').innerHTML = crop["Drenaje"];
+						document.getElementById('Textura de suelo').innerHTML = crop["Textura de suelo"];
+						document.getElementById('Profundidad de suelo').innerHTML = crop["Profundidad de suelo"];
+						document.getElementById('Drenaje').innerHTML = crop["Drenaje"];
 
-						document.getElementById('salinidad').innerHTML = crop["Salinidad"];
-						document.getElementById('ph').innerHTML = crop["pH"];
-
-						var id = crop.Foto.substring(0, crop.Foto.indexOf('.'));
-						document.getElementById('cropId').value = id;
+						document.getElementById('Salinidad').innerHTML = crop["Salinidad"];
+						document.getElementById('pH').innerHTML = crop["pH"];
 
 						var altitudeRequirements = crop.altitude;
 						for (altitudeRequirementNumber in altitudeRequirements) {
@@ -241,6 +244,7 @@ function recorta(tipo, texto, caracteres) {
 }
 
 function destacaTipoFotosintetico(tipoFotosintetico) {
+    document.getElementById('Tipo Fotosintético').innerHTML = tipoFotosintetico;
 	switch (tipoFotosintetico) {
 	case "C3":
 		document.getElementById("c3").style.opacity = 1;
@@ -624,4 +628,93 @@ function addEditableTag(tag){
 function removeTag(tag){
 	var item = document.getElementById(tag);
 	item.parentNode.removeChild(item);
+}
+
+function edit(property){
+    var content = document.getElementById(property).childNodes;
+    var value = "";
+    if(document.getElementById(property).childElementCount > 1){
+        value = document.getElementById(property).childNodes[0].nodeValue;
+    }else{
+        value = document.getElementById(property).innerHTML;
+    }
+    document.getElementById('propertyRow').value = value;
+    document.getElementById('editPropertyModButton').setAttribute("onclick", "updatePropertyCrop(\"" + property + "\")");
+    document.getElementById('editPropertyModal').style.display='block';
+}
+
+function updatePropertyCrop(property){
+    var form = document.getElementById("propertyForm");
+    var value = form.getElementsByTagName("textarea").propertyRow.value;
+    var doc = {};
+
+    doc[property] = value;
+
+    var data = {
+		doc : doc
+	};
+
+	data["doc_as_upsert"] = true;
+
+	var url = "/osc/crops/elastic/update/" + document.getElementById("cropId").value + "/";
+
+
+    var request = jQuery.ajax({
+		crossDomain : true,
+		url : url,
+		type : 'POST',
+		dataType : "json",
+		data : JSON.stringify(data)
+	});
+
+	request
+			.done(function(response, textStatus, jqXHR) {
+				if (response.status == "SUCCESS") {
+
+					document.getElementById('resultText').innerHTML = '<p><i class="fa fa-check-square-o w3-text-green"></i> ¡Estupendo! El cultivo se ha actualizado. <i class="fa fa-smile-o"></i></p>';
+					document.getElementById('result').style.display = 'block';
+
+				} else {
+					document.getElementById('resultText').innerHTML = '<p>La hemos liao. '
+							+ '<i class="fa fa fa-meh-o w3-text-red"></i> '
+							+ ' Aquí va algo de información por si ayuda. '
+							+ '<i class="fa fa-fire-extinguisher w3-text-red"></i></p>'
+							+ '<h4>Datos del request a la url:</h4> '
+							+ '<p>'
+							+ url
+							+ '</p>'
+							+ '<div class="w3-panel w3-pale-blue w3-leftbar w3-border-blue">'
+							+ '<pre style="white-space: pre-wrap;"><code>'
+							+ JSON.stringify(data)
+							+ '</code></pre>'
+							+ '</div>'
+							+ '<div class="w3-panel w3-pale-red w3-leftbar w3-border-red">'
+							+ '<pre style="white-space: pre-wrap;"><code>'
+							+ JSON.stringify(response)
+							+ '</code></pre>' + '</div>';
+					;
+					document.getElementById('result').style.display = 'block';
+
+				}
+
+			});
+}
+
+function makeEditable(){
+
+    var editable = 'none';
+    var makeEditable = 'inline';
+    if(QueryString.API_KEY == "3r1k4"){
+        editable = 'inline';
+        makeEditable = 'none';
+    }
+    var editables = document.getElementsByClassName("editable");
+    for(var editableNumber = 0; editableNumber < editables.length; editableNumber++){
+        editables[editableNumber].style.display = editable;
+    }
+
+    var makeEditables = document.getElementsByClassName("makeEditable");
+    for(var makeEditableNumber = 0; makeEditableNumber < makeEditables.length; makeEditableNumber++){
+        makeEditables[makeEditableNumber].style.display = makeEditable;
+    }
 }

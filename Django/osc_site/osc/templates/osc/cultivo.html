@@ -43,6 +43,7 @@
 	ga('create', 'UA-74247467-2', 'auto');
 	ga('send', 'pageview');
 
+
     </script>
 </head>
 <body onload="cargaDatos()">
@@ -65,7 +66,10 @@
         <h5 class="w3-left">
             <i class="fa fa-dashboard"></i> <span id="pagina"></span>
         </h5>
-        <a href="javascript:void(0)"
+        <a class="makeEditable" href="javascript:void(0)"
+           onclick="document.getElementById('makeEditableModal').style.display='block'"><i
+                class="fa fa-edit w3-right w3-opacity"></i></a>
+        <a class="editable" href="javascript:void(0)"
            onclick="document.getElementById('editModal').style.display='block'"><i
                 class="fa fa-edit w3-right"></i></a>
     </header>
@@ -85,6 +89,9 @@
                     </div>
                     <div class="w3-clear"></div>
                     <h4>Precipitación</h4>
+                    <span class="editable"><a href="javascript:void(0)"
+                             onclick="edit('precipitacion')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
                 </div>
             </div>
         </div>
@@ -97,11 +104,14 @@
                 </div>
                 <div class="w3-right">
                     <p>
-                        <span id="temperatura"></span>
+                        <span id="Temperatura"></span>
                     </p>
                 </div>
                 <div class="w3-clear"></div>
                 <h4>Temperatura</h4>
+                <span class="editable"><a href="javascript:void(0)"
+                         onclick="edit('Temperatura')"><i
+                        class="fa fa-edit w3-right"></i></a></span>
             </div>
         </div>
 
@@ -113,11 +123,14 @@
                 </div>
                 <div class="w3-right">
                     <p>
-                        <span id="sol"></span>
+                        <span id="Luz"></span>
                     </p>
                 </div>
                 <div class="w3-clear"></div>
                 <h4>Sol</h4>
+                <span class="editable"><a href="javascript:void(0)"
+                         onclick="edit('Luz')"><i
+                        class="fa fa-edit w3-right"></i></a></span>
             </div>
         </div>
 
@@ -130,11 +143,14 @@
                 </div>
                 <div class="w3-right">
                     <p>
-                        <span id="humedad_ambiental"></span>
+                        <span id="Humedad ambiental"></span>
                     </p>
                 </div>
                 <div class="w3-clear"></div>
                 <h4>Humedad ambiental</h4>
+                <span class="editable"><a href="javascript:void(0)"
+                         onclick="edit('Humedad ambiental')"><i
+                        class="fa fa-edit w3-right"></i></a></span>
             </div>
         </div>
 
@@ -151,12 +167,20 @@
             </h5>
             <div class="w3-twothird">
                 <ul class="w3-ul w3-striped w3-white w3-hoverable">
-                    <li><strong>Nombre</strong> <span id="nombre"></span></li>
+                    <li><strong>Nombre</strong> <span id="Nombre"></span><span class="editable"><a href="javascript:void(0)"
+                                                                                  onclick="edit('Nombre')"><i
+                            class="fa fa-edit w3-right"></i></a></span></li>
                     <li><strong>Nombre Científico</strong> <span
-                            id="nombre_cientifico"></span></li>
-                    <li><strong>Familia</strong> <span id="familia"></span></li>
+                            id="Nombre Científico"></span><span class="editable"><a href="javascript:void(0)"
+                                                                   onclick="edit('Nombre Científico')"><i
+                            class="fa fa-edit w3-right"></i></a></span></li>
+                    <li><strong>Familia</strong> <span id="Familia"></span><span class="editable"><a href="javascript:void(0)"
+                                                                                    onclick="edit('Familia')"><i
+                            class="fa fa-edit w3-right"></i></a></span></li>
                     <li><strong>Nombres Comunes</strong> <span
-                            id="nombres_comunes"></span></li>
+                            id="Nombres Comunes"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Nombres Comunes')"><i
+                            class="fa fa-edit w3-right"></i></a></span></li>
                 </ul>
                 <span id="buscar_imagen"></span>
                 <!-- Labels / tags -->
@@ -202,24 +226,32 @@
                     <tr>
                         <td><i class="fa fa-map-marker w3-blue w3-padding-tiny"></i></td>
                         <td>Origen</td>
-                        <td><span id="origen"></span></td>
+                        <td><span id="Origen"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Origen')"><i
+                            class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-map-o w3-red w3-padding-tiny"></i></td>
                         <td>Distribución</td>
-                        <td><span id="distribucion"></span></td>
+                        <td><span id="Distribución"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Distribución')"><i
+                            class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
                     <tr>
                         <td><i
                                 class="fa fa-image w3-orange w3-text-white w3-padding-tiny"></i></td>
                         <td>Adaptación</td>
-                        <td><span id="adaptacion"></span></td>
+                        <td><span id="Adaptación"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Adaptación')"><i
+                            class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
                     <tr>
                         <td><i
                                 class="fa fa-arrows-v w3-green w3-text-white w3-padding-tiny"></i></td>
                         <td>Altitud</td>
-                        <td><span id="altitud"></span></td>
+                        <td><span id="Altitud"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Altitud')"><i
+                            class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
                 </table>
             </div>
@@ -234,22 +266,26 @@
         <div class="w3-row">
             <div class="w3-half">
                 <h5>Periodos</h5>
-                <p>Ciclo Vegetativo</p>
+                <p>Ciclo Vegetativo<span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Ciclo vegetativo')"><i
+                            class="fa fa-edit w3-right"></i></a></span></p>
                 <div class="w3-progress-container w3-grey">
                     <div class="w3-progressbar w3-green"
                          style="width: 100%">
                         <div class="w3-center w3-text-white">
-                            <span id="ciclo_vegetativo"></span>
+                            <span id="Ciclo vegetativo"></span>
                         </div>
                     </div>
                 </div>
 
-                <p>Fotoperiodo</p>
+                <p>Fotoperiodo<span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Fotoperíodo')"><i
+                            class="fa fa-edit w3-right"></i></a></span></p>
                 <div class="w3-progress-container w3-grey w3-margin-bottom">
                     <div class="w3-progressbar w3-yellow"
                          style="width: 50%">
                         <div class="w3-center w3-text-white">
-                            <span id="fotoperiodo"></span>
+                            <span id="Fotoperíodo"></span>
                         </div>
                     </div>
                 </div>
@@ -258,7 +294,9 @@
 					<span
                             onclick="this.parentElement.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding">&times;</span>
-                <p>Tipo fotosintético</p>
+                <p>Tipo fotosintético<span style="display:none" id="Tipo Fotosintético"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Tipo Fotosintético')"><i
+                            class="fa fa-edit w3-right"></i></a></span></p>
                 <div class="w3-container w3-third">
                     <div id="tarjeta_c3" class="w3-card-2">
                         <img id="c3" class="w3-opacity" alt="C3" src="{% static 'osc/img/C3.png' %}"
@@ -309,19 +347,25 @@
                     <i class="	fa fa-cubes w3-padding-tiny"></i>Textura
                 </dt>
                 <dd>
-                    <span id="textura"></span>
+                    <span id="Textura de suelo"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Textura de suelo')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
                 </dd>
                 <dt>
                     <i class="fa fa-database w3-padding-tiny"></i>Profundidad de suelo
                 </dt>
                 <dd>
-                    <span id="profundidad"></span>
+                    <span id="Profundidad de suelo"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Profundidad de suelo')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
                 </dd>
                 <dt>
                     <i class="fa fa-filter  w3-padding-tiny"></i>Drenaje
                 </dt>
                 <dd>
-                    <span id="drenaje"></span>
+                    <span id="Drenaje"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Drenaje')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
                 </dd>
             </dl>
         </div>
@@ -338,11 +382,13 @@
                     class="w3-closebtn w3-padding">&times;</span>
         <h4>Química</h4>
         <div class="w3-half">
-            <h5>Salinidad</h5>
+            <h5>Salinidad</h5><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('Salinidad')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
             <img src="{% static 'osc/img/sal-masivo-halita-_sal-cristalizada_-1kg.jpg' %}"
                  class="w3-circle w3-left w3-padding">
             <p>
-                <span id="salinidad"></span>
+                <span id="Salinidad"></span>
             </p>
         </div>
         <div class="w3-half">
@@ -398,7 +444,9 @@
             </div>
 
             <p>
-                <span id="ph"></span>
+                <span id="pH"></span><span class="editable"><a href="javascript:void(0)"
+                                                                 onclick="edit('pH')"><i
+                            class="fa fa-edit w3-right"></i></a></span>
             </p>
         </div>
     </article>
@@ -453,7 +501,8 @@
                 <div class=w3-container>
                     <div class="w3-row-padding">
                         <p id="tagsRow"></p>
-                        <input id="newTag" class="w3-right" placeholder="Nueva etiqueta" type="text" onchange="addEditableTag()">
+                        <input id="newTag" class="w3-right" placeholder="Nueva etiqueta" type="text"
+                               onchange="addEditableTag()">
                     </div>
                     <div id="requirementsRows" class="w3-row-padding"></div>
 
@@ -477,6 +526,52 @@
                 <option value="Sol" label="Horas de sol anuales">
                 <option value="Temperatura" label="Temperaturas máximas y mínimas, rangos térmicos">
             </datalist>
+        </div>
+    </div>
+</div>
+
+<!-- The Make Editable Modal -->
+    <div id="makeEditableModal" class="w3-modal">
+        <div class="w3-modal-content">
+
+            <form class="w3-container w3-card-4" action="/osc/cultivo/">
+                <h2 class="w3-text-blue">Modificar el cultivo</h2>
+                <p>Vas a modificar cultivo, para ello aparecerán lapicitos en cada cosa que puedas editar.</p>
+                <p>Para poder hacerlo necesitas conocer la clave de edición, ¿la conoces?. Si quieres conocerla ponte en contacto con nosotros ;)</p>
+                <p>
+                    <label class="w3-text-blue"><b>Clave</b></label>
+                    <input class="w3-input w3-border" name="API_KEY" type="text"></p>
+                    <input id="cultivo_id" style="display:none" name="cultivo_id" type="number"></p>
+                <p>
+                    <button class="w3-btn w3-blue">Editar cultivo</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+<!-- editPropertyModal -->
+<div id="editPropertyModal" class="w3-modal">
+    <div class="w3-modal-content">
+
+        <div id="propertyForm">
+            <div class="w3-card-4">
+                <div class="w3-container w3-light-grey">
+                    <span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+                    <h2 class="w3-text-dark-grey">
+                        <input id="propertyCropId" class="w3-light-grey w3-border-0" name="cultivo_id" type="number"
+                               readonly="readonly">
+                    </h2>
+                </div>
+
+                <div class=w3-container>
+                    <textarea id="propertyRow" rows="4" class="w3-input w3-border"></textarea>
+                    <div class="w3-clear">
+                        <button id="editPropertyModButton"
+                                class="w3-btn w3-left w3-light-grey">Modificar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
