@@ -1,5 +1,5 @@
 import ConfigParser
-from osc_site.settings import *
+from osc.settings.base_settings import *
 
 SECRETS_PATH = '/code/tmp/secrets.ini'
 
@@ -14,7 +14,7 @@ ELASTICSEARCH = {
 
 GOOGLE_ELEVATION = {
     'chunk_size': 512,
-    'api_key': secrets.get('Google Elevation', 'api_key')
+    'api_key': get_secret(secrets, 'Google Elevation', 'api_key')
 }
 
 INFORIEGO = {
@@ -22,8 +22,8 @@ INFORIEGO = {
     'index': 'inforiego',
     'daily.mapping': 'info_riego_daily',
     'station.mapping': 'info_riego_station',
-    'user': secrets.get('inforiego', 'user'),
-    'passwd': secrets.get('inforiego', 'passwd')
+    'user': get_secret(secrets, 'inforiego', 'user'),
+    'passwd': get_secret(secrets, 'inforiego', 'passwd')
 }
 
 CADASTRE = {
@@ -42,13 +42,13 @@ STATIONS = {
 WEATHER = {
     'index': 'weather_v1',
     'mapping': 'weather',
-    'owm_token': secrets.get('openweathermap', 'token'),
+    'owm_token': get_secret(secrets, 'openweathermap', 'token'),
     'owm_chunk_size': 60,
     'owm_chunk_time': 60
 }
 
 SLACK = {
-    'token': secrets.get('slack', 'token'),
+    'token': get_secret(secrets, 'slack', 'token'),
     'flush_bucket': 200
 }
 

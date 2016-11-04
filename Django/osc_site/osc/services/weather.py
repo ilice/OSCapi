@@ -10,7 +10,11 @@ from osc.services import get_all_stations
 from osc.util import elastic_bulk_save, error_managed, es
 from elasticsearch.client import IndicesClient
 
+import logging
+
 owm_url = 'http://api.openweathermap.org/data/2.5/weather'
+
+logger = logging.getLogger(__name__)
 
 """
 Parameters:
@@ -236,6 +240,8 @@ def get_weather_from_stations():
             if weather is not None:
                 weather['station_name'] = station['name']
                 weather_list.append(weather)
+            else:
+                logger.warning('No weather obtained for station %s', str(station))
 
     return weather_list
 
