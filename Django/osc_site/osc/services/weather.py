@@ -3,12 +3,13 @@ from django.conf import settings
 import pytz
 import time
 from datetime import datetime
+from geopy.distance import great_circle
 
-from osc.exceptions import ConnectionError
-from osc.services import get_all_stations
+from osc.exceptions import ConnectionError, ElasticException
 
 from osc.util import elastic_bulk_save, error_managed, es
 from elasticsearch.client import IndicesClient
+from elasticsearch import ElasticsearchException
 
 import logging
 
@@ -61,13 +62,17 @@ cod Internal parameter
 # https://openweathermap.org/weather-conditions
 
 weather_index = settings.WEATHER['index']
-weather_mapping = settings.WEATHER['mapping']
+weather_mapping = settings.WEATHER['weather.mapping']
+locations_mapping = settings.WEATHER['locations.mapping']
 
 
 def make_weather_mapping():
     idx_client = IndicesClient(es)
 
     mapping = {
+        "_parent": {
+            "type": locations_mapping
+        },
         "properties": {
             "base": {
                 "type": "keyword"
@@ -133,7 +138,7 @@ def make_weather_mapping():
                     }
                 }
             },
-            "station_name": {
+            "location_name": {
                 "type": "keyword"
             },
             "sys": {
@@ -211,22 +216,24 @@ def get_weather(lat, lon):
         weather_record['dt'] = pytz.timezone(settings.TIME_ZONE).localize(datetime.fromtimestamp(weather_record['dt']))
         weather_record['sys']['sunrise'] = pytz.timezone(settings.TIME_ZONE).localize(datetime.fromtimestamp(weather_record['sys']['sunrise']))
         weather_record['sys']['sunset'] = pytz.timezone(settings.TIME_ZONE).localize(datetime.fromtimestamp(weather_record['sys']['sunset']))
+        weather_record['coordinates'] = weather_record['coord']
+        del(weather_record['coord'])
     else:
         raise ConnectionError('OPENWEATHERMAP', 'Error connecting to ' + owm_url + '. Status code: ' + response.status_code)
 
     return weather_record
 
 
-def get_weather_from_stations():
+def get_weather_from_locations():
     chunk_size = settings.WEATHER['owm_chunk_size']
     chunk_time = settings.WEATHER['owm_chunk_time']
 
-    stations = get_all_stations()
+    locations = get_all_locations()
     weather_list = []
 
     begin = None
-    for i in range(0, len(stations), chunk_size):
-        chunk = stations[i:i+chunk_size]
+    for i in range(0, len(locations), chunk_size):
+        chunk = locations[i:i+chunk_size]
         # wait for the waiting time
         if begin:
             time_spent = (datetime.now() - begin).seconds
@@ -235,13 +242,16 @@ def get_weather_from_stations():
 
         begin = datetime.now()
 
-        for station in chunk:
-            weather = get_weather(station['coordinates']['lat'], station['coordinates']['lon'])
-            if weather is not None:
-                weather['station_name'] = station['name']
+        for (id_location, location) in chunk:
+            weather_rec = get_weather(location['coordinates']['lat'], location['coordinates']['lon'])
+
+            if weather_rec is not None:
+                weather = {'location': id_location,
+                           'record': weather_rec}
+
                 weather_list.append(weather)
             else:
-                logger.warning('No weather obtained for station %s', str(station))
+                logger.warning('No weather obtained for location %s', str(location))
 
     return weather_list
 
@@ -252,8 +262,58 @@ def store_weather(weather_list):
     for i in range(0, len(weather_list), chunk_size):
         records = weather_list[i:i + chunk_size]
 
-        ids = [str(time.mktime(r['dt'].timetuple())) + '_' +
-               str(r['coord']['lat']) + '_' +
-               str(r['coord']['lon']) for r in records]
+        docs = [r['record'] for r in records]
+        ids = [str(time.mktime(r['record']['dt'].timetuple())) + '_' + r['location'] for r in records]
+        parents = [r['location'] for r in records]
 
-        elastic_bulk_save('STORE_WEATHER', weather_index, weather_mapping, records, ids=ids)
+        elastic_bulk_save('STORE_WEATHER', weather_index, weather_mapping, docs, ids=ids, parents=parents)
+
+
+@error_managed(default_answer={})
+def get_closest_location(lat, lon):
+    try:
+        query = {"size": 1,
+                 "sort": [
+                     {
+                         "_geo_distance": {
+                             "coordinates": {
+                                 "lat": lat,
+                                 "lon": lon
+                             },
+                             "order": "asc",
+                             "unit": "km",
+                             "mode": "min",
+                             "distance_type": "sloppy_arc"
+                         }
+                     }
+                 ]
+                 }
+
+        result = es.search(index=weather_index, doc_type=locations_mapping, body=query)
+
+        locations = [(hits['_id'], hits['_source']) for hits in result['hits']['hits']]
+
+        closest_location = {}
+        id_location = None
+
+        if len(locations) == 1:
+            id_location, closest_location = locations[0]
+
+            this_loc = (lat, lon)
+            location_loc = (closest_location['coordinates']['lat'], closest_location['coordinates']['lon'])
+
+            closest_location['distance_to_parcel'] = great_circle(this_loc, location_loc).kilometers
+
+        return id_location, closest_location
+
+    except ElasticsearchException as e:
+        raise ElasticException('locationS', 'ElasticSearch Error getting closest location', e)
+
+
+def get_all_locations():
+    result = es.search(index=weather_index, doc_type=locations_mapping, size=10000)
+
+    locations = [(hits['_id'], hits['_source']) for hits in result['hits']['hits']]
+
+    return locations
+

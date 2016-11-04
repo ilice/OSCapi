@@ -34,14 +34,10 @@ CADASTRE = {
     'max.query.size': 5000
 }
 
-STATIONS = {
-    'index': 'stations_v1',
-    'mapping': 'stations',
-}
-
 WEATHER = {
     'index': 'weather_v1',
-    'mapping': 'weather',
+    'weather.mapping': 'weather',
+    'locations.mapping': 'locations',
     'owm_token': get_secret(secrets, 'openweathermap', 'token'),
     'owm_chunk_size': 60,
     'owm_chunk_time': 60

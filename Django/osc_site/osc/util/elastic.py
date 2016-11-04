@@ -43,17 +43,21 @@ def elastic_bulk_update(process_name, index, doc_type, records, ids=None, retry=
 
 
 @error_managed(inhibit_exception=True)
-def elastic_bulk_save(process_name, index, doc_type, records, ids=None, retry=True):
+def elastic_bulk_save(process_name, index, doc_type, records, ids=None, parents=None, retry=True):
     try:
         if ids is None:
             ids = [None] * len(records)
+
+        if parents is None:
+            parents = [None] * len(records)
 
         wait_for_yellow_cluster_status()
         es_helpers.bulk(es,
                         ({'_index': index,
                           '_id': idx,
+                          '_parent': parent,
                           '_type': doc_type,
-                          '_source': r} for (r, idx) in zip(records, ids)))
+                          '_source': r} for (r, idx, parent) in zip(records, ids, parents)))
     except Exception as e:
         for (r, idx) in zip(records, ids):
             if retry:

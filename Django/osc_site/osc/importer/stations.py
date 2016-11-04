@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import xml.etree.ElementTree as ET
 from django.conf import settings
 from osc.util import elastic_bulk_save, es
@@ -6,11 +8,10 @@ from osc.services import obtain_elevation_from_google
 
 from elasticsearch.client import IndicesClient
 
-
 ns = {'default': 'http://www.opengis.net/kml/2.2'}
 
-stations_index = settings.STATIONS['index']
-stations_mapping = settings.STATIONS['mapping']
+stations_index = settings.WEATHER['index']
+stations_mapping = settings.WEATHER['locations.mapping']
 
 
 def read_stations(from_file):
@@ -74,13 +75,13 @@ def store_stations(stations):
     for i in range(0, len(stations), chunk_size):
         records = stations[i:i+chunk_size]
 
-        ids = [str(r['coordinates']) for r in records]
+        ids = [r['name'] + '_' + str(r['coordinates']['lat']) + '_' + str(r['coordinates']['lon']) for r in records]
 
         elastic_bulk_save('STORE_STATIONS', stations_index, stations_mapping, records, ids=ids)
 
 
 def import_stations(file_name):
-    create_stations_mapping()
+    # create_stations_mapping()
 
     stations = read_stations(file_name)
     add_elevation_from_google(stations)

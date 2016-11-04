@@ -8,7 +8,6 @@ from osc.views import web
 
 urlpatterns = [
     # Relative to the web
-    url(r'^$', web.index, name='index'),
     url(r'^propietario/$', web.propietario, name='propietario'),
     url(r'^mapaDeParcelas/$', web.mapa_de_parcelas, name='mapa_de_parcelas'),
     url(r'^parcela/$', web.parcela, name='parcela'),

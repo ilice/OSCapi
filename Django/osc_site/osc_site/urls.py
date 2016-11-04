@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from osc.views import web
 
 urlpatterns = [
-    url(r'^$', include('osc.urls')),
+    url(r'^$', web.index, name='index'),
     url(r'^osc/', include('osc.urls')),
     url(r'^admin/', admin.site.urls),
 ]

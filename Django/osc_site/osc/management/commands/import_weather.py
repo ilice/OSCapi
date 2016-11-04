@@ -16,9 +16,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Started importing stations from open weather map')
 
-        weather.make_weather_mapping()
+        # weather.make_weather_mapping()
 
-        weather_list = weather.get_weather_from_stations()
+        weather_list = weather.get_weather_from_locations()
         weather.store_weather(weather_list)
 
         logger.info('   ...Finished!!')
