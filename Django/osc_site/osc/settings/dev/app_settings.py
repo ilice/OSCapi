@@ -74,14 +74,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'logfile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': AUX_DIRS['log_dir'] + "/osc.log",
-            'maxBytes': 50000,
-            'backupCount': 2,
-            'formatter': 'standard',
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -100,8 +92,8 @@ LOGGING = {
             'propagate': False,
         },
         'osc': {
-            'handlers': ['console', 'logfile'],
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
         },
     }
 }
