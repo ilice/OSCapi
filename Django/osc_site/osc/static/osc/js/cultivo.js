@@ -654,7 +654,7 @@ function updatePropertyCrop(property){
 		doc : doc
 	};
 
-	data["doc_as_upsert"] = true;
+	data["doc_as_upsert"] = "true";
 
 	var url = "/osc/crops/elastic/update/" + document.getElementById("cropId").value + "/";
 
