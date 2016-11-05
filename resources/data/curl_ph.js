@@ -3,6 +3,7 @@
 {"update":{"_id":"2"}}
 {"doc" : { "ph" : [ {"min":6.0, "max": 7.0, "obs": "Raza Antillana y Guatemalteca "}]}}
 {"update":{"_id":"2"}}
+{"doc" : { "ph" : [ {"min":4.8, "max": 7.5}]}}
 {"update":{"_id":"2"}}
 {"doc" : { "ph" : [ {"min":7.0, "max": 7.5, "obs": "Óptimo raza Mexicana "}]}}
 {"update":{"_id":"9"}}
@@ -130,6 +131,7 @@
 {"update":{"_id":"4"}}
 {"doc" : { "ph" : [ {"min":7.5, "max": 8.5, "obs": "Posilbilidad de desarrollarse en condiciones de acidez ligera (Aragón, 1995)"}]}}
 {"update":{"_id":"27"}}
+{"doc" : { "ph" : [ { "obs": "Tolera acidez en el suelo (Aragón, 1995)"}]}}
 {"update":{"_id":"53"}}
 {"doc" : { "ph" : [ {"min":6.0, "max": 6.8, "obs": " (Aragón, 1995)"}]}}
 {"update":{"_id":"86"}}
@@ -139,6 +141,7 @@
 {"update":{"_id":"20"}}
 {"doc" : { "ph" : [ {"min":5.0, "max": 8.5, "obs": "Óptimo alredeor 6,5 (Doorenbos y Kassam, 1979)"}]}}
 {"update":{"_id":"21"}}
+{"doc" : { "ph" : [ { "obs": "Neutros (Doorenbos y Kassam, 1979)"}]}}
 {"update":{"_id":"23"}}
 {"doc" : { "ph" : [ {"min":6.0, "max": 7.0, "obs": " (Doorenbos y Kassam, 1979)"}]}}
 {"update":{"_id":"26"}}
@@ -324,7 +327,9 @@
 {"update":{"_id":"91"}}
 {"doc" : { "ph" : [ {"min":5.3, "max": 7.8, "obs": "Óptimo 6,6 (FAO, 1994)"}]}}
 {"update":{"_id":"6"}}
+{"doc" : { "ph" : [ { "obs": "Precisa la presencia de caliza en el suelo (Yuste, 1997)"}]}}
 {"update":{"_id":"7"}}
+{"doc" : { "ph" : [ { "obs": "Precisa la presencia de caliza en el suelo (Yuste, 1997)"}]}}
 {"update":{"_id":"63"}}
 {"doc" : { "ph" : [ {"min":5.4, "max": 6.8, "obs": "Minima tolerancia 5,2. (Yuste, 1997)"}]}}
 {"update":{"_id":"73"}}
