@@ -265,7 +265,7 @@
 {"update":{"_id":"16"}}
 {"doc" : { "altitude" : [ {"min":1000, "max": 2800, "obs": " (Alegre, 1959)"}]}}
 {"update":{"_id":"26"}}
-{"doc" : { "altitude" : [ {"min":1300, "max": 0, "obs": " En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien (Parsons, 1987)"}]}}
+{"doc" : { "altitude" : [ {"min":1300, "obs": " En regiones subtropicales y subtropicales a alturas menores a 1300 m no produce bien (Parsons, 1987)"}]}}
 {"update":{"_id":"37"}}
 {"doc" : { "altitude" : [ {"min":0, "max": 2000, "obs": "Se recomienda utilizar cultivares de bajos requerimientos de frío y la aplicación de compensadores de frío y hormonas de crecimiento (Rodríguez y Avitia, 1984)"}]}}
 {"update":{"_id":"39"}}

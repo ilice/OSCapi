@@ -388,7 +388,14 @@ function updateCrop() {
 
 	var form = document.getElementById("cropForm");
 	var doc = {};
-	doc["altitude"] = [];
+    doc["altitude"] = [];
+    doc["latitude"] = [];
+    doc["ph"] = [];
+    doc["temperature"] = [];
+    doc["rainfall"] = [];
+    doc["sunHours"] = [];
+
+
 	var cropId = form.getElementsByTagName("input").cropId.value;
 
 	var fieldsets = document.getElementsByTagName("fieldset");
@@ -404,7 +411,9 @@ function updateCrop() {
 			var type = getType(input.id);
 			var value = input.value;
 			if (type != "measure") {
-				requirement[type] = value;
+			    if(value != ""){
+				    requirement[type] = value;
+				}
 			} else {
 				label = value;
 			}
@@ -419,7 +428,7 @@ function updateCrop() {
 			}
 			break;
 		case "Latitud":
-			label = "altitude";
+			label = "latitude";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {

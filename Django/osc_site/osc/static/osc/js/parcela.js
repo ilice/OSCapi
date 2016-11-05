@@ -427,61 +427,93 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 
 function drawAlternatives(cadastralParcelFeatures){
 	
-	var altitud = cadastralParcelFeatures.properties.elavation;
-	var textoBusqueda;
+	var altitud = cadastralParcelFeatures.properties.elevation.toFixed();
 	var query;
-	var match = textoBusqueda;
-	var _all = textoBusqueda;
-	var queryType;
-	var numeroCultivoInicial = 0;
 	var numeroCultivosACargar = 100;
 
 	if (encodeURIComponent(altitud) != "undefined"){
 		query = {
-				"constant_score" : {
-		            "filter" : {
-		                "bool": {
-		                "must": [
-		                   {"range" : {
-		                    "altitude.min" : {
-		                        "lte"  : altitud
-		                    }
-		                }},
-		                {"range" : {
-		                    "altitude.max" : {
-		                        "gte" : altitud
-		                    }
-		                }}
-		                
-		                ]
-		                }
-		            }
-		        }
-		};
-	} else if (encodeURIComponent(textoBusqueda) == "undefined") {
-		query = {
-			"match_all" : {}
-		};
+      dis_max: {
+         tie_breaker: 0.7,
+         boost: 1.2,
+         queries: [
+            {
+               bool: {
+                  must: [
+                     {
+                        range: {
+                           "altitude.min": {
+                              lte: altitud
+                           }
+                        }
+                     },
+                     {
+                        range: {
+                           "altitude.max": {
+                              gte: altitud
+                           }
+                        }
+                     }
+                  ]
+               }
+            },
+            {
+               bool: {
+                  must: {
+                     range: {
+                        "altitude.min": {
+                           lte: altitud
+                        }
+                     }
+                  },
+                  must_not: {
+                     exists: {
+                        field: "altitude.max"
+                     }
+                  }
+               }
+            },
+            {
+               bool: {
+                  must: {
+                     range: {
+                        "altitude.max": {
+                           gte: altitud
+                        }
+                     }
+                  },
+                  must_not: {
+                     exists: {
+                        field: "altitude.min"
+                     }
+                  }
+               }
+            },
+            {
+               bool: {
+                  must_not: {
+                     exists: {
+                        field: "altitude.max"
+                     }
+                  },
+                  must_not: {
+                     exists: {
+                        field: "altitude.min"
+                     }
+                  }
+               }
+            }
+         ]
+      }
+   };
 	} else {
-		if (queryType == "match") {
-
-			query = {
-				"match" : {
-					_all
-				}
-			};
-		} else {
-			query = {
-				"match_phrase" : {
-					_all
-				}
-			};
-		}
+		query = {
+			match_all : {}
+		};
 	}
 
 	var data = {
-		"from" : numeroCultivoInicial,
-		"size" : numeroCultivosACargar,
+		size : numeroCultivosACargar,
 		query
 
 	};
