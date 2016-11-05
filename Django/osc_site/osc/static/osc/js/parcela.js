@@ -433,15 +433,17 @@ function drawAlternatives(cadastralParcelFeatures){
 	var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
 	queries.push(altitudeQuery);
 
-	var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature;
-	var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature;
+	var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature.toFixed();
+	var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature.toFixed();
     var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
     queries.push(temperatureQuery);
 
+    var plotLatitude = cadastralParcelFeatures.properties.reference_point.lat.toFixed();
+    var latitudeQuery = createQueryForTypeAndValue("latitude", plotLatitude);
+    queries.push(latitudeQuery);
+
 
 	var numeroCultivosACargar = 100;
-
-
 
 	var query = aggregateQueries(queries);
 
@@ -1127,7 +1129,7 @@ function createQueryForTypeAndRange(type, minValue, maxValue){
 }
 
 function aggregateQueries(queries){
-    
+
     var query = {
         bool: {
             must: queries
