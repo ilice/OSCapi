@@ -29,8 +29,9 @@ Se utiliza el [Bulk API de Elasticsearch](https://www.elastic.co/guide/en/elasti
 Como estamos utilizando ficheros, usaremos el --data-binary en lugar del -d que utilizamos habitualmente, es decir, en orden ejecutamos:
 ```
 curl -XDELETE "elastic_endpoint/osc"
-curl -s -XPOST "elastic_endpoint/osc/requirements/_bulk" --data-binary "@curl_requirements_inicial.js"
-curl -s -XPOST "elastic_endpoint/osc/requirements/_bulk" --data-binary "@curl_altitud.js"
+curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_requirements_inicial.js"
+curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_altitud.js"
+curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_ph.js"
 ```
 Sustituyendo `elastic_endpoint` por la url de la base de datos que estamos utilizando, por ejemplo `http://localhost:9200`
 ### Estaciones de inforiego

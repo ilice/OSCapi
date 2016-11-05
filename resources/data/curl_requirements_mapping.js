@@ -78,16 +78,6 @@
 						},
 						"obs" : {
 							"type" : "string"
-						},
-						"source" : {
-							"properties" : {
-								"name" : {
-									"type" : "string"
-								},
-								"year" : {
-									"type" : "integer"
-								}
-							}
 						}
 					}
 				},
