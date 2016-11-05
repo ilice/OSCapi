@@ -426,91 +426,24 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 }
 
 function drawAlternatives(cadastralParcelFeatures){
+
+    var queries = [];
 	
-	var altitud = cadastralParcelFeatures.properties.elevation.toFixed();
-	var query;
+	var altitude = cadastralParcelFeatures.properties.elevation.toFixed();
+	var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
+	queries.push(altitudeQuery);
+
+	var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature;
+	var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature;
+    var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
+    queries.push(temperatureQuery);
+
+
 	var numeroCultivosACargar = 100;
 
-	if (encodeURIComponent(altitud) != "undefined"){
-		query = {
-      dis_max: {
-         tie_breaker: 0.7,
-         boost: 1.2,
-         queries: [
-            {
-               bool: {
-                  must: [
-                     {
-                        range: {
-                           "altitude.min": {
-                              lte: altitud
-                           }
-                        }
-                     },
-                     {
-                        range: {
-                           "altitude.max": {
-                              gte: altitud
-                           }
-                        }
-                     }
-                  ]
-               }
-            },
-            {
-               bool: {
-                  must: {
-                     range: {
-                        "altitude.min": {
-                           lte: altitud
-                        }
-                     }
-                  },
-                  must_not: {
-                     exists: {
-                        field: "altitude.max"
-                     }
-                  }
-               }
-            },
-            {
-               bool: {
-                  must: {
-                     range: {
-                        "altitude.max": {
-                           gte: altitud
-                        }
-                     }
-                  },
-                  must_not: {
-                     exists: {
-                        field: "altitude.min"
-                     }
-                  }
-               }
-            },
-            {
-               bool: {
-                  must_not: {
-                     exists: {
-                        field: "altitude.max"
-                     }
-                  },
-                  must_not: {
-                     exists: {
-                        field: "altitude.min"
-                     }
-                  }
-               }
-            }
-         ]
-      }
-   };
-	} else {
-		query = {
-			match_all : {}
-		};
-	}
+
+
+	var query = aggregateQueries(queries);
 
 	var data = {
 		size : numeroCultivosACargar,
@@ -996,4 +929,210 @@ function carousel(seats) {
 	}
 	x[myIndex - 1].style.display = "block";
 	setTimeout(carousel, 4000, seats); // Change image every 2 seconds
+}
+
+
+function createQueryForTypeAndValue(type, value){
+    var query;
+    var minType = type + ".min";
+    var maxType = type + ".max";
+    //Dis Max Query: A query that generates the union of documents produced by its subqueries,
+    //and that scores each document with the maximum score for that document as
+    //produced by any subquery, plus a tie breaking increment for any additional
+    //matching subqueries.
+	if (encodeURIComponent(value) != "undefined"){
+
+        var subqueryValueBetweenMinAndMaxValueForCrop = {
+            bool: {
+                must: [
+                 {
+                    range: {
+                       [minType] : {
+                          lte: value
+                       }
+                    }
+                 },
+                 {
+                    range: {
+                       [maxType] : {
+                          gte: value
+                       }
+                    }
+                 }
+                ]
+            }
+        };
+
+        var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
+            bool: {
+                must: {
+                    range: {
+                        [minType]: {
+                           lte: value
+                        }
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: maxType
+                    }
+                }
+            }
+        };
+
+        var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
+            bool: {
+                must: {
+                    range: {
+                        [maxType]: {
+                           gte: value
+                        }
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: minType
+                    }
+                }
+            }
+        };
+
+        var subqueryCropsWithoutValueRanges = {
+            bool: {
+                must_not: {
+                    exists: {
+                        field: maxType
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: minType
+                    }
+                }
+            }
+        };
+
+		query = {
+            dis_max: {
+                tie_breaker: 0.7,
+                boost: 1.2,
+                queries: [
+                    subqueryValueBetweenMinAndMaxValueForCrop,
+                    subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+                    subqueryValueSmallerThanMaxWithoutMinValueForCrop,
+                    subqueryCropsWithoutValueRanges
+                ]
+            }
+         };
+	}
+
+	return query;
+}
+
+function createQueryForTypeAndRange(type, minValue, maxValue){
+    var query;
+    var minType = type + ".min";
+    var maxType = type + ".max";
+    //Dis Max Query: A query that generates the union of documents produced by its subqueries,
+    //and that scores each document with the maximum score for that document as
+    //produced by any subquery, plus a tie breaking increment for any additional
+    //matching subqueries.
+	if (encodeURIComponent(minValue) != "undefined" && encodeURIComponent(maxValue) != "undefined"){
+
+        var subqueryValueBetweenMinAndMaxValueForCrop = {
+            bool: {
+                must: [
+                 {
+                    range: {
+                       [minType] : {
+                          lte: minValue
+                       }
+                    }
+                 },
+                 {
+                    range: {
+                       [maxType] : {
+                          gte: maxValue
+                       }
+                    }
+                 }
+                ]
+            }
+        };
+
+        var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
+            bool: {
+                must: {
+                    range: {
+                        [minType]: {
+                           lte: minValue
+                        }
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: maxType
+                    }
+                }
+            }
+        };
+
+        var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
+            bool: {
+                must: {
+                    range: {
+                        [maxType]: {
+                           gte: maxValue
+                        }
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: minType
+                    }
+                }
+            }
+        };
+
+        var subqueryCropsWithoutValueRanges = {
+            bool: {
+                must_not: {
+                    exists: {
+                        field: maxType
+                    }
+                },
+                must_not: {
+                    exists: {
+                        field: minType
+                    }
+                }
+            }
+        };
+
+		query = {
+            dis_max: {
+                tie_breaker: 0.7,
+                boost: 1.2,
+                queries: [
+                    subqueryValueBetweenMinAndMaxValueForCrop,
+                    subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+                    subqueryValueSmallerThanMaxWithoutMinValueForCrop,
+                    subqueryCropsWithoutValueRanges
+                ]
+            }
+         };
+	}
+
+	return query;
+}
+
+function aggregateQueries(queries){
+    
+    var query = {
+        bool: {
+            must: queries
+        }
+    };
+
+    return query;
 }
