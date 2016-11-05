@@ -38,3 +38,16 @@ td {
 	height: 100%;
 	width: 100%;
 }
+
+::-webkit-scrollbar {
+    width: 0.2em;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: white ;
+  outline: 1px solid grey;
+}

@@ -3,6 +3,12 @@
  */
 function cargaDatos() {
 
+    addWidget('blue', 'white', "fa fa-tint",  "Precipitación");
+    addWidget('red', 'white', "fa fa-eyedropper",  "Temperatura");
+    addWidget('yellow', 'dark-grey', "fa fa-sun-o",  "Luz");
+    addWidget('green', 'white', "fa fa-rss",  "Humedad ambiental");
+
+
     makeEditable();
 
 	var cultivo_id = QueryString.cultivo_id;
@@ -38,25 +44,18 @@ function cargaDatos() {
 				if (response.status == "SUCCESS") {
 					var result = response.result.crops;
 					for (crop in result) {
+
 						var cropId = result[crop]._id;
 						crop = result[crop]._source;
+
+						drawCrop(crop);
+
 						document.title += crop.Nombre;
 						document.getElementById("pagina").innerHTML = crop.Nombre;
 
-						// Widgets iniciales: como el texto es largo se recorta
-						// y
-						// ponen unos puntos para ver más
-						setValueInField(recorta("Precipitación", crop["Precipitación"], 120), "precipitacion");
-                        setValueInField(recorta("Temperatura", crop["Temperatura"], 120), "Temperatura");
-						setValueInField(recorta("Luz", crop["Luz"], 120), "Luz");
-						setValueInField(recorta("Humedad ambiental", crop["Humedad ambiental"], 120), "Luz");
-
 						// Ficha básica del cultivo
 						setValueInField(crop["Nombre"],'ficha');
-						setCropValue("Nombre", crop);
-						setCropValue("Nombre Científico",crop);
-						setCropValue("Familia", crop);
-						setCropValue('Nombres Comunes', crop);
+
 						if(!(crop["Foto"] === undefined)){
 						setValueInField('<img src="/static/osc/img/cultivos/'
 								+ crop["Foto"] + '" style="width:100%"/>', 'imagen');}
@@ -68,19 +67,6 @@ function cargaDatos() {
 								+ '<i class="fa fa-search"></i> Buscar otras imágenes en la Web'
 								+ '</button>', 'buscar_imagen');
 
-						// Ficha sobre origen y distribución
-						setCropValue('Origen', crop);
-						setCropValue('Distribución', crop);
-						setCropValue("Adaptación", crop);
-						setCropValue("Altitud", crop);
-
-						// Ficha sobre los periodos
-						setValueInField(recorta(
-								"Ciclo vegetativo", crop["Ciclo vegetativo"],
-								35), "Ciclo vegetativo");
-						setValueInField(recorta(
-								"Fotoperíodo", crop["Fotoperíodo"], 35), "Fotoperíodo");
-						destacaTipoFotosintetico(crop["Tipo Fotosintético"]);
 
 						// Observaciones
 						var observaciones = crop["Otros"];
@@ -95,14 +81,6 @@ function cargaDatos() {
 
 							setValueInField(observaciones, 'observaciones');
 						}
-
-						// Suelo
-						setCropValue("Textura de suelo", crop);
-						setCropValue("Profundidad de suelo", crop);
-						setCropValue("Drenaje", crop);
-
-						setCropValue("Salinidad", crop);
-						setCropValue("pH", crop);
 
 						var altitudeRequirements = crop.altitude;
 						for (altitudeRequirementNumber in altitudeRequirements) {
@@ -215,30 +193,6 @@ var QueryString = function() {
 	}
 	return query_string;
 }();
-
-function recorta(tipo, texto, caracteres) {
-    if(!texto === undefined){
-	    var recorte = texto.substring(0, 120);
-        var tipoCamelCase = tipo.substr(0, 1).toUpperCase() + tipo.substr(1);
-
-        var modal = '<div id="' + tipo + '_modal" class="w3-modal">'
-                + ' <div class="w3-modal-content">'
-                + ' <div class="w3-container w3-text-grey">'
-                + ' <span onclick="document.getElementById(\'' + tipo
-                + '_modal\').style.display=\'none\'" '
-                + '  class="w3-closebtn">&times;</span> ' + '  <p><h4>'
-                + tipoCamelCase + ':</h4> ' + texto + '</p>' + '  </div> '
-                + '  </div> ' + '  </div>';
-
-        if (texto.length > caracteres) {
-            recorte = recorte
-                    + '<span class="w3-closebtn" onclick="document.getElementById(\''
-                    + tipo + '_modal\').style.display=\'block\'"">...</span>'
-                    + modal;
-        }
-    }
-	return recorte;
-}
 
 function destacaTipoFotosintetico(tipoFotosintetico) {
     document.getElementById('Tipo Fotosintético').innerHTML = tipoFotosintetico;
@@ -725,4 +679,49 @@ function setValueInField(value, field) {
 function setCropValue(field, crop){
     var value = crop[field];
     setValueInField(value, field);
+}
+
+function drawCrop(crop){
+    for (cropProperty in crop)
+    {
+        drawCropProperty(cropProperty, crop[cropProperty]);
+    }
+}
+
+function drawCropProperty(property, value){
+    if(typeof value == 'string' && document.getElementById(property) != null){
+        setValueInField(value, property);
+    }
+}
+
+function addWidget(color, textColor, icon,  dataType){
+
+        var widget = document.createElement('div');
+        widget.setAttribute('class', 'w3-quarter');
+        var container = document.createElement('div');
+        container.setAttribute('class', 'w3-container w3-text-' + textColor + ' w3-margin w3-' + color);
+        widget.appendChild(container);
+        var bigIcon = document.createElement('p');
+        bigIcon.setAttribute('class', 'w3-xxxlarge w3-margin-top w3-margin-0 ' + icon);
+        container.appendChild(bigIcon);
+        var text = document.createElement('p');
+        text.setAttribute('style', 'height:150px; overflow:auto');
+        text.setAttribute('id', dataType);
+        container.appendChild(text);
+        var title = document.createElement('h4');
+        title.appendChild(document.createTextNode(dataType));
+        container.appendChild(title);
+        var editableButton = document.createElement('span');
+        editableButton.setAttribute('class', 'editable w3-right');
+        title.appendChild(editableButton);
+        var editButton = document.createElement('a');
+        editButton.setAttribute('href', 'javascript:void(0)');
+        editButton.setAttribute('onclick', 'edit("'+ dataType + '")');
+        editableButton.appendChild(editButton);
+        var editButtonIcon = document.createElement('i');
+        editButtonIcon.setAttribute('class', 'fa fa-edit w3-small');
+        editButton.appendChild(editButtonIcon);
+
+        document.getElementById('widgets').appendChild(widget);
+
 }
