@@ -102,6 +102,7 @@ def parse_last_year(last_year):
 
     if len(last_year) == 1:
         result['max_sun_hours'] = last_year[0]['max_sun_hours']['value']
+        result['sum_sun_hours'] = last_year[0]['sum_sun_hours']['value']
         result['avg_radiation'] = last_year[0]['avg_radiation']['value']
         result['avg_sun_hours'] = last_year[0]['avg_sun_hours']['value']
         result['avg_temperature'] = last_year[0]['avg_temperature']['value']

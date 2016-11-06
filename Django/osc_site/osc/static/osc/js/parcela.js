@@ -428,19 +428,41 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 function drawAlternatives(cadastralParcelFeatures){
 
     var queries = [];
-	
-	var altitude = cadastralParcelFeatures.properties.elevation.toFixed();
-	var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
-	queries.push(altitudeQuery);
 
-	var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature.toFixed();
-	var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature.toFixed();
-    var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
-    queries.push(temperatureQuery);
+	if(!(cadastralParcelFeatures.properties.elevation === undefined)){
+        var altitude = cadastralParcelFeatures.properties.elevation.toFixed();
+        var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
+        queries.push(altitudeQuery);
+	}
 
-    var plotLatitude = cadastralParcelFeatures.properties.reference_point.lat.toFixed();
-    var latitudeQuery = createQueryForTypeAndValue("latitude", plotLatitude);
-    queries.push(latitudeQuery);
+    if(!(cadastralParcelFeatures.properties.climate_aggregations === undefined)){
+        var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature.toFixed();
+        var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature.toFixed();
+        var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
+        queries.push(temperatureQuery);
+
+        var plotYearlyRainfall = cadastralParcelFeatures.properties.climate_aggregations.last_year.sum_rainfall.toFixed();
+        var rainfallQuery = createQueryForTypeAndValue("rainfall", plotYearlyRainfall);
+        queries.push(rainfallQuery);
+
+        var plotYearlySunHours = cadastralParcelFeatures.properties.climate_aggregations.last_year.sum_sun_hours.toFixed();
+        var sunHoursQuery = createQueryForTypeAndValue("sunHours", plotYearlySunHours);
+        queries.push(sunHoursQuery);
+    }
+
+    if(!(cadastralParcelFeatures.properties.reference_point === undefined)){
+        var plotLatitude = cadastralParcelFeatures.properties.reference_point.lat.toFixed();
+        var latitudeQuery = createQueryForTypeAndValue("latitude", plotLatitude);
+        queries.push(latitudeQuery);
+    }
+
+    if(!(cadastralParcelFeatures.properties.soil_profile === undefined)){
+        var plotpH = cadastralParcelFeatures.properties.soil_profile.pH;
+        var pHQuery = createQueryForTypeAndValue("ph", plotpH);
+        queries.push(pHQuery);
+    }
+
+
 
 
 	var numeroCultivosACargar = 100;
