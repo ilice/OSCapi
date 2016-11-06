@@ -505,6 +505,7 @@ function drawAlternatives(cadastralParcelFeatures){
 			var contenido = ''
 			+ '<div class="w3-row mySlides">'
 			+ '	<div class="w3-third">'
+			+ '     <h4>' + crop["Nombres Comunes"] + ' <span class="w3-small">('+ crop["Nombre Científico"] + ')</span></h4>'
 			+ '		<h6>Impacto</h6>'
 			+ '		Social <i class="fa fa-group"></i>'
 			+ '		<div class="w3-progress-container">'
@@ -537,7 +538,7 @@ function drawAlternatives(cadastralParcelFeatures){
 			+ ''
 			+ '	</div>'
 			+ '	<div class="w3-twothird">'
-			+ '			<img onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%">'
+			+ '			<img class="w3-right" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 70%">'
 			+ '	</div>'
 			+ '</div>' ;
 				
@@ -654,9 +655,7 @@ function drawLastYearClimateAggregationsWidgetBar(
 			"precipitacion-widget");
 	setValueInField(parcellast_yearClimate_aggregations.avg_temperature
 			.toFixed(2), "temperatura-widget");
-	// TODO: esto debe ser la suma de las horas de sol, no las horas medias de
-	// sol, o al menos eso era antes
-	setValueInField(parcellast_yearClimate_aggregations.avg_sun_hours
+	setValueInField(parcellast_yearClimate_aggregations.sum_sun_hours
 			.toFixed(2), "horasSol-widget");
 	setValueInField(parcellast_yearClimate_aggregations.sum_radiation
 			.toFixed(2), "radiacion-widget");
