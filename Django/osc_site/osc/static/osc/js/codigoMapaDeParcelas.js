@@ -258,9 +258,9 @@ function inicializaMapa() {
 									+ ' ,'
 									+ longitude
 									+ '</p>'
-									+ '</div><button type="button" onclick="location.href=\'/osc/parcela?cadastral_code='
+									+ '</div><button type="button" onclick="window.open(\'/osc/parcela?cadastral_code='
 									+ nationalCadastralReference
-									+ '&nombre=Demo\'">Más detalles</button>';
+									+ '&nombre=Demo\')">Más detalles</button>';
 
 							var ventanaInformacion = new google.maps.InfoWindow(
 									{
@@ -300,8 +300,8 @@ function aniadeMarcadorConTimeout(posicion, timeout) {
 				+ '<img src="' + posicion.foto + '" height="400""/>' + '<div>'
 				+ '<ul><li>Latitud: ' + posicion.lat + '</li>'
 				+ '<li>Longitud: ' + posicion.lng + '</li></ul>' + '</div>'
-				+ '</div><button type="button" onclick="location.href=\''
-				+ posicion.url + '\'">Más detalles</button>';
+				+ '</div><button type="button" onclick="window.open(\''
+				+ posicion.url + '\')">Más detalles</button>';
 
 		var ventanaInformacion = new google.maps.InfoWindow({
 			content : contenidoVentana
