@@ -22,6 +22,8 @@ __all__ = ['get_parcels_by_bbox',
            'get_parcels_by_cadastral_code']
 
 url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
+
+#Example: http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?service=wfs&request=getfeature&STOREDQUERIE_ID=GetParcel&SRSname=EPSG::25830&REFCAT=37284A01600146
 url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
 
 parcel_index = settings.CADASTRE['index']
