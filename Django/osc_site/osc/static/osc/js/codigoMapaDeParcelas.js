@@ -394,12 +394,6 @@ function getCoodinatesFromNationalCadastralReference(nationalCadastralReference)
 				+ '<p> Pruebe a realizar la búsqueda de nuevo.</p>';
 		document.getElementById('aviso').style.display = 'block';
 
-	} else if (provinciasConDatos.indexOf(provincia) == -1) {
-		document.getElementById('textoDelAviso').innerHTML = '<p>Aún no tenemos datos para esa provincia.</p>'
-				+ '<p> Estamos empezando por Castilla y León pero en breve ampliaremos a otras comunidades. </p>'
-				+ '<p> Si quiere que <strong>prioricemos su zona</strong> contacte con nosotros. </p>';
-		document.getElementById('aviso').style.display = 'block';
-
 	} else {
 
 		var url = '/osc/cadastral/parcel?cadastral_code='
