@@ -21,6 +21,8 @@
 	sizes="192x192" />
 <link href="{% static 'osc/img/OpenSmartCountry_logo_128x128.png' %}" rel="icon"
 	sizes="128x128" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="768014208579-h3ljagmcpi8v3q8hkfapvcvast4tp8u8.apps.googleusercontent.com">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript"
@@ -59,6 +61,8 @@
 			</a></li>
 			<li><a id="openNav" href="javascript:void(0)"
 				class="w3-padding-large w3-text-grey" onclick="w3_open()">MENU</a></li>
+            <li class="w3-padding w3-right"><div id="googleSignIn" class="g-signin2" data-onsuccess="onSignIn"></div></li>
+            <li class="w3-padding w3-right"><span id="userMenu"></span></li>
 			<li class="w3-padding-large w3-right"><span id="rc"></span></li>
 			<li class="w3-padding-large w3-right"><button id="ErrorBadge"
 					class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
@@ -66,11 +70,14 @@
 					onclick="document.getElementById('ErrorData').style.display='block'">
 					<i class="fa fa-exclamation-triangle"></i>
 				</button></li>
+
 			<li class="w3-padding-large w3-right"><div id="ErrorData"
 					class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
 						class="w3-closebtn w3-padding">&times;</span><span id="ErrorText"></span>
 				</div></li>
+
+
 		</ul>
 		<div class="w3-hide-medium w3-hide-large">
 			<div class="w3-padding-large w3-opacity"
@@ -91,11 +98,51 @@
 	</div>
 
 	<!-- Sidenav/menu -->
-	<script src="{% static 'osc/js/codigoBarraLateral.js' %}"></script>
+
 	<!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
 	<div id="isGoogleChartsCorechartLoaded" style="display: none">false</div>
 	<nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left"
-		style="z-index: 3; width: 300px; display: none"></nav>
+		style="z-index: 3; width: 300px; display: none">
+        <div class="w3-container  ">
+	<div class="w3-row w3-right">
+					<div class="w3-col w3-right">
+						<a href="/" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-home"></i></a>
+						<a href="/osc/mapaDeParcelas" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i class="fa fa-globe"></i></a>
+						<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge" onclick="w3_close()"><i class="fa fa-remove"></i></a>
+					</div>
+				</div>
+			</div>
+			<hr/>
+
+			<div class="w3-container w3-row w3-padding-16">
+				<div class="w3-col s4">
+					<img id="avatar" src="{% static '/osc/img/avatar.PNG' %}" class="w3-circle w3-margin-right" style="width:46px" alt="Avatar Viña de la Estación"/>
+				</div>
+				<div class="w3-col s8">
+					<span>Bienvenidos a <strong id="bienvenidos"></strong></span><br/>
+					<a href="#" class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i class="fa fa-envelope"></i></a>
+					<a href="#" class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i class="fa fa-user"></i></a>
+					<a href="#" class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i class="fa fa-cog"></i></a>
+				</div>
+			</div>
+			<hr/>
+
+			<div class="w3-container" id="panelNavegacion">
+				<h5>Panel de navegación</h5>
+			</div>
+
+			<a href="#" class="w3-padding w3-blue" onclick="w3_close();"><i class="fa fa fa-television fa-fw"></i>  General</a>
+			<a href="#catastro" class="w3-padding" onclick="document.getElementById('catastro').style.display='block';w3_close();"><i class="fa fa-institution fa-fw"></i>  Catastro</a>
+			<a href="#tarjetaMapa" class="w3-padding" onclick="document.getElementById('tarjetaMapa').style.display='block';w3_close();"><i class="fa fa-map fa-fw"></i>  Mapa</a>
+			<a href="#precipitacion" class="w3-padding" onclick="document.getElementById('precipitacion').style.display='block';w3_close();"><i class="fa fa-tint fa-fw"></i>  Precipitaciones</a>
+			<a href="#temperatura" class="w3-padding" onclick="document.getElementById('temperatura').style.display='block';w3_close();"><i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a>
+			<a href="#sol" class="w3-padding" onclick="document.getElementById('sol').style.display='block';w3_close();"><i class="fa fa-certificate fa-fw"></i>  Sol</a>
+			<a href="#radiacion" class="w3-padding" onclick="document.getElementById('radiacion').style.display='block';w3_close();"><i class="fa fa-rss fa-fw"></i>  Radiacion</a>
+			<a href="#informacion" class="w3-padding" onclick="document.getElementById('informacion').style.display='block';w3_close();"><i class="fa fa-info fa-fw"></i>  Información</a>
+
+			<div  id="regions_div"  style="width: 100%; height: auto;" ></div>
+
+    </nav>
 
 
 

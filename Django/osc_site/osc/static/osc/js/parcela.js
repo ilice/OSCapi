@@ -45,6 +45,7 @@ function getNationalCadastreReference() {
 				break;
 			case "nombre":
 				document.getElementById('pagina').innerHTML = decodeURI(pair[1]);
+				document.getElementById('bienvenidos').innerHTML = decodeURI(pair[1]);
 				break;
 			default:
 				break;
@@ -1158,4 +1159,106 @@ function aggregateQueries(queries){
     };
 
     return query;
+}
+
+function onSignIn(googleUser) {
+
+  var profile = googleUser.getBasicProfile();
+  var profile_image_url = profile.getImageUrl();
+
+  document.getElementById('googleSignIn').style.display = 'none';
+
+  var avatar_dropdown_hover = document.createElement('div');
+  avatar_dropdown_hover.setAttribute('class', "w3-dropdown-hover");
+  avatar_dropdown_hover.setAttribute('style', 'background-color: transparent');
+
+  var avatar = document.createElement('img');
+  avatar.setAttribute('src', profile_image_url);
+  avatar.setAttribute('class', "w3-circle");
+  avatar.setAttribute('alt', 'User avatar');
+  avatar.setAttribute('style', 'width:100%;max-width:36px')
+  avatar_dropdown_hover.appendChild(avatar);
+
+  var avatar_dropdown_content = document.createElement('div');
+  avatar_dropdown_content.setAttribute('class', 'w3-dropdown-content w3-card-4 w3-margin-right');
+  avatar_dropdown_content.setAttribute('style', 'right:0');
+  avatar_dropdown_hover.appendChild(avatar_dropdown_content);
+
+  var logout_row = document.createElement('a');
+  logout_row.setAttribute('href', 'javascript:void(0)');
+  logout_row.setAttribute('onclick', 'signOut()');
+  avatar_dropdown_content.appendChild(logout_row);
+
+  var logout_icon = document.createElement('i');
+  logout_icon.setAttribute('class', 'fa fa-sign-out')
+  logout_row.appendChild(logout_icon);
+  logout_row.appendChild(document.createTextNode(' Cerrar sesión'));
+
+
+  document.getElementById('userMenu').appendChild(avatar_dropdown_hover);
+
+
+
+  document.getElementById("avatar").src = profile_image_url;
+}
+
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+      location.reload(true);
+    });
+}
+
+
+// Dibuja el mapa en la barra lateral
+function drawRegionsMap() {
+
+	var latitud = document.getElementById("latitud").innerHTML;
+	var longitud = document.getElementById("longitud").innerHTML;
+
+	var data = google.visualization.arrayToDataTable([
+				['latitude', 'longitude', 'temperatura'],
+				[Number(latitud), Number(longitud), 25]
+			]);
+
+	var options = {
+		region : 'ES',
+		displayMode : 'markers',
+		colorAxis : {
+			colors : ['blue']
+		},
+		resolution : 'provinces'
+	};
+
+	var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+
+	chart.draw(data, options);
+}
+
+// Script to open and close sidenav
+function w3_open() {
+
+	if(document.getElementById("mySidenav").innerHTML == ""){
+		cargaBarraLateral();
+	}
+	document.getElementById("mySidenav").style.display = "block";
+	document.getElementById("myOverlay").style.display = "block";
+	if(document.getElementById("latitud")){
+
+
+	if (document.getElementById("isGoogleChartsCorechartLoaded").innerHTML == "false") {
+		google.charts.load('current', {
+			'packages' : ['corechart']
+		});
+		document.getElementById("isGoogleChartsCorechartLoaded").innerHTML = "true";
+	}
+	google.charts.setOnLoadCallback(drawRegionsMap);
+	}
+
+}
+
+function w3_close() {
+	document.getElementById("mySidenav").style.display = "none";
+	document.getElementById("myOverlay").style.display = "none";
 }
