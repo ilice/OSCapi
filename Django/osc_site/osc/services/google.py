@@ -7,7 +7,7 @@ from django.conf import settings
 
 __all__ = ['obtain_elevation_from_google', 'try_obtain_elevation_from_google']
 
-api_key = 'AIzaSyB-K-4XmS9a5ItnkrqJSS9070qAeRuXt6M'
+api_key = 'AIzaSyDEYNecKjBWYMEAEKzOMLmLYf1vM8Mn2Aw'
 
 
 def compose_locations_param(points):
