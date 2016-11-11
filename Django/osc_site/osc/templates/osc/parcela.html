@@ -49,6 +49,12 @@
 
         ga('create', 'UA-87069839-1', 'auto');
         ga('send', 'pageview');
+
+
+
+
+
+
     </script>
 </head>
 <body onload="onBodyLoad()">
@@ -62,10 +68,16 @@
         </a></li>
         <li><a id="openNav" href="javascript:void(0)"
                class="w3-padding-large w3-text-grey" onclick="w3_open()">MENU</a></li>
-        <li class="w3-padding w3-right">
-            <div id="googleSignIn" class="g-signin2" data-onsuccess="onSignIn"></div>
+
+        <li class="w3-show-inline-block w3-center w3-display-middle">
+            <button id="esMiParcelaButton" onclick="openForm('esMiParcela')"
+                    class="w3-btn w3-grey w3-margin-right w3-text-white">Es Mi Parcela
+            </button>
+            <button id="meInteresaEstaParcelaButton" onclick="openForm('meInteresaEstaParcela')" class="w3-btn w3-grey w3-text-white">Me interesa esta parcela
+            </button>
         </li>
-        <li class="w3-padding w3-right"><span id="userMenu"></span></li>
+        <li id="userMenuItem" class="w3-padding w3-right"></span>
+        </li>
         <li class="w3-padding-large w3-right"><span id="rc"></span></li>
         <li class="w3-padding-large w3-right">
             <button id="ErrorBadge"
@@ -83,8 +95,6 @@
                           class="w3-closebtn w3-padding">&times;</span><span id="ErrorText"></span>
             </div>
         </li>
-
-
     </ul>
     <div class="w3-hide-medium w3-hide-large">
         <div class="w3-padding-large w3-opacity"
@@ -97,12 +107,101 @@
              style="width: 70%; float: left;">
             <span id="rc_smallBar"></span>
         </div>
-        <div style="width: 15%; float: left;" class="w3-right w3-margin-top">
+        <div style="width: 15% float: left;" class="w3-right w3-margin-top">
             <a class="w3-padding-large" href="javascript:void(0)"
                onclick="w3_open()"><i class="fa fa-bars"></i></a>
         </div>
     </div>
 </div>
+
+
+<!-- Es mi parcela login form -->
+<div id="esMiParcela" class="w3-modal">
+    <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px">
+
+        <div class="w3-center w3-light-grey w3-margin-bottom w3-border-bottom"><br>
+            <span onclick="document.getElementById('esMiParcela').style.display='none'"
+                  class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                  title="Close Modal">×</span>
+            <h2 id="objetiveDescription">Registra tu parcela</h2>
+            <h5>Te ayudaremos con lo que quieras hacer con ella</h5>
+        </div>
+
+        <div class="w3-center">
+            <h3>Conecta con tus redes sociales</h3>
+        </div>
+        <div class="w3-padding-large" style="max-width:550px">
+            <div id="googleSignIn" class="g-signin2 w3-margin-bottom" data-onsuccess="onSignIn" data-width="550"
+                 data-height="36" data-longtitle="true">Continúa con Google
+            </div>
+            <div class="w3-card-2 w3-white w3-center w3-btn w3-display-container w3-hover-shadow"
+                 style="width:550px;height:36px;padding-left: 60px;" onclick="login()">
+                <img class="w3-display-left" style="max-height:18px;margin-left:8px"
+                     src="{% static '/osc/img/FB-f-Logo__blue_29.png' %}"/>
+                <span class="w3-roboto-font">Continúa Facebook</span>
+            </div>
+
+
+        </div>
+
+        <hr>
+        <div class="w3-center">
+            <h3>O mediante correo electrónico</h3>
+        </div>
+        <form
+                enctype="application/x-www-form-urlencoded"
+                action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o"
+                method="post">
+            <div class="zend_form">
+                <div id="groups-label"></div>
+                <div id="groups-element">
+                    <input class="w3-input" type="hidden" name="groups[]" value="1"/>
+                </div>
+                <div class="w3-row-padding w3-padding-large" style="margin: 0 -16px 8px -16px">
+                    <div class="w3-half">
+                        <div id="name-label">
+                            <label for="name" class="optional w3-label w3-text-grey">Nombre</label>
+                        </div>
+                        <div id="name-element">
+                            <input type="text"
+                                   class="w3-input w3-border w3-hover-light-grey" name="name"
+                                   id="name" value="" placeholder="Nombre"/>
+                        </div>
+                    </div>
+                    <div class="w3-half">
+                        <div id="email-label">
+                            <label for="email"
+                                   class="required w3-label w3-validate w3-text-grey">Email</label>
+                        </div>
+                        <div id="email-element">
+                            <input type="email"
+                                   class="w3-input w3-border w3-hover-light-grey" name="email"
+                                   id="email" value="" required placeholder="e-mail"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="submit-label"></div>
+                <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                    <div class="w3-clear" id="submit-element">
+                        <button onclick="document.getElementById('esMiParcela').style.display='none'" type="button"
+                                class="w3-btn w3-red">
+                            Cancel
+                        </button>
+
+                        <button type="submit" name="submit" id="submit"
+                                class="w3-btn w3-dark-grey w3-right"
+                                onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Enviar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+
+    </div>
+</div>
+
 
 <!-- Sidenav/menu -->
 

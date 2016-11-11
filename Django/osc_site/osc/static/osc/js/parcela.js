@@ -405,6 +405,9 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 
 	setValueInField(
 			cadastralParcelFeature.properties.nationalCadastralReference, "rc");
+
+	setValueInField(
+			cadastralParcelFeature.properties.nationalCadastralReference, "rc_smallBar");
 	
 	drawAlternatives(cadastralParcelFeature);
 
@@ -1166,47 +1169,36 @@ function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   var profile_image_url = profile.getImageUrl();
 
-  document.getElementById('googleSignIn').style.display = 'none';
+  drawUserMenu(profile_image_url, 'google');
 
-  var avatar_dropdown_hover = document.createElement('div');
-  avatar_dropdown_hover.setAttribute('class', "w3-dropdown-hover");
-  avatar_dropdown_hover.setAttribute('style', 'background-color: transparent');
-
-  var avatar = document.createElement('img');
-  avatar.setAttribute('src', profile_image_url);
-  avatar.setAttribute('class', "w3-circle");
-  avatar.setAttribute('alt', 'User avatar');
-  avatar.setAttribute('style', 'width:100%;max-width:36px')
-  avatar_dropdown_hover.appendChild(avatar);
-
-  var avatar_dropdown_content = document.createElement('div');
-  avatar_dropdown_content.setAttribute('class', 'w3-dropdown-content w3-card-4 w3-margin-right');
-  avatar_dropdown_content.setAttribute('style', 'right:0');
-  avatar_dropdown_hover.appendChild(avatar_dropdown_content);
-
-  var logout_row = document.createElement('a');
-  logout_row.setAttribute('href', 'javascript:void(0)');
-  logout_row.setAttribute('onclick', 'signOut()');
-  avatar_dropdown_content.appendChild(logout_row);
-
-  var logout_icon = document.createElement('i');
-  logout_icon.setAttribute('class', 'fa fa-sign-out')
-  logout_row.appendChild(logout_icon);
-  logout_row.appendChild(document.createTextNode(' Cerrar sesión'));
+  document.getElementById('esMiParcela').style.display = 'none';
+  document.getElementById('esMiParcelaButton').disabled = true;
+  document.getElementById('meInteresaEstaParcelaButton').disabled = true;
 
 
-  document.getElementById('userMenu').appendChild(avatar_dropdown_hover);
-
-
-
-  document.getElementById("avatar").src = profile_image_url;
 }
+
+function logout(socialNetwork){
+    if(socialNetwork == 'google'){
+        signOut();
+    }else if (socialNetwork == 'facebook'){
+        FB.logout(function(response) {
+       // Person is now logged out
+       statusChangeCallback(response);
+    });
+    }
+
+    document.getElementById('userMenu').parentNode.removeChild(document.getElementById('userMenu'));
+    document.getElementById('avatar').src = "/static/osc/img/avatar.PNG";
+    document.getElementById('esMiParcelaButton').disabled = false;
+    document.getElementById('meInteresaEstaParcelaButton').disabled = false;
+}
+
 
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
-      location.reload(true);
     });
 }
 
@@ -1261,4 +1253,162 @@ function w3_open() {
 function w3_close() {
 	document.getElementById("mySidenav").style.display = "none";
 	document.getElementById("myOverlay").style.display = "none";
+}
+
+// -------------Facebook code---------------
+
+// This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+      // Logged into your app and Facebook.
+      testAPI();
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      //document.getElementById('status').innerHTML = 'Please log ' +
+      //  'into this app.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      //document.getElementById('status').innerHTML = 'Please log ' +
+      //  'into Facebook.';
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '1620993304869407',
+    cookie     : true,  // enable cookies to allow the server to access
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.5' // use graph api version 2.5
+  });
+
+  // Now that we've initialized the JavaScript SDK, we call
+  // FB.getLoginStatus().  This function gets the state of the
+  // person visiting this page and can return one of three states to
+  // the callback you provide.  They can be:
+  //
+  // 1. Logged into your app ('connected')
+  // 2. Logged into Facebook, but not your app ('not_authorized')
+  // 3. Not logged into Facebook and can't tell if they are logged into
+  //    your app or not.
+  //
+  // These three cases are handled in the callback function.
+
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+
+  };
+
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Here we run a very simple test of the Graph API after login is
+  // successful.  See statusChangeCallback() for when this call is made.
+  function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      //document.getElementById('status').innerHTML =
+      //  'Thanks for logging in, ' + response.name + '!';
+
+       profile_image_url = 'http://graph.facebook.com/' + response.id + '/picture';
+
+       drawUserMenu(profile_image_url, 'facebook');
+    });
+
+
+
+  }
+function login(){
+  FB.login(function(response) {
+    if (response.authResponse) {
+     console.log('Welcome!  Fetching your information.... ');
+     FB.api('/me', function(response) {
+       console.log('Successful login for: ' + response.name);
+      //document.getElementById('status').innerHTML =
+      //  'Thanks for logging in, ' + response.name + '!';
+
+       profile_image_url = 'http://graph.facebook.com/' + response.id + '/picture';
+
+       drawUserMenu(profile_image_url, 'facebook');
+
+       document.getElementById('esMiParcela').style.display = 'none';
+       document.getElementById('esMiParcelaButton').disabled = true;
+       document.getElementById('meInteresaEstaParcelaButton').disabled = true;
+     });
+    } else {
+     console.log('User cancelled login or did not fully authorize.');
+    }
+},{scope: 'public_profile,email'});
+}
+
+function drawUserMenu(profile_image_url, socialNetwork){
+
+  var userMenu = document.createElement('div');
+  userMenu.setAttribute('id', 'userMenu');
+
+  var avatar_dropdown_hover = document.createElement('div');
+  avatar_dropdown_hover.setAttribute('class', "w3-dropdown-hover");
+  avatar_dropdown_hover.setAttribute('style', 'background-color: transparent');
+  userMenu.appendChild(avatar_dropdown_hover);
+
+  var avatar = document.createElement('img');
+  avatar.setAttribute('src', profile_image_url);
+  avatar.setAttribute('class', "w3-circle");
+  avatar.setAttribute('alt', 'User avatar');
+  avatar.setAttribute('style', 'width:100%;max-width:36px')
+  avatar_dropdown_hover.appendChild(avatar);
+
+  var avatar_dropdown_content = document.createElement('div');
+  avatar_dropdown_content.setAttribute('class', 'w3-dropdown-content w3-card-4 w3-margin-right');
+  avatar_dropdown_content.setAttribute('style', 'right:0');
+  avatar_dropdown_hover.appendChild(avatar_dropdown_content);
+
+  var logout_row = document.createElement('a');
+  logout_row.setAttribute('href', 'javascript:void(0)');
+  logout_row.setAttribute('onclick', 'logout("'+socialNetwork+'")');
+  avatar_dropdown_content.appendChild(logout_row);
+
+  var logout_icon = document.createElement('i');
+  logout_icon.setAttribute('class', 'fa fa-sign-out')
+  logout_row.appendChild(logout_icon);
+  logout_row.appendChild(document.createTextNode(' Cerrar sesión'));
+
+  document.getElementById('userMenuItem').appendChild(userMenu);
+
+  document.getElementById("avatar").src = profile_image_url;
+}
+
+function openForm(relation){
+    if (relation == 'esMiParcela'){
+        document.getElementById('objetiveDescription').innerHTML = 'Registra tu parcela';
+        document.getElementById('esMiParcela').style.display = 'block';
+    }else {
+        document.getElementById('objetiveDescription').innerHTML = 'Obten información sobre la parcela';
+        document.getElementById('esMiParcela').style.display = 'block';
+
+    }
 }
