@@ -32,6 +32,8 @@ curl -XDELETE "elastic_endpoint/osc"
 curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_requirements_inicial.js"
 curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_altitud.js"
 curl -s -XPOST "elastic_endpoint/osc_v2/requirements/_bulk" --data-binary "@curl_ph.js"
+curl -s -XPOST "elastic_endpoint/osc_v3/requirements/_bulk" --data-binary "@curl_latitude.js"
+
 ```
 Sustituyendo `elastic_endpoint` por la url de la base de datos que estamos utilizando, por ejemplo `http://localhost:9200`
 ### Estaciones de inforiego
