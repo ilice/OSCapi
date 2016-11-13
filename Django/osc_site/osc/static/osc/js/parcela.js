@@ -30,7 +30,7 @@ function drawPlotProfile(user) {
 
 	var nationalCadastralReference = getNationalCadastreReference();
 
-	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference);
+	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference, user);
 
 }
 
@@ -389,7 +389,7 @@ function drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations) 
 }
 
 function drawPublicParcelInfoByNationalCadastralReference(
-	nationalCadastralReference) {
+	nationalCadastralReference, user) {
 	var cadastralParcelFeature;
 
 	var url = '/osc/cadastral/parcel?cadastral_code='
@@ -625,16 +625,38 @@ function drawCatastralCard(parcelCadastralData) {
 			setValueInField(parcelCadastralData.control.cucons, "cucons");
 			setValueInField(parcelCadastralData.control.cucul, "cucul");
 			var subparcels = parcelCadastralData.bico.lspr.spr;
+			
+			var cropTypeTableBody = document.getElementById('cropTypeTableBody');
+			var cropTypeTableContent = cropTypeTableBody.getElementsByTagName('tr');
+			for(var cropTypeElementNumber = 0; cropTypeElementNumber < cropTypeTableContent.length; cropTypeElementNumber++){
+				cropTypeTableBody.removeChild(cropTypeTableContent[cropTypeElementNumber]);
+			}
+		
+			
+			var productionLevelTableBody = document.getElementById('productionLevelTableBody');
+			var productionLevelTableContent = productionLevelTableBody.getElementsByTagName('tr');
+			for(var productionLevelElementNumber = 0; productionLevelElementNumber < productionLevelTableContent.length; productionLevelElementNumber++){
+				productionLevelTableBody.removeChild(productionLevelTableContent[productionLevelElementNumber]);
+			}
+			
+
+			var cropAreaTableBody = document.getElementById('cropAreaTableBody');
+			var cropAreaTableContent = cropAreaTableBody.getElementsByTagName('tr');
+			for(var cropAreaElementNumber = 0; cropAreaElementNumber < cropAreaTableContent.length; cropAreaElementNumber++){
+				cropAreaTableBody.removeChild(cropAreaTableContent[cropAreaElementNumber]);
+			}
+			
+			
 			for (subparcel in subparcels) {
-				document.getElementById("cropTypeTable").innerHTML += '<td><i>'
+				document.getElementById("cropTypeTableBody").innerHTML += '<tr><td><i>'
 				 + subparcels[subparcel].dspr.ccc
 				 + subparcels[subparcel].dspr.dcc + '</i></td></tr>';
 
-				document.getElementById("productionLevelTable").innerHTML += '<tr><td><i>'
+				document.getElementById("productionLevelTableBody").innerHTML += '<tr><td><i>'
 				 + subparcels[subparcel].dspr.ip
 				 + '</i> intensidad productiva</td></tr>';
 
-				document.getElementById("cropAreaTable").innerHTML += '<tr><td>'
+				document.getElementById("cropAreaTableBody").innerHTML += '<tr><td>'
 				 + subparcels[subparcel].dspr.ssp
 				 + ' </span> m<sup>2</sup></i></td>	</tr>';
 
@@ -1232,7 +1254,8 @@ function onSignIn(googleUser) {
 	var user = {
 			name : profile.getName(),
 			email : profile.getEmail(),
-			google_id_token: googleUser.getAuthResponse().id_token,
+			tokenID: googleUser.getAuthResponse().id_token,
+			loginMethod: 'google',
 			userProfilePicture : profile_image_url, 
 			plot : getNationalCadastreReference(), 
 			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'
@@ -1372,7 +1395,8 @@ function drawFBuser() {
 		user = {
 			name : response.name,
 			email : response.email,
-			facebook_id: response.id,
+			tokenID: response.id,
+			loginMethod: 'facebook',
 			userProfilePicture : profile_image_url, 
 			plot : getNationalCadastreReference(), 
 			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'
@@ -1461,8 +1485,9 @@ function emailLogin(){
 			name : 'Invitado',
 			//email : response.email,
 			email : data.email,
-			//application_id: response.id,
-			application_id: 33,
+			//tokenID: response.id,
+			tokenID : 33,
+			loginMethod: 'email',
 			//userProfilePicture : response.userProfilePinture, 
 			userProfilePicture : "/static/osc/img/avatar.PNG",
 			plot : getNationalCadastreReference(), 
@@ -1505,8 +1530,9 @@ function getEmailLogin(userEmailTokenID){
 			name : 'Invitado',
 			//email : response.email,
 			email : userEmailTokenID,
-			//application_id: response.id,
-			application_id: 33,
+			//tokenID: response.id,
+			tokenID: 33,
+			loginMethod: 'email',
 			//userProfilePicture : response.userProfilePinture, 
 			userProfilePicture : "/static/osc/img/avatar.PNG",
 			plot : getNationalCadastreReference(), 
