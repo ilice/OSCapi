@@ -57,7 +57,7 @@
 
     </script>
 </head>
-<body onload="onBodyLoad()">
+<body>
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
@@ -131,43 +131,24 @@
             <h3>Conecta con tus redes sociales</h3>
         </div>
         <div class="w3-padding-large" style="max-width:550px">
-            <div id="googleSignIn" class="g-signin2 w3-margin-bottom" data-onsuccess="onSignIn" data-width="550"
-                 data-height="36" data-longtitle="true">Continúa con Google
-            </div>
+	            <div id="googleSignIn" class="g-signin2 w3-margin-bottom" data-onsuccess="onSignIn" data-width="550"
+	                 data-height="36" data-longtitle="true">Continúa con Google
+	            </div>
             <div class="w3-card-2 w3-white w3-center w3-btn w3-display-container w3-hover-shadow"
                  style="width:550px;height:36px;padding-left: 60px;" onclick="login()">
                 <img class="w3-display-left" style="max-height:18px;margin-left:8px"
                      src="{% static '/osc/img/FB-f-Logo__blue_29.png' %}"/>
-                <span class="w3-roboto-font">Continúa Facebook</span>
+                <span class="w3-roboto-font">Continúa con Facebook</span>
             </div>
-
-
         </div>
 
-        <hr>
+        <hr/>
         <div class="w3-center">
             <h3>O mediante correo electrónico</h3>
         </div>
-        <form
-                enctype="application/x-www-form-urlencoded"
-                action="http://opensmartcountry.ip-zone.com/ccm/subscribe/index/form/9ljsfx841o"
-                method="post">
+        <div>
             <div class="zend_form">
-                <div id="groups-label"></div>
-                <div id="groups-element">
-                    <input class="w3-input" type="hidden" name="groups[]" value="1"/>
-                </div>
                 <div class="w3-row-padding w3-padding-large" style="margin: 0 -16px 8px -16px">
-                    <div class="w3-half">
-                        <div id="name-label">
-                            <label for="name" class="optional w3-label w3-text-grey">Nombre</label>
-                        </div>
-                        <div id="name-element">
-                            <input type="text"
-                                   class="w3-input w3-border w3-hover-light-grey" name="name"
-                                   id="name" value="" placeholder="Nombre"/>
-                        </div>
-                    </div>
                     <div class="w3-half">
                         <div id="email-label">
                             <label for="email"
@@ -179,8 +160,29 @@
                                    id="email" value="" required placeholder="e-mail"/>
                         </div>
                     </div>
+                    <div class="w3-half">
+                        <div id="name-label">
+                            <label for="password" class="optional w3-label w3-text-grey">Contraseña</label>
+                        </div>
+                        <div id="password-element">
+                            <input type="password"
+                                   class="w3-input w3-border w3-hover-light-grey" name="name"
+                                   id="password" value="" placeholder="Contraseña" required/>
+                        </div>
+                    </div>
                 </div>
-                <div id="submit-label"></div>
+                <hr class="w3-clear" />
+					<div class="w3-row-padding w3-padding-large">
+						<div class="w3-half">
+							<input id="myPlotRadio" class="w3-radio" name="relation" value="myPlot" type="radio" checked="checked">
+							<label class="w3-validate">Es mi parcela</label>
+						</div>
+						<div class="w3-half">
+							<input id="interestingPlotRadio" class="w3-radio" name="relation" value="interestingPlot" type="radio" disabled>
+							<label class="w3-validate">Estoy interesad@ en la parcela</label>
+						</div>
+					</div>
+					<div id="submit-label"></div>
                 <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
                     <div class="w3-clear" id="submit-element">
                         <button onclick="document.getElementById('esMiParcela').style.display='none'" type="button"
@@ -188,15 +190,15 @@
                             Cancel
                         </button>
 
-                        <button type="submit" name="submit" id="submit"
+                        <button 
                                 class="w3-btn w3-dark-grey w3-right"
-                                onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Enviar
+                                onClick="emailLogin()">Enviar
                         </button>
                     </div>
                 </div>
 
             </div>
-        </form>
+        </div>
 
 
     </div>
