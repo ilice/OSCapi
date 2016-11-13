@@ -791,7 +791,8 @@ function drawRadiationAggregationsCard(parcelPorperties) {
 function drawCropDistributionCard(cadastralParcelFeature) {
 	try {
 		if (cadastralParcelFeature.properties.cadastralData.bico.bi.dt.np == "SALAMANCA") {
-			document.getElementById("fixed").style.display = 'inline';
+			document.getElementById("fixed").style.display = 'block';
+			document.getElementById("fixedLink").style.display = 'block';
 			openCropDistribution("All");
 		}
 	} catch (error) {
