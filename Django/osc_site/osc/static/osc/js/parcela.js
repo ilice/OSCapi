@@ -394,7 +394,10 @@ function drawPublicParcelInfoByNationalCadastralReference(
 
 	var url = '/osc/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
-		 + '&retrieve_public_info=True&retrieve_climate_info=True';
+		 + '&retrieve_public_info=True&retrieve_climate_info=True&userTokenID='
+		 + (user===undefined?'':user.tokenID)
+		 + '&userLoginType='
+		 + (user===undefined?'':user.loginMethod);
 
 	var request = jQuery.ajax({
 			url : url,
@@ -1263,30 +1266,11 @@ function onSignIn(googleUser) {
 	
 	console.log(user);
 	
-	drawUserMenu(user, 'google');
+	drawUserMenu(user);
 	drawPlotProfile(user);
 
 }
 
-function logout(socialNetwork) {
-	
-	console.log('logout('+socialNetwork+')');
-	if (socialNetwork == 'google') {
-		signOut();
-	} else if (socialNetwork == 'facebook') {
-		FB.logout(function (response) {
-			// Person is now logged out
-			statusChangeCallback(response);
-		});
-	} else if (socialNetwork == 'email'){
-		setCookie('userEmailTokenID', '', 0);
-	}
-
-	document.getElementById('userMenu').parentNode.removeChild(document.getElementById('userMenu'));
-	document.getElementById('avatar').src = "/static/osc/img/avatar.PNG";
-	document.getElementById('esMiParcelaButton').disabled = false;
-	document.getElementById('meInteresaEstaParcelaButton').disabled = false;
-}
 
 function signOut() {
 	console.log('signOut');
@@ -1404,7 +1388,7 @@ function drawFBuser() {
 		
 		console.log(user);	
 		
-		drawUserMenu(user, 'facebook');
+		drawUserMenu(user);
 		drawPlotProfile(user);
 	});
 	
@@ -1459,7 +1443,7 @@ function drawEmailuser(user) {
 
 	console.log(user);	
 	
-	drawUserMenu(user, 'email');
+	drawUserMenu(user);
 	drawPlotProfile(user);
 	
 	
@@ -1560,10 +1544,30 @@ function getEmailLoginStatus(callback) {
 	callback(response);
 }
 
+// ------------- login commons ---------------
+
+function logout(socialNetwork) {
+	
+	console.log('logout('+socialNetwork+')');
+	if (socialNetwork == 'google') {
+		signOut();
+	} else if (socialNetwork == 'facebook') {
+		FB.logout(function (response) {
+			// Person is now logged out
+			statusChangeCallback(response);
+		});
+	} else if (socialNetwork == 'email'){
+		setCookie('userEmailTokenID', '', 0);
+	}
+
+	document.getElementById('userMenu').parentNode.removeChild(document.getElementById('userMenu'));
+	document.getElementById('avatar').src = "/static/osc/img/avatar.PNG";
+	document.getElementById('esMiParcelaButton').disabled = false;
+	document.getElementById('meInteresaEstaParcelaButton').disabled = false;
+}
 
 
-
-function drawUserMenu(user, socialNetwork) {
+function drawUserMenu(user) {
 	var profile_image_url = user.userProfilePicture;
 	console.log('drawUserMenu');
 
@@ -1589,7 +1593,7 @@ function drawUserMenu(user, socialNetwork) {
 
 	var logout_row = document.createElement('a');
 	logout_row.setAttribute('href', 'javascript:void(0)');
-	logout_row.setAttribute('onclick', 'logout("' + socialNetwork + '")');
+	logout_row.setAttribute('onclick', 'logout("' + user.loginMethod + '")');
 	avatar_dropdown_content.appendChild(logout_row);
 
 	var logout_icon = document.createElement('i');
