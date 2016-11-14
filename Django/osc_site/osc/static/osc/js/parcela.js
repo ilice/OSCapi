@@ -20,17 +20,17 @@ $(window).resize(function () {
 	});
 });
 
-function drawPlotProfile(user) {
+function drawPlotProfile(accessToken) {
 
-	if (user === undefined) {
+	if (accessToken === undefined) {
 		console.log('drawPlotProfile without user');
 	} else {
-		console.log('drawPlotProfile for user:' + user.name);
+		console.log('drawPlotProfile for user');
 	}
 
 	var nationalCadastralReference = getNationalCadastreReference();
 
-	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference, user);
+	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference, accessToken);
 
 }
 
@@ -389,15 +389,15 @@ function drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations) 
 }
 
 function drawPublicParcelInfoByNationalCadastralReference(
-	nationalCadastralReference, user) {
+	nationalCadastralReference, accessToken) {
 	var cadastralParcelFeature;
+	
+	//TODO creo el accessToken que debe ir en el cuerpo y no en la url
 
 	var url = '/osc/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
-		 + '&retrieve_public_info=True&retrieve_climate_info=True&userTokenID='
-		 + (user===undefined?'':user.tokenID)
-		 + '&userLoginType='
-		 + (user===undefined?'':user.loginMethod);
+		 + '&retrieve_public_info=True&retrieve_climate_info=True&accessToken='
+		 + (accessToken===undefined?'':accessToken);
 
 	var request = jQuery.ajax({
 			url : url,
@@ -1247,32 +1247,21 @@ function w3_close() {
 // --------------------- Google code ---------------------
 function onSignIn(googleUser) {
 	
-	console.log('onSignIn(googleUser)');
-
-	var profile = googleUser.getBasicProfile();
-	var profile_image_url = profile.getImageUrl();
-
+	var accessToken=getCookie("accessToken");
 	
+		if(accessToken == ''){
+		
+		console.log('onSignIn(googleUser)');
+	
+		var authorizationGrant =  {
+				googleAccessToken: googleUser.getAuthResponse().id_token , 
+				plot: getNationalCadastreReference(),
+				relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+		};
+		
+		getAccessToken(authorizationGrant);
 
-	document.getElementById('esMiParcela').style.display = 'none';
-	document.getElementById('esMiParcelaButton').disabled = true;
-	document.getElementById('meInteresaEstaParcelaButton').disabled = true;
-	
-	var user = {
-			name : profile.getName(),
-			email : profile.getEmail(),
-			tokenID: googleUser.getAuthResponse().id_token,
-			loginMethod: 'google',
-			userProfilePicture : profile_image_url, 
-			plot : getNationalCadastreReference(), 
-			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'
-	};
-	
-	console.log(user);
-	
-	drawUserMenu(user);
-	drawPlotProfile(user);
-
+	}
 }
 
 
@@ -1281,6 +1270,8 @@ function signOut() {
 	var auth2 = gapi.auth2.getAuthInstance();
 	auth2.signOut().then(function () {
 		console.log('User signed out.');
+		var response = {status: 'unknown'};
+		statusChangeCallback(response);
 	});
 }
 
@@ -1288,15 +1279,6 @@ function signOut() {
 
 // -------------Facebook code---------------
 
-// This function is called when someone finishes with the Login
-// Button. See the onlogin handler attached to it in the sample
-// code below.
-/*function checkLoginState() {
-	console.log('checkLoginState');
-	FB.getLoginStatus(function (response) {
-		statusChangeCallback(response);
-	});
-}*/
 
 window.fbAsyncInit = function () {
 	FB.init({
@@ -1343,34 +1325,46 @@ window.fbAsyncInit = function () {
 
 // --------------------- email code ----------------------------
 
-function statusChangeCallback(response) {
-	console.log('statusChangeCallback');
-	console.log(response);
-	
-	// The response object is returned with a status field that lets the
-	// app know the current login status of the person.
-	// Full docs on the response object can be found in the documentation
-	// for FB.getLoginStatus().
-	if (response.status === 'connected' && response.accessToken != undefined) {
-		console.log('statusChangeCallback: Logged into Open Smart Country');
-		var accessToken = response.accessToken;
-		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
-		drawUser(accessToken);
-		drawPlotProfile(accessToken);
-	} else if (response.status == 'not_connected'){
-		console.log('statusChangeCallback: Not logged into Open Smart Country'); 
-		drawPlotProfile();	
-	} else {
-		console.log('statusChangeCallback: unknown'); 
-		emailInit();
-	}
-}
+
 
 
 function emailInit() {
 	console.log('emailInit');
 	getLoginStatus(statusChangeCallback);
 }
+
+
+
+
+
+
+function getEmailLogin(userEmailTokenID){
+	
+	console.log('getEmailLogin');
+
+	data = {userEmailTokenID: userEmailTokenID};
+	
+	
+	user = {
+			//name : response.name,
+			name : 'Invitado',
+			//email : response.email,
+			email : userEmailTokenID,
+			loginMethod: 'email',
+			//userProfilePicture : response.userProfilePinture, 
+			userProfilePicture : "/static/osc/img/avatar.PNG",
+			plot : getNationalCadastreReference(), 
+			relation : 'myPlot'
+	};
+	
+	var response = {status: 'connected', user: user};
+	
+	return response;
+	
+}
+
+
+// ------------- login commons ---------------
 
 function drawUser(accessToken) {
 	
@@ -1389,7 +1383,7 @@ function drawUser(accessToken) {
 
 	request.done(function (response, textStatus, jqXHR) {*/
 		//TODO eliminar cuando esté el servicio de consulta de usuario
-		var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':'facebook'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
+		var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':(accessToken=='66')?'facebook':'google'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
 		
 		if (response.status == "SUCCESS") {
 			var user = response.user;
@@ -1419,33 +1413,6 @@ function login(callback){
 
 }
 
-
-function getEmailLogin(userEmailTokenID){
-	
-	console.log('getEmailLogin');
-
-	data = {userEmailTokenID: userEmailTokenID};
-	
-	
-	user = {
-			//name : response.name,
-			name : 'Invitado',
-			//email : response.email,
-			email : userEmailTokenID,
-			loginMethod: 'email',
-			//userProfilePicture : response.userProfilePinture, 
-			userProfilePicture : "/static/osc/img/avatar.PNG",
-			plot : getNationalCadastreReference(), 
-			relation : 'myPlot'
-	};
-	
-	var response = {status: 'connected', user: user};
-	
-	return response;
-	
-}
-
-
 function getLoginStatus(callback) {
 	console.log('getLoginStatus');
 	var accessToken=getCookie("accessToken");
@@ -1460,8 +1427,28 @@ function getLoginStatus(callback) {
 	callback(response);
 }
 
-
-// ------------- login commons ---------------
+function statusChangeCallback(response) {
+	console.log('statusChangeCallback');
+	console.log(response);
+	
+	// The response object is returned with a status field that lets the
+	// app know the current login status of the person.
+	// Full docs on the response object can be found in the documentation
+	// for FB.getLoginStatus().
+	if (response.status === 'connected' && response.accessToken != undefined) {
+		console.log('statusChangeCallback: Logged into Open Smart Country');
+		var accessToken = response.accessToken;
+		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
+		drawUser(accessToken);
+		drawPlotProfile(accessToken);
+	} else if (response.status == 'not_connected'){
+		console.log('statusChangeCallback: Not logged into Open Smart Country'); 
+		drawPlotProfile();	
+	} else {
+		console.log('statusChangeCallback: unknown'); 
+		emailInit();
+	}
+}
 
 function logout(socialNetwork) {
 	
@@ -1619,7 +1606,7 @@ function getAccessToken(authorizationGrant){
 
 	request.done(function (response, textStatus, jqXHR) {*/
 		//TODO quitar esto de response =
-		var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":"33" };
+		var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
 		if (response.status == "connected") {
 			var accessToken = response.accessToken;
 			setCookie('accessToken', accessToken, 1);
