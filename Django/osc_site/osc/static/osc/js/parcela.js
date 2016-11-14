@@ -631,22 +631,25 @@ function drawCatastralCard(parcelCadastralData) {
 			
 			var cropTypeTableBody = document.getElementById('cropTypeTableBody');
 			var cropTypeTableContent = cropTypeTableBody.getElementsByTagName('tr');
-			for(var cropTypeElementNumber = 0; cropTypeElementNumber < cropTypeTableContent.length; cropTypeElementNumber++){
-				cropTypeTableBody.removeChild(cropTypeTableContent[cropTypeElementNumber]);
+			var cropTypeTableContentCount = cropTypeTableContent.length;
+			for(var cropTypeElementNumber = 0; cropTypeElementNumber < cropTypeTableContentCount; cropTypeElementNumber++){
+				cropTypeTableBody.removeChild(cropTypeTableContent[cropTypeTableContentCount - cropTypeElementNumber - 1]);
 			}
 		
 			
 			var productionLevelTableBody = document.getElementById('productionLevelTableBody');
 			var productionLevelTableContent = productionLevelTableBody.getElementsByTagName('tr');
-			for(var productionLevelElementNumber = 0; productionLevelElementNumber < productionLevelTableContent.length; productionLevelElementNumber++){
-				productionLevelTableBody.removeChild(productionLevelTableContent[productionLevelElementNumber]);
+			var productionLevelTableContentCount = productionLevelTableContent.length;
+			for(var productionLevelElementNumber = 0; productionLevelElementNumber < productionLevelTableContentCount; productionLevelElementNumber++){
+				productionLevelTableBody.removeChild(productionLevelTableContent[productionLevelTableContentCount - productionLevelElementNumber - 1]);
 			}
 			
 
 			var cropAreaTableBody = document.getElementById('cropAreaTableBody');
 			var cropAreaTableContent = cropAreaTableBody.getElementsByTagName('tr');
-			for(var cropAreaElementNumber = 0; cropAreaElementNumber < cropAreaTableContent.length; cropAreaElementNumber++){
-				cropAreaTableBody.removeChild(cropAreaTableContent[cropAreaElementNumber]);
+			var cropAreaTableContentCount = cropAreaTableContent.length;
+			for(var cropAreaElementNumber = 0; cropAreaElementNumber < cropAreaTableContentCount; cropAreaElementNumber++){
+				cropAreaTableBody.removeChild(cropAreaTableContent[cropAreaTableContentCount - cropAreaElementNumber - 1]);
 			}
 			
 			
@@ -1285,34 +1288,6 @@ function signOut() {
 
 // -------------Facebook code---------------
 
-// This is called with the results from from FB.getLoginStatus().
-function statusChangeCallback(response) {
-	console.log('statusChangeCallback');
-	console.log(response);
-	// The response object is returned with a status field that lets the
-	// app know the current login status of the person.
-	// Full docs on the response object can be found in the documentation
-	// for FB.getLoginStatus().
-	if (response.status === 'connected') {
-		console.log('statusChangeCallback: Logged into Open Smart Country and Facebook');
-		// Logged into your app and Facebook.
-		user = drawFBuser();
-	} else if (response.status === 'not_authorized') {
-		// The person is logged into Facebook, but not your app.
-		// document.getElementById('status').innerHTML = 'Please log ' +
-		// 'into this app.';
-		console.log('statusChangeCallback: Logged into Facebook, but not in Open Smart Country');
-		drawPlotProfile();
-	} else {
-		// The person is not logged into Facebook, so we're not sure if
-		// they are logged into this app or not.
-		// document.getElementById('status').innerHTML = 'Please log ' +
-		// 'into Facebook.';
-		console.log('statusChangeCallback: Not logged into Facebook and not sure if they are logged into Open Smart Country or not ');
-		emailInit();
-	}
-}
-
 // This function is called when someone finishes with the Login
 // Button. See the onlogin handler attached to it in the sample
 // code below.
@@ -1360,148 +1335,90 @@ window.fbAsyncInit = function () {
 	fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-// Here we run a very simple test of the Graph API after login is
-// successful. See statusChangeCallback() for when this call is made.
-function drawFBuser() {
-	var user = {};
-	console.log('drawFBuser');
-	console.log('Welcome!  Fetching your information.... ');
-	FB.api('/me?fields=name,email,id', function (response) {
-		console.log('Successful login for: ' + response.name);
 
-		profile_image_url = 'http://graph.facebook.com/' + response.id + '/picture';
 
-		
-
-		document.getElementById('esMiParcela').style.display = 'none';
-		document.getElementById('esMiParcelaButton').disabled = true;
-		document.getElementById('meInteresaEstaParcelaButton').disabled = true;
-
-		user = {
-			name : response.name,
-			email : response.email,
-			tokenID: response.id,
-			loginMethod: 'facebook',
-			userProfilePicture : profile_image_url, 
-			plot : getNationalCadastreReference(), 
-			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'
-		};
-		
-		console.log(user);	
-		
-		drawUserMenu(user);
-		drawPlotProfile(user);
-	});
-	
-}
-function login() {
-	console.log('login');
-	FB.login(function (response) {
-		console.log('login: statusChangeCallback');
-		statusChangeCallback(response);
-
-	}, {
-		scope : 'public_profile,email',
-		return_scopes : true
-	});
-}
 
 
 
 
 // --------------------- email code ----------------------------
 
-function emailStatusChangeCallback(response) {
-	console.log('emailStatusChangeCallback');
+function statusChangeCallback(response) {
+	console.log('statusChangeCallback');
 	console.log(response);
 	
-	if (response.status === 'connected') {
-		console.log('emailStatusChangeCallback: Logged into Open Smart Country with email');
-		drawEmailuser(response.user);
+	// The response object is returned with a status field that lets the
+	// app know the current login status of the person.
+	// Full docs on the response object can be found in the documentation
+	// for FB.getLoginStatus().
+	if (response.status === 'connected' && response.accessToken != undefined) {
+		console.log('statusChangeCallback: Logged into Open Smart Country');
+		var accessToken = response.accessToken;
+		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
+		drawUser(accessToken);
+		drawPlotProfile(accessToken);
+	} else if (response.status == 'not_connected'){
+		console.log('statusChangeCallback: Not logged into Open Smart Country'); 
+		drawPlotProfile();	
 	} else {
-		console.log('emailStatusChangeCallback: Not logged into Open Smart Country with email'); 
-		drawPlotProfile();
+		console.log('statusChangeCallback: unknown'); 
+		emailInit();
 	}
 }
 
 
 function emailInit() {
 	console.log('emailInit');
-	getEmailLoginStatus(emailStatusChangeCallback);
+	getLoginStatus(statusChangeCallback);
 }
 
-function drawEmailuser(user) {
+function drawUser(accessToken) {
 	
-	console.log('drawEmailuser');
+	console.log('drawUser');
 	
-	
-	console.log('Successful login for: ' + user.email);
-
-	document.getElementById('esMiParcela').style.display = 'none';
-	document.getElementById('esMiParcelaButton').disabled = true;
-	document.getElementById('meInteresaEstaParcelaButton').disabled = true;
-
-
-	console.log(user);	
-	
-	drawUserMenu(user);
-	drawPlotProfile(user);
-	
-	
-}
-
-
-function emailLogin(){
-	
-	
-
-	var url = "/osc/....";
-	var data = {};
-	
-	data = {
-			email: document.getElementById('email').value , 
-			password: document.getElementById('password').value, 
-			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'
-	};
-	
-	//TODO quitar esto (user : {...}) cuando esté el servicio de alta y obtención de usuario por correo y contraseña
-	user = {
-			//name : response.name,
-			name : 'Invitado',
-			//email : response.email,
-			email : data.email,
-			//tokenID: response.id,
-			tokenID : 33,
-			loginMethod: 'email',
-			//userProfilePicture : response.userProfilePinture, 
-			userProfilePicture : "/static/osc/img/avatar.PNG",
-			plot : getNationalCadastreReference(), 
-			relation : data.relation
-	};
-	
+	var userEndPoint = "/osc/....";
+	var data = {accessToken: accessToken};
 	
 	/*var request = jQuery.ajax({
 		crossDomain : true,
-		url : url,
+		url : userEndPoint,
 		data : JSON.stringify(data),
 		type : 'POST',
 		dataType : "json"
 	});
 
-	request.done(function (response, textStatus, jqXHR) {
-		if (response.status == "SUCCESS") {*/
+	request.done(function (response, textStatus, jqXHR) {*/
+		//TODO eliminar cuando esté el servicio de consulta de usuario
+		var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':'facebook'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
+		
+		if (response.status == "SUCCESS") {
+			var user = response.user;
+			
+			console.log('Successful login for: ' + user.email);
 
-			var response = {status: 'connected', user: user};
+			document.getElementById('esMiParcela').style.display = 'none';
+			document.getElementById('esMiParcelaButton').disabled = true;
+			document.getElementById('meInteresaEstaParcelaButton').disabled = true;
+
+
+			console.log(user);	
 			
-			setCookie('userEmailTokenID', response.user.email, 1);
+			drawUserMenu(user);
 			
-			ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');
+		}
 			
-// });
-			
-			emailStatusChangeCallback(response);
+//  });
+		
+}
+
+function login(callback){
+
+	var authorizationGrant = getAuthorizationGrant(callback);
+	
+	
 
 }
+
 
 function getEmailLogin(userEmailTokenID){
 	
@@ -1515,8 +1432,6 @@ function getEmailLogin(userEmailTokenID){
 			name : 'Invitado',
 			//email : response.email,
 			email : userEmailTokenID,
-			//tokenID: response.id,
-			tokenID: 33,
 			loginMethod: 'email',
 			//userProfilePicture : response.userProfilePinture, 
 			userProfilePicture : "/static/osc/img/avatar.PNG",
@@ -1531,19 +1446,20 @@ function getEmailLogin(userEmailTokenID){
 }
 
 
-function getEmailLoginStatus(callback) {
-	console.log('getEmailLoginStatus');
-	var userEmailTokenID=getCookie("userEmailTokenID");
+function getLoginStatus(callback) {
+	console.log('getLoginStatus');
+	var accessToken=getCookie("accessToken");
 	var response = {};
-	if (userEmailTokenID != "") {
-		console.log('getEmailLoginStatus: with userEmailTokenID');
-		response = getEmailLogin(userEmailTokenID);
+	if (accessToken != "") {
+		console.log('getLoginStatus: with accessToken');
+		response = {status: 'connected', accessToken: accessToken};
     }else{
-    	console.log('getEmailLoginStatus: without userEmailTokenID');
+    	console.log('getLoginStatus: without accessToken');
     	response = {status: 'not_connected'};
     }
 	callback(response);
 }
+
 
 // ------------- login commons ---------------
 
@@ -1556,11 +1472,14 @@ function logout(socialNetwork) {
 		FB.logout(function (response) {
 			// Person is now logged out
 			statusChangeCallback(response);
+			
 		});
 	} else if (socialNetwork == 'email'){
-		setCookie('userEmailTokenID', '', 0);
+		
 	}
 
+	setCookie('accessToken', '', 0);
+	
 	document.getElementById('userMenu').parentNode.removeChild(document.getElementById('userMenu'));
 	document.getElementById('avatar').src = "/static/osc/img/avatar.PNG";
 	document.getElementById('esMiParcelaButton').disabled = false;
@@ -1607,7 +1526,7 @@ function drawUserMenu(user) {
 	document.getElementById("avatar").src = profile_image_url;
 }
 
-function openForm(relation) {
+function authorizationRequest(relation) {
 	if (relation == 'esMiParcela') {
 		document.getElementById('interestingPlotRadio').checked = false;
 		document.getElementById('interestingPlotRadio').disabled = true;
@@ -1650,3 +1569,62 @@ function getCookie(cname) {
     return "";
 }
 
+
+function getAuthorizationGrant(callback){
+	callback();
+}
+
+function emailAuthorizationGrant(){
+	var authorizationGrant =  {
+			email: document.getElementById('email').value , 
+			password: document.getElementById('password').value, 
+			plot: getNationalCadastreReference(),
+			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+	};
+	
+	getAccessToken(authorizationGrant);
+}
+
+
+function facebookAuthorizationGrant() {
+	console.log('login');
+	FB.login(function (response) {
+		console.log('login: statusChangeCallback');
+		
+		var authorizationGrant =  {
+				facebookAccessToken: response.authResponse.accessToken , 
+				plot: getNationalCadastreReference(),
+				relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+		};
+		
+		getAccessToken(authorizationGrant);
+
+	}, {
+		scope : 'public_profile,email',
+		return_scopes : true
+	});
+}
+
+function getAccessToken(authorizationGrant){
+
+	var authorizationTokenEndPoint = "/osc/....";
+		
+	/*var request = jQuery.ajax({
+		crossDomain : true,
+		url : authorizationTokenEndPoint,
+		data : JSON.stringify(authorizationGrant),
+		type : 'POST',
+		dataType : "json"
+	});
+
+	request.done(function (response, textStatus, jqXHR) {*/
+		//TODO quitar esto de response =
+		var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":"33" };
+		if (response.status == "connected") {
+			var accessToken = response.accessToken;
+			setCookie('accessToken', accessToken, 1);
+			statusChangeCallback(response);
+		}
+			
+//  });
+}

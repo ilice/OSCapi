@@ -70,13 +70,13 @@
                class="w3-padding-large w3-text-grey" onclick="w3_open()">MENU</a></li>
 
         <li class="w3-show-inline-block w3-center w3-display-middle">
-            <button id="esMiParcelaButton" onclick="openForm('esMiParcela')"
+            <button id="esMiParcelaButton" onclick="authorizationRequest('esMiParcela')"
                     class="w3-btn w3-grey w3-margin-right w3-text-white">Es Mi Parcela
             </button>
             <button id="meInteresaEstaParcelaButton" onclick="openForm('meInteresaEstaParcela')" class="w3-btn w3-grey w3-text-white">Me interesa esta parcela
             </button>
         </li>
-        <li id="userMenuItem" class="w3-padding w3-right"></span>
+        <li id="userMenuItem" class="w3-padding w3-right">
         </li>
         <li class="w3-padding-large w3-right"><span id="rc"></span></li>
         <li class="w3-padding-large w3-right">
@@ -132,10 +132,9 @@
         </div>
         <div class="w3-padding-large" style="max-width:550px">
 	            <div id="googleSignIn" class="g-signin2 w3-margin-bottom" data-onsuccess="onSignIn" data-width="550"
-	                 data-height="36" data-longtitle="true">Continúa con Google
-	            </div>
+	                 data-height="36" data-longtitle="true"></div>
             <div class="w3-card-2 w3-white w3-center w3-btn w3-display-container w3-hover-shadow"
-                 style="width:550px;height:36px;padding-left: 60px;" onclick="login()">
+                 style="width:550px;height:36px;padding-left: 60px;" onclick="login(facebookAuthorizationGrant)">
                 <img class="w3-display-left" style="max-height:18px;margin-left:8px"
                      src="{% static '/osc/img/FB-f-Logo__blue_29.png' %}"/>
                 <span class="w3-roboto-font">Continúa con Facebook</span>
@@ -192,7 +191,7 @@
 
                         <button 
                                 class="w3-btn w3-dark-grey w3-right"
-                                onClick="emailLogin()">Enviar
+                                onClick="login(emailAuthorizationGrant)">Enviar
                         </button>
                     </div>
                 </div>
