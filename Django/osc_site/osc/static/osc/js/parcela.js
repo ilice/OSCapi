@@ -29,8 +29,8 @@ function drawPlotProfile(accessToken) {
 	}
 
 	var nationalCadastralReference = getNationalCadastreReference();
-
-	drawPublicParcelInfoByNationalCadastralReference(nationalCadastralReference, accessToken);
+	
+	drawParcelInfoByNationalCadastralReference(nationalCadastralReference, accessToken);
 
 }
 
@@ -388,9 +388,9 @@ function drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations) 
 
 }
 
-function drawPublicParcelInfoByNationalCadastralReference(
+function drawParcelInfoByNationalCadastralReference(
 	nationalCadastralReference, accessToken) {
-	var cadastralParcelFeature;
+	var cadastralParcelFeature = {};
 	
 	//TODO creo el accessToken que debe ir en el cuerpo y no en la url
 
@@ -407,8 +407,13 @@ function drawPublicParcelInfoByNationalCadastralReference(
 
 	request
 	.done(function (response, textStatus, jqXHR) {
-		cadastralParcelFeature = response.features[0];
-		cadastralParcelFeature.properties.climate_aggregations = addGoogleFormatedTablesOf(cadastralParcelFeature.properties.climate_aggregations);
+		if(response.error === undefined){
+			cadastralParcelFeature = response.features[0];
+			cadastralParcelFeature.properties.climate_aggregations = addGoogleFormatedTablesOf(cadastralParcelFeature.properties.climate_aggregations);
+		}else{
+			showError(new Error('Se ha producido un error al recuperar la información de la parcela.'));
+		}
+		cadastralParcelFeature.getProperty = getProperty;
 		drawCardsAndWidgets(cadastralParcelFeature);
 	});
 }
@@ -416,64 +421,89 @@ function drawPublicParcelInfoByNationalCadastralReference(
 function drawCardsAndWidgets(cadastralParcelFeature) {
 
 	setValueInField(
-		cadastralParcelFeature.properties.nationalCadastralReference, "rc");
+		cadastralParcelFeature.getProperty('properties.nationalCadastralReference'), "rc");
 
 	setValueInField(
-		cadastralParcelFeature.properties.nationalCadastralReference, "rc_smallBar");
+		cadastralParcelFeature.getProperty('properties.nationalCadastralReference'), "rc_smallBar");
+	
+	drawCompletionParcelProfileBar(cadastralParcelFeature);
 
 	drawAlternatives(cadastralParcelFeature);
 
 	drawLocationCard(cadastralParcelFeature);
 
-	drawCatastralCard(cadastralParcelFeature.properties.cadastralData);
+	drawCatastralCard(cadastralParcelFeature.getProperty('properties.cadastralData'));
 
-	drawLastYearClimateAggregationsWidgetBar(cadastralParcelFeature.properties.climate_aggregations.last_year);
+	drawLastYearClimateAggregationsWidgetBar(cadastralParcelFeature.getProperty('properties.climate_aggregations.last_year'));
 
-	drawRainfallAggregationsCard(cadastralParcelFeature.properties);
+	drawRainfallAggregationsCard(cadastralParcelFeature.getProperty('properties'));
 
-	drawTemperatureAggregationsCard(cadastralParcelFeature.properties);
+	drawTemperatureAggregationsCard(cadastralParcelFeature.getProperty('properties'));
 
-	drawSunHoursAggregationsCard(cadastralParcelFeature.properties);
+	drawSunHoursAggregationsCard(cadastralParcelFeature.getProperty('properties'));
 
-	drawRadiationAggregationsCard(cadastralParcelFeature.properties);
+	drawRadiationAggregationsCard(cadastralParcelFeature.getProperty('properties'));
 
 	drawCropDistributionCard(cadastralParcelFeature);
 
+}
+
+function drawCompletionParcelProfileBar(cadastralParcelFeature){
+	
+		var completionParcelProfileBarCard = createCard('completionParcelProfileBarCard');
+		
+		//document.getElementById('main').insertBefore(completionParcelProfileBarCard, document.getElementById('parcelHeader').nextSibling);
+	
+	
+	
+}
+
+function createCard(id){
+	var card = document.createElement('div');
+	card.setAttribute('class', "w3-container w3-card-8");
+	card.setAttribute('id', id);
+	
+	var closeCardButton = document.createElement('span');
+	closeCardButton.setAttribute('onclick', "this.parentElement.style.display='none'");
+	closeCardButton.setAttribute('class', "w3-closebtn w3-padding fa fa-close");
+	card.appendChild(closeCardButton);
+	
+	return card;
 }
 
 function drawAlternatives(cadastralParcelFeatures) {
 
 	var queries = [];
 
-	if (!(cadastralParcelFeatures.properties.elevation === undefined)) {
-		var altitude = cadastralParcelFeatures.properties.elevation.toFixed();
+	if (!(cadastralParcelFeatures.getProperty('properties.elevation') === undefined)) {
+		var altitude = cadastralParcelFeatures.getProperty('properties.elevation').toFixed();
 		var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
 		queries.push(altitudeQuery);
 	}
 
-	if (!(cadastralParcelFeatures.properties.climate_aggregations === undefined)) {
-		var plotMinTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.min_temperature.toFixed();
-		var plotMaxTemperature = cadastralParcelFeatures.properties.climate_aggregations.last_year.max_temperature.toFixed();
+	if (!(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') === undefined)) {
+		var plotMinTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.min_temperature').toFixed();
+		var plotMaxTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.max_temperature').toFixed();
 		var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
 		queries.push(temperatureQuery);
 
-		var plotYearlyRainfall = cadastralParcelFeatures.properties.climate_aggregations.last_year.sum_rainfall.toFixed();
+		var plotYearlyRainfall = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_rainfall').toFixed();
 		var rainfallQuery = createQueryForTypeAndValue("rainfall", plotYearlyRainfall);
 		queries.push(rainfallQuery);
 
-		var plotYearlySunHours = cadastralParcelFeatures.properties.climate_aggregations.last_year.sum_sun_hours.toFixed();
+		var plotYearlySunHours = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_sun_hours').toFixed();
 		var sunHoursQuery = createQueryForTypeAndValue("sunHours", plotYearlySunHours);
 		queries.push(sunHoursQuery);
 	}
 
-	if (!(cadastralParcelFeatures.properties.reference_point === undefined)) {
-		var plotLatitude = cadastralParcelFeatures.properties.reference_point.lat.toFixed();
+	if (!(cadastralParcelFeatures.getProperty('properties.reference_point.lat') === undefined)) {
+		var plotLatitude = cadastralParcelFeatures.getProperty('properties.reference_point.lat').toFixed();
 		var latitudeQuery = createQueryForTypeAndValue("latitude", plotLatitude);
 		queries.push(latitudeQuery);
 	}
 
-	if (!(cadastralParcelFeatures.properties.soil_profile === undefined)) {
-		var plotpH = cadastralParcelFeatures.properties.soil_profile.pH;
+	if (!(cadastralParcelFeatures.getProperty('properties.soil_profile') === undefined)) {
+		var plotpH = cadastralParcelFeatures.getProperty('properties.soil_profile.pH');
 		var pHQuery = createQueryForTypeAndValue("ph", plotpH);
 		queries.push(pHQuery);
 	}
@@ -686,7 +716,7 @@ function drawCatastralCard(parcelCadastralData) {
 			setValueInField(parcelCadastralData.bico.bi.ldt, "direccion");
 		} else {
 
-			throw (new Error("Error en los datos del catastro. Contacte con nosotros."));
+			throw (new Error('Error en los datos del catastro.'));
 		}
 	} catch (error) {
 		showErrorInCard(error, "CatastralCard");
@@ -696,6 +726,7 @@ function drawCatastralCard(parcelCadastralData) {
 
 function drawLastYearClimateAggregationsWidgetBar(
 	parcellast_yearClimate_aggregations) {
+	if(parcellast_yearClimate_aggregations!= undefined){
 	setValueInField(
 		parcellast_yearClimate_aggregations.sum_rainfall.toFixed(2),
 		"precipitacion-widget");
@@ -705,21 +736,24 @@ function drawLastYearClimateAggregationsWidgetBar(
 		.toFixed(2), "horasSol-widget");
 	setValueInField(parcellast_yearClimate_aggregations.sum_radiation
 		.toFixed(2), "radiacion-widget");
+	}else{
+		showError(new Error('Error al crear los widgets de resumen.'));
+	}
 }
 
-function drawRainfallAggregationsCard(parcelPorperties) {
+function drawRainfallAggregationsCard(parcelProperties) {
 
 	try {
 		loadGoogleChartsCorechart();
 
-		var parcelclimate_aggregations = parcelPorperties.climate_aggregations;
+		var parcelclimate_aggregations = parcelProperties.climate_aggregations;
 
 		google.charts.setOnLoadCallback(function () {
 			drawChartOfRainfallByMonthAndYear(parcelclimate_aggregations)
 		});
 
-		setValueInField(parcelPorperties.closest_station.ESTACION + " a "
-			 + parcelPorperties.closest_station.distance_to_parcel.toFixed()
+		setValueInField(parcelProperties.closest_station.ESTACION + " a "
+			 + parcelProperties.closest_station.distance_to_parcel.toFixed()
 			 + " km de distancia  (lineal)", "estacionLluvia");
 
 		setValueInField(parcelclimate_aggregations.last_year.rainy_days,
@@ -731,18 +765,18 @@ function drawRainfallAggregationsCard(parcelPorperties) {
 	}
 }
 
-function drawTemperatureAggregationsCard(parcelPorperties) {
+function drawTemperatureAggregationsCard(parcelProperties) {
 	try {
 		loadGoogleChartsCorechart();
 
-		var parcelclimate_aggregations = parcelPorperties.climate_aggregations;
+		var parcelclimate_aggregations = parcelProperties.climate_aggregations;
 
 		google.charts.setOnLoadCallback(function () {
 			drawChartOfTemperaturesByMonthAndYear(parcelclimate_aggregations)
 		});
 
-		setValueInField(parcelPorperties.closest_station.ESTACION + " a "
-			 + parcelPorperties.closest_station.distance_to_parcel.toFixed()
+		setValueInField(parcelProperties.closest_station.ESTACION + " a "
+			 + parcelProperties.closest_station.distance_to_parcel.toFixed()
 			 + " km de distancia  (lineal)", "estacionTemperatura");
 
 		setValueInField(parcelclimate_aggregations.last_year.max_temperature
@@ -756,18 +790,18 @@ function drawTemperatureAggregationsCard(parcelPorperties) {
 	}
 }
 
-function drawSunHoursAggregationsCard(parcelPorperties) {
+function drawSunHoursAggregationsCard(parcelProperties) {
 	try {
 		loadGoogleChartsCorechart();
 
-		var parcelclimate_aggregations = parcelPorperties.climate_aggregations;
+		var parcelclimate_aggregations = parcelProperties.climate_aggregations;
 
 		google.charts.setOnLoadCallback(function () {
 			drawChartOfDailySunHoursByMonthAndYear(parcelclimate_aggregations)
 		});
 
-		setValueInField(parcelPorperties.closest_station.ESTACION + " a "
-			 + parcelPorperties.closest_station.distance_to_parcel.toFixed()
+		setValueInField(parcelProperties.closest_station.ESTACION + " a "
+			 + parcelProperties.closest_station.distance_to_parcel.toFixed()
 			 + " km de distancia  (lineal)", "estacionSol");
 
 		setValueInField(parcelclimate_aggregations.last_year.avg_sun_hours
@@ -777,23 +811,23 @@ function drawSunHoursAggregationsCard(parcelPorperties) {
 		setValueInField(parcelclimate_aggregations.last_year.sum_sun_hours,
 			"horasSolAcumuladas");
 	} catch (error) {
-		showErrorInCard(error, "TemperatureCard");
+		showErrorInCard(error, "SunHoursCard");
 	}
 }
 
-function drawRadiationAggregationsCard(parcelPorperties) {
+function drawRadiationAggregationsCard(parcelProperties) {
 	try {
 		loadGoogleChartsCorechart();
 
-		var parcelclimate_aggregations = parcelPorperties.climate_aggregations;
+		var parcelclimate_aggregations = parcelProperties.climate_aggregations;
 
 		google.charts
 		.setOnLoadCallback(function () {
 			drawChartOfDailyNetRadiationByMonthAndYear(parcelclimate_aggregations)
 		});
 
-		setValueInField(parcelPorperties.closest_station.ESTACION + " a "
-			 + parcelPorperties.closest_station.distance_to_parcel.toFixed()
+		setValueInField(parcelProperties.closest_station.ESTACION + " a "
+			 + parcelProperties.closest_station.distance_to_parcel.toFixed()
 			 + " km de distancia  (lineal)", "estacionRadiacion");
 
 		setValueInField(parcelclimate_aggregations.last_year.max_radiation
@@ -982,10 +1016,26 @@ function showErrorInCard(error, card) {
 	document.getElementById(card + 'ErrorText').innerHTML += "<p>"
 	 + error.message + "</p>";
 
-	document.getElementById('ErrorBadge').style.display = 'block';
-	document.getElementById('ErrorText').innerHTML += "<p>"
-	 + error.message + "</p>";
+	showError(error);
 
+}
+
+function showError(error){
+	
+	var errorPanel = document.createElement('div');
+	errorPanel.setAttribute('class', 'w3-col w3-panel w3-red w3-card-4');
+	errorPanel.appendChild(document.createTextNode(error.message));
+	
+	var proposedAction = document.createElement('a');
+	proposedAction.setAttribute('class', 'w3-right');
+	proposedAction.setAttribute('href', '/osc/propietario/#contacto');
+	proposedAction.setAttribute('target', '_blank');
+	proposedAction.appendChild(document.createTextNode('Contacte con nosotros'));
+	
+	errorPanel.appendChild(proposedAction);
+	
+	document.getElementById('infoContainer').appendChild(errorPanel);
+	document.getElementById('ErrorBadge').style.display = 'block';
 }
 
 function carousel(seats) {
@@ -1298,7 +1348,7 @@ function signOut() {
 
 window.fbAsyncInit = function () {
 	FB.init({
-		appId : '1620985944870143',
+		appId : '1620993304869407',
 		cookie : true, // enable cookies to allow the server to access
 		// the session
 		xfbml : true, // parse social plugins on this page
@@ -1630,4 +1680,20 @@ function getAccessToken(authorizationGrant){
 		}
 			
 //  });
+}
+
+function getProperty(property){
+	var properties = property.split('.');
+	var result = this;
+	for (var i = 0; i < properties.length; i++){
+		if(result != undefined){
+			result = result[properties[i]];
+		}else{
+			break;
+		}
+	}
+	if(result === undefined){
+		showError (new Error('Error al intentar recuperar el dato '+ property + '.'));
+	}
+	return result;
 }

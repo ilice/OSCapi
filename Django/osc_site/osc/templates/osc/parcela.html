@@ -83,17 +83,9 @@
             <button id="ErrorBadge"
                     class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                     style="display: none"
-                    onclick="document.getElementById('ErrorData').style.display='block'">
+                    onclick="document.getElementById('infoDropnav').style.display='block'">
                 <i class="fa fa-exclamation-triangle"></i>
             </button>
-        </li>
-
-        <li class="w3-padding-large w3-right">
-            <div id="ErrorData"
-                 class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span id="ErrorText"></span>
-            </div>
         </li>
     </ul>
     <div class="w3-hide-medium w3-hide-large">
@@ -113,6 +105,17 @@
         </div>
     </div>
 </div>
+
+<!-- Error details -->
+<nav class="w3-dropnav w3-card-2" style="display:none; padding-top: 65px" id="infoDropnav">
+  <div class="w3-container">
+  <span onclick="document.getElementById('infoDropnav').style.display='none'" class="w3-closebtn w3-xlarge fa fa-close" title="Close Menu"></span>
+  <div id="infoContainer" class="w3-row-padding w3-padding-bottom">
+    
+  </div>
+  </div>
+  <br>
+</nav>
 
 
 <!-- Es mi parcela login form -->
@@ -285,7 +288,7 @@
 <div id="main" class="w3-main">
 
     <!-- Header -->
-    <header class="w3-container" style="padding-top: 65px">
+    <header id='parcelHeader' class="w3-container" style="padding-top: 65px">
         <h5>
             <i class="fa fa-dashboard"></i> <span id="pagina"></span>
         </h5>
@@ -382,7 +385,7 @@
             <div id="AlternativesCard" class="w3-card-8">
 					<span
                             onclick="this.parentElement.style.display='none'"
-                            class="w3-closebtn w3-padding">&times;</span>
+                            class="w3-closebtn w3-padding fa fa-close"></span>
                 <div id="alternativesContainer" class="w3-container w3-padding-large">
                     <h5>
                         Alternativas de uso según características <a
@@ -400,7 +403,7 @@
                     <div id="AlternativesErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 							<span onclick="this.parentElement.style.display='none'"
-                                  class="w3-closebtn w3-padding">&times;</span><span
+                                  class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="AlternativesCardErrorText"></span>
                     </div>
                 </div>
@@ -414,7 +417,7 @@
             <div class="w3-container">
 					<span
                             onclick="document.getElementById('AlternativesInfo').style.display='none'"
-                            class="w3-closebtn">&times;</span>
+                            class="w3-closebtn fa fa-close"></span>
                 <p>
                     Actualmente sólo filtramos cultivos <strong>según la
                     altitud, latitud y algunos otros datos de la parcela</strong> y los valores de Impacto no tienen en
@@ -432,7 +435,7 @@
                     de los avances puedes ponerte en contacto con nosotros en la
                     sección de contacto.
                 </p>
-                <a href="http://localhost/Web/propietario.html#contacto"
+                <a href="/osc/propietario/#contacto"
                    target="_blank">Contacto</a>
             </div>
         </div>
@@ -444,14 +447,14 @@
             <div class="w3-container">
 					<span
                             onclick="document.getElementById('ReportInfo').style.display='none'"
-                            class="w3-closebtn">&times;</span>
+                            class="w3-closebtn fa fa-close"></span>
                 <p>
                     Si quieres obtener un <strong>informe detallado</strong> sobre tu
                     parcela, con sus características y alternativas de uso, además de
                     los datos, cálculos e <strong>información económica y de
                     viabilidad</strong> sobre cada una de las alternativas, ponte en contacto
                     con nosotros a través de la <a
-                        href="http://localhost/Web/propietario.html#contacto"
+                        href="/osc/propietario/#contacto"
                         target="_blank">sección de contacto</a>.
                 </p>
             </div>
@@ -467,7 +470,7 @@
             <div id="LocationCard" class="w3-card-8" style="min-height: 451px;">
 					<span
                             onclick="this.parentElement.style.display='none'"
-                            class="w3-closebtn w3-padding">&times;</span>
+                            class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
                     <h5>
                         Localización
@@ -481,7 +484,7 @@
                     <div id="LocationErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 							<span onclick="this.parentElement.style.display='none'"
-                                  class="w3-closebtn w3-padding">&times;</span><span
+                                  class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="LocationCardErrorText"></span>
                     </div>
                     <div id="mapa"></div>
@@ -508,7 +511,7 @@
         <div class="w3-twothird">
             <div id="catastro" class="w3-card-8" style="min-height: 451px;">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span>
+                          class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
                     <h5>
                         Información del catastro
@@ -523,7 +526,7 @@
                     <div id="CatastralCardErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 							<span onclick="this.parentElement.style.display='none'"
-                                  class="w3-closebtn w3-padding">&times;</span> <span
+                                  class="w3-closebtn w3-padding fa fa-close"></span> <span
                             id="CatastralCardErrorText"></span>
                     </div>
                     <table
@@ -606,7 +609,7 @@
             <div class="w3-container">
 					<span
                             onclick="document.getElementById('idea_modal').style.display='none'"
-                            class="w3-closebtn">&times;</span>
+                            class="w3-closebtn fa fa-close"></span>
                 <p>
                     Esta parcela está a una altitud de <strong><span
                         id="altitud_idea"></span></strong>, basado en este dato podemos encontrar
@@ -627,7 +630,7 @@
     <div class="w3-container w3-section ">
         <div class="w3-orange w3-text-dark-grey w3-row-padding">
 				<span onclick="this.parentElement.style.display='none'"
-                      class="w3-closebtn w3-padding">&times;</span>
+                      class="w3-closebtn w3-padding fa fa-close"></span>
             <h3>Observación</h3>
             <p>De momento estos datos son los de la estación meteorológica
                 más cercana, y por las características del terreno es probable que
@@ -651,7 +654,7 @@
     <!-- Tarjetas de análisis de datos -->
     <div id="precipitacion" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
@@ -668,7 +671,7 @@
             <div id="RainfallErrorData" class="w3-col w3-panel w3-red w3-card-8"
                  style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span
+                          class="w3-closebtn w3-padding fa fa-close"></span><span
                     id="RainfallCardErrorText"></span>
             </div>
             <div class="w3-row-padding">
@@ -699,7 +702,7 @@
 
     <div id="temperatura" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding"> fa fa-close">;</span>
         <div class="w3-card-8">
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
@@ -717,7 +720,7 @@
             <div id="TemperatureErrorData"
                  class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span
+                          class="w3-closebtn w3-padding fa fa-close"></span><span
                     id="TemperatureCardErrorText"></span>
             </div>
             <div class="w3-row-padding">
@@ -753,7 +756,7 @@
 
     <div id="sol" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
@@ -770,7 +773,7 @@
             <div id="SunHoursErrorData" class="w3-col w3-panel w3-red w3-card-8"
                  style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span
+                          class="w3-closebtn w3-padding fa fa-close"></span><span
                     id="SunHoursCardErrorText"></span>
             </div>
             <div class="w3-row-padding">
@@ -806,7 +809,7 @@
 
     <div id="radiacion" class="w3-container w3-section">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
@@ -823,7 +826,7 @@
             <div id="RadiationErrorData"
                  class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span
+                          class="w3-closebtn w3-padding fa fa-close"></span><span
                     id="RadiationCardErrorText"></span>
             </div>
             <div class="w3-row-padding">
@@ -862,7 +865,7 @@
     <!-- Tarjeta fija con los datos de Salamanca -->
     <div id="fixed" class="w3-container w3-section" style="display: none">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-container w3-card-8">
             <p class="w3-padding">
                 <em>Distribución de los diferentes usos del suelo </em>
@@ -877,7 +880,7 @@
             <div id="CropDistributionErrorData"
                  class="w3-col w3-panel w3-red w3-card-8" style="display: none">
 					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding">&times;</span><span
+                          class="w3-closebtn w3-padding fa fa-close"></span><span
                     id="CropDistributionCardErrorText"></span>
             </div>
             <div id="w3-row">
@@ -1086,7 +1089,7 @@
     <!-- Tarjeta de información -->
     <div id='informacion' class="w3-container w3-section" id="informacion">
 			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding">&times;</span>
+                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
             <header class="w3-container w3-blue">
                 <h1>Información</h1>
