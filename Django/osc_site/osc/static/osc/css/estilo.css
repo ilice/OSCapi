@@ -1,3 +1,12 @@
+.circle-button{
+	background-color:transparent;
+	border-radius:50%;
+	cursor: pointer;
+	outline:0;
+	padding:0;
+	border:none;
+}
+
 .w3-roboto-font {
   font-family: Roboto,arial,sans-serif;
   font-weight: 500;

@@ -450,26 +450,22 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 
 function drawCompletionParcelProfileBar(cadastralParcelFeature){
 	
-		var completionParcelProfileBarCard = createCard('completionParcelProfileBarCard');
+	var parcelProfile = cadastralParcelFeature.getProperty('property.parcelProfile');	
+	
+	//TODO esto debe de mostrarse por la información que nos llega a pintar no por el access token 
+	//if(parcelProfile === undefined){
+	
+	if(getCookie("accessToken") != ''){
+		document.getElementById('completionParcelProfileBarCard').style.display = 'block';
+		createProgressCircle('10');
+	}else{
+		document.getElementById('completionParcelProfileBarCard').style.display = 'none';
 		
-		//document.getElementById('main').insertBefore(completionParcelProfileBarCard, document.getElementById('parcelHeader').nextSibling);
-	
-	
-	
+	}
+		
 }
 
-function createCard(id){
-	var card = document.createElement('div');
-	card.setAttribute('class', "w3-container w3-card-8");
-	card.setAttribute('id', id);
-	
-	var closeCardButton = document.createElement('span');
-	closeCardButton.setAttribute('onclick', "this.parentElement.style.display='none'");
-	closeCardButton.setAttribute('class', "w3-closebtn w3-padding fa fa-close");
-	card.appendChild(closeCardButton);
-	
-	return card;
-}
+
 
 function drawAlternatives(cadastralParcelFeatures) {
 
@@ -1348,7 +1344,7 @@ function signOut() {
 
 window.fbAsyncInit = function () {
 	FB.init({
-		appId : '1620993304869407',
+		appId : '1620985944870143',
 		cookie : true, // enable cookies to allow the server to access
 		// the session
 		xfbml : true, // parse social plugins on this page
@@ -1518,7 +1514,12 @@ function statusChangeCallback(response) {
 
 function logout(socialNetwork) {
 	
+	
+	
 	console.log('logout('+socialNetwork+')');
+	
+	setCookie('accessToken', '', 0);
+	
 	if (socialNetwork == 'google') {
 		signOut();
 	} else if (socialNetwork == 'facebook') {
@@ -1528,10 +1529,11 @@ function logout(socialNetwork) {
 			
 		});
 	} else if (socialNetwork == 'email'){
-		
+		var response = {status: 'unknown'};
+		statusChangeCallback(response);
 	}
 
-	setCookie('accessToken', '', 0);
+	
 	
 	document.getElementById('userMenu').parentNode.removeChild(document.getElementById('userMenu'));
 	document.getElementById('avatar').src = "/static/osc/img/avatar.PNG";
@@ -1696,4 +1698,68 @@ function getProperty(property){
 		showError (new Error('Error al intentar recuperar el dato '+ property + '.'));
 	}
 	return result;
+}
+
+
+// ------------ Progreso perfil -----------------------
+
+function createProgressCircle(percent){
+	
+	var el = document.createElement('div');
+	el.setAttribute('class', 'chart');
+	el.setAttribute('id', 'graph');
+	el.setAttribute('data-percent', percent);
+	el.setAttribute('style', 'position:relative; width:86px; height:86px;');
+	
+	var progressCircle = document.getElementById("progressCircle");
+	while (progressCircle.firstChild) {
+		progressCircle.removeChild(myNode.firstChild);
+	}
+
+	progressCircle.appendChild(el);
+	
+
+	var options = {
+	    percent:  percent,
+	    size: 86,
+	    lineWidth: 8,
+	    rotate: el.getAttribute('data-rotate') || 0
+	}
+
+	var canvas = document.createElement('canvas');
+	canvas.setAttribute('style', 'display: block; position:absolute; top:0; left:0;');
+	
+	var span = document.createElement('div');
+	span.textContent = options.percent + '%';
+	span.setAttribute('style', ' color:#555; display:block; line-height:86px; text-align:center; width:86px; font-family:sans-serif; font-size:20px; font-weight:100; margin-left:5px;');
+    
+	if (typeof(G_vmlCanvasManager) !== 'undefined') {
+	    G_vmlCanvasManager.initElement(canvas);
+	}
+
+	var ctx = canvas.getContext('2d');
+	canvas.width = canvas.height = options.size;
+
+	el.appendChild(span);
+	el.appendChild(canvas);
+
+	ctx.translate(options.size / 2, options.size / 2); // change center
+	ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
+
+	// imd = ctx.getImageData(0, 0, 240, 240);
+	var radius = (options.size - options.lineWidth) / 2;
+
+	var drawCircle = function(color, lineWidth, percent) {
+			percent = Math.min(Math.max(0, percent || 1), 1);
+			ctx.beginPath();
+			ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
+			ctx.strokeStyle = color;
+	        ctx.lineCap = 'round'; // butt, round or square
+			ctx.lineWidth = lineWidth
+			ctx.stroke();
+	};
+
+	drawCircle('#efefef', options.lineWidth, 100 / 100);
+	drawCircle('#555555', options.lineWidth, options.percent / 100);
+
 }
