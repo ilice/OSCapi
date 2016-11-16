@@ -533,6 +533,8 @@ function drawAlternatives(cadastralParcelFeatures) {
 
 			for (cropNumber in crops) {
 				var crop = crops[cropNumber]._source;
+				
+				addAlternativesTableRow(crop);
 
 				var id = crops[cropNumber]._id;
 
@@ -1698,6 +1700,30 @@ function getProperty(property){
 		showError (new Error('Error al intentar recuperar el dato '+ property + '.'));
 	}
 	return result;
+}
+
+
+function addAlternativesTableRow(crop){
+	var table = document.getElementById('AlternativesTableContent');
+	
+	var row = document.createElement('tr');
+	
+	var td = document.createElement('td');
+	var image = document.createElement('img');
+	image.setAttribute('src','/static/osc/img/cultivos/' + crop['Foto']);
+	image.setAttribute('style','width:100%;max-width:40px');
+	td.appendChild(image);
+	row.appendChild(td);
+
+	td = document.createElement('td');
+	td.appendChild(document.createTextNode(crop['Nombre']));
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.appendChild(document.createTextNode(crop['Nombre Científico']));
+	row.appendChild(td);
+	
+	table.appendChild(row);
 }
 
 
