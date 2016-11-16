@@ -1713,7 +1713,7 @@ function createProgressCircle(percent){
 	
 	var progressCircle = document.getElementById("progressCircle");
 	while (progressCircle.firstChild) {
-		progressCircle.removeChild(myNode.firstChild);
+		progressCircle.removeChild(progressCircle.firstChild);
 	}
 
 	progressCircle.appendChild(el);
