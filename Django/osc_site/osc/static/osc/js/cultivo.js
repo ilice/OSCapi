@@ -127,6 +127,45 @@ function cargaDatos() {
 						    addMinMaxRequirementsRow("Precipitaciones", rainfall);
 						}
 
+						var altitudeRequirements = crop.optimal_altitude;
+						for (altitudeRequirementNumber in altitudeRequirements) {
+							var altitude = altitudeRequirements[altitudeRequirementNumber];
+
+							addMinMaxRequirementsRow("Altitud Óptimo", altitude);
+
+						}
+
+						var pHRequirements = crop.optimal_ph;
+						for (pHRequirementNumber in pHRequirements) {
+							var pH = pHRequirements[pHRequirementNumber];
+
+							addMinMaxRequirementsRow("pH Óptimo", pH);
+
+						}
+						
+						var sunHoursRequirements = crop.sunHours;
+						for (sunHoursRequirementsNumber in sunHoursRequirements){
+						    var sunHours = sunHoursRequirements[sunHoursRequirementsNumber];
+
+						    addMinMaxRequirementsRow("Sol Óptimo", sunHours);
+						}
+
+						var temperatureRequirements = crop.temperature;
+						for (temperatureRequirementsNumber in temperatureRequirements){
+						    var temperature = temperatureRequirements[temperatureRequirementsNumber];
+
+						    addMinMaxRequirementsRow("Temperatura Óptimo", temperature);
+						}
+
+						var rainfallRequirements = crop.rainfall;
+						for (rainfallRequitementNumber in rainfallRequirements){
+						    var rainfall = rainfallRequirements[rainfallRequitementNumber];
+
+						    addMinMaxRequirementsRow("Precipitaciones Óptimo", rainfall);
+						}
+
+						
+						
 						var tags = crop.labels;
 						for (tagNumber in tags){
 						    addTag(tags[tagNumber]);
@@ -238,6 +277,8 @@ function addMinMaxRequirementsRow(type, requirement)
 
 {
 	var number = document.getElementsByClassName(type).length + 1;
+	var measureType = getMeasureType(type);
+	type = getMeasure(type);
 
 	var rowContainer = document.createElement("fieldset");
 	rowContainer.setAttribute("id", type + "_requirement_" + number);
@@ -259,12 +300,13 @@ function addMinMaxRequirementsRow(type, requirement)
 	row.setAttribute("class", "w3-row-padding " + type);
 	// row.setAttribute("id", type + "_requirement_" + number);
 	rowContainer.appendChild(row);
-	row.style = "margin-right: 50px;";
+	//row.style = "margin-right: 50px;";
 
-	// First column: Label
-
+	// First column: measure
+	
 	var firstColumn = document.createElement("div");
-	firstColumn.setAttribute("class", "w3-quarter")
+	firstColumn.setAttribute("class", "w3-col");
+	firstColumn.setAttribute("style", "width:15%");
 	row.appendChild(firstColumn);
 
 	var labelOfFirstColumn = document.createElement("label");
@@ -291,11 +333,45 @@ function addMinMaxRequirementsRow(type, requirement)
 		inputOfFirstColumn.setAttribute("value", type);
 	}
 	firstColumn.appendChild(inputOfFirstColumn);
+	
+	// First and half column: measureType
 
+	var firstHalfColumn = document.createElement("div");
+	firstHalfColumn.setAttribute("class", "w3-col");
+	firstHalfColumn.setAttribute("style", "width:15%");
+	row.appendChild(firstHalfColumn);
+
+	var labelOfFirstHalfColumn = document.createElement("label");
+	labelOfFirstHalfColumn.setAttribute("class",
+			"w3-label w3-text-grey w3-validate");
+	firstHalfColumn.appendChild(labelOfFirstHalfColumn);
+
+	var labelOflabelOfFirstHalfColumn = document.createElement("b");
+	labelOfFirstHalfColumn.appendChild(labelOflabelOfFirstHalfColumn);
+
+	var textOflabelOflabelOfFirstHalfColumn = document
+			.createTextNode("Tipo");
+	labelOflabelOfFirstHalfColumn.appendChild(textOflabelOflabelOfFirstHalfColumn);
+
+	var inputOfFirstHalfColumn = document.createElement("input");
+	inputOfFirstHalfColumn.setAttribute("id", "measureType_" + measureType + "_" + number);
+	inputOfFirstHalfColumn
+			.setAttribute("class", "w3-input w3-border w3-light-grey");
+	inputOfFirstHalfColumn.setAttribute("name", "measureType_" + measureType + "_" + number);
+	inputOfFirstHalfColumn.setAttribute("type", "text");
+	inputOfFirstHalfColumn.setAttribute("placeholder", "Tipo");
+	inputOfFirstHalfColumn.setAttribute("list", "measureType");
+	if (!(measureType === undefined)) {
+		inputOfFirstHalfColumn.setAttribute("value", measureType);
+	}
+	firstHalfColumn.appendChild(inputOfFirstHalfColumn);
+
+	
 	// Second column: Minimum
 
 	var secondColumn = document.createElement("div");
-	secondColumn.setAttribute("class", "w3-quarter");
+	secondColumn.setAttribute("class", "w3-col");
+	secondColumn.setAttribute("style", "width:10%");
 	row.appendChild(secondColumn);
 
 	var labelOfSecondColumn = document.createElement("label");
@@ -325,7 +401,8 @@ function addMinMaxRequirementsRow(type, requirement)
 	// Third column: Maximum
 
 	var thirdColumn = document.createElement("div");
-	thirdColumn.setAttribute("class", "w3-quarter");
+	thirdColumn.setAttribute("class", "w3-col");
+	thirdColumn.setAttribute("style", "width:10%");
 	row.appendChild(thirdColumn);
 
 	var labelOfThirdColumn = document.createElement("label");
@@ -355,7 +432,8 @@ function addMinMaxRequirementsRow(type, requirement)
 	// Fourth column: Comments
 
 	var fourthColumn = document.createElement("div");
-	fourthColumn.setAttribute("class", "w3-quarter");
+	fourthColumn.setAttribute("class", "w3-col");
+	fourthColumn.setAttribute("style", "width:47%");
 	row.appendChild(fourthColumn);
 
 	var labelOfFourthColumn = document.createElement("label");
@@ -394,7 +472,11 @@ function updateCrop() {
     doc["temperature"] = [];
     doc["rainfall"] = [];
     doc["sunHours"] = [];
-
+    doc["optimal_altitude"] = [];
+    doc["optimal_ph"] = [];
+    doc["optimal_temperature"] = [];
+    doc["optimal_rainfall"] = [];
+    doc["optimal_sunHours"] = [];
 
 	var cropId = form.getElementsByTagName("input").cropId.value;
 
@@ -404,23 +486,26 @@ function updateCrop() {
 		var fieldset = fieldsets[fieldsetNumber];
 		var inputs = fieldset.getElementsByTagName("input");
 		var label;
+		var measureType;
 		var requirement = {};
 		var inputNumber;
 		for (inputNumber = 0; inputNumber < inputs.length; inputNumber++) {
 			var input = inputs[inputNumber];
 			var type = getType(input.id);
 			var value = input.value;
-			if (type != "measure") {
-			    if(value != ""){
-				    requirement[type] = value;
-				}
-			} else {
+			if (type == "measure") {
 				label = value;
+			} else if (type == "measureType"){
+				measureType = value;
+			} else {
+				if(value != ""){
+					requirement[type] = value;
+				}
 			}
 		}
 		switch (label) {
 		case "Altitud":
-			label = "altitude";
+			label =  (measureType == "Óptimo")? "optimal_altitude": "altitude";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -436,7 +521,7 @@ function updateCrop() {
 			}
 			break;
 		case "pH":
-			label = "ph";
+			label = (measureType == "Óptimo")? "optimal_ph": "ph";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -444,7 +529,7 @@ function updateCrop() {
 			}
 			break;
 		case "Temperatura":
-			label = "temperature";
+			label = (measureType == "Óptimo")? "optimal_temperature": "temperature";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -452,7 +537,7 @@ function updateCrop() {
 			}
 			break;
 		case "Precipitaciones":
-			label = "rainfall";
+			label = (measureType == "Óptimo")? "optimal_rainfall": "rainfall";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -460,7 +545,7 @@ function updateCrop() {
 			}
 			break;
 		case "Sol":
-			label = "sunHours";
+			label = (measureType == "Óptimo")? "optimal_sunHours": "sunHours";
 			if (doc[label] === undefined) {
 				doc[label] = [ requirement ];
 			} else {
@@ -538,6 +623,22 @@ function getRequirement(id) {
 
 function getRequirementId(id) {
 	return id.split("_")[2];
+}
+
+function getMeasureType(type) {
+	var measureType;
+	if (type != undefined){
+		measureType = (type.split(" ")[1] == "Óptimo")?"Óptimo":"Absoluto";
+	}
+	return measureType;
+}
+
+function getMeasure(type) {
+	var measure;
+	if (type != undefined){
+		measure = type.split(" ")[0];
+	}
+	return measure;
 }
 
 function reloadPage() {
