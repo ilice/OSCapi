@@ -13,6 +13,7 @@ def retrieve_crops_from_elastic(query):
         result = es.search(index=crop_index, doc_type=crop_mapping, body=query)
 
         crops = [{'_id': hits['_id'],
+                  '_score': hits['_score'],
                   '_source': hits['_source']} for hits in result['hits']['hits']]
 
         return {'total': result['hits']['total'],

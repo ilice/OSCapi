@@ -475,6 +475,9 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var altitude = cadastralParcelFeatures.getProperty('properties.elevation').toFixed();
 		var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
 		queries.push(altitudeQuery);
+		
+		var optimalAltitudeQuery = createQueryForTypeAndValue("optimal_altitude", altitude);
+		queries.push(optimalAltitudeQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') === undefined)) {
@@ -482,14 +485,23 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var plotMaxTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.max_temperature').toFixed();
 		var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
 		queries.push(temperatureQuery);
+		
+		var optimalTemperatureQuery = createQueryForTypeAndRange("optimal_temperature", plotMinTemperature, plotMaxTemperature);
+		queries.push(optimalTemperatureQuery);
 
 		var plotYearlyRainfall = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_rainfall').toFixed();
 		var rainfallQuery = createQueryForTypeAndValue("rainfall", plotYearlyRainfall);
 		queries.push(rainfallQuery);
+		
+		var optimalrainfallQuery = createQueryForTypeAndValue("optimal_rainfall", plotYearlyRainfall);
+		queries.push(optimalrainfallQuery);
 
 		var plotYearlySunHours = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_sun_hours').toFixed();
 		var sunHoursQuery = createQueryForTypeAndValue("sunHours", plotYearlySunHours);
 		queries.push(sunHoursQuery);
+		
+		var optimalSunHoursQuery = createQueryForTypeAndValue("optimal_sunHours", plotYearlySunHours);
+		queries.push(optimalSunHoursQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.reference_point.lat') === undefined)) {
@@ -502,6 +514,9 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var plotpH = cadastralParcelFeatures.getProperty('properties.soil_profile.pH');
 		var pHQuery = createQueryForTypeAndValue("ph", plotpH);
 		queries.push(pHQuery);
+		
+		var optimalPHQuery = createQueryForTypeAndValue("optimal_ph", plotpH);
+		queries.push(optimalPHQuery);
 	}
 
 	var numeroCultivosACargar = 100;
@@ -533,8 +548,9 @@ function drawAlternatives(cadastralParcelFeatures) {
 
 			for (cropNumber in crops) {
 				var crop = crops[cropNumber]._source;
+				var score = crops[cropNumber]._score;
 				
-				addAlternativesTableRow(crop);
+				addAlternativesTableRow(crop, score, cadastralParcelFeatures);
 
 				var id = crops[cropNumber]._id;
 
@@ -1703,13 +1719,14 @@ function getProperty(property){
 }
 
 
-function addAlternativesTableRow(crop){
+function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	var table = document.getElementById('AlternativesTableContent');
 	
 	var row = document.createElement('tr');
 	
 	var td = document.createElement('td');
 	var image = document.createElement('img');
+	var check;
 	image.setAttribute('src','/static/osc/img/cultivos/' + crop['Foto']);
 	image.setAttribute('style','width:100%;max-width:40px');
 	td.appendChild(image);
@@ -1722,6 +1739,75 @@ function addAlternativesTableRow(crop){
 	td = document.createElement('td');
 	td.appendChild(document.createTextNode(crop['Nombre Científico']));
 	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.optimal_altitude != undefined && crop.optimal_altitude.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	} else if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.altitude != undefined && crop.altitude.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty('properties.soil_profile') && crop.optimal_ph != undefined && crop.optimal_ph.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	} else if(cadastralParcelFeatures.getProperty('properties.soil_profile') && crop.ph != undefined && crop.ph.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_rainfall != undefined && crop.optimal_rainfall.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.rainfall != undefined && crop.rainfall.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_sunHours != undefined && crop.optimal_sunHours.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.sunHours != undefined && crop.sunHours.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty('properties.reference_point.lat') != undefined && crop.latitude != undefined && crop.latitude.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.setAttribute('class', 'w3-center');
+	check = document.createElement('i');
+	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_temperature != undefined && crop.optimal_temperature.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
+	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.temperature != undefined && crop.temperature.length > 0){
+		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
+	}
+	td.appendChild(check);
+	row.appendChild(td);
+	
+	td = document.createElement('td');
+	td.appendChild(document.createTextNode(score.toFixed(2)));
+	row.appendChild(td);
+	
 	
 	table.appendChild(row);
 }
