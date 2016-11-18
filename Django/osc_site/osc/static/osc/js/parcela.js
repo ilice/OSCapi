@@ -396,7 +396,7 @@ function drawParcelInfoByNationalCadastralReference(
 
 	var url = '/osc/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
-		 + '&retrieve_public_info=True&retrieve_climate_info=True&accessToken='
+		 + '&retrieve_public_info=True&retrieve_climate_info=True&retrieve_soil_info=True&accessToken='
 		 + (accessToken===undefined?'':accessToken);
 
 	var request = jQuery.ajax({
@@ -510,13 +510,22 @@ function drawAlternatives(cadastralParcelFeatures) {
 		queries.push(latitudeQuery);
 	}
 
-	if (!(cadastralParcelFeatures.getProperty('properties.soil_profile') === undefined)) {
-		var plotpH = cadastralParcelFeatures.getProperty('properties.soil_profile.pH');
-		var pHQuery = createQueryForTypeAndValue("ph", plotpH);
-		queries.push(pHQuery);
+	if (!(cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') === undefined)) {
+		var plotpH_inH2O = cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O');
+		var pH_in_H2OQuery = createQueryForTypeAndValue("ph", plotpH_inH2O);
+		queries.push(pH_in_H2OQuery);
 		
-		var optimalPHQuery = createQueryForTypeAndValue("optimal_ph", plotpH);
-		queries.push(optimalPHQuery);
+		var optimalpH_in_H2OQuery = createQueryForTypeAndValue("optimal_ph", plotpH_inH2O);
+		queries.push(optimalpH_in_H2OQuery);
+	}
+	
+	if (!(cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') === undefined)) {
+		var plotpH_in_CaCl2 = cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2');
+		var pH_in_CaCl2Query = createQueryForTypeAndValue("ph", plotpH_in_CaCl2);
+		queries.push(pH_in_CaCl2Query);
+		
+		var optimalpH_in_CaCl2Query = createQueryForTypeAndValue("optimal_ph", plotpH_in_CaCl2);
+		queries.push(optimalpH_in_CaCl2Query);
 	}
 
 	var numeroCultivosACargar = 100;
@@ -1754,9 +1763,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.soil_profile') && crop.optimal_ph != undefined && crop.optimal_ph.length > 0){
+	if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.optimal_ph != undefined && crop.optimal_ph.length > 0){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.soil_profile') && crop.ph != undefined && crop.ph.length > 0){
+	} else if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.ph != undefined && crop.ph.length > 0){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
