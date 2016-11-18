@@ -786,476 +786,754 @@
 
         </div>
     </div>
-    <!--FIN de Una observación-->
 
-    <!-- Tarjetas de análisis de datos -->
-    <div id="precipitacion" class="w3-container w3-section">
-			
-        <div class="w3-card-8">
-            <span onclick="document.getElementById('precipitacion').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <p class="w3-padding">
-                <em>*Los datos que se muestran son los de la estación
-                    meteorológica más cercana: <span id="estacionLluvia"> </span>
-                </em>
-                <button id="RainfallCardErrorBadge"
+
+        <!--  Tarjeta con información del suelo -->
+        <div id="soil" class="w3-container w3-section">
+            <div class="w3-card-8">
+                <span
+                    onclick="document.getElementById('soil').style.display='none'"
+                    class="w3-closebtn w3-padding fa fa-close"></span>
+                <div class="w3-container">
+                    <button id="SoilCardErrorBadge"
                         class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                         style="display: none">
-                    <i
-                            onclick="document.getElementById('RainfallErrorData').style.display='block'"
+                        <i
+                            onclick="document.getElementById('SoilErrorData').style.display='block'"
                             class="fa fa-exclamation-triangle"></i>
-                </button>
-            </p>
-            <div id="RainfallErrorData" class="w3-col w3-panel w3-red w3-card-8"
-                 style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding fa fa-close"></span><span
-                    id="RainfallCardErrorText"></span>
-            </div>
-            <div class="w3-row-padding">
-                <div class="w3-twothird grafica"
-                     id="graficoPrecipitacionPorMesYAnio"></div>
-                <div class="w3-third w3-center" id="tablaResumen">
-                    <table>
-                        <tr>
-                            <td><img src="{% static 'osc/img/Nube.png' %}" alt="Nube"/></td>
-                        </tr>
-                        <tr>
-                            <th>Días de lluvia 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="diasDeLluvia"/>
-                        </tr>
-                        <tr>
-                            <th>Acumulado 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="pecipitacionacumulada"/>
-                        </tr>
-                    </table>
+                    </button>
+                    <h5>Información del suelo</h5>
+                    <div id="SoilErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
+                        style="display: none">
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span>
+                        <span id="SoilCardErrorText"></span>
+                    </div>
+                    <div class="w3-row-padding">
+                        <div class="w3-third">
+                            <img
+                                src="{% static 'osc/img/diagtext.gif' %}"
+                                alt="Textura suelo" style="width: 100%;">
+                        </div>
+                        <div class="w3-twothird" >
+                            
+                                <h6><strong>pH:</strong> <span id="pH_in_H2O"></span> <em>(<span id="pH_in_CaCl2"></span> - CaCl2)</em></h6>
+                                <div style="position: relative;">
+                                <input id="phRange" class="w3-input"  style="width: 100%;" type="range"  min="1" max="15" step="0.01" disabled/>
+                                <img src="{% static 'osc/img/pH_scale.jpg' %}"
+                                alt="ph Suelo" style="width: 100%;max-height:20px;position:absolute;top:0;left: 0; z-index: -1">
+                                </div>
+
+                            <table class="w3-table-all w3-hoverable">
+                                <thead>
+                                    <tr class="w3-light-grey">
+                                        <th>Arena</th>
+                                        <th>Arcilla</th>
+                                        <th>Limo</th>
+                                        <th>Grosor</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td id="sand"></td>
+                                    <td id="clay"></td>
+                                    <td id="silt"></td>
+                                    <td id="coarse"></td>
+                                </tr>
+                            </table>
+                            <br>
+                            <table class="w3-table-all w3-hoverable">
+                                <thead>
+                                    <tr class="w3-light-grey">
+                                        <th>CaCO3</th>
+                                        <th>OC</th>
+                                        <th>N</th>
+                                        <th>P</th>
+                                        <th>K</th>
+                                        <th>CEC</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td id="CaCO3"></td>
+                                    <td id="OC"></td>
+                                    <td id="N"></td>
+                                    <td id="P"></td>
+                                    <td id="K"></td>
+                                    <td id="CEC"></td>
+                                </tr>
+                            </table>
+                            <p class="w3-right"><em>Punto de muestra más cercano: <span id="distance_to_parcel_on_closest_soil_measure"></span> km</em></p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="temperatura" class="w3-container w3-section">
-	    <div class="w3-card-8">
-            <span onclick="document.getElementById('temperatura').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <p class="w3-padding">
-                <em>*Los datos que se muestran son los de la estación
-                    meteorológica más cercana: <span id="estacionTemperatura">
-					</span>
-                </em>
-                <button id="TemperatureCardErrorBadge"
+            <!-- Tarjetas de análisis de datos -->
+            <div id="precipitacion" class="w3-container w3-section">
+
+                <div class="w3-card-8">
+                    <span
+                        onclick="document.getElementById('precipitacion').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <p class="w3-padding">
+                        <em>*Los datos que se muestran son los de
+                            la estación meteorológica más cercana: <span
+                            id="estacionLluvia"> </span>
+                        </em>
+                        <button id="RainfallCardErrorBadge"
+                            class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            style="display: none">
+                            <i
+                                onclick="document.getElementById('RainfallErrorData').style.display='block'"
+                                class="fa fa-exclamation-triangle"></i>
+                        </button>
+                    </p>
+                    <div id="RainfallErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
+                        style="display: none">
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span><span
+                            id="RainfallCardErrorText"></span>
+                    </div>
+                    <div class="w3-row-padding">
+                        <div class="w3-twothird grafica"
+                            id="graficoPrecipitacionPorMesYAnio"></div>
+                        <div class="w3-third w3-center"
+                            id="tablaResumen">
+                            <table>
+                                <tr>
+                                    <td><img
+                                            src="{% static 'osc/img/Nube.png' %}"
+                                            alt="Nube" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Días de lluvia 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="diasDeLluvia" />
+                                </tr>
+                                <tr>
+                                    <th>Acumulado 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="pecipitacionacumulada" />
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="temperatura" class="w3-container w3-section">
+                <div class="w3-card-8">
+                    <span
+                        onclick="document.getElementById('temperatura').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <p class="w3-padding">
+                        <em>*Los datos que se muestran son los de
+                            la estación meteorológica más cercana: <span
+                            id="estacionTemperatura"> </span>
+                        </em>
+                        <button id="TemperatureCardErrorBadge"
+                            class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            style="display: none">
+                            <i
+                                onclick="document.getElementById('TemperatureErrorData').style.display='block'"
+                                class="fa fa-exclamation-triangle"></i>
+                        </button>
+                    </p>
+                    <div id="TemperatureErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
+                        style="display: none">
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span><span
+                            id="TemperatureCardErrorText"></span>
+                    </div>
+                    <div class="w3-row-padding">
+                        <div class="w3-third w3-center">
+                            <table>
+                                <tr>
+                                    <td><img
+                                            src="{% static 'osc/img/Termometro.png' %}"
+                                            alt="Termómetro" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Máxima diurna 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="maximaTemperaturaDiurna" />
+                                </tr>
+                                <tr>
+                                    <th>Mínima diurna 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="minimaTemperaturaDiurna" />
+                                </tr>
+                                <tr>
+                                    <th>Media diurna 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="mediaTemperaturaDiurna" />
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="w3-twothird grafica"
+                            id="graficoTemperaturaMediaDiurna"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sol" class="w3-container w3-section">
+                <div class="w3-card-8">
+                    <span
+                        onclick="document.getElementById('sol').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <p class="w3-padding">
+                        <em>*Los datos que se muestran son los de
+                            la estación meteorológica más cercana: <span
+                            id="estacionSol"> </span>
+                        </em>
+                        <button id="SunHoursCardErrorBadge"
+                            class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            style="display: none">
+                            <i
+                                onclick="document.getElementById('SunHoursErrorData').style.display='block'"
+                                class="fa fa-exclamation-triangle"></i>
+                        </button>
+                    </p>
+                    <div id="SunHoursErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
+                        style="display: none">
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span><span
+                            id="SunHoursCardErrorText"></span>
+                    </div>
+                    <div class="w3-row-padding">
+                        <div class="w3-twothird grafica"
+                            id="graficoHorasDeSolDiarias"></div>
+                        <div class="w3-third w3-center">
+                            <table>
+                                <tr>
+                                    <td><img
+                                            src="{% static 'osc/img/Sol.png' %}"
+                                            alt="Sol con horas" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Horas diarias de sol 2016
+                                        (en media)</th>
+                                </tr>
+                                <tr>
+                                    <td id="mediaHorasSolDiarias" />
+                                </tr>
+                                <tr>
+                                    <th>Horas máximas de sol 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="maximasHorasSolDiarias" />
+                                </tr>
+                                <tr>
+                                    <th>Horas acumuladas de sol
+                                        2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="horasSolAcumuladas" />
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="radiacion" class="w3-container w3-section">
+                <div class="w3-card-8">
+                    <span
+                        onclick="document.getElementById('radiacion').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <p class="w3-padding">
+                        <em>*Los datos que se muestran son los de
+                            la estación meteorológica más cercana: <span
+                            id="estacionRadiacion"> </span>
+                        </em>
+                        <button id="RadiationCardErrorBadge"
+                            class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            style="display: none">
+                            <i
+                                onclick="document.getElementById('RadiationErrorData').style.display='block'"
+                                class="fa fa-exclamation-triangle"></i>
+                        </button>
+                    </p>
+                    <div id="RadiationErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
+                        style="display: none">
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span><span
+                            id="RadiationCardErrorText"></span>
+                    </div>
+                    <div class="w3-row-padding">
+                        <div class="w3-third w3-center">
+                            <table>
+                                <tr>
+                                    <td><img
+                                            src="{% static 'osc/img/Radiacion.png' %}"
+                                            alt="Sol con flechas de radiación" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Radiación máxima neta
+                                        diaria 2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="maximoRadiacionNetaDiaria" />
+                                </tr>
+                                <tr>
+                                    <th>Radiación media neta diaria
+                                        2016</th>
+                                </tr>
+                                <tr>
+                                    <td id="mediaRadiacionNetaDiaria" />
+                                </tr>
+                                <tr>
+                                    <th>Radiación acumulada neta
+                                        2016</th>
+                                </tr>
+                                <tr>
+                                    <td
+                                        id="acumuladoRadiacionNetaDiaria" />
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="w3-twothird grafica"
+                            id="graficoRadiacionNetaDiaria"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN Tarjetas de análisis de datos -->
+
+            <!-- Tarjeta fija con los datos de Salamanca -->
+            <div id="fixed" class="w3-container w3-section"
+                style="display: none">
+                <div class="w3-container w3-card-8">
+                    <span
+                        onclick="document.getElementById('fixed').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <p class="w3-padding">
+                        <em>Distribución de los diferentes usos del
+                            suelo </em>
+                    </p>
+                    <button id="CropDistributionCardErrorBadge"
                         class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                         style="display: none">
-                    <i
-                            onclick="document.getElementById('TemperatureErrorData').style.display='block'"
+                        <i
+                            onclick="document.getElementById('CropDistributionErrorData').style.display='block'"
                             class="fa fa-exclamation-triangle"></i>
-                </button>
-            </p>
-            <div id="TemperatureErrorData"
-                 class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding fa fa-close"></span><span
-                    id="TemperatureCardErrorText"></span>
-            </div>
-            <div class="w3-row-padding">
-                <div class="w3-third w3-center">
-                    <table>
-                        <tr>
-                            <td><img src="{% static 'osc/img/Termometro.png' %}"
-                                     alt="Termómetro"/></td>
-                        </tr>
-                        <tr>
-                            <th>Máxima diurna 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="maximaTemperaturaDiurna"/>
-                        </tr>
-                        <tr>
-                            <th>Mínima diurna 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="minimaTemperaturaDiurna"/>
-                        </tr>
-                        <tr>
-                            <th>Media diurna 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="mediaTemperaturaDiurna"/>
-                        </tr>
-                    </table>
-                </div>
-                <div class="w3-twothird grafica" id="graficoTemperaturaMediaDiurna"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="sol" class="w3-container w3-section">
-        <div class="w3-card-8">
-            <span onclick="document.getElementById('sol').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <p class="w3-padding">
-                <em>*Los datos que se muestran son los de la estación
-                    meteorológica más cercana: <span id="estacionSol"> </span>
-                </em>
-                <button id="SunHoursCardErrorBadge"
-                        class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                    </button>
+                    <div id="CropDistributionErrorData"
+                        class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                    <i
-                            onclick="document.getElementById('SunHoursErrorData').style.display='block'"
-                            class="fa fa-exclamation-triangle"></i>
-                </button>
-            </p>
-            <div id="SunHoursErrorData" class="w3-col w3-panel w3-red w3-card-8"
-                 style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding fa fa-close"></span><span
-                    id="SunHoursCardErrorText"></span>
-            </div>
-            <div class="w3-row-padding">
-                <div class="w3-twothird grafica" id="graficoHorasDeSolDiarias"></div>
-                <div class="w3-third w3-center">
-                    <table>
-                        <tr>
-                            <td><img src="{% static 'osc/img/Sol.png' %}"
-                                     alt="Sol con horas"/></td>
-                        </tr>
-                        <tr>
-                            <th>Horas diarias de sol 2016 (en media)</th>
-                        </tr>
-                        <tr>
-                            <td id="mediaHorasSolDiarias"/>
-                        </tr>
-                        <tr>
-                            <th>Horas máximas de sol 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="maximasHorasSolDiarias"/>
-                        </tr>
-                        <tr>
-                            <th>Horas acumuladas de sol 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="horasSolAcumuladas"/>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="radiacion" class="w3-container w3-section">
-        <div class="w3-card-8">
-            <span onclick="document.getElementById('radiacion').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <p class="w3-padding">
-                <em>*Los datos que se muestran son los de la estación
-                    meteorológica más cercana: <span id="estacionRadiacion"> </span>
-                </em>
-                <button id="RadiationCardErrorBadge"
-                        class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-                        style="display: none">
-                    <i
-                            onclick="document.getElementById('RadiationErrorData').style.display='block'"
-                            class="fa fa-exclamation-triangle"></i>
-                </button>
-            </p>
-            <div id="RadiationErrorData"
-                 class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding fa fa-close"></span><span
-                    id="RadiationCardErrorText"></span>
-            </div>
-            <div class="w3-row-padding">
-                <div class="w3-third w3-center">
-                    <table>
-                        <tr>
-                            <td><img src="{% static 'osc/img/Radiacion.png' %}"
-                                     alt="Sol con flechas de radiación"/></td>
-                        </tr>
-                        <tr>
-                            <th>Radiación máxima neta diaria 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="maximoRadiacionNetaDiaria"/>
-                        </tr>
-                        <tr>
-                            <th>Radiación media neta diaria 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="mediaRadiacionNetaDiaria"/>
-                        </tr>
-                        <tr>
-                            <th>Radiación acumulada neta 2016</th>
-                        </tr>
-                        <tr>
-                            <td id="acumuladoRadiacionNetaDiaria"/>
-                        </tr>
-                    </table>
-                </div>
-                <div class="w3-twothird grafica" id="graficoRadiacionNetaDiaria"></div>
-            </div>
-        </div>
-    </div>
-    <!-- FIN Tarjetas de análisis de datos -->
-
-    <!-- Tarjeta fija con los datos de Salamanca -->
-    <div id="fixed" class="w3-container w3-section" style="display: none">
-		<div class="w3-container w3-card-8">
-            <span onclick="document.getElementById('fixed').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <p class="w3-padding">
-                <em>Distribución de los diferentes usos del suelo </em>
-            </p>
-            <button id="CropDistributionCardErrorBadge"
-                    class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-                    style="display: none">
-                <i
-                        onclick="document.getElementById('CropDistributionErrorData').style.display='block'"
-                        class="fa fa-exclamation-triangle"></i>
-            </button>
-            <div id="CropDistributionErrorData"
-                 class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-					<span onclick="this.parentElement.style.display='none'"
-                          class="w3-closebtn w3-padding fa fa-close"></span><span
-                    id="CropDistributionCardErrorText"></span>
-            </div>
-            <div id="w3-row">
-                <div class="w3-col" style="width: 150px">
-                    <ul class="w3-ul w3-hoverable w3-large">
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('All')">Todos</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('Agua')">Agua</a></li>
-                        <!-- <li><a href="#fixed" onclick="openCropDistribution('Viales')">Viales</a></li>
+                        <span
+                            onclick="this.parentElement.style.display='none'"
+                            class="w3-closebtn w3-padding fa fa-close"></span><span
+                            id="CropDistributionCardErrorText"></span>
+                    </div>
+                    <div id="w3-row">
+                        <div class="w3-col" style="width: 150px">
+                            <ul class="w3-ul w3-hoverable w3-large">
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('All')">Todos</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('Agua')">Agua</a>
+                                </li>
+                                <!-- <li><a href="#fixed" onclick="openCropDistribution('Viales')">Viales</a></li>
               <li><a href="#fixed" onclick="openCropDistribution('Viales')">Edificaciones</a></li> -->
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('FL')">FS y
-                            olivar</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('FO')">Forestal</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('FS')">Frutos
-                            secos</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('FV')">FS y
-                            Viñedos</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('FY')">Frutales</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('IM')">Improductivo</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('IV')">Invernaderos</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('OF')">Olivar -
-                            Frutal</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('OV')">Olivar</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('PA')">Pasto con
-                            arb.</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('PR')">Pasto
-                            arbustivo</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('PS')">Pastizal</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('TA')">Arables</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('TH')">Huerta</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('VF')">Viñedo -
-                            Frutal</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('VI')">Viñedo</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('VO')">Viñedo -
-                            Olivar</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('ZC')">Concentración</a></li>
-                        <li><a style="display: block; text-decoration: none;"
-                               href="#fixed" onclick="openCropDistribution('ZU')">Urbano</a></li>
-                    </ul>
-                </div>
-                <div class="w3-rest w3-padding">
-                    <div id="All" class="w3-container city">
-                        <h2>Todos los cultivos</h2>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('FL')">FS
+                                        y olivar</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('FO')">Forestal</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('FS')">Frutos
+                                        secos</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('FV')">FS
+                                        y Viñedos</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('FY')">Frutales</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('IM')">Improductivo</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('IV')">Invernaderos</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('OF')">Olivar
+                                        - Frutal</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('OV')">Olivar</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('PA')">Pasto
+                                        con arb.</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('PR')">Pasto
+                                        arbustivo</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('PS')">Pastizal</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('TA')">Arables</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('TH')">Huerta</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('VF')">Viñedo
+                                        - Frutal</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('VI')">Viñedo</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('VO')">Viñedo
+                                        - Olivar</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('ZC')">Concentración</a>
+                                </li>
+                                <li>
+                                    <a
+                                        style="display: block; text-decoration: none;"
+                                        href="#fixed"
+                                        onclick="openCropDistribution('ZU')">Urbano</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w3-rest w3-padding">
+                            <div id="All" class="w3-container city">
+                                <h2>Todos los cultivos</h2>
 
-                        <img src="{% static 'osc/img/distribucion/37_ALL.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_ALL.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
 
-                    </div>
+                            </div>
 
-                    <div id="Agua" class="w3-container city" style="display: none">
-                        <h2>Corrientes y superficies de agua</h2>
-                        <img src="{% static 'osc/img/distribucion/37_AG.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="Agua" class="w3-container city"
+                                style="display: none">
+                                <h2>Corrientes y superficies de
+                                    agua</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_AG.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="Viales" class="w3-container city" style="display: none">
-                        <h2>Viales</h2>
-                        <img src="{% static 'osc/img/distribucion/37_CA.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="Viales" class="w3-container city"
+                                style="display: none">
+                                <h2>Viales</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_CA.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="ED" class="w3-container city" style="display: none">
-                        <h2>Edificaciones</h2>
-                        <img src="{% static 'osc/img/distribucion/37_ED.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="ED" class="w3-container city"
+                                style="display: none">
+                                <h2>Edificaciones</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_ED.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="FL" class="w3-container city" style="display: none">
-                        <h2>Frutos secos y olivar</h2>
-                        <img src="{% static 'osc/img/distribucion/37_FL.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="FL" class="w3-container city"
+                                style="display: none">
+                                <h2>Frutos secos y olivar</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_FL.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="FO" class="w3-container city" style="display: none">
-                        <h2>Forestal</h2>
-                        <img src="{% static 'osc/img/distribucion/37_FO.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="FO" class="w3-container city"
+                                style="display: none">
+                                <h2>Forestal</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_FO.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="FS" class="w3-container city" style="display: none">
-                        <h2>Frutos secos</h2>
-                        <img src="{% static 'osc/img/distribucion/37_FL.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="FS" class="w3-container city"
+                                style="display: none">
+                                <h2>Frutos secos</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_FL.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="FV" class="w3-container city" style="display: none">
-                        <h2>Frutos secos y Viñedos</h2>
-                        <img src="{% static 'osc/img/distribucion/37_FV.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="FV" class="w3-container city"
+                                style="display: none">
+                                <h2>Frutos secos y Viñedos</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_FV.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="FY" class="w3-container city" style="display: none">
-                        <h2>Frutales</h2>
-                        <img src="{% static 'osc/img/distribucion/37_FY.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="FY" class="w3-container city"
+                                style="display: none">
+                                <h2>Frutales</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_FY.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="IM" class="w3-container city" style="display: none">
-                        <h2>Improductivos</h2>
-                        <img src="{% static 'osc/img/distribucion/37_IM.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="IM" class="w3-container city"
+                                style="display: none">
+                                <h2>Improductivos</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_IM.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="IV" class="w3-container city" style="display: none">
-                        <h2>Invernaderos y cultivos bajo plástico</h2>
-                        <img src="{% static 'osc/img/distribucion/37_IV.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="IV" class="w3-container city"
+                                style="display: none">
+                                <h2>Invernaderos y cultivos bajo
+                                    plástico</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_IV.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="OF" class="w3-container city" style="display: none">
-                        <h2>Olivar frutal</h2>
-                        <img src="{% static 'osc/img/distribucion/37_OF.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="OF" class="w3-container city"
+                                style="display: none">
+                                <h2>Olivar frutal</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_OF.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="OV" class="w3-container city" style="display: none">
-                        <h2>Olivar</h2>
-                        <img src="{% static 'osc/img/distribucion/37_OV.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="OV" class="w3-container city"
+                                style="display: none">
+                                <h2>Olivar</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_OV.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="PA" class="w3-container city" style="display: none">
-                        <h2>Pasto con arbolado</h2>
-                        <img src="{% static 'osc/img/distribucion/37_PA.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="PA" class="w3-container city"
+                                style="display: none">
+                                <h2>Pasto con arbolado</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_PA.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="PR" class="w3-container city" style="display: none">
-                        <h2>Pasto arbustivo</h2>
-                        <img src="{% static 'osc/img/distribucion/37_PR.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="PR" class="w3-container city"
+                                style="display: none">
+                                <h2>Pasto arbustivo</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_PR.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="PS" class="w3-container city" style="display: none">
-                        <h2>Pastizal</h2>
-                        <img src="{% static 'osc/img/distribucion/37_PS.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="PS" class="w3-container city"
+                                style="display: none">
+                                <h2>Pastizal</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_PS.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="TA" class="w3-container city" style="display: none">
-                        <h2>Tierras arables</h2>
-                        <img src="{% static 'osc/img/distribucion/37_TA.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="TA" class="w3-container city"
+                                style="display: none">
+                                <h2>Tierras arables</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_TA.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="TH" class="w3-container city" style="display: none">
-                        <h2>Huerta</h2>
-                        <img src="{% static 'osc/img/distribucion/37_TH.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="TH" class="w3-container city"
+                                style="display: none">
+                                <h2>Huerta</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_TH.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="VF" class="w3-container city" style="display: none">
-                        <h2>Viñedo - Frutal</h2>
-                        <img src="{% static 'osc/img/distribucion/37_VF.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="VF" class="w3-container city"
+                                style="display: none">
+                                <h2>Viñedo - Frutal</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_VF.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="VI" class="w3-container city" style="display: none">
-                        <h2>Viñedo</h2>
-                        <img src="{% static 'osc/img/distribucion/37_VI.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="VI" class="w3-container city"
+                                style="display: none">
+                                <h2>Viñedo</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_VI.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="VO" class="w3-container city" style="display: none">
-                        <h2>Viñedo - Olivar</h2>
-                        <img src="{% static 'osc/img/distribucion/37_VO.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="VO" class="w3-container city"
+                                style="display: none">
+                                <h2>Viñedo - Olivar</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_VO.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="ZC" class="w3-container city" style="display: none">
-                        <h2>Zona concentrada</h2>
-                        <img src="{% static 'osc/img/distribucion/37_ZC.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
-                    </div>
+                            <div id="ZC" class="w3-container city"
+                                style="display: none">
+                                <h2>Zona concentrada</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_ZC.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
 
-                    <div id="ZU" class="w3-container city" style="display: none">
-                        <h2>Zona urbana</h2>
-                        <img src="{% static 'osc/img/distribucion/37_ZU.png' %}"
-                             alt="Todos los cultivos de Salamanca" style="width: 100%">
+                            <div id="ZU" class="w3-container city"
+                                style="display: none">
+                                <h2>Zona urbana</h2>
+                                <img
+                                    src="{% static 'osc/img/distribucion/37_ZU.png' %}"
+                                    alt="Todos los cultivos de Salamanca"
+                                    style="width: 100%">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
 
-    <!-- Tarjeta de información -->
-    <div id='informacion' class="w3-container w3-section" id="informacion">
-        <div class="w3-card-8">
-            <span onclick="document.getElementById('informacion').style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
-            <header class="w3-container w3-blue">
-                <h1>Información</h1>
-            </header>
-            <div class="w3-container">
-                <p>
-                    Toda la información que se muestra en esta página se encuentra
-                    disponible como datos abiertos. Inicialmente las fuentes de
-                    información son <strong>Inforiego</strong> y la <strong>Sede
-                    Electrónica del Catastro</strong>. Ambos disponen de APIs de consulta. En
-                    este caso a partir de las coordenadas de la parcela, muestran toda
-                    la información que puedes ver.
-                </p>
-                <p>Este espacio se irá actualizando com más información
-                    disponible como datos abiertos, además de información y enlaces
-                    sobre cómo interpretar y utilizar todos estos datos.</p>
-                <p>Si encuentras algún error, tienes cualquier duda, sugerencia
-                    o simplemtente quieres saber cómo está hecho y qué es lo próximo
-                    que se va a hacer, puedes contactar conmigo.</p>
+            <!-- Tarjeta de información -->
+            <div id='informacion' class="w3-container w3-section"
+                id="informacion">
+                <div class="w3-card-8">
+                    <span
+                        onclick="document.getElementById('informacion').style.display='none'"
+                        class="w3-closebtn w3-padding fa fa-close"></span>
+                    <header class="w3-container w3-blue">
+                        <h1>Información</h1>
+                    </header>
+                    <div class="w3-container">
+                        <p>
+                            Toda la información que se muestra en esta
+                            página se encuentra disponible como datos
+                            abiertos. Inicialmente las fuentes de
+                            información son <strong>Inforiego</strong> y
+                            la <strong>Sede Electrónica del
+                                Catastro</strong>. Ambos disponen de APIs de
+                            consulta. En este caso a partir de las
+                            coordenadas de la parcela, muestran toda la
+                            información que puedes ver.
+                        </p>
+                        <p>Este espacio se irá actualizando com más
+                            información disponible como datos abiertos,
+                            además de información y enlaces sobre cómo
+                            interpretar y utilizar todos estos datos.</p>
+                        <p>Si encuentras algún error, tienes
+                            cualquier duda, sugerencia o simplemtente
+                            quieres saber cómo está hecho y qué es lo
+                            próximo que se va a hacer, puedes contactar
+                            conmigo.</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <!--FIN Tarjeta de información -->
+            <!--FIN Tarjeta de información -->
 
-</div>
-<!--FIN !PAGE CONTENT! -->
+        </div>
+        <!--FIN !PAGE CONTENT! -->
 
 
 <!-- Footer -->

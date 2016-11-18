@@ -433,6 +433,8 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 	drawLocationCard(cadastralParcelFeature);
 
 	drawCatastralCard(cadastralParcelFeature.getProperty('properties.cadastralData'));
+	
+	drawSoilCard(cadastralParcelFeature.getProperty('properties.closest_soil_measure'));
 
 	drawLastYearClimateAggregationsWidgetBar(cadastralParcelFeature.getProperty('properties.climate_aggregations.last_year'));
 
@@ -628,7 +630,7 @@ function drawAlternatives(cadastralParcelFeatures) {
 					'<div class="w3-container">' +
 					'<div class="w3-row w3-right">' +
 					' <div class="w3-col w3-right">' +
-					'<a href="/osc/cultivo?cultivo_id=' + id + '" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
+					'<a href="/osc/cultivo?cultivo_id=' + id + '" target="_blank" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
 					'<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'none\'"><i class="fa fa-remove"></i></a>' +
 					'</div>' +
 					'</div>' +
@@ -745,6 +747,24 @@ function drawCatastralCard(parcelCadastralData) {
 		showErrorInCard(error, "CatastralCard");
 	}
 
+}
+
+function drawSoilCard(closest_soil_measure){
+	setValueInField(closest_soil_measure.silt, "silt", "%");
+	setValueInField(closest_soil_measure.CaCO3, "CaCO3");
+	setValueInField(closest_soil_measure.OC, "OC");
+	setValueInField(closest_soil_measure.N, "N");
+	setValueInField(closest_soil_measure.P, "P");
+	setValueInField(closest_soil_measure.sand, "sand", "%");
+	setValueInField(closest_soil_measure.coarse, "coarse");
+	setValueInField(closest_soil_measure.clay, "clay", "%");
+	setValueInField(closest_soil_measure.K, "K");
+	setValueInField(closest_soil_measure.CEC, "CEC");
+	setValueInField(closest_soil_measure.distance_to_parcel, "distance_to_parcel_on_closest_soil_measure");
+	setValueInField(closest_soil_measure.pH_in_CaCl2, "pH_in_CaCl2");
+	setValueInField(closest_soil_measure.pH_in_H2O, "pH_in_H2O");
+	
+	document.getElementById("phRange").value = closest_soil_measure.pH_in_H2O;
 }
 
 function drawLastYearClimateAggregationsWidgetBar(
@@ -876,9 +896,9 @@ function drawCropDistributionCard(cadastralParcelFeature) {
 	}
 }
 
-function setValueInField(value, field) {
-	document.getElementById(field).innerHTML = typeof(value) != 'undefined' ? value
-		 : "";
+function setValueInField(value, field, format ="") {
+	document.getElementById(field).innerHTML = (typeof(value) != 'undefined' ? value
+		 : "") + format;
 }
 
 function openCropDistribution(crop) {
@@ -1730,15 +1750,18 @@ function getProperty(property){
 
 function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	var table = document.getElementById('AlternativesTableContent');
-	
 	var row = document.createElement('tr');
-	
 	var td = document.createElement('td');
-	var image = document.createElement('img');
 	var check;
+	
+	var a = document.createElement('a');
+	a.setAttribute('href', '/osc/cultivo?cultivo_id=' + crop.Clave);
+	a.setAttribute('target', '_blank');
+	var image = document.createElement('img');
 	image.setAttribute('src','/static/osc/img/cultivos/' + crop['Foto']);
 	image.setAttribute('style','width:100%;max-width:40px');
-	td.appendChild(image);
+	a.appendChild(image);
+	td.appendChild(a);
 	row.appendChild(td);
 
 	td = document.createElement('td');
@@ -1751,6 +1774,7 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
+	
 	check = document.createElement('i');
 	if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.optimal_altitude != undefined && crop.optimal_altitude.length > 0){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
