@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from osc.services import get_parcels_by_bbox, get_parcels_by_cadastral_code
 from osc.services.climate import get_closest_station, get_aggregated_climate_measures
+from osc.services.soil import get_closest_soil_measure
 
 from osc.exceptions import OSCException
 
@@ -25,6 +26,7 @@ def obtain_cadastral_parcels(request):
         cadastral_code_param = request.GET.get('cadastral_code', None)
         retrieve_public_info_param = request.GET.get('retrieve_public_info', None)
         retrieve_climate_info_param = request.GET.get('retrieve_climate_info', None)
+        retrieve_soil_info_param = request.GET.get('retrieve_soil_info', None)
 
         parcels = []
 
@@ -42,6 +44,15 @@ def obtain_cadastral_parcels(request):
                                                                   closest_station['IDPROVINCIA'],
                                                                   3)
                     parcel['properties']['climate_aggregations'] = climate_agg
+            
+            # Add soil info
+            if retrieve_soil_info_param == 'True':
+                for parcel in parcels:
+                    closest_soil_measure = \
+                        get_closest_soil_measure(parcel['properties']['reference_point']['lat'],
+                                            parcel['properties']['reference_point']['lon'])
+                    parcel['properties']['closest_soil_measure'] = closest_soil_measure         
+            
 
         elif bbox_param is not None:
             lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))

@@ -43,6 +43,11 @@ WEATHER = {
     'owm_chunk_time': 60
 }
 
+SOIL = {
+    'index': 'soil',
+    'mapping': 'soil'
+}
+
 SLACK = {
     'token': get_secret(secrets, 'slack', 'token'),
     'flush_bucket': 200
