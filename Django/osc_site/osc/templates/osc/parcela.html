@@ -790,9 +790,10 @@
 
     <!-- Tarjetas de análisis de datos -->
     <div id="precipitacion" class="w3-container w3-section">
-			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
+			
         <div class="w3-card-8">
+            <span onclick="document.getElementById('precipitacion').style.display='none'"
+                  class="w3-closebtn w3-padding fa fa-close"></span>
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
                     meteorológica más cercana: <span id="estacionLluvia"> </span>
@@ -838,9 +839,9 @@
     </div>
 
     <div id="temperatura" class="w3-container w3-section">
-			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close">;</span>
-        <div class="w3-card-8">
+	    <div class="w3-card-8">
+            <span onclick="document.getElementById('temperatura').style.display='none'"
+                  class="w3-closebtn w3-padding fa fa-close"></span>
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
                     meteorológica más cercana: <span id="estacionTemperatura">
@@ -893,9 +894,9 @@
     </div>
 
     <div id="sol" class="w3-container w3-section">
-			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
+            <span onclick="document.getElementById('sol').style.display='none'"
+                  class="w3-closebtn w3-padding fa fa-close"></span>
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
                     meteorológica más cercana: <span id="estacionSol"> </span>
@@ -947,9 +948,9 @@
     </div>
 
     <div id="radiacion" class="w3-container w3-section">
-			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
+            <span onclick="document.getElementById('radiacion').style.display='none'"
+                  class="w3-closebtn w3-padding fa fa-close"></span>
             <p class="w3-padding">
                 <em>*Los datos que se muestran son los de la estación
                     meteorológica más cercana: <span id="estacionRadiacion"> </span>
@@ -1003,9 +1004,9 @@
 
     <!-- Tarjeta fija con los datos de Salamanca -->
     <div id="fixed" class="w3-container w3-section" style="display: none">
-			<span onclick="this.parentElement.style.display='none'"
+		<div class="w3-container w3-card-8">
+            <span onclick="document.getElementById('fixed').style.display='none'"
                   class="w3-closebtn w3-padding fa fa-close"></span>
-        <div class="w3-container w3-card-8">
             <p class="w3-padding">
                 <em>Distribución de los diferentes usos del suelo </em>
             </p>
@@ -1227,9 +1228,9 @@
 
     <!-- Tarjeta de información -->
     <div id='informacion' class="w3-container w3-section" id="informacion">
-			<span onclick="this.parentElement.style.display='none'"
-                  class="w3-closebtn w3-padding fa fa-close"></span>
         <div class="w3-card-8">
+            <span onclick="document.getElementById('informacion').style.display='none'"
+                  class="w3-closebtn w3-padding fa fa-close"></span>
             <header class="w3-container w3-blue">
                 <h1>Información</h1>
             </header>
