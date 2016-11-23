@@ -172,11 +172,17 @@
         <div class="w3-padding-large" style="max-width: 550px">
             <div id="googleSignIn" class="g-signin2 w3-margin-bottom"
                  data-onsuccess="onSignIn" data-width="550" data-height="36"
-                 data-longtitle="true"></div>
+                 data-longtitle="true" ga-on="click"
+                            ga-event-category="signIn"
+                            ga-event-action="click"
+                            ga-event-label="Google signIn"></div>
             <div
                     class="w3-card-2 w3-white w3-center w3-btn w3-display-container w3-hover-shadow"
                     style="width: 550px; height: 36px; padding-left: 60px;"
-                    onclick="login(facebookAuthorizationGrant)">
+                    onclick="login(facebookAuthorizationGrant)" ga-on="click"
+                            ga-event-category="signIn"
+                            ga-event-action="click"
+                            ga-event-label="Facebook signIn">
                 <img class="w3-display-left"
                      style="max-height: 18px; margin-left: 8px"
                      src="{% static '/osc/img/FB-f-Logo__blue_29.png' %}"/> <span
@@ -239,9 +245,9 @@
                         </button>
 
                         <button ga-on="click"
-                            ga-event-category="Interactions"
+                            ga-event-category="signIn"
                             ga-event-action="click"
-                            ga-event-label="Login with email"
+                            ga-event-label="e-mail signIn"
                             class="w3-btn w3-dark-grey w3-right"
                                 onClick="login(emailAuthorizationGrant)">Enviar
                         </button>
