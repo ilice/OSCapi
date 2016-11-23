@@ -218,12 +218,14 @@ function inicializaMapa() {
 					function(event) {
 						if (typeof (event.feature
 								.getProperty("reference_point")) == 'undefined') {
+							//TODO ahora  nunca pasa por aquí porque solo se permite hacer clik en las parcelas pintadas, hay que poner este aviso en otro sitio
 							document.getElementById('textoDelAviso').innerHTML = '<p>Seleccione una de las <strong>parcelas dibujadas</strong>.</p>'
 									+ '<p> Para que se vean las parcelas debe hacer zoom hasta que aparezcan marcadas en rojo, en ese momento simplemente seleccione una de ellas para añadir un marcador.</p>'
 									+ '<p> Una vez esté el marcador en la parcela pulse sobre él para poder ver datos básicos o para ver su <strong>perfil</strong> </p>'
 									+ '<p> Si no consigue <strong>marcar su parcela </strong> contacte con nosotros. </p>';
 							document.getElementById('aviso').style.display = 'block';
 						} else {
+							ga('send', 'event', 'Interactions', 'click', 'Select plot');
 							var latitude = event.feature
 									.getProperty("reference_point").lat;
 							var longitude = event.feature
@@ -258,7 +260,13 @@ function inicializaMapa() {
 									+ ' ,'
 									+ longitude
 									+ '</p>'
-									+ '</div><button type="button" onclick="window.open(\'/osc/parcela?cadastral_code='
+									+ '</div> '
+									+ ' <button ga-on="click" '
+		                            + '			ga-event-category="Interactions" '
+		                            + ' 		ga-event-action="click" '
+		                            + '         ga-event-label="Más detalles" '
+		                            + '			type="button" '
+		                            + '			onclick="window.open(\'/osc/parcela?cadastral_code='
 									+ nationalCadastralReference
 									+ '&nombre=Demo\')">Más detalles</button>';
 
@@ -300,7 +308,13 @@ function aniadeMarcadorConTimeout(posicion, timeout) {
 				+ '<img src="' + posicion.foto + '" height="400""/>' + '<div>'
 				+ '<ul><li>Latitud: ' + posicion.lat + '</li>'
 				+ '<li>Longitud: ' + posicion.lng + '</li></ul>' + '</div>'
-				+ '</div><button type="button" onclick="window.open(\''
+				+ '</div> ' 
+				+ ' <button ga-on="click" '
+                + '			ga-event-category="Interactions" '
+                + ' 		ga-event-action="click" '
+                + '         ga-event-label="Más detalles" '
+                + '			type="button" '
+                + '			onclick="window.open(\''
 				+ posicion.url + '\')">Más detalles</button>';
 
 		var ventanaInformacion = new google.maps.InfoWindow({
@@ -308,6 +322,7 @@ function aniadeMarcadorConTimeout(posicion, timeout) {
 		});
 
 		marcador.addListener('click', function() {
+			ga('send', 'event', 'Interactions', 'click', 'Open info window');
 			ventanaInformacion.open(mapa, marcador);
 		});
 

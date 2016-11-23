@@ -47,9 +47,17 @@
     			'https://www.google-analytics.com/analytics.js', 'ga');
     
     	ga('create', 'UA-87069839-1', 'auto');
+    	ga('require', 'eventTracker');
+        ga('require', 'outboundLinkTracker');
+        ga('require', 'cleanUrlTracker', {
+        	  stripQuery: true,
+        	  queryDimensionIndex: 1,
+        	  trailingSlash: 'add'
+        	});
     	ga('send', 'pageview');
 
     </script>
+    <script async src="{% static 'osc/js/autotrack.js' %}"></script>
 </head>
 <body>
 
@@ -57,18 +65,29 @@
 <div class="w3-top">
     <ul class="w3-navbar w3-card-2 w3-left-align w3-hide-small">
             <li>
-                <a class="w3-padding-large w3-opacity" href="/"> <img
+                <a ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Home logo"
+                             class="w3-padding-large w3-opacity" href="/"> <img
                         src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
                         alt="Open Smart Country logo" />
                 </a>
             </li>
             <li>
-                <a id="openNav" href="javascript:void(0)"
+                <a ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Abre menú lateral" id="openNav" href="javascript:void(0)"
                     class="w3-padding-large w3-text-grey"
                     onclick="w3_open()">MENU</a>
             </li>
             <li class="w3-show-inline-block w3-center w3-display-middle">
-                <button id="esMiParcelaButton"
+                <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Es mi parcela"
+                             id="esMiParcelaButton"
                     onclick="authorizationRequest('esMiParcela')"
                     class="w3-btn w3-grey w3-margin-right w3-text-white">Es
                     Mi Parcela</button>
@@ -82,7 +101,10 @@
                 <span id="rc"></span>
             </li>
             <li class="w3-padding-large w3-right">
-                <button id="ErrorBadge"
+                <button id="ErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error Badge"
                     class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                     style="display: none"
                     onclick="document.getElementById('infoDropnav').style.display='block'">
@@ -93,7 +115,10 @@
     <div class="w3-hide-medium w3-hide-large">
         <div class="w3-padding-large w3-opacity"
              style="width: 15%; float: left;">
-            <a href="/"><img id="logo"
+            <a ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Home logo" href="/"><img id="logo"
                              src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
                              alt="Open Smart Country logo"></a>
         </div>
@@ -102,7 +127,10 @@
             <span id="rc_smallBar"></span>
         </div>
         <div style="width: 15% float: left;" class="w3-right w3-margin-top">
-            <a class="w3-padding-large" href="javascript:void(0)"
+            <a ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Abre menú lateral" class="w3-padding-large" href="javascript:void(0)"
                onclick="w3_open()"><i class="fa fa-bars"></i></a>
         </div>
     </div>
@@ -202,12 +230,19 @@
                 <div id="submit-label"></div>
                 <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
                     <div class="w3-clear" id="submit-element">
-                        <button
+                        <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Cancel Es mi parcela"
                                 onclick="document.getElementById('esMiParcela').style.display='none'"
                                 type="button" class="w3-btn w3-red">Cancel
                         </button>
 
-                        <button class="w3-btn w3-dark-grey w3-right"
+                        <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Login with email"
+                            class="w3-btn w3-dark-grey w3-right"
                                 onClick="login(emailAuthorizationGrant)">Enviar
                         </button>
                     </div>
@@ -225,75 +260,100 @@
 
 <!-- TODO: arreglar esta chapuza. Necesito saber si se ha cargado previamente la librería de google para pintar los mapas porque si se ha hecho no puedo volver a cargarla y si no se ha hecho tengo que hacerlo. Para eso guardo aquí si se ha cargado o no.-->
 <div id="isGoogleChartsCorechartLoaded" style="display: none">false</div>
+
 <nav id="mySidenav" class="w3-sidenav  w3-card-8 w3-animate-left"
      style="z-index: 3; width: 300px; display: none">
-    <div class="w3-container  ">
+    <div class="w3-container w3-border-bottom w3-border-light-grey">
         <div class="w3-row w3-right">
             <div class="w3-col w3-right">
-                <a href="/"
-                   class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i
-                        class="fa fa-home"></i></a> <a href="/osc/mapaDeParcelas"
-                                                       class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"><i
-                    class="fa fa-globe"></i></a> <a href="#"
-                                                    class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xxlarge"
-                                                    onclick="w3_close()"><i class="fa fa-remove"></i></a>
+                <a ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click"
+                    ga-event-label="Home button" href="/"
+                    class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge">
+                    <i class="fa fa-home"></i>
+                </a> 
+                <a ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click"
+                    ga-event-label="Map button"
+                    href="/osc/mapaDeParcelas"
+                    class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge">
+                    <i class="fa fa-globe"></i>
+                </a> 
+                <a ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click"
+                    ga-event-label="Close lateral menu button"
+                    href="#"
+                    class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge"
+                    onclick="w3_close()"> <i
+                    class="fa fa-remove"></i>
+                </a>
             </div>
         </div>
     </div>
-    <hr/>
 
-    <div class="w3-container w3-row w3-padding-16">
+    <div class="w3-container w3-row w3-padding-16 w3-border-bottom w3-border-light-grey">
         <div class="w3-col s4">
             <img id="avatar" src="{% static '/osc/img/avatar.PNG' %}"
                  class="w3-circle w3-margin-right" style="width: 46px"
                  alt="Avatar Viña de la Estación"/>
         </div>
         <div class="w3-col s8">
-            <span>Bienvenidos a <strong id="bienvenidos"></strong></span><br/>
-            <a href="#"
-               class="w3-hover-none w3-hover-text-red w3-show-inline-block"><i
-                    class="fa fa-envelope"></i></a> <a href="#"
-                                                       class="w3-hover-none w3-hover-text-green w3-show-inline-block"><i
-                class="fa fa-user"></i></a> <a href="#"
-                                               class="w3-hover-none w3-hover-text-blue w3-show-inline-block"><i
-                class="fa fa-cog"></i></a>
+            <span>Bienvenido a <strong id="bienvenidos"></strong></span><br/>
+            <a ga-on="click"
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Envelope button" href="#"
+                class="w3-hover-none w3-hover-text-red w3-show-inline-block">
+               <i class="fa fa-envelope"></i></a> 
+             <a ga-on="click"
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="User button" href="#"
+                class="w3-hover-none w3-hover-text-green w3-show-inline-block">
+                <i class="fa fa-user"></i></a> 
+             <a ga-on="click"
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Settings button" href="#"
+                class="w3-hover-none w3-hover-text-blue w3-show-inline-block">
+                <i class="fa fa-cog"></i></a>
         </div>
     </div>
-    <hr/>
-
-    <div class="w3-container" id="panelNavegacion">
+    
+    <div class="w3-container">
         <h5>Panel de navegación</h5>
     </div>
 
-    <a href="#" class="w3-padding w3-blue" onclick="w3_close();"><i
-            class="fa fa fa-television fa-fw"></i>  General</a> <a href="#"
-                                                                   class="w3-padding"
-                                                                   onclick="document.getElementById('AlternativesCard').style.display='block';w3_close();"><i
-        class="fa fa-refresh fa-fw"></i>  Alternativas</a> <a href="#tarjetaMapa"
-                                                              class="w3-padding"
-                                                              onclick="document.getElementById('LocationCard').style.display='block';w3_close();"><i
-        class="fa fa-map fa-fw"></i>  Mapa</a> <a href="#catastro"
-                                                  class="w3-padding"
-                                                  onclick="document.getElementById('catastro').style.display='block';w3_close();"><i
-        class="fa fa-institution fa-fw"></i>  Catastro</a> <a
-        href="#precipitacion" class="w3-padding"
-        onclick="document.getElementById('precipitacion').style.display='block';w3_close();"><i
-        class="fa fa-tint fa-fw"></i>  Precipitaciones</a> <a href="#temperatura"
-                                                              class="w3-padding"
-                                                              onclick="document.getElementById('temperatura').style.display='block';w3_close();"><i
-        class="fa fa-eyedropper fa-fw"></i>  Temperatura</a> <a href="#sol"
-                                                                class="w3-padding"
-                                                                onclick="document.getElementById('sol').style.display='block';w3_close();"><i
-        class="fa fa-certificate fa-fw"></i>  Sol</a> <a href="#radiacion"
-                                                         class="w3-padding"
-                                                         onclick="document.getElementById('radiacion').style.display='block';w3_close();"><i
-        class="fa fa-rss fa-fw"></i>  Radiacion</a> <a id='fixedLink'
-                                                       href="#fixed" class="w3-padding"
-                                                       onclick="document.getElementById('fixed').style.display='block';w3_close();"><i
-        class="fa fa-eye fa-fw"></i>  Usos cercanos</a> <a href="#informacion"
-                                                           class="w3-padding"
-                                                           onclick="document.getElementById('informacion').style.display='block';w3_close();"><i
-        class="fa fa-info fa-fw"></i>  Información</a>
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="General"
+        href="#" class="w3-padding w3-blue" onclick="w3_close();">
+        <i class="fa fa fa-television fa-fw"></i>  General</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternativas"
+        href="#" class="w3-padding" onclick="document.getElementById('AlternativesCard').style.display='block';w3_close();">
+        <i class="fa fa-refresh fa-fw"></i>  Alternativas</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Mapa"
+        href="#tarjetaMapa" class="w3-padding" onclick="document.getElementById('LocationCard').style.display='block';w3_close();">
+        <i class="fa fa-map fa-fw"></i>  Mapa</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Catastro"
+        href="#catastro" class="w3-padding" onclick="document.getElementById('catastro').style.display='block';w3_close();">
+        <i class="fa fa-institution fa-fw"></i>  Catastro</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Precipitaciones"
+        href="#precipitacion" class="w3-padding" onclick="document.getElementById('precipitacion').style.display='block';w3_close();">
+        <i class="fa fa-tint fa-fw"></i>  Precipitaciones</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Temperatura"
+        href="#temperatura" class="w3-padding" onclick="document.getElementById('temperatura').style.display='block';w3_close();">
+        <i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Sol"
+        href="#sol" class="w3-padding" onclick="document.getElementById('sol').style.display='block';w3_close();">
+        <i class="fa fa-certificate fa-fw"></i>  Sol</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Radiación"
+        href="#radiacion" class="w3-padding" onclick="document.getElementById('radiacion').style.display='block';w3_close();">
+        <i class="fa fa-rss fa-fw"></i>  Radiacion</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Usos cercanos"
+        id='fixedLink' href="#fixed" class="w3-padding" onclick="document.getElementById('fixed').style.display='block';w3_close();">
+        <i class="fa fa-eye fa-fw"></i>  Usos cercanos</a> 
+    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Información"
+        href="#informacion" class="w3-padding" onclick="document.getElementById('informacion').style.display='block';w3_close();">
+        <i class="fa fa-info fa-fw"></i>  Información</a>
 
     <div id="regions_div" style="width: 100%; height: auto;"></div>
 
@@ -301,7 +361,7 @@
 
 
 <!-- Overlay effect when opening sidenav on small screens -->
-<div class="w3-overlay w3-hide-large w3-animate-opacity"
+<div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="close side menu" class="w3-overlay w3-hide-large w3-animate-opacity"
      onclick="w3_close()" style="cursor: pointer" title="close side menu"
      id="myOverlay"></div>
 
@@ -321,7 +381,8 @@
 
     <div id="completionParcelProfileBarCard"
         class="w3-section w3-card-8 w3-margin" style="display: none">
-        <span onclick="this.parentElement.style.display='none'"
+        <span  ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="completionParcelProfileBarCard close"
+            onclick="this.parentElement.style.display='none'"
             class="w3-closebtn fa fa-times w3-padding"></span>
             <div class="w3-container w3-padding-large">        
                 <div class="w3-row">
@@ -332,7 +393,10 @@
                     </div>
                     <div class="w3-half w3-center">
                         <i class='w3-tooltip'>
-                            <button class="circle-button">
+                            <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Revisa la información" class="circle-button">
                                 <i
                                     class="fa fa-eye w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
@@ -341,7 +405,10 @@
                             class="w3-text">Revisa la información</span>
                         </i> <i class="fa fa-arrow-right w3-xxlarge"></i> <i
                             class='w3-tooltip'>
-                            <button class="circle-button">
+                            <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Añade más imágenes" class="circle-button">
                                 <i
                                     class="fa fa-camera w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
@@ -351,7 +418,11 @@
                             class="w3-text">Añade más imágenes</span>
                         </i> <i class="fa fa-arrow-right w3-xxlarge"></i> <i
                             class='w3-tooltip'>
-                            <button class="circle-button">
+                            <button
+                            ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Añade información" class="circle-button">
                                 <i
                                     class="fa fa-pencil w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
@@ -361,7 +432,10 @@
                                 relevante</span>
                         </i> <i class="fa fa-arrow-right w3-xxlarge"></i> <i
                             class='w3-tooltip'>
-                            <button class="circle-button">
+                            <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Comparte el perfil" class="circle-button">
                                 <i
                                     class="fa fa-share-alt w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
@@ -371,7 +445,10 @@
                                 tu parcela</span>
                         </i> <i class="fa fa-arrow-right w3-xxlarge"></i> <i
                             class='w3-tooltip'>
-                            <button class="circle-button">
+                            <button ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Márcaté nuevos objetivos" class="circle-button">
                                 <i
                                     class="fa fa-flag-checkered w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
@@ -391,19 +468,13 @@
                 </div>
             </div>
         </div>
-    
-
 
     <!-- Línea de widgets de colores iniciales -->
     <div class="w3-row-padding">
-
-
         <div class="w3-half w3-container w3-margin-top">
-
             <div class="w3-margin-bottom">
-
-                <div class="w3-half w3-hover-opacity w3-small"
-                     onclick="location.href='#precipitacion'">
+                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget lluvia" 
+                    class="w3-half w3-hover-opacity w3-small" onclick="location.href='#precipitacion'">
                     <div class="w3-container w3-blue w3-padding-large w3-margin">
                         <div class="w3-left">
                             <i class="fa fa-tint w3-xxxlarge"></i>
@@ -420,10 +491,8 @@
                         </h3>
                     </div>
                 </div>
-
-
-                <div class="w3-half w3-hover-opacity"
-                     onclick="location.href='#temperatura'">
+                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget Temperatura"
+                    class="w3-half w3-hover-opacity" onclick="location.href='#temperatura'">
                     <div class="w3-container  w3-red w3-padding-large w3-margin">
                         <div class="w3-left">
                             <i class="fa fa-thermometer-three-quarters w3-xxlarge"></i>
@@ -439,12 +508,10 @@
                         </h3>
                     </div>
                 </div>
-
             </div>
             <div class="w3-margin-bottom">
-
-                <div class="w3-half w3-hover-opacity"
-                     onclick="location.href='#sol'">
+                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget Sol"
+                    class="w3-half w3-hover-opacity" onclick="location.href='#sol'">
                     <div class="w3-container w3-yellow w3-padding-large w3-margin">
                         <div class="w3-left">
                             <i class="fa fa-sun-o w3-xxlarge"></i>
@@ -460,9 +527,8 @@
                         </h3>
                     </div>
                 </div>
-
-
-                <div class="w3-half w3-hover-opacity"
+                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget Radiación"
+                    class="w3-half w3-hover-opacity"
                      onclick="location.href='#radiacion'">
                     <div
                             class="w3-container w3-orange w3-text-white w3-padding-large w3-margin">
@@ -480,30 +546,32 @@
                         </h3>
                     </div>
                 </div>
-
             </div>
-
-
         </div>
-
 
         <div class="w3-half">
             <div id="AlternativesCard" class="w3-card-8">
-                    <span onclick="this.parentElement.style.display='none'"
-                          class=" w3-closebtn w3-padding fa fa-close fa-fw"></span>
-                          <span
-                            onclick="document.getElementById('AlternativesTable').style.display='block'"
-                            class=" w3-closebtn w3-padding  fa fa-arrows-alt fa-fw w3-tiny"></span>
-                    
+                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives close" 
+                    onclick="this.parentElement.style.display='none'"
+                    class=" w3-closebtn w3-padding fa fa-close fa-fw"></span>
+                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives open table"
+                    onclick="document.getElementById('AlternativesTable').style.display='block'"
+                    class=" w3-closebtn w3-padding  fa fa-arrows-alt fa-fw w3-tiny"></span>
                 <div id="alternativesContainer"
                      class="w3-container w3-padding-large">
                     <h5>
-                        Alternativas de uso según características <a
+                        Alternativas de uso según características <a ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Alternatives info"
                             class="w3-hover-opacity" href="javascript:void(0)"
                             onclick="document.getElementById('AlternativesInfo').style.display='block'">
                         <i class="fa fa-info-circle w3-text-blue"></i>
                     </a>
-                        <button id="AlternativesCardErrorBadge"
+                        <button id="AlternativesCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                                 class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                                 style="display: none"
                                 onclick="document.getElementById('AlternativesErrorData').style.display='block'">
@@ -512,8 +580,9 @@
                     </h5>
                     <div id="AlternativesErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-							<span onclick="this.parentElement.style.display='none'"
-                                  class="w3-closebtn w3-padding fa fa-close"></span><span
+							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives Error close"
+                                onclick="this.parentElement.style.display='none'"
+                                class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="AlternativesCardErrorText"></span>
                     </div>
                 </div>
@@ -525,7 +594,7 @@
     <div id="AlternativesInfo" class="w3-modal">
         <div class="w3-modal-content">
             <div class="w3-container">
-					<span
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives Info close"
                             onclick="document.getElementById('AlternativesInfo').style.display='none'"
                             class="w3-closebtn fa fa-close"></span>
                 <p>
@@ -555,7 +624,7 @@
     <div id="AlternativesTable" class="w3-modal">
         <div class="w3-modal-content">
             <div class="w3-container w3-padding">
-                <span
+                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives Table close"
                     onclick="document.getElementById('AlternativesTable').style.display='none'"
                     class="w3-closebtn fa fa-close"></span>
                 <table id='AlternativesTableContent' class="w3-table-all w3-hoverable">
@@ -584,7 +653,7 @@
     <div id="ReportInfo" class="w3-modal">
         <div class="w3-modal-content">
             <div class="w3-container">
-					<span
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="ReportInfo close"
                             onclick="document.getElementById('ReportInfo').style.display='none'"
                             class="w3-closebtn fa fa-close"></span>
                 <p>
@@ -606,12 +675,16 @@
     <div class="w3-container w3-section w3-row-padding">
         <div class="w3-third">
             <div id="LocationCard" class="w3-card-8" style="min-height: 451px;">
-					<span onclick="this.parentElement.style.display='none'"
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="LocationCard close"
+                        onclick="this.parentElement.style.display='none'"
                           class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
                     <h5>
                         Localización
-                        <button id="LocationCardErrorBadge"
+                        <button id="LocationCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                                 class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                                 style="display: none"
                                 onclick="document.getElementById('LocationErrorData').style.display='block'">
@@ -620,7 +693,8 @@
                     </h5>
                     <div id="LocationErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-							<span onclick="this.parentElement.style.display='none'"
+							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="LocationErrorData close" 
+                                onclick="this.parentElement.style.display='none'"
                                   class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="LocationCardErrorText"></span>
                     </div>
@@ -647,22 +721,26 @@
         </div>
         <div class="w3-twothird">
             <div id="catastro" class="w3-card-8" style="min-height: 451px;">
-					<span onclick="this.parentElement.style.display='none'"
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="catastro close" 
+                        onclick="this.parentElement.style.display='none'"
                           class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
                     <h5>
                         Información del catastro
-                        <button id="CatastralCardErrorBadge"
+                        <button id="CatastralCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                                 class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                                onclick="document.getElementById('CatastralCardErrorData').style.display='block'"
                                 style="display: none">
-                            <i
-                                    onclick="document.getElementById('CatastralCardErrorData').style.display='block'"
-                                    class="fa fa-exclamation-triangle"></i>
+                            <i class="fa fa-exclamation-triangle"></i>
                         </button>
                     </h5>
                     <div id="CatastralCardErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-							<span onclick="this.parentElement.style.display='none'"
+							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="CatastralCardErrorData close" 
+                                onclick="this.parentElement.style.display='none'"
                                   class="w3-closebtn w3-padding fa fa-close"></span> <span
                             id="CatastralCardErrorText"></span>
                     </div>
@@ -744,7 +822,7 @@
     <div id="idea_modal" class="w3-modal w3-animate-zoom">
         <div class="w3-modal-content">
             <div class="w3-container">
-					<span
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="idea_modal close" 
                             onclick="document.getElementById('idea_modal').style.display='none'"
                             class="w3-closebtn fa fa-close"></span>
                 <p>
@@ -753,7 +831,10 @@
                     qué cultivos se dan bien en esa altitud y ofrecerte información
                     sobre los mismos.
 
-                    <button id="cultivos_por_altitud"
+                    <button id="cultivos_por_altitud" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Muestrame los cultivos"
                             class="w3-btn-block w3-section w3-padding w3-dark-grey">¡Muéstarme
                         los cultivos!
                     </button>
@@ -766,7 +847,8 @@
     <!--Una observación-->
     <div class="w3-container w3-section ">
         <div class="w3-orange w3-text-dark-grey w3-row-padding">
-				<span onclick="this.parentElement.style.display='none'"
+				<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="observación close"  
+                    onclick="this.parentElement.style.display='none'"
                       class="w3-closebtn w3-padding fa fa-close"></span>
             <h3>Observación</h3>
             <p>De momento estos datos son los de la estación meteorológica
@@ -791,22 +873,24 @@
         <!--  Tarjeta con información del suelo -->
         <div id="soil" class="w3-container w3-section">
             <div class="w3-card-8">
-                <span
+                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="soil close"
                     onclick="document.getElementById('soil').style.display='none'"
                     class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
-                    <button id="SoilCardErrorBadge"
+                    <button id="SoilCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                         class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                        onclick="document.getElementById('SoilErrorData').style.display='block'"
                         style="display: none">
-                        <i
-                            onclick="document.getElementById('SoilErrorData').style.display='block'"
-                            class="fa fa-exclamation-triangle"></i>
+                        <i class="fa fa-exclamation-triangle"></i>
                     </button>
                     <h5>Información del suelo</h5>
                     <div id="SoilErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="SoilErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span>
                         <span id="SoilCardErrorText"></span>
@@ -873,7 +957,7 @@
             <div id="precipitacion" class="w3-container w3-section">
 
                 <div class="w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="precipitacion close"
                         onclick="document.getElementById('precipitacion').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <p class="w3-padding">
@@ -881,18 +965,20 @@
                             la estación meteorológica más cercana: <span
                             id="estacionLluvia"> </span>
                         </em>
-                        <button id="RainfallCardErrorBadge"
+                        <button id="RainfallCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                             class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            onclick="document.getElementById('RainfallErrorData').style.display='block'"
                             style="display: none">
-                            <i
-                                onclick="document.getElementById('RainfallErrorData').style.display='block'"
-                                class="fa fa-exclamation-triangle"></i>
+                            <i class="fa fa-exclamation-triangle"></i>
                         </button>
                     </p>
                     <div id="RainfallErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="RainfallErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="RainfallCardErrorText"></span>
@@ -928,7 +1014,7 @@
 
             <div id="temperatura" class="w3-container w3-section">
                 <div class="w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="temperatura close"
                         onclick="document.getElementById('temperatura').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <p class="w3-padding">
@@ -936,18 +1022,20 @@
                             la estación meteorológica más cercana: <span
                             id="estacionTemperatura"> </span>
                         </em>
-                        <button id="TemperatureCardErrorBadge"
+                        <button id="TemperatureCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                             class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            onclick="document.getElementById('TemperatureErrorData').style.display='block'"
                             style="display: none">
-                            <i
-                                onclick="document.getElementById('TemperatureErrorData').style.display='block'"
-                                class="fa fa-exclamation-triangle"></i>
+                            <i class="fa fa-exclamation-triangle"></i>
                         </button>
                     </p>
                     <div id="TemperatureErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="TemperatureErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="TemperatureCardErrorText"></span>
@@ -988,7 +1076,7 @@
 
             <div id="sol" class="w3-container w3-section">
                 <div class="w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="sol close"
                         onclick="document.getElementById('sol').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <p class="w3-padding">
@@ -996,18 +1084,20 @@
                             la estación meteorológica más cercana: <span
                             id="estacionSol"> </span>
                         </em>
-                        <button id="SunHoursCardErrorBadge"
+                        <button id="SunHoursCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                             class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
+                            onclick="document.getElementById('SunHoursErrorData').style.display='block'"
                             style="display: none">
-                            <i
-                                onclick="document.getElementById('SunHoursErrorData').style.display='block'"
-                                class="fa fa-exclamation-triangle"></i>
+                            <i class="fa fa-exclamation-triangle"></i>
                         </button>
                     </p>
                     <div id="SunHoursErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="SunHoursErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="SunHoursCardErrorText"></span>
@@ -1050,7 +1140,7 @@
 
             <div id="radiacion" class="w3-container w3-section">
                 <div class="w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="radiacion close"
                         onclick="document.getElementById('radiacion').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <p class="w3-padding">
@@ -1058,18 +1148,20 @@
                             la estación meteorológica más cercana: <span
                             id="estacionRadiacion"> </span>
                         </em>
-                        <button id="RadiationCardErrorBadge"
+                        <button id="RadiationCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge" 
                             class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-                            style="display: none">
-                            <i
-                                onclick="document.getElementById('RadiationErrorData').style.display='block'"
-                                class="fa fa-exclamation-triangle"></i>
+                            style="display: none"
+                            onclick="document.getElementById('RadiationErrorData').style.display='block'">
+                            <i  class="fa fa-exclamation-triangle"></i>
                         </button>
                     </p>
                     <div id="RadiationErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="RadiationErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="RadiationCardErrorText"></span>
@@ -1117,24 +1209,26 @@
             <div id="fixed" class="w3-container w3-section"
                 style="display: none">
                 <div class="w3-container w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="fixed close"
                         onclick="document.getElementById('fixed').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <p class="w3-padding">
                         <em>Distribución de los diferentes usos del
                             suelo </em>
                     </p>
-                    <button id="CropDistributionCardErrorBadge"
+                    <button id="CropDistributionCardErrorBadge" ga-on="click"
+                            ga-event-category="Interactions"
+                            ga-event-action="click"
+                            ga-event-label="Error badge"
                         class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
-                        style="display: none">
-                        <i
-                            onclick="document.getElementById('CropDistributionErrorData').style.display='block'"
-                            class="fa fa-exclamation-triangle"></i>
+                        style="display: none"
+                        onclick="document.getElementById('CropDistributionErrorData').style.display='block'">
+                        <i class="fa fa-exclamation-triangle"></i>
                     </button>
                     <div id="CropDistributionErrorData"
                         class="w3-col w3-panel w3-red w3-card-8"
                         style="display: none">
-                        <span
+                        <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="CropDistributionErrorData close"
                             onclick="this.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="CropDistributionCardErrorText"></span>
@@ -1143,13 +1237,13 @@
                         <div class="w3-col" style="width: 150px">
                             <ul class="w3-ul w3-hoverable w3-large">
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution FS y olivar"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('All')">Todos</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Agua"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('Agua')">Agua</a>
@@ -1157,123 +1251,123 @@
                                 <!-- <li><a href="#fixed" onclick="openCropDistribution('Viales')">Viales</a></li>
               <li><a href="#fixed" onclick="openCropDistribution('Viales')">Edificaciones</a></li> -->
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution FS y olivar"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('FL')">FS
                                         y olivar</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Forestal"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('FO')">Forestal</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Frutos secos"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('FS')">Frutos
                                         secos</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution FS y Viñedos"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('FV')">FS
                                         y Viñedos</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Frutales"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('FY')">Frutales</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Improductivo"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('IM')">Improductivo</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Invernaderos"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('IV')">Invernaderos</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Olivar - Frutal"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('OF')">Olivar
                                         - Frutal</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Olivar"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('OV')">Olivar</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Pasto con arb."
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('PA')">Pasto
                                         con arb.</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Pasto"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('PR')">Pasto
                                         arbustivo</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Pastizal"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('PS')">Pastizal</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Arables"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('TA')">Arables</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Huerta"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('TH')">Huerta</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Viñedo - Frutal"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('VF')">Viñedo
                                         - Frutal</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Viñedo"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('VI')">Viñedo</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Viñedo - Olivar"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('VO')">Viñedo
                                         - Olivar</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution Concentración"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('ZC')">Concentración</a>
                                 </li>
                                 <li>
-                                    <a
+                                    <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Distribution urbano"
                                         style="display: block; text-decoration: none;"
                                         href="#fixed"
                                         onclick="openCropDistribution('ZU')">Urbano</a>
@@ -1500,7 +1594,7 @@
             <div id='informacion' class="w3-container w3-section"
                 id="informacion">
                 <div class="w3-card-8">
-                    <span
+                    <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="informacion close"
                         onclick="document.getElementById('informacion').style.display='none'"
                         class="w3-closebtn w3-padding fa fa-close"></span>
                     <header class="w3-container w3-blue">
@@ -1534,34 +1628,44 @@
 
         </div>
         <!--FIN !PAGE CONTENT! -->
-
+</div>
 
 <!-- Footer -->
-<footer
-        class="w3-center w3-dark-grey w3-hover-black w3-display-container"
-        style="height: 8%;">
-    <div class="w3-xlarge w3-display-bottomleft w3-padding">
-        <a href="https://www.facebook.com/opnsc"
-           class="w3-hover-text-indigo w3-show-inline-block"><i
-                class="fa fa-facebook-official"></i></a> <a
-            href="https://twitter.com/opnsc"
-            class="w3-hover-text-light-blue w3-show-inline-block"><i
-            class="fa fa-twitter"></i></a><a
-            href="https://github.com/teanocrata/OpenSmartCountry"
-            class="w3-hover-text-indigo w3-show-inline-block"><i
-            class="fa fa-github"></i></a>
-    </div>
-    <div class="w3-display-middle">
-
-        OPEN<strong>SMART</strong>COUNTRY
-
-    </div>
-    <a class="w3-right w3-display-bottomright w3-padding" rel="license"
-       href="http://creativecommons.org/licenses/by-nc-sa/4.0/"> <img
-            alt="Creative Commons License" style="border-width: 0"
-            src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/>
-    </a>
-</footer>
+    <footer>
+        <ul class="w3-navbar w3-card-2 w3-left-align w3-light-grey">
+            <li>
+                <a href="https://www.facebook.com/opnsc"
+                    class="w3-hover-text-indigo"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-facebook-official"></i></a>
+            </li>
+            <li>
+                <a href="https://twitter.com/opnsc"
+                    class="w3-hover-text-light-blue"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="https://github.com/teanocrata/OpenSmartCountry"
+                    class="w3-hover-text-black"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-github"></i></a>
+            </li>
+            <li class="w3-right">
+                <a rel="license"
+                    href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+                    target="_blank"
+                    style="float:right;">
+                    <img alt="Creative Commons License"
+                        style="border-width: 0"
+                        src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                </a>
+            </li>
+        </ul>
+    </footer>
 
 </body>
 </html>

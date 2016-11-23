@@ -39,8 +39,11 @@
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-87069839-1', 'auto');
+        ga('require', 'eventTracker');
+        ga('require', 'outboundLinkTracker');
         ga('send', 'pageview');
     </script>
+    <script async src="{% static 'osc/js/autotrack.js' %}"></script>
 </head>
 <body>
 
@@ -60,18 +63,6 @@
         <li><a
                 onclick="document.getElementById('suscripcion').style.display='block'"
                 class="w3-hide-small w3-padding-large w3-text-light-grey">CONTACTO</a></li>
-        <li class="w3-hide-small w3-right"><a
-                href="https://twitter.com/opnsc"
-                class="w3-padding-large w3-text-light-grey"><i
-                class="fa fa-twitter"></i></a></li>
-        <li class="w3-hide-small w3-right"><a
-                href="https://www.facebook.com/OpnSC/"
-                class="w3-padding-large w3-text-light-grey"><i
-                class="fa fa-facebook-official"></i></a></li>
-        <li class="w3-hide-small w3-right"><a
-                href="https://github.com/teanocrata/OpenSmartCountry"
-                class="w3-padding-large w3-text-light-grey"><i
-                class="fa fa-github"></i></a></li>
     </ul>
 </div>
 
@@ -129,12 +120,15 @@
 
                     <dt id="submit-label"></dt>
                     <dd id="submit-element">
-                        <button type="submit" name="submit" id="submit"
-                                class="w3-btn w3-dark-grey w3-margin-top"
-                                onClick="ga('send', 'event', 'Subscripciones', 'suscribirse', 'OK');">Mantenme
-                            al tanto
-                        </button>
+                        <button ga-on="click"
+                            ga-event-category="Subscriptions"
+                            ga-event-action="subscribe"
+                            ga-event-label="OK" type="submit"
+                            name="submit" id="submit"
+                            class="w3-btn w3-dark-grey w3-margin-top"
+                            >Mantenme al tanto</button>
                     </dd>
+
 
                 </dl>
             </form>
@@ -157,25 +151,28 @@
                 class="w3-xxlarge w3-wide w3-animate-opacity w3-text-light-grey w3-hide-large">COUNTRY</span>
 
         <div class="w3-btn-bar w3-show-inline-block">
-            <button
+                <button ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click" ga-event-label="owner"
                     class="w3-hide-small w3-hide-medium w3-btn w3-border w3-padding-xlarge w3-ripple w3-hover-dark-grey w3-border-light-grey w3-text-light-grey"
-                    style="text-transform: uppercase; "
+                    style="text-transform: uppercase;"
                     onclick="location.href='/osc/propietario'">Soy
-                propietario
-            </button>
-            <button
+                    propietario</button>
+                <button ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click" ga-event-label="owner"
                     class="w3-hide-large w3-small w3-slim w3-btn-block w3-btn w3-border w3-ripple w3-hover-dark-grey w3-border-light-grey w3-text-light-grey"
                     style="text-transform: uppercase; font-weight: bold"
                     onclick="location.href='/osc/propietario'">Soy
                 propietario
             </button>
-            <button
+            <button ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click" ga-event-label="seeker"
                     class="w3-hide-small w3-hide-medium w3-btn w3-border w3-padding-xlarge w3-ripple w3-hover-dark-grey w3-border-light-grey w3-light-grey w3-text-dark-grey"
                     style="text-transform: uppercase; font-weight: bold"
                     onclick="location.href='/osc/mapaDeParcelas'">Busco
                 parcela
             </button>
-            <button
+            <button ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="click" ga-event-label="owner"
                     class="w3-hide-large w3-small w3-slim w3-btn-block w3-btn w3-border w3-ripple w3-hover-dark-grey w3-border-light-grey w3-light-grey w3-text-dark-grey"
                     style="text-transform: uppercase; "
                     onclick="location.href='/osc/mapaDeParcelas'">Busco
@@ -187,7 +184,45 @@
 
 
 </div>
-<script>
+
+   <!-- Footer -->
+    <footer class="w3-bottom">
+        <ul class="w3-navbar w3-card-2 w3-left-align">
+            <li>
+                <a href="https://www.facebook.com/opnsc"
+                    class="w3-hover-text-indigo w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-facebook-official"></i></a>
+            </li>
+            <li>
+                <a href="https://twitter.com/opnsc"
+                    class="w3-hover-text-light-blue w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="https://github.com/teanocrata/OpenSmartCountry"
+                    class="w3-hover-text-black w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-github"></i></a>
+            </li>
+            <li class="w3-right">
+                <a rel="license"
+                    href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+                    target="_blank"
+                    style="float:right;">
+                    <img alt="Creative Commons License"
+                        style="border-width: 0"
+                        src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                </a>
+            </li>
+        </ul>
+    </footer>
+    
+    <script>
 		// Used to toggle the menu on small screens when clicking on the menu button
 		function myFunction() {
 			var x = document.getElementById("navDemo");

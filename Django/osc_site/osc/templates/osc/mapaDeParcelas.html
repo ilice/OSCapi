@@ -40,8 +40,11 @@
 			'https://www.google-analytics.com/analytics.js', 'ga');
 
 	ga('create', 'UA-87069839-1', 'auto');
+	ga('require', 'eventTracker');
+    ga('require', 'outboundLinkTracker');
 	ga('send', 'pageview');
     </script>
+    <script async src="{% static 'osc/js/autotrack.js' %}"></script>
 </head>
 <body onload="dibujaMarcadores()">
 
@@ -58,14 +61,21 @@
                      alt="Open Smart Country logo">Buscando parcelas
             </div>
         </li>
-        <li class="w3-right"><a
+        <li class="w3-right"><a ga-on="click" 
+                    ga-event-category="Interactions"
+                    ga-event-action="click"
+                    ga-event-label="Buscar"
                 class="w3-padding-large w3-hover-dark-grey w3-text-grey" id="buscar"><i
                 class="fa fa-search"></i></a></li>
-        <li class="w3-right" style="width: 50%"><input
-                class="w3-input  w3-text-grey w3-hover-light-grey" id="buscador"
-                type="text"
-                placeholder="Inserta un lugar o dirección para centrar el mapa"></li>
-    </ul>
+            <li class="w3-right" style="width: 50%">
+                <input ga-on="click" ga-event-category="Interactions"
+                    ga-event-action="selectInput"
+                    ga-event-label="Find place input"
+                    class="w3-input  w3-text-grey w3-hover-light-grey"
+                    id="buscador" type="text"
+                    placeholder="Inserta un lugar o dirección para centrar el mapa">
+            </li>
+        </ul>
     <div
             class="w3-navbar w3-card-2 w3-left-align w3-hide-medium w3-hide-large">
         <div>
@@ -76,13 +86,20 @@
                         alt="Open Smart Country logo"></a>
             </div>
             <div style="width: 70%; float: left; margin-top: 1%;">
-                <input class="w3-input  w3-text-grey w3-hover-light-grey w3-small"
-                       id="buscadorSmall" type="text"
-                       placeholder="Inserta un lugar o dirección para centrar el mapa">
+                <input ga-on="click" 
+                    ga-event-category="Interactions"
+                    ga-event-action="selectInput"
+                    ga-event-label="Find place input"
+                    class="w3-input  w3-text-grey w3-hover-light-grey w3-small"
+                    id="buscadorSmall" type="text"
+                    placeholder="Inserta un lugar o dirección para centrar el mapa">
             </div>
             <div class="w3-padding-large w3-hover-dark-grey w3-text-grey"
                  style="width: 15%; float: left;">
-                <a id="buscarSmall"><i class="fa fa-search"></i></a>
+                <a ga-on="click" 
+                    ga-event-category="Interactions"
+                    ga-event-action="click"
+                    ga-event-label="Buscar small" id="buscarSmall"><i class="fa fa-search"></i></a>
             </div>
         </div>
     </div>
@@ -117,6 +134,43 @@
         </footer>
     </div>
 </div>
+
+ <!-- Footer -->
+    <footer class="w3-bottom">
+        <ul class="w3-navbar w3-card-2 w3-left-align">
+            <li>
+                <a href="https://www.facebook.com/opnsc"
+                    class="w3-hover-text-indigo w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-facebook-official"></i></a>
+            </li>
+            <li>
+                <a href="https://twitter.com/opnsc"
+                    class="w3-hover-text-light-blue w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-twitter"></i></a>
+            </li>
+            <li>
+                <a href="https://github.com/teanocrata/OpenSmartCountry"
+                    class="w3-hover-text-black w3-text-light-grey"
+                    target="_blank"
+                    style="float:left;"><i
+                    class="fa fa-github"></i></a>
+            </li>
+            <li class="w3-right">
+                <a rel="license"
+                    href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+                    target="_blank"
+                    style="float:right;">
+                    <img alt="Creative Commons License"
+                        style="border-width: 0"
+                        src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                </a>
+            </li>
+        </ul>
+    </footer>
 
 </body>
 </html>

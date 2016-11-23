@@ -40,15 +40,25 @@
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-87069839-1', 'auto');
+        ga('require', 'eventTracker');
+        ga('require', 'cleanUrlTracker', {
+            stripQuery: true,
+            trailingSlash: 'add'
+          });
+        ga('require', 'outboundLinkTracker');
         ga('send', 'pageview');
     </script>
+    <script async src="{% static 'osc/js/autotrack.js' %}"></script>
 </head>
 <body onload="cargaDatos()">
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
     <ul class="w3-navbar w3-card-2 w3-left-align">
-        <li><a class="w3-padding-large w3-opacity" href="/">
+        <li><a class="w3-padding-large w3-opacity" href="/" ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Home logo">
             <img src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
                  alt="Open Smart Country logo"/>
         </a></li>
@@ -66,35 +76,70 @@
         </h1>
         <div class="w3-section w3-bottombar w3-padding-16">
             <span class="w3-margin-right">Filter:</span>
-            <button class="w3-btn">ALL</button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="ALL crops" 
+                class="w3-btn">ALL</button>
+            <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Pastos / Alimento ganado crops" 
+                class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa fa-bug w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Pastos / Alimento ganado</span>
             </button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Verduras crops" 
+                class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa-leaf w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Verduras</span>
             </button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Frutales crops" 
+                class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa-lemon-o w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Frutales</span>
             </button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <buttonga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Madera crops" 
+                 class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa-tree w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Madera</span>
             </button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <buttonga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Regadío crops" 
+                 class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa-tint w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Regadío</span>
             </button>
-            <button class="w3-btn w3-white w3-tooltip">
+            <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Según parcela crops" 
+                class="w3-btn w3-white w3-tooltip">
                 <i class="fa fa-magic w3-margin-right"></i><span
                     class="w3-text w3-tag w3-white">Filtrar según parcela</span>
             </button>
             <form class="w3-right" method="get">
-                <input type="search" id="txtSearch" name="search"
+                <input ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="Input"
+                ga-event-label="Search crop" 
+                 type="search" id="txtSearch" name="search"
                        placeholder="Búsqueda...">
-                <button type="submit" value="search"
+                <button ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Search crop"  type="submit" value="search"
                         class="w3-btn w3-white w3-hide-small ">
                     <i class="fa fa-search"></i>
                 </button>

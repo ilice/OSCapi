@@ -42,18 +42,42 @@
         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-87069839-1', 'auto');
+        ga('require', 'eventTracker');
+        ga('require', 'cleanUrlTracker', {
+            stripQuery: true,
+            queryDimensionIndex: 2,
+            trailingSlash: 'add'
+          });
+        ga('require', 'outboundLinkTracker');
         ga('send', 'pageview');
     </script>
+    <script async src="{% static 'osc/js/autotrack.js' %}"></script>
 </head>
 <body onload="cargaDatos()">
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
     <ul class="w3-navbar w3-card-2 w3-left-align">
-        <li><a class="w3-padding-large w3-opacity" href="/">
-            <img src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
+        <li>
+            <a ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Home logo"
+                class="w3-padding-large w3-opacity" href="/" style="float:left;">
+                <img src="{% static 'osc/img/OpenSmartCountry_logo_25x26.png' %}"
                  alt="Open Smart Country logo"/>
         </a></li>
+        <li class="w3-right">
+            <a ga-on="click" 
+                ga-event-category="Interactions"
+                ga-event-action="click"
+                ga-event-label="Buscar más cultivos"
+                class="w3-padding-large w3-opacity" id="buscar"
+                style="float:right;"
+                href="/osc/cultivos/">
+                <i class="fa fa-search"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -65,10 +89,18 @@
         <h5 class="w3-left">
             <i class="fa fa-dashboard"></i> <span id="pagina"></span>
         </h5>
-        <a class="makeEditable" href="javascript:void(0)"
+        <a ga-on="click" 
+           ga-event-category="Interactions"
+           ga-event-action="click"
+           ga-event-label="Edit crop"
+           class="makeEditable" href="javascript:void(0)"
            onclick="document.getElementById('makeEditableModal').style.display='block'"><i
                 class="fa fa-edit w3-right w3-opacity"></i></a>
-        <a class="editable" href="javascript:void(0)"
+        <a ga-on="click" 
+           ga-event-category="Interactions"
+           ga-event-action="click"
+           ga-event-label="Edit crop requirements"
+           class="editable" href="javascript:void(0)"
            onclick="document.getElementById('editModal').style.display='block'"><i
                 class="fa fa-edit w3-right"></i></a>
     </header>
@@ -78,28 +110,43 @@
 
     <section id="general" class="w3-container w3-section ">
         <article class="w3-container w3-card-8 w3-row-padding">
-				<span
-                        onclick="this.parentElement.style.display='none'"
-                        class="w3-closebtn w3-padding">&times;</span>
+				<span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close general crop info"
+                      onclick="this.parentElement.style.display='none'"
+                      class="w3-closebtn w3-padding">&times;</span>
             <h5>
                 <span id="ficha"></span>
             </h5>
             <div class="w3-twothird">
                 <ul class="w3-ul w3-striped w3-white w3-hoverable">
-                    <li><strong>Nombre</strong> <span id="Nombre"></span><span class="editable"><a
+                    <li><strong>Nombre</strong> <span id="Nombre"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editNombre"
                             href="javascript:void(0)"
                             onclick="edit('Nombre')"><i
                             class="fa fa-edit w3-right"></i></a></span></li>
                     <li><strong>Nombre Científico</strong><em> <span
-                            id="Nombre Científico"></span></em><span class="editable"><a href="javascript:void(0)"
+                            id="Nombre Científico"></span></em><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editNombreCientífico" href="javascript:void(0)"
                                                                                          onclick="edit('Nombre Científico')"><i
                             class="fa fa-edit w3-right"></i></a></span></li>
-                    <li><strong>Familia</strong> <span id="Familia"></span><span class="editable"><a
+                    <li><strong>Familia</strong> <span id="Familia"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editFamilia"
                             href="javascript:void(0)"
                             onclick="edit('Familia')"><i
                             class="fa fa-edit w3-right"></i></a></span></li>
-                    <li><strong>Nombres Comunes</strong> <span
-                            id="Nombres Comunes"></span><span class="editable"><a href="javascript:void(0)"
+                    <li><strong>Nombres Comunes</strong> <span 
+                            id="Nombres Comunes"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editNombresComunes" href="javascript:void(0)"
                                                                                   onclick="edit('Nombres Comunes')"><i
                             class="fa fa-edit w3-right"></i></a></span></li>
                 </ul>
@@ -121,7 +168,10 @@
     <section id="localizacion"
              class="w3-container w3-section w3-row-padding">
         <article class="w3-container w3-card-8">
-				<span
+				<span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close location crop info"
                         onclick="this.parentElement.style.display='none'"
                         class="w3-closebtn w3-padding">&times;</span>
             <h5>Origen y distribución</h5>
@@ -147,14 +197,20 @@
                     <tr>
                         <td><i class="fa fa-map-marker w3-blue w3-padding-tiny"></i></td>
                         <td>Origen</td>
-                        <td><span id="Origen"></span><span class="editable"><a href="javascript:void(0)"
+                        <td><span id="Origen"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editOrigen" href="javascript:void(0)"
                                                                                onclick="edit('Origen')"><i
                                 class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-map-o w3-red w3-padding-tiny"></i></td>
                         <td>Distribución</td>
-                        <td><span id="Distribución"></span><span class="editable"><a href="javascript:void(0)"
+                        <td><span id="Distribución"></span><span class="editable"><a href="javascript:void(0)" ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editDistribucion"
                                                                                      onclick="edit('Distribución')"><i
                                 class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
@@ -162,7 +218,10 @@
                         <td><i
                                 class="fa fa-image w3-orange w3-text-white w3-padding-tiny"></i></td>
                         <td>Adaptación</td>
-                        <td><span id="Adaptación"></span><span class="editable"><a href="javascript:void(0)"
+                        <td><span id="Adaptación"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editAdaptacion" href="javascript:void(0)"
                                                                                    onclick="edit('Adaptación')"><i
                                 class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
@@ -171,6 +230,10 @@
                                 class="fa fa-arrows-v w3-green w3-text-white w3-padding-tiny"></i></td>
                         <td>Altitud</td>
                         <td><span id="Altitud"></span><span class="editable"><a href="javascript:void(0)"
+                        ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editAtitud"
                                                                                 onclick="edit('Altitud')"><i
                                 class="fa fa-edit w3-right"></i></a></span></td>
                     </tr>
@@ -187,7 +250,10 @@
         <div class="w3-row">
             <div class="w3-half">
                 <h5>Periodos</h5>
-                <p>Ciclo Vegetativo<span class="editable"><a href="javascript:void(0)"
+                <p>Ciclo Vegetativo<span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editCiclovegetativo" href="javascript:void(0)"
                                                              onclick="edit('Ciclo vegetativo')"><i
                         class="fa fa-edit w3-right"></i></a></span></p>
                 <div class="w3-progress-container w3-grey">
@@ -199,7 +265,10 @@
                     </div>
                 </div>
 
-                <p>Fotoperiodo<span class="editable"><a href="javascript:void(0)"
+                <p>Fotoperiodo<span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editFotoperiodo" href="javascript:void(0)"
                                                         onclick="edit('Fotoperíodo')"><i
                         class="fa fa-edit w3-right"></i></a></span></p>
                 <div class="w3-progress-container w3-grey w3-margin-bottom">
@@ -212,10 +281,16 @@
                 </div>
             </div>
             <div class="w3-half w3-row w3-padding">
-					<span
+					<span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close periods crop info"
                             onclick="this.parentElement.parentElement.style.display='none'"
                             class="w3-closebtn w3-padding">&times;</span>
-                <p>Tipo fotosintético<span style="display:none" id="Tipo Fotosintético"></span><span class="editable"><a
+                <p>Tipo fotosintético<span style="display:none" id="Tipo Fotosintético"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editTipoFotosintetico"
                         href="javascript:void(0)"
                         onclick="edit('Tipo Fotosintético')"><i
                         class="fa fa-edit w3-right"></i></a></span></p>
@@ -259,7 +334,10 @@
 
 <section id="suelo" class="w3-container w3-section ">
     <article class="w3-container w3-card-8 w3-row-padding">
-			<span
+			<span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close soil crop info"
                     onclick="this.parentElement.style.display='none'"
                     class="w3-closebtn w3-padding">&times;</span>
         <h5>Suelo</h5>
@@ -269,7 +347,10 @@
                     <i class="	fa fa-cubes w3-padding-tiny"></i>Textura
                 </dt>
                 <dd>
-                    <span id="Textura de suelo"></span><span class="editable"><a href="javascript:void(0)"
+                    <span id="Textura de suelo"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editTexturaSuelo" href="javascript:void(0)"
                                                                                  onclick="edit('Textura de suelo')"><i
                         class="fa fa-edit w3-right"></i></a></span>
                 </dd>
@@ -277,7 +358,10 @@
                     <i class="fa fa-database w3-padding-tiny"></i>Profundidad de suelo
                 </dt>
                 <dd>
-                    <span id="Profundidad de suelo"></span><span class="editable"><a href="javascript:void(0)"
+                    <span id="Profundidad de suelo"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editProfundidad" href="javascript:void(0)"
                                                                                      onclick="edit('Profundidad de suelo')"><i
                         class="fa fa-edit w3-right"></i></a></span>
                 </dd>
@@ -285,7 +369,10 @@
                     <i class="fa fa-filter  w3-padding-tiny"></i>Drenaje
                 </dt>
                 <dd>
-                    <span id="Drenaje"></span><span class="editable"><a href="javascript:void(0)"
+                    <span id="Drenaje"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editDrenaje" href="javascript:void(0)"
                                                                         onclick="edit('Drenaje')"><i
                         class="fa fa-edit w3-right"></i></a></span>
                 </dd>
@@ -299,12 +386,18 @@
 
 <section id="química" class="w3-container w3-section ">
     <article class="w3-container w3-card-8 w3-row-padding">
-			<span
+			<span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close chemical crop info"
                     onclick="this.parentElement.style.display='none'"
                     class="w3-closebtn w3-padding">&times;</span>
         <h4>Química</h4>
         <div class="w3-half">
-            <h5>Salinidad</h5><span class="editable"><a href="javascript:void(0)"
+            <h5>Salinidad</h5><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editSalinity" href="javascript:void(0)"
                                                         onclick="edit('Salinidad')"><i
                 class="fa fa-edit w3-right"></i></a></span>
             <img src="{% static 'osc/img/sal-masivo-halita-_sal-cristalizada_-1kg.jpg' %}"
@@ -366,7 +459,10 @@
             </div>
 
             <p>
-                <span id="pH"></span><span class="editable"><a href="javascript:void(0)"
+                <span id="pH"></span><span class="editable"><a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="editPH" href="javascript:void(0)"
                                                                onclick="edit('pH')"><i
                     class="fa fa-edit w3-right"></i></a></span>
             </p>
@@ -412,7 +508,10 @@
         <div id="cropForm">
             <div class="w3-card-4">
                 <div class="w3-container w3-light-grey">
-                    <span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+                    <span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close edit crop form" onclick="reloadPage()" class="w3-closebtn">&times;</span>
                     <h2 class="w3-text-dark-grey">
                         Valores de filtrado para el cultivo <input id="cropId"
                                                                    class="w3-light-grey w3-border-0" name="cultivo_id"
@@ -429,10 +528,16 @@
                     <div id="requirementsRows" class="w3-row-padding"></div>
 
                     <div class="w3-clear">
-                        <button onclick="updateCrop()"
+                        <button ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="updateCrop"  onclick="updateCrop()"
                                 class="w3-btn w3-left w3-light-grey">Modificar
                         </button>
-                        <a class="w3-btn-floating w3-right w3-grey w3-text-light-grey"
+                        <a ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="addMinMaxRequirementsRow" class="w3-btn-floating w3-right w3-grey w3-text-light-grey"
                            onclick="addMinMaxRequirementsRow()">+</a>
                     </div>
 
@@ -483,7 +588,10 @@
         <div id="propertyForm">
             <div class="w3-card-4">
                 <div class="w3-container w3-light-grey">
-                    <span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+                    <span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close editPropertyModal" onclick="reloadPage()" class="w3-closebtn">&times;</span>
                     <h2 class="w3-text-dark-grey">
                         <input id="propertyCropId" class="w3-light-grey w3-border-0" name="cultivo_id" type="number"
                                readonly="readonly">
@@ -507,14 +615,20 @@
 <div id="result" class="w3-modal">
     <div class="w3-modal-content w3-card-4">
         <header class="w3-container w3-light-grey">
-            <span onclick="reloadPage()" class="w3-closebtn">&times;</span>
+            <span ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close result" onclick="reloadPage()" class="w3-closebtn">&times;</span>
             <h2 class="w3-text-dark-grey">Actualización del cultivo</h2>
         </header>
         <div class="w3-container ">
             <div id="resultText" class=w3-container></div>
         </div>
         <footer class="w3-container w3-light-grey w3-padding-large">
-            <button onclick="reloadPage()" class="w3-btn w3-left w3-grey">Continar</button>
+            <button ga-on="click" 
+                      ga-event-category="Interactions"
+                      ga-event-action="click"
+                      ga-event-label="Close button result" onclick="reloadPage()" class="w3-btn w3-left w3-grey">Continar</button>
         </footer>
     </div>
 </div>

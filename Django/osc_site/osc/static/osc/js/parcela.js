@@ -599,6 +599,10 @@ function drawAlternatives(cadastralParcelFeatures) {
 					 + '			</div>'
 					 + ''
 					 + '			<button'
+					 + '				ga-on="click"'
+					 + '				ga-event-category="Interactions"'
+					 + '				ga-event-action="click"'
+					 + '				ga-event-label="Obtener informe"'
 					 + '				class="w3-btn w3-margin w3-dark-grey w3-right w3-ripple w3-small"'
 					 + '				onclick="document.getElementById(\'ReportInfo\').style.display=\'block\'">'
 					 + '				Obtener informe <i class="fa fa-file-text"></i>'
@@ -608,58 +612,48 @@ function drawAlternatives(cadastralParcelFeatures) {
 					 + '		<div class="w3-twothird">'
 					 + '	<div class="w3-row">'
 					 + '		<ul class="w3-navbar">'
-					 + '			<li class="w3-right w3-grey w3-text-white"><a href="javascript:void(0)" onclick="">Agrícolas</a></li>'
+					 + '			<li class="w3-right w3-grey w3-text-white"><a href="javascript:void(0)" onclick="" '
+					 + '															ga-on="click"'
+					 + '															ga-event-category="Interactions"'
+					 + '															ga-event-action="click"'
+					 + '															ga-event-label="Agrícolas"'
+					 + '                                                            >Agrícolas</a></li>'
 					 + '			<li class="w3-right"><a href="javascript:void(0)"'
-					 + '       	                 onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'">Energéticas</a>'
+					 + '       	                 onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'"'
+					 + '															ga-on="click"'
+					 + '															ga-event-category="Interactions"'
+					 + '															ga-event-action="click"'
+					 + '															ga-event-label="Energéticas"'
+					 + '															>Energéticas</a>'
 					 + '			</li>'
 					 + '			<li class="w3-right"><a href="javascript:void(0)"'
-					 + '       	                 onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'">Forestales</a>'
+					 + '       	                 onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'"'
+					 + '															ga-on="click"'
+					 + '															ga-event-category="Interactions"'
+					 + '															ga-event-action="click"'
+					 + '															ga-event-label="Forestales"'
+					 + '															>Forestales</a>'
 					 + '			</li>'
 					 + '			<li class="w3-right"><a href="javascript:void(0)"'
-					 + '    	                    onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'">Sociales</a>'
+					 + '    	                    onclick="document.getElementById(\'AlternativesInfo\').style.display=\'block\'"'
+					 + '															ga-on="click"'
+					 + '															ga-event-category="Interactions"'
+					 + '															ga-event-action="click"'
+					 + '															ga-event-label="Sociales"'
+					 + '															>Sociales</a>'
 					 + '			</li>'
 					 + '		</ul>'
 					 + '	</div>'
-					 + '				<img class="w3-right" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%">'
+					 + '				<a href="/osc/cultivo?cultivo_id=' + id + '" target="_blank"><img ga-on="click"' 
+					 + '					ga-event-category="Interactions"'
+					 + '					ga-event-action="click"'
+					 + '					ga-event-label="Select crop" class="w3-right" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%"></a>'
 					 + '		</div>'
 					 + '	</div>'
 					 + '</div>';
 
-				var modal = '<div id="' + id + '_modal" class="w3-modal">' +
-					' <div class="w3-modal-content">' +
-					'<div class="w3-container">' +
-					'<div class="w3-row w3-right">' +
-					' <div class="w3-col w3-right">' +
-					'<a href="/osc/cultivo?cultivo_id=' + id + '" target="_blank" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-large w3-margin-right"><i class="fa fa-binoculars"></i></a>' +
-					'<a href="#" class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'none\'"><i class="fa fa-remove"></i></a>' +
-					'</div>' +
-					'</div>' +
-					'<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">' +
-					'<tr class="w3-grey w3-text-light-grey"><th></th><th>' + crop["Nombres Comunes"] + ' (' + crop["Nombre Científico"] + ')</th></tr>' +
-					'<tr><td>Origen</td><td>' + crop["Origen"] + '</td></tr>' +
-					'<tr><td>Distribución</td><td>' + crop["Distribución"] + '</td></tr>' +
-					'<tr><td>Adaptación</td><td>' + crop["Adaptación"] + '</td></tr>' +
-					'<tr><td>Ciclo vegetativo</td><td>' + crop["Ciclo vegetativo"] + '</td></tr>' +
-					'<tr><td>Tipo Fotosintético</td><td>' + crop["Tipo Fotosintético"] + '</td></tr>' +
-					'<tr><td>Fotoperíodo</td><td>' + crop["Fotoperíodo"] + '</td></tr>' +
-					'<tr><td>Altitud</td><td>' + crop["Altitud"] + '</td></tr>' +
-					'<tr><td>Precipitación</td><td>' + crop["Precipitación"] + '</td></tr>' +
-					'<tr><td>Humedad ambiental</td><td>' + crop["Humedad ambiental"] + '</td></tr>' +
-					'<tr><td>Temperatura</td><td>' + crop["Temperatura"] + '</td></tr>' +
-					'<tr><td>Luz</td><td>' + crop["Luz"] + '</td></tr>' +
-					'<tr><td>Textura de suelo</td><td>' + crop["Textura de suelo"] + '</td></tr>' +
-					'<tr><td>Profundidad de suelo</td><td>' + crop["Profundidad de suelo"] + '</td></tr>' +
-					'<tr><td>Salinidad</td><td>' + crop["Salinidad"] + '</td></tr>' +
-					'<tr><td>pH</td><td>' + crop["pH"] + '</td></tr>' +
-					'<tr><td>Drenaje</td><td>' + crop["Drenaje"] + '</td></tr>' +
-					'<tr><td>Otros</td><td>' + crop["Otros"] + '</td></tr>' +
-					'</table>' +
-					'</div>' +
-					'</div>' +
-					'</div>';
-
 				document.getElementById('alternativesContainer').innerHTML += contenido;
-				document.getElementById('AlternativesCard').innerHTML += modal;
+				
 
 			}
 			carousel("mySlides");
