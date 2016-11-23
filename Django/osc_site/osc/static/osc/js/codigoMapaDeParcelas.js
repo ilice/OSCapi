@@ -3,13 +3,13 @@ var parcelas = [
 			lat : 40.439983,
 			lng : -5.737026,
 			foto : "/static/osc/img/IMG_20160501_175931.jpg",
-			url : "/osc/parcela?cadastral_code=37284A00600098&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
+			url : "/parcela?cadastral_code=37284A00600098&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
 		},
 		{
 			lat : 41.080364,
 			lng : -4.588973,
 			foto : "/static/osc/img/IMG_0882.JPG",
-			url : "/osc/parcela?cadastral_code=40066A00500025&longitud=-4.589025&nombre=La%20Nueva"
+			url : "/parcela?cadastral_code=40066A00500025&longitud=-4.589025&nombre=La%20Nueva"
 		} ];
 
 var marcadores = [];
@@ -202,7 +202,7 @@ function inicializaMapa() {
 				}
 			});
 
-			var url = "/osc/cadastral/parcel?bbox="
+			var url = "/cadastral/parcel?bbox="
 					+ getOptimalBbox(bbox).toUrlValue();
 
 			mapa.data.loadGeoJson(url, null, function(features) {
@@ -266,7 +266,7 @@ function inicializaMapa() {
 		                            + ' 		ga-event-action="click" '
 		                            + '         ga-event-label="Más detalles" '
 		                            + '			type="button" '
-		                            + '			onclick="window.open(\'/osc/parcela?cadastral_code='
+		                            + '			onclick="window.open(\'/parcela?cadastral_code='
 									+ nationalCadastralReference
 									+ '&nombre=Demo\')">Más detalles</button>';
 
@@ -411,7 +411,7 @@ function getCoodinatesFromNationalCadastralReference(nationalCadastralReference)
 
 	} else {
 
-		var url = '/osc/cadastral/parcel?cadastral_code='
+		var url = '/cadastral/parcel?cadastral_code='
 				+ nationalCadastralReference
 				+ '&retrieve_public_info=True&retrieve_climate_info=True';
 

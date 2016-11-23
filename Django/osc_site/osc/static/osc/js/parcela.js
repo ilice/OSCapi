@@ -394,7 +394,7 @@ function drawParcelInfoByNationalCadastralReference(
 	
 	//TODO creo el accessToken que debe ir en el cuerpo y no en la url
 
-	var url = '/osc/cadastral/parcel?cadastral_code='
+	var url = '/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
 		 + '&retrieve_public_info=True&retrieve_climate_info=True&retrieve_soil_info=True&accessToken='
 		 + (accessToken===undefined?'':accessToken);
@@ -540,7 +540,7 @@ function drawAlternatives(cadastralParcelFeatures) {
 
 	};
 
-	var url = "/osc/crops/elastic/search/";
+	var url = "/crops/elastic/search/";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
@@ -644,7 +644,7 @@ function drawAlternatives(cadastralParcelFeatures) {
 					 + '			</li>'
 					 + '		</ul>'
 					 + '	</div>'
-					 + '				<a href="/osc/cultivo?cultivo_id=' + id + '" target="_blank"><img ga-on="click"' 
+					 + '				<a href="/cultivo?cultivo_id=' + id + '" target="_blank"><img ga-on="click"' 
 					 + '					ga-event-category="Interactions"'
 					 + '					ga-event-action="click"'
 					 + '					ga-event-label="Select crop" class="w3-right" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%"></a>'
@@ -676,7 +676,7 @@ function drawLocationCard(cadastralParcelFeature) {
 		setValueInField(cadastralParcelFeature.properties.elevation.toFixed(2)
 			 + " m", "altitud_idea");
 
-		var urlbusqueda = "location.href='/osc/cultivos?altitud="
+		var urlbusqueda = "location.href='/cultivos?altitud="
 			 + cadastralParcelFeature.properties.elevation.toFixed() + "'";
 		document.getElementById('cultivos_por_altitud').setAttribute('onclick',
 			urlbusqueda);
@@ -1065,7 +1065,7 @@ function showError(error){
 	
 	var proposedAction = document.createElement('a');
 	proposedAction.setAttribute('class', 'w3-right');
-	proposedAction.setAttribute('href', '/osc/propietario/#contacto');
+	proposedAction.setAttribute('href', '/propietario/#contacto');
 	proposedAction.setAttribute('target', '_blank');
 	proposedAction.appendChild(document.createTextNode('Contacte con nosotros'));
 	
@@ -1473,7 +1473,7 @@ function drawUser(accessToken) {
 	
 	console.log('drawUser');
 	
-	var userEndPoint = "/osc/....";
+	var userEndPoint = "/....";
 	var data = {accessToken: accessToken};
 	
 	/*var request = jQuery.ajax({
@@ -1703,7 +1703,7 @@ function facebookAuthorizationGrant() {
 
 function getAccessToken(authorizationGrant){
 
-	var authorizationTokenEndPoint = "/osc/....";
+	var authorizationTokenEndPoint = "/....";
 		
 	/*var request = jQuery.ajax({
 		crossDomain : true,
@@ -1749,7 +1749,7 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	var check;
 	
 	var a = document.createElement('a');
-	a.setAttribute('href', '/osc/cultivo?cultivo_id=' + crop.Clave);
+	a.setAttribute('href', '/cultivo/?cultivo_id=' + crop.Clave);
 	a.setAttribute('target', '_blank');
 	var image = document.createElement('img');
 	image.setAttribute('src','/static/osc/img/cultivos/' + crop['Foto']);

@@ -17,7 +17,7 @@ function cargaDatos() {
 	document.getElementById('propertyCropId').value = cultivo_id;
 	document.getElementById('cultivo_id').value = cultivo_id;
 
-	var url = "/osc/crops/elastic/search/";
+	var url = "/crops/elastic/search/";
 
 	var data = {
 		"query" : {
@@ -569,7 +569,7 @@ function updateCrop() {
 	var data = {
 		doc : doc
 	};
-	var url = "/osc/crops/elastic/update/" + cropId + "/";
+	var url = "/crops/elastic/update/" + cropId + "/";
 
 	var request = jQuery.ajax({
 		crossDomain : true,
@@ -717,7 +717,7 @@ function updatePropertyCrop(property){
 
 	data["doc_as_upsert"] = "true";
 
-	var url = "/osc/crops/elastic/update/" + document.getElementById("cropId").value + "/";
+	var url = "/crops/elastic/update/" + document.getElementById("cropId").value + "/";
 
 
     var request = jQuery.ajax({

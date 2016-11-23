@@ -70,7 +70,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 
 	};
 
-	var url = "/osc/crops/elastic/search/";
+	var url = "/crops/elastic/search/";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
@@ -96,7 +96,7 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 			}
 
 			var contenido = '<a style="text-decoration:none;" ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Crop details"' +
-				'href="/osc/cultivo?cultivo_id=' + id + '" target="_blank" class="w3-third w3-container">' +
+				'href="/cultivo?cultivo_id=' + id + '" target="_blank" class="w3-third w3-container">' +
 				'<div id="' + id + '" class="w3-margin w3-card-8 w3-hover-opacity">' +
 				'<img src="/static/osc/img/cultivos/' + crop.Foto + '" style="width:100%"/>' +
 				'<div class="w3-container">' +
