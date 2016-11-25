@@ -3,70 +3,70 @@
 		"requirements" : {
 			"properties" : {
 				"Adaptación" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Altitud" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Ciclo vegetativo" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Clave" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Distribución" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Drenaje" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Familia" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Foto" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Fotoperíodo" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Humedad ambiental" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Luz" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Nombre" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Nombre Científico" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Nombres Comunes" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Origen" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Otros" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Precipitación" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Profundidad de suelo" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Salinidad" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Temperatura" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Textura de suelo" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"Tipo Fotosintético" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"altitude" : {
 					"properties" : {
@@ -77,15 +77,41 @@
 							"type" : "integer"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
+						}
+					}
+				},
+				"optimal_altitude" : {
+					"properties" : {
+						"max" : {
+							"type" : "integer"
+						},
+						"min" : {
+							"type" : "integer"
+						},
+						"obs" : {
+							"type" : "text"
 						}
 					}
 				},
 				"labels" : {
-					"type" : "string"
+					"type" : "text"
+				},
+				"latitude" : {
+					"properties" : {
+						"max" : {
+							"type" : "float"
+						},
+						"min" : {
+							"type" : "float"
+						},
+						"obs" : {
+							"type" : "text"
+						}
+					}
 				},
 				"pH" : {
-					"type" : "string"
+					"type" : "text"
 				},
 				"ph" : {
 					"properties" : {
@@ -96,7 +122,20 @@
 							"type" : "float"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
+						}
+					}
+				},
+				"optimal_ph" : {
+					"properties" : {
+						"max" : {
+							"type" : "float"
+						},
+						"min" : {
+							"type" : "float"
+						},
+						"obs" : {
+							"type" : "text"
 						}
 					}
 				},
@@ -109,7 +148,20 @@
 							"type" : "float"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
+						}
+					}
+				},
+				"optimal_rainfall" : {
+					"properties" : {
+						"max" : {
+							"type" : "float"
+						},
+						"min" : {
+							"type" : "float"
+						},
+						"obs" : {
+							"type" : "text"
 						}
 					}
 				},
@@ -122,7 +174,20 @@
 							"type" : "integer"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
+						}
+					}
+				},
+				"optimal_sunHours" : {
+					"properties" : {
+						"max" : {
+							"type" : "integer"
+						},
+						"min" : {
+							"type" : "integer"
+						},
+						"obs" : {
+							"type" : "text"
 						}
 					}
 				},
@@ -135,20 +200,20 @@
 							"type" : "float"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
 						}
 					}
 				},
-				"latitude" : {
+				"optimal_temperature" : {
 					"properties" : {
 						"max" : {
-							"type" : "integer"
+							"type" : "float"
 						},
 						"min" : {
-							"type" : "integer"
+							"type" : "float"
 						},
 						"obs" : {
-							"type" : "string"
+							"type" : "text"
 						}
 					}
 				}
