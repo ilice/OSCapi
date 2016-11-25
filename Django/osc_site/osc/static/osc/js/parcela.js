@@ -485,25 +485,18 @@ function drawAlternatives(cadastralParcelFeatures) {
 	if (!(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') === undefined)) {
 		var plotMinTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.min_temperature').toFixed();
 		var plotMaxTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.max_temperature').toFixed();
+		
 		var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
 		queries.push(temperatureQuery);
 		
-		var optimalTemperatureQuery = createQueryForTypeAndRange("optimal_temperature", plotMinTemperature, plotMaxTemperature);
-		queries.push(optimalTemperatureQuery);
-
 		var plotYearlyRainfall = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_rainfall').toFixed();
 		var rainfallQuery = createQueryForTypeAndValue("rainfall", plotYearlyRainfall);
 		queries.push(rainfallQuery);
 		
-		var optimalrainfallQuery = createQueryForTypeAndValue("optimal_rainfall", plotYearlyRainfall);
-		queries.push(optimalrainfallQuery);
-
 		var plotYearlySunHours = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_sun_hours').toFixed();
 		var sunHoursQuery = createQueryForTypeAndValue("sunHours", plotYearlySunHours);
 		queries.push(sunHoursQuery);
 		
-		var optimalSunHoursQuery = createQueryForTypeAndValue("optimal_sunHours", plotYearlySunHours);
-		queries.push(optimalSunHoursQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.reference_point.lat') === undefined)) {
@@ -517,17 +510,13 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var pH_in_H2OQuery = createQueryForTypeAndValue("ph", plotpH_inH2O);
 		queries.push(pH_in_H2OQuery);
 		
-		var optimalpH_in_H2OQuery = createQueryForTypeAndValue("optimal_ph", plotpH_inH2O);
-		queries.push(optimalpH_in_H2OQuery);
 	}
 	
 	if (!(cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') === undefined)) {
 		var plotpH_in_CaCl2 = cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2');
 		var pH_in_CaCl2Query = createQueryForTypeAndValue("ph", plotpH_in_CaCl2);
 		queries.push(pH_in_CaCl2Query);
-		
-		var optimalpH_in_CaCl2Query = createQueryForTypeAndValue("optimal_ph", plotpH_in_CaCl2);
-		queries.push(optimalpH_in_CaCl2Query);
+
 	}
 
 	var numeroCultivosACargar = 100;
@@ -1191,6 +1180,8 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 	var query;
 	var minType = type + ".min";
 	var maxType = type + ".max";
+	var minOptimalType = "optimal_" + type + ".min";
+	var maxOptimalType = "optimal_" + type + ".max";
 	// Dis Max Query: A query that generates the union of documents produced by
 	// its subqueries,
 	// and that scores each document with the maximum score for that document as
@@ -1217,6 +1208,25 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				]
 			}
 		};
+		
+		var subqueryValueBetweenMinAndMaxOptimalValueForCrop = {
+				bool : {
+					must : [{
+							range : {
+								[minOptimalType] : {
+									lte : minValue
+								}
+							}
+						}, {
+							range : {
+								[maxOptimalType] : {
+									gte : maxValue
+								}
+							}
+						}
+					]
+				}
+			};
 
 		var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
 			bool : {
@@ -1234,6 +1244,23 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[minOptimalType] : {
+								lte : minValue
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
 			bool : {
@@ -1251,6 +1278,23 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[maxOptimalType] : {
+								gte : maxValue
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryCropsWithoutValueRanges = {
 			bool : {
@@ -1266,6 +1310,21 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryCropsWithoutOptimalValueRanges = {
+				bool : {
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		query = {
 			dis_max : {
@@ -1273,9 +1332,13 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				boost : 1.2,
 				queries : [
 					subqueryValueBetweenMinAndMaxValueForCrop,
+					subqueryValueBetweenMinAndMaxOptimalValueForCrop,
 					subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+					subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop,
 					subqueryValueSmallerThanMaxWithoutMinValueForCrop,
-					subqueryCropsWithoutValueRanges
+					subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop,
+					subqueryCropsWithoutValueRanges,
+					subqueryCropsWithoutOptimalValueRanges
 				]
 			}
 		};
