@@ -9,8 +9,15 @@ var parcelas = [
 			lat : 41.080364,
 			lng : -4.588973,
 			foto : "/static/osc/img/IMG_0882.JPG",
-			url : "/parcela?cadastral_code=40066A00500025&longitud=-4.589025&nombre=La%20Nueva"
-		} ];
+			url : "/parcela?cadastral_code=40066A00500025&nombre=La%20Nueva"
+		},
+		{
+			lat : 42.42134234731058,
+			lng : -2.9352070971348705,
+			foto : "/static/osc/img/basajaun.jpg",
+			url : "/parcela/?cadastral_code=26138A50100036&nombre=La%20parcela%20del%20Basajaun"
+		}
+		];
 
 var marcadores = [];
 var mapa;
