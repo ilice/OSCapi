@@ -522,6 +522,7 @@ function drawAlternatives(cadastralParcelFeatures) {
 	var query = aggregateQueries(queries);
 
 	var data = {
+		explain: "true",	
 		size : numeroCultivosACargar,
 		query
 
@@ -547,8 +548,9 @@ function drawAlternatives(cadastralParcelFeatures) {
 			for (cropNumber in crops) {
 				var crop = crops[cropNumber]._source;
 				var score = crops[cropNumber]._score;
+				var explanation = crops[cropNumber]._explanation;
 				
-				addAlternativesTableRow(crop, score, cadastralParcelFeatures);
+				addAlternativesTableRow(crop, score, explanation, cadastralParcelFeatures);
 
 				var id = crops[cropNumber]._id;
 
@@ -1877,7 +1879,8 @@ function getProperty(property){
 }
 
 
-function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
+function addAlternativesTableRow(crop, score, explanation, cadastralParcelFeatures){
+	explanation.has = has;
 	var table = document.getElementById('AlternativesTableContent');
 	var row = document.createElement('tr');
 	var td = document.createElement('td');
@@ -1905,9 +1908,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td.setAttribute('class', 'w3-center');
 	
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.optimal_altitude != undefined && crop.optimal_altitude.length > 0){
+	if(explanation.has('optimal_altitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.altitude != undefined && crop.altitude.length > 0){
+	} else if(explanation.has('altitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1916,9 +1919,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.optimal_ph != undefined && crop.optimal_ph.length > 0){
+	if(explanation.has('optimal_ph')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.ph != undefined && crop.ph.length > 0){
+	} else if(explanation.has('ph')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1927,9 +1930,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_rainfall != undefined && crop.optimal_rainfall.length > 0){
+	if(explanation.has('optimal_rainfall')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.rainfall != undefined && crop.rainfall.length > 0){
+	} else if(explanation.has('rainfall')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1938,9 +1941,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_sunHours != undefined && crop.optimal_sunHours.length > 0){
+	if(explanation.has('optimal_sunHours')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.sunHours != undefined && crop.sunHours.length > 0){
+	} else if(explanation.has('sunHours')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1949,7 +1952,7 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.reference_point.lat') != undefined && crop.latitude != undefined && crop.latitude.length > 0){
+	if(explanation.has('latitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
 	}
 	td.appendChild(check);
@@ -1958,9 +1961,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_temperature != undefined && crop.optimal_temperature.length > 0){
+	if(explanation.has('optimal_temperature')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.temperature != undefined && crop.temperature.length > 0){
+	} else if(explanation.has('temperature')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -2036,4 +2039,20 @@ function createProgressCircle(percent){
 	drawCircle('#efefef', options.lineWidth, 100 / 100);
 	drawCircle('#555555', options.lineWidth, options.percent / 100);
 
+}
+
+function has(description){
+	var hasDescription = false;
+	var explanation = this;
+	if (explanation.description.includes(description)){
+		return true;
+	}else{
+		var details = explanation.details;
+		for(var explanationNumber = 0; explanationNumber < details.length && hasDescription != true; explanationNumber++){
+			explanation = details[explanationNumber];
+			explanation.has = has;
+			hasDescription = explanation.has(description);
+		}		
+	}
+	return hasDescription;
 }
