@@ -1081,6 +1081,8 @@ function createQueryForTypeAndValue(type, value) {
 	var query;
 	var minType = type + ".min";
 	var maxType = type + ".max";
+	var minOptimalType = "optimal_" + type + ".min";
+	var maxOptimalType = "optimal_" + type + ".max";
 	// Dis Max Query: A query that generates the union of documents produced by
 	// its subqueries,
 	// and that scores each document with the maximum score for that document as
@@ -1107,6 +1109,25 @@ function createQueryForTypeAndValue(type, value) {
 				]
 			}
 		};
+		
+		var subqueryValueBetweenMinAndMaxOptimalValueForCrop = {
+				bool : {
+					must : [{
+							range : {
+								[minOptimalType] : {
+									lte : value
+								}
+							}
+						}, {
+							range : {
+								[maxOptimalType] : {
+									gte : value
+								}
+							}
+						}
+					]
+				}
+			};
 
 		var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
 			bool : {
@@ -1124,6 +1145,23 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[minOptimalType] : {
+								lte : value
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
 			bool : {
@@ -1141,6 +1179,23 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[maxOptimalType] : {
+								gte : value
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryCropsWithoutValueRanges = {
 			bool : {
@@ -1156,6 +1211,21 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryCropsWithoutOptimalValueRanges = {
+				bool : {
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		query = {
 			dis_max : {
@@ -1163,9 +1233,13 @@ function createQueryForTypeAndValue(type, value) {
 				boost : 1.2,
 				queries : [
 					subqueryValueBetweenMinAndMaxValueForCrop,
+					subqueryValueBetweenMinAndMaxOptimalValueForCrop,
 					subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+					subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop,
 					subqueryValueSmallerThanMaxWithoutMinValueForCrop,
-					subqueryCropsWithoutValueRanges
+					subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop,
+					subqueryCropsWithoutValueRanges,
+					subqueryCropsWithoutOptimalValueRanges
 				]
 			}
 		};
