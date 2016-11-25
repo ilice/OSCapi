@@ -143,28 +143,26 @@ function cargaDatos() {
 
 						}
 						
-						var sunHoursRequirements = crop.sunHours;
+						var sunHoursRequirements = crop.optimal_sunHours;
 						for (sunHoursRequirementsNumber in sunHoursRequirements){
 						    var sunHours = sunHoursRequirements[sunHoursRequirementsNumber];
 
 						    addMinMaxRequirementsRow("Sol Óptimo", sunHours);
 						}
 
-						var temperatureRequirements = crop.temperature;
+						var temperatureRequirements = crop.optimal_temperature;
 						for (temperatureRequirementsNumber in temperatureRequirements){
 						    var temperature = temperatureRequirements[temperatureRequirementsNumber];
 
 						    addMinMaxRequirementsRow("Temperatura Óptimo", temperature);
 						}
 
-						var rainfallRequirements = crop.rainfall;
+						var rainfallRequirements = crop.optimal_rainfall;
 						for (rainfallRequitementNumber in rainfallRequirements){
 						    var rainfall = rainfallRequirements[rainfallRequitementNumber];
 
 						    addMinMaxRequirementsRow("Precipitaciones Óptimo", rainfall);
 						}
-
-						
 						
 						var tags = crop.labels;
 						for (tagNumber in tags){
