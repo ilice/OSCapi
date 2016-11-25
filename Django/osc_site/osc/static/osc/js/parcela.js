@@ -478,8 +478,6 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
 		queries.push(altitudeQuery);
 		
-		var optimalAltitudeQuery = createQueryForTypeAndValue("optimal_altitude", altitude);
-		queries.push(optimalAltitudeQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') === undefined)) {
