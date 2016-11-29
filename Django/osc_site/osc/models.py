@@ -1,6 +1,16 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
+from django.conf import settings
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 
 class Error(models.Model):
@@ -28,3 +38,20 @@ class Feed(models.Model):
     update_date = models.DateTimeField()
     success = models.BooleanField()
     info = models.TextField(null=True)
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_profile(sender, instance, created=False, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    else:
+        instance.userprofile.save()
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+
+class UserParcel(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    cadastral_code = models.CharField(max_length=255)

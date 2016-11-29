@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Error, Feed
+from .models import Error, Feed, UserProfile, UserParcel
 
 # Register your models here.
 
@@ -20,3 +20,17 @@ class FeedAdmin(admin.ModelAdmin):
     list_filter = ('success',)
 
 admin.site.register(Feed, FeedAdmin)
+
+
+class UserProfileAdmin(admin.ModelAdmin):
+    # define which columns displayed in changelist
+    list_display = ('user', )
+
+admin.site.register(UserProfile, UserProfileAdmin)
+
+
+class UserParcelAdmin(admin.ModelAdmin):
+    # define which columns displayed in changelist
+    list_display = ('user', 'cadastral_code',)
+
+admin.site.register(UserParcel, UserParcelAdmin)

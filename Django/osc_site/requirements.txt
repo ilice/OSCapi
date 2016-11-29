@@ -13,3 +13,4 @@ pyshp
 feedparser
 geopy
 pytz
+djangorestframework

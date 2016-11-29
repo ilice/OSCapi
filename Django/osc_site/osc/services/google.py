@@ -22,7 +22,7 @@ def obtain_elevation_from_google(centers):
     if centers is tuple:
         centers = [centers]
 
-    chunk_size = settings.GOOGLE_ELEVATION['chunk_size']
+    chunk_size = settings.GOOGLE['chunk_size']
 
     elevations = []
     for i in range(0, len(centers), chunk_size):

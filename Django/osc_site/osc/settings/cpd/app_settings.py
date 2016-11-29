@@ -12,9 +12,11 @@ ELASTICSEARCH = {
     'port': 9200
 }
 
-GOOGLE_ELEVATION = {
+GOOGLE = {
     'chunk_size': 512,
-    'api_key': get_secret(secrets, 'Google Elevation', 'api_key')
+    'api_key': get_secret(secrets, 'Google Elevation', 'api_key'),
+    'auth_client_id': get_secret(secrets, 'Google Auth', 'client_id'),
+    'auth_client_secret': get_secret(secrets, 'Google Auth', 'client_secret'),
 }
 
 INFORIEGO = {
