@@ -4,7 +4,7 @@ services:
     image: postgres
   web:
     build: .
-    command: bash -c "python manage.py collectstatic --noinput && gunicorn osc_site.wsgi"
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn osc_site.wsgi -b 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
