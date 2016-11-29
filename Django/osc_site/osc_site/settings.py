@@ -126,6 +126,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 try:
-    from osc.settings.teanocrata_dev.app_settings import *
+    from osc.settings.dev.app_settings import *
 except ImportError:
     from osc.settings.cpd.app_settings import *
