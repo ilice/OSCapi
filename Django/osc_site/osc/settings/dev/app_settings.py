@@ -6,6 +6,14 @@ SECRETS_PATH = 'C:/Users/jlafu/opensmartcountry.ini'
 secrets = ConfigParser.ConfigParser()
 secrets.read(SECRETS_PATH)
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = secrets.get('django', 'SECRET_KEY')
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
+DEBUG = True
+ALLOWED_HOSTS = []
+
 ELASTICSEARCH = {
     'chunk_size': 100,
     'host': '94.76.229.213',

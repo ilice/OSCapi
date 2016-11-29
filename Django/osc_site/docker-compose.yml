@@ -4,7 +4,7 @@ services:
     image: postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000 --settings=osc.settings.cpd.app_settings
+    command: bash -c "python manage.py collectstatic && gunicorn mysite.wsgi"
     volumes:
       - .:/code
     ports:

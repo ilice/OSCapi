@@ -63,6 +63,7 @@ Django/opensmartcountry.ini
 *.sqlite3
 Django/osc_site/osc/settings/teanocrata_dev
 Django/osc_site/oscenv
+Django/osc_site/staticfiles
 
 #IDE metadata
 .idea/
