@@ -394,7 +394,7 @@ function drawParcelInfoByNationalCadastralReference(
 	
 	//TODO creo el accessToken que debe ir en el cuerpo y no en la url
 
-	var url = '/osc/cadastral/parcel?cadastral_code='
+	var url = '/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
 		 + '&retrieve_public_info=True&retrieve_climate_info=True&retrieve_soil_info=True&accessToken='
 		 + (accessToken===undefined?'':accessToken);
@@ -478,32 +478,23 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var altitudeQuery = createQueryForTypeAndValue("altitude", altitude);
 		queries.push(altitudeQuery);
 		
-		var optimalAltitudeQuery = createQueryForTypeAndValue("optimal_altitude", altitude);
-		queries.push(optimalAltitudeQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') === undefined)) {
 		var plotMinTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.min_temperature').toFixed();
 		var plotMaxTemperature = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.max_temperature').toFixed();
+		
 		var temperatureQuery = createQueryForTypeAndRange("temperature", plotMinTemperature, plotMaxTemperature);
 		queries.push(temperatureQuery);
 		
-		var optimalTemperatureQuery = createQueryForTypeAndRange("optimal_temperature", plotMinTemperature, plotMaxTemperature);
-		queries.push(optimalTemperatureQuery);
-
 		var plotYearlyRainfall = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_rainfall').toFixed();
 		var rainfallQuery = createQueryForTypeAndValue("rainfall", plotYearlyRainfall);
 		queries.push(rainfallQuery);
 		
-		var optimalrainfallQuery = createQueryForTypeAndValue("optimal_rainfall", plotYearlyRainfall);
-		queries.push(optimalrainfallQuery);
-
 		var plotYearlySunHours = cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year.sum_sun_hours').toFixed();
 		var sunHoursQuery = createQueryForTypeAndValue("sunHours", plotYearlySunHours);
 		queries.push(sunHoursQuery);
 		
-		var optimalSunHoursQuery = createQueryForTypeAndValue("optimal_sunHours", plotYearlySunHours);
-		queries.push(optimalSunHoursQuery);
 	}
 
 	if (!(cadastralParcelFeatures.getProperty('properties.reference_point.lat') === undefined)) {
@@ -517,17 +508,13 @@ function drawAlternatives(cadastralParcelFeatures) {
 		var pH_in_H2OQuery = createQueryForTypeAndValue("ph", plotpH_inH2O);
 		queries.push(pH_in_H2OQuery);
 		
-		var optimalpH_in_H2OQuery = createQueryForTypeAndValue("optimal_ph", plotpH_inH2O);
-		queries.push(optimalpH_in_H2OQuery);
 	}
 	
 	if (!(cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') === undefined)) {
 		var plotpH_in_CaCl2 = cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2');
 		var pH_in_CaCl2Query = createQueryForTypeAndValue("ph", plotpH_in_CaCl2);
 		queries.push(pH_in_CaCl2Query);
-		
-		var optimalpH_in_CaCl2Query = createQueryForTypeAndValue("optimal_ph", plotpH_in_CaCl2);
-		queries.push(optimalpH_in_CaCl2Query);
+
 	}
 
 	var numeroCultivosACargar = 100;
@@ -535,12 +522,13 @@ function drawAlternatives(cadastralParcelFeatures) {
 	var query = aggregateQueries(queries);
 
 	var data = {
+		explain: "true",	
 		size : numeroCultivosACargar,
 		query
 
 	};
 
-	var url = "/osc/crops/elastic/search/";
+	var url = "/crops/elastic/search/";
 
 	var request = jQuery.ajax({
 			crossDomain : true,
@@ -560,8 +548,9 @@ function drawAlternatives(cadastralParcelFeatures) {
 			for (cropNumber in crops) {
 				var crop = crops[cropNumber]._source;
 				var score = crops[cropNumber]._score;
+				var explanation = crops[cropNumber]._explanation;
 				
-				addAlternativesTableRow(crop, score, cadastralParcelFeatures);
+				addAlternativesTableRow(crop, score, explanation, cadastralParcelFeatures);
 
 				var id = crops[cropNumber]._id;
 
@@ -644,7 +633,7 @@ function drawAlternatives(cadastralParcelFeatures) {
 					 + '			</li>'
 					 + '		</ul>'
 					 + '	</div>'
-					 + '				<a href="/osc/cultivo?cultivo_id=' + id + '" target="_blank"><img ga-on="click"' 
+					 + '				<a href="/cultivo?cultivo_id=' + id + '" target="_blank"><img ga-on="click"' 
 					 + '					ga-event-category="Interactions"'
 					 + '					ga-event-action="click"'
 					 + '					ga-event-label="Select crop" class="w3-right" onclick="document.getElementById(\'' + id + '_modal\').style.display=\'block\'" src="/static/osc/img/cultivos/' + crop.Foto + '" style="width: 100%"></a>'
@@ -676,7 +665,7 @@ function drawLocationCard(cadastralParcelFeature) {
 		setValueInField(cadastralParcelFeature.properties.elevation.toFixed(2)
 			 + " m", "altitud_idea");
 
-		var urlbusqueda = "location.href='/osc/cultivos?altitud="
+		var urlbusqueda = "location.href='/cultivos?altitud="
 			 + cadastralParcelFeature.properties.elevation.toFixed() + "'";
 		document.getElementById('cultivos_por_altitud').setAttribute('onclick',
 			urlbusqueda);
@@ -1065,7 +1054,7 @@ function showError(error){
 	
 	var proposedAction = document.createElement('a');
 	proposedAction.setAttribute('class', 'w3-right');
-	proposedAction.setAttribute('href', '/osc/propietario/#contacto');
+	proposedAction.setAttribute('href', '/propietario/#contacto');
 	proposedAction.setAttribute('target', '_blank');
 	proposedAction.appendChild(document.createTextNode('Contacte con nosotros'));
 	
@@ -1094,6 +1083,8 @@ function createQueryForTypeAndValue(type, value) {
 	var query;
 	var minType = type + ".min";
 	var maxType = type + ".max";
+	var minOptimalType = "optimal_" + type + ".min";
+	var maxOptimalType = "optimal_" + type + ".max";
 	// Dis Max Query: A query that generates the union of documents produced by
 	// its subqueries,
 	// and that scores each document with the maximum score for that document as
@@ -1120,6 +1111,25 @@ function createQueryForTypeAndValue(type, value) {
 				]
 			}
 		};
+		
+		var subqueryValueBetweenMinAndMaxOptimalValueForCrop = {
+				bool : {
+					must : [{
+							range : {
+								[minOptimalType] : {
+									lte : value
+								}
+							}
+						}, {
+							range : {
+								[maxOptimalType] : {
+									gte : value
+								}
+							}
+						}
+					]
+				}
+			};
 
 		var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
 			bool : {
@@ -1137,6 +1147,23 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[minOptimalType] : {
+								lte : value
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
 			bool : {
@@ -1154,6 +1181,23 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[maxOptimalType] : {
+								gte : value
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryCropsWithoutValueRanges = {
 			bool : {
@@ -1169,6 +1213,21 @@ function createQueryForTypeAndValue(type, value) {
 				}
 			}
 		};
+		
+		var subqueryCropsWithoutOptimalValueRanges = {
+				bool : {
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		query = {
 			dis_max : {
@@ -1176,9 +1235,13 @@ function createQueryForTypeAndValue(type, value) {
 				boost : 1.2,
 				queries : [
 					subqueryValueBetweenMinAndMaxValueForCrop,
+					subqueryValueBetweenMinAndMaxOptimalValueForCrop,
 					subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+					subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop,
 					subqueryValueSmallerThanMaxWithoutMinValueForCrop,
-					subqueryCropsWithoutValueRanges
+					subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop,
+					subqueryCropsWithoutValueRanges,
+					subqueryCropsWithoutOptimalValueRanges
 				]
 			}
 		};
@@ -1191,6 +1254,8 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 	var query;
 	var minType = type + ".min";
 	var maxType = type + ".max";
+	var minOptimalType = "optimal_" + type + ".min";
+	var maxOptimalType = "optimal_" + type + ".max";
 	// Dis Max Query: A query that generates the union of documents produced by
 	// its subqueries,
 	// and that scores each document with the maximum score for that document as
@@ -1217,6 +1282,25 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				]
 			}
 		};
+		
+		var subqueryValueBetweenMinAndMaxOptimalValueForCrop = {
+				bool : {
+					must : [{
+							range : {
+								[minOptimalType] : {
+									lte : minValue
+								}
+							}
+						}, {
+							range : {
+								[maxOptimalType] : {
+									gte : maxValue
+								}
+							}
+						}
+					]
+				}
+			};
 
 		var subqueryValueGreaterThanMinWithoutMaxValueForCrop = {
 			bool : {
@@ -1234,6 +1318,23 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[minOptimalType] : {
+								lte : minValue
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryValueSmallerThanMaxWithoutMinValueForCrop = {
 			bool : {
@@ -1251,6 +1352,23 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop = {
+				bool : {
+					must : {
+						range : {
+							[maxOptimalType] : {
+								gte : maxValue
+							}
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		var subqueryCropsWithoutValueRanges = {
 			bool : {
@@ -1266,6 +1384,21 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				}
 			}
 		};
+		
+		var subqueryCropsWithoutOptimalValueRanges = {
+				bool : {
+					must_not : {
+						exists : {
+							field : maxOptimalType
+						}
+					},
+					must_not : {
+						exists : {
+							field : minOptimalType
+						}
+					}
+				}
+			};
 
 		query = {
 			dis_max : {
@@ -1273,9 +1406,13 @@ function createQueryForTypeAndRange(type, minValue, maxValue) {
 				boost : 1.2,
 				queries : [
 					subqueryValueBetweenMinAndMaxValueForCrop,
+					subqueryValueBetweenMinAndMaxOptimalValueForCrop,
 					subqueryValueGreaterThanMinWithoutMaxValueForCrop,
+					subqueryValueGreaterThanMinWithoutMaxOptimalValueForCrop,
 					subqueryValueSmallerThanMaxWithoutMinValueForCrop,
-					subqueryCropsWithoutValueRanges
+					subqueryValueSmallerThanMaxWithoutMinOptimalValueForCrop,
+					subqueryCropsWithoutValueRanges,
+					subqueryCropsWithoutOptimalValueRanges
 				]
 			}
 		};
@@ -1473,7 +1610,7 @@ function drawUser(accessToken) {
 	
 	console.log('drawUser');
 	
-	var userEndPoint = "/osc/....";
+	var userEndPoint = "/....";
 	var data = {accessToken: accessToken};
 	
 	/*var request = jQuery.ajax({
@@ -1703,7 +1840,7 @@ function facebookAuthorizationGrant() {
 
 function getAccessToken(authorizationGrant){
 
-	var authorizationTokenEndPoint = "/osc/....";
+	var authorizationTokenEndPoint = "/....";
 		
 	/*var request = jQuery.ajax({
 		crossDomain : true,
@@ -1742,14 +1879,15 @@ function getProperty(property){
 }
 
 
-function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
+function addAlternativesTableRow(crop, score, explanation, cadastralParcelFeatures){
+	explanation.has = has;
 	var table = document.getElementById('AlternativesTableContent');
 	var row = document.createElement('tr');
 	var td = document.createElement('td');
 	var check;
 	
 	var a = document.createElement('a');
-	a.setAttribute('href', '/osc/cultivo?cultivo_id=' + crop.Clave);
+	a.setAttribute('href', '/cultivo/?cultivo_id=' + crop.Clave);
 	a.setAttribute('target', '_blank');
 	var image = document.createElement('img');
 	image.setAttribute('src','/static/osc/img/cultivos/' + crop['Foto']);
@@ -1770,9 +1908,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td.setAttribute('class', 'w3-center');
 	
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.optimal_altitude != undefined && crop.optimal_altitude.length > 0){
+	if(explanation.has('optimal_altitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty("properties.elevation") != undefined && crop.altitude != undefined && crop.altitude.length > 0){
+	} else if(explanation.has('altitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1781,9 +1919,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.optimal_ph != undefined && crop.optimal_ph.length > 0){
+	if(explanation.has('optimal_ph')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if((cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_H2O') != undefined || cadastralParcelFeatures.getProperty('properties.closest_soil_measure.pH_in_CaCl2') != undefined) && crop.ph != undefined && crop.ph.length > 0){
+	} else if(explanation.has('ph')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1792,9 +1930,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_rainfall != undefined && crop.optimal_rainfall.length > 0){
+	if(explanation.has('optimal_rainfall')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.rainfall != undefined && crop.rainfall.length > 0){
+	} else if(explanation.has('rainfall')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1803,9 +1941,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_sunHours != undefined && crop.optimal_sunHours.length > 0){
+	if(explanation.has('optimal_sunHours')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.sunHours != undefined && crop.sunHours.length > 0){
+	} else if(explanation.has('sunHours')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1814,7 +1952,7 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.reference_point.lat') != undefined && crop.latitude != undefined && crop.latitude.length > 0){
+	if(explanation.has('latitude')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
 	}
 	td.appendChild(check);
@@ -1823,9 +1961,9 @@ function addAlternativesTableRow(crop, score, cadastralParcelFeatures){
 	td = document.createElement('td');
 	td.setAttribute('class', 'w3-center');
 	check = document.createElement('i');
-	if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.optimal_temperature != undefined && crop.optimal_temperature.length > 0){
+	if(explanation.has('optimal_temperature')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-green');
-	} else if(cadastralParcelFeatures.getProperty('properties.climate_aggregations.last_year') != undefined && crop.temperature != undefined && crop.temperature.length > 0){
+	} else if(explanation.has('temperature')){
 		check.setAttribute('class', 'fa fa-check-square-o w3-text-orange');
 	}
 	td.appendChild(check);
@@ -1901,4 +2039,20 @@ function createProgressCircle(percent){
 	drawCircle('#efefef', options.lineWidth, 100 / 100);
 	drawCircle('#555555', options.lineWidth, options.percent / 100);
 
+}
+
+function has(description){
+	var hasDescription = false;
+	var explanation = this;
+	if (explanation.description.includes(description)){
+		return true;
+	}else{
+		var details = explanation.details;
+		for(var explanationNumber = 0; explanationNumber < details.length && hasDescription != true; explanationNumber++){
+			explanation = details[explanationNumber];
+			explanation.has = has;
+			hasDescription = explanation.has(description);
+		}		
+	}
+	return hasDescription;
 }

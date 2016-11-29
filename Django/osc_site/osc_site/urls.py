@@ -19,6 +19,6 @@ from osc.views import web
 
 urlpatterns = [
     url(r'^$', web.index, name='index'),
-    url(r'^osc/', include('osc.urls')),
+    url(r'', include('osc.urls')),
     url(r'^admin/', admin.site.urls),
 ]

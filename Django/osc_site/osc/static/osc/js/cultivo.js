@@ -17,7 +17,7 @@ function cargaDatos() {
 	document.getElementById('propertyCropId').value = cultivo_id;
 	document.getElementById('cultivo_id').value = cultivo_id;
 
-	var url = "/osc/crops/elastic/search/";
+	var url = "/crops/elastic/search/";
 
 	var data = {
 		"query" : {
@@ -143,28 +143,26 @@ function cargaDatos() {
 
 						}
 						
-						var sunHoursRequirements = crop.sunHours;
+						var sunHoursRequirements = crop.optimal_sunHours;
 						for (sunHoursRequirementsNumber in sunHoursRequirements){
 						    var sunHours = sunHoursRequirements[sunHoursRequirementsNumber];
 
 						    addMinMaxRequirementsRow("Sol Óptimo", sunHours);
 						}
 
-						var temperatureRequirements = crop.temperature;
+						var temperatureRequirements = crop.optimal_temperature;
 						for (temperatureRequirementsNumber in temperatureRequirements){
 						    var temperature = temperatureRequirements[temperatureRequirementsNumber];
 
 						    addMinMaxRequirementsRow("Temperatura Óptimo", temperature);
 						}
 
-						var rainfallRequirements = crop.rainfall;
+						var rainfallRequirements = crop.optimal_rainfall;
 						for (rainfallRequitementNumber in rainfallRequirements){
 						    var rainfall = rainfallRequirements[rainfallRequitementNumber];
 
 						    addMinMaxRequirementsRow("Precipitaciones Óptimo", rainfall);
 						}
-
-						
 						
 						var tags = crop.labels;
 						for (tagNumber in tags){
@@ -569,7 +567,7 @@ function updateCrop() {
 	var data = {
 		doc : doc
 	};
-	var url = "/osc/crops/elastic/update/" + cropId + "/";
+	var url = "/crops/elastic/update/" + cropId + "/";
 
 	var request = jQuery.ajax({
 		crossDomain : true,
@@ -717,7 +715,7 @@ function updatePropertyCrop(property){
 
 	data["doc_as_upsert"] = "true";
 
-	var url = "/osc/crops/elastic/update/" + document.getElementById("cropId").value + "/";
+	var url = "/crops/elastic/update/" + document.getElementById("cropId").value + "/";
 
 
     var request = jQuery.ajax({
