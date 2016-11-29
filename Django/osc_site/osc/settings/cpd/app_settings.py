@@ -12,7 +12,7 @@ SECRET_KEY = secrets.get('django', 'SECRET_KEY')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 DEBUG = False
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.opensmartcountry.com', '.opensmartcountry.es', '.opensmartcountry.org']
 
 # Whether to use a secure cookie for the CSRF cookie. If this is set to True, the cookie will be 
 # marked as secure, which means browsers may ensure that the cookie is only sent with an HTTPS connection.
