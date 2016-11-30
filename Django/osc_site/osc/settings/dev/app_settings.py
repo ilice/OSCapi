@@ -1,7 +1,7 @@
 import ConfigParser
 from osc.settings.base_settings import *
 
-SECRETS_PATH = 'C:/Users/jlafu/opensmartcountry.ini'
+SECRETS_PATH = os.path.join(BASE_DIR, 'tmp/secrets.ini')
 
 secrets = ConfigParser.ConfigParser()
 secrets.read(SECRETS_PATH)
@@ -66,11 +66,11 @@ WEB = {
 }
 
 AUX_DIRS = {
-    'data_dir': 'C:/Users/jlafu/Downloads/OpenSmartCountry/data',
-    'tmp_dir': 'C:/Users/jlafu/Downloads/OpenSmartCountry/tmp',
-    'log_dir': 'C:/Users/jlafu/Downloads/OpenSmartCountry/logs',
-    'errors_dir': 'C:/Users/jlafu/Downloads/OpenSmartCountry/errors',
-    'dataframes_dir': 'C:/Users/jlafu/Downloads/OpenSmartCountry/dataframes'
+    'data_dir': os.path.join(BASE_DIR, 'tmp/data'),
+    'tmp_dir': os.path.join(BASE_DIR, 'tmp/tmp'),
+    'log_dir': os.path.join(BASE_DIR, 'tmp/logs'),
+    'errors_dir': os.path.join(BASE_DIR, 'tmp/errors'),
+    'dataframes_dir': os.path.join(BASE_DIR, 'tmp/data_frames')
 }
 
 for dir_name in AUX_DIRS:

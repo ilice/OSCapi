@@ -59,11 +59,10 @@ weathercrawler/data
 *.log
 
 #Django and venv directories
-Django/opensmartcountry.ini
 *.sqlite3
-Django/osc_site/osc/settings/teanocrata_dev
 Django/osc_site/oscenv
 Django/osc_site/staticfiles
+Django/osc_site/tmp/*
 
 #IDE metadata
 .idea/
