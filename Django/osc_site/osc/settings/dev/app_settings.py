@@ -62,7 +62,7 @@ SLACK = {
 }
 
 WEB = {
-    'url': 'http://89.141.96.206:8080'
+    'url': 'http://localhost:8000'
 }
 
 AUX_DIRS = {

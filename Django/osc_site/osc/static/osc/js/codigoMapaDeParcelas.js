@@ -426,7 +426,7 @@ function getCoodinatesFromNationalCadastralReference(nationalCadastralReference)
 			url : url,
 			type : 'GET',
 			dataType : "json",
-		        async : false
+		    async : false
 		});
 
 		request.done(function(response, textStatus, jqXHR) {

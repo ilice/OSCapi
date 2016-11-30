@@ -535,7 +535,8 @@ function drawAlternatives(cadastralParcelFeatures) {
 			url : url,
 			data : JSON.stringify(data),
 			type : 'POST',
-			dataType : "json"
+			dataType : "json",
+			contentType: 'application/json',
 		});
 
 	request.done(function (response, textStatus, jqXHR) {
@@ -1618,7 +1619,8 @@ function drawUser(accessToken) {
 		url : userEndPoint,
 		data : JSON.stringify(data),
 		type : 'POST',
-		dataType : "json"
+		dataType : "json",
+		contentType: 'application/json'
 	});
 
 	request.done(function (response, textStatus, jqXHR) {*/
@@ -1847,7 +1849,8 @@ function getAccessToken(authorizationGrant){
 		url : authorizationTokenEndPoint,
 		data : JSON.stringify(authorizationGrant),
 		type : 'POST',
-		dataType : "json"
+		dataType : "json",
+		contentType: 'application/json'
 	});
 
 	request.done(function (response, textStatus, jqXHR) {*/
