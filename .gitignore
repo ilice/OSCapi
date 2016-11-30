@@ -63,6 +63,7 @@ weathercrawler/data
 Django/osc_site/oscenv
 Django/osc_site/staticfiles
 Django/osc_site/tmp/*
+Django/osc_site/osc/settings/dev_*
 
 #IDE metadata
 .idea/
