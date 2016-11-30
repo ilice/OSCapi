@@ -11,8 +11,10 @@ services:
   db:
     image: postgres
   web:
+    environment:
+      - DJANGO_SETTINGS_MODULE=osc.settings.cpd.app_settings
     build: .
-    command: bash -c "python manage.py collectstatic --noinput && gunicorn --env DJANGO_SETTINGS_MODULE=osc.settings.cpd.app_settings osc_site.wsgi -b 0.0.0.0:8000"
+    command: bash -c "python manage.py collectstatic --noinput && gunicorn osc_site.wsgi -b 0.0.0.0:8000"
     volumes:
       - .:/code
     expose:
