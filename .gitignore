@@ -69,3 +69,7 @@ Django/osc_site/osc/settings/dev_*
 .idea/
 *.pydevproject
 .settings
+
+#SSL config files
+Django/osc_site/nginx/ssl/*
+
