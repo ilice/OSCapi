@@ -3,14 +3,18 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:8000"
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/ssl
     depends_on:
       - web
   db:
     image: postgres
   web:
+    environment:
+      - DJANGO_SETTINGS_MODULE=osc.settings.cpd.app_settings
     build: .
     command: bash -c "python manage.py collectstatic --noinput && gunicorn osc_site.wsgi -b 0.0.0.0:8000"
     volumes:

@@ -36,6 +36,7 @@ function cargaDatos() {
 		url : url,
 		type : 'POST',
 		dataType : "json",
+		contentType: 'application/json',
 		data : JSON.stringify(data)
 	});
 
@@ -572,8 +573,9 @@ function updateCrop() {
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
-		type : 'POST',
+		type : 'PUT',
 		dataType : "json",
+		contentType: 'application/json',
 		data : JSON.stringify(data)
 	});
 
@@ -721,8 +723,9 @@ function updatePropertyCrop(property){
     var request = jQuery.ajax({
 		crossDomain : true,
 		url : url,
-		type : 'POST',
+		type : 'PUT',
 		dataType : "json",
+		contentType: 'application/json',
 		data : JSON.stringify(data)
 	});
 

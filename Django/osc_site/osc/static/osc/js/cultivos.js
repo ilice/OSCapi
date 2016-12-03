@@ -77,7 +77,8 @@ function cargaCultivos(numeroCultivoInicial, numeroCultivosACargar) {
 			url : url,
 			data : JSON.stringify(data),
 			type : 'POST',
-			dataType : "json"
+			dataType : "json",
+			contentType: 'application/json'
 		});
 
 	request.done(function (response, textStatus, jqXHR) {
