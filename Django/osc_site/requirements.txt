@@ -25,4 +25,4 @@ six==1.10.0
 slacker==0.9.30
 urllib3==1.19.1
 whitenoise==3.2.2
-djangorestframework
+djangorestframework==3.5.3

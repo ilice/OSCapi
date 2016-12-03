@@ -568,7 +568,7 @@ function updateCrop() {
 	var data = {
 		doc : doc
 	};
-	var url = "/crops/elastic/update/" + cropId + "/";
+	var url = "/crops/elastic/" + cropId + "/";
 
 	var request = jQuery.ajax({
 		crossDomain : true,
@@ -717,7 +717,7 @@ function updatePropertyCrop(property){
 
 	data["doc_as_upsert"] = "true";
 
-	var url = "/crops/elastic/update/" + document.getElementById("cropId").value + "/";
+	var url = "/crops/elastic/" + document.getElementById("cropId").value + "/";
 
 
     var request = jQuery.ajax({

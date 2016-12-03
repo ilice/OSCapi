@@ -7,12 +7,17 @@ from osc.exceptions import OSCException
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated
 
 
 class GoogleElevationList(APIView):
     """
     Obtain elevations from google from google
     """
+    renderer_classes = (JSONRenderer,)
+
     def get(self, request, format=None):
         param = request.GET.get('locations', '')
 
@@ -32,8 +37,9 @@ class ParcelList(APIView):
     """
     Obtain parcels with associated information
     """
+    renderer_classes = (JSONRenderer,)
 
-    def get(self, request, format=None):
+    def get(self, request):
         try:
             bbox_param = request.GET.get('bbox', None)
             cadastral_code_param = request.GET.get('cadastral_code', None)
@@ -67,6 +73,9 @@ class ParcelList(APIView):
 
 
 class CropList(APIView):
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (JSONParser,)
+
     def post(self, request, format=None):
         query = request.data
 
@@ -81,6 +90,9 @@ class CropList(APIView):
 
 
 class CropDetail(APIView):
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (JSONParser,)
+
     def put(self, request, crop_id, format=None):
         query = request.data
 
