@@ -651,7 +651,7 @@ def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
 
 
 @error_managed(default_answer=[])
-def get_inspire_data_by_code(code):
+def get_inspire_data_by_code(codes):
     """
     Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
     """
@@ -661,10 +661,10 @@ def get_inspire_data_by_code(code):
                                                  'request': 'getfeature',
                                                  'STOREDQUERIE_ID': 'GetParcel',
                                                  'srsname': zone_for_queries,
-                                                 'REFCAT': code})
+                                                 'REFCAT': codes})
 
     if response.ok:
-        parcels = parse_inspire_response(response.text)
+        parcels += parse_inspire_response(response.text)
     else:
         raise CadastreException('Error connecting to ' + url_inspire + '. Status code: ' + response.status_code)
     return parcels

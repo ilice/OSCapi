@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^cadastral/parcel/$', rest_api.ParcelList.as_view(), name='get_cadastral_parcels'),
     url(r'^crops/elastic/search/$', rest_api.CropList.as_view(), name='obtain_crops_elastic_query'),
     url(r'^crops/elastic/(?P<crop_id>[0-9]+)/$', rest_api.CropDetail.as_view(), name='update_crops_elastic'),
+    url(r'^userparcel/query/$', rest_api.UserParcelsList.as_view(), name='obtain_user_parcels'),
+    url(r'^userparcel/add/$', rest_api.UserParcelsDetail.as_view(), name='add_user_parcel'),
 
     # Autentication
     url(r'^auth-create-user', auth.CreateUser.as_view()),

@@ -1,8 +1,11 @@
 import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.crop as crop_service
+import osc.services.users as users_service
 
 from osc.exceptions import OSCException
+
+from osc.serializers import UserParcelSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,7 +22,7 @@ class GoogleElevationList(APIView):
     renderer_classes = (JSONRenderer,)
 
     def get(self, request, format=None):
-        param = request.GET.get('locations', '')
+        param = request.query_params.get('locations', '')
 
         if param == '':
             return Response({'error': 'Altitude Request should bring locations'},
@@ -41,15 +44,15 @@ class ParcelList(APIView):
 
     def get(self, request):
         try:
-            bbox_param = request.GET.get('bbox', None)
-            cadastral_code_param = request.GET.get('cadastral_code', None)
+            bbox_param = request.query_params.get('bbox', None)
+            cadastral_code_param = request.query_params.get('cadastral_code', None)
 
             parcels = []
 
             if cadastral_code_param is not None:
-                retrieve_public_info_param = request.GET.get('retrieve_public_info', None)
-                retrieve_climate_info_param = request.GET.get('retrieve_climate_info', None)
-                retrieve_soil_info_param = request.GET.get('retrieve_soil_info', None)
+                retrieve_public_info_param = request.query_params.get('retrieve_public_info', None)
+                retrieve_climate_info_param = request.query_params.get('retrieve_climate_info', None)
+                retrieve_soil_info_param = request.query_params.get('retrieve_soil_info', None)
 
                 parcels = parcel_service.obtain_parcels_by_cadastral_code(cadastral_code_param,
                                                                           retrieve_public_info_param == 'True',
@@ -114,4 +117,47 @@ class CropDetail(APIView):
             return Response({'status': 'FAILURE',
                              'message': e.message},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserParcelsList(APIView):
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (JSONParser,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        username = request.user
+        retrieve_public_info_param = request.query_params.get('retrieve_public_info', None)
+        retrieve_climate_info_param = request.query_params.get('retrieve_climate_info', None)
+        retrieve_soil_info_param = request.query_params.get('retrieve_soil_info', None)
+
+        try:
+            parcels = users_service.get_parcels(username,
+                                                retrieve_public_info_param == 'True',
+                                                retrieve_climate_info_param == 'True',
+                                                retrieve_soil_info_param == 'True')
+
+            return Response(parcels, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'msg': e.message},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserParcelsDetail(APIView):
+    renderer_classes = (JSONRenderer,)
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request, format=None):
+        username = request.user
+        cadastral_code = request.data['cadastral_code'] if 'cadastral_code' in request.data else None
+
+        if cadastral_code is not None:
+            try:
+                user_parcel = users_service.add_parcel(username, cadastral_code)
+                serializer = UserParcelSerializer(user_parcel)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'msg': e.message},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
