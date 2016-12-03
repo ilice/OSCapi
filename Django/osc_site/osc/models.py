@@ -55,3 +55,6 @@ class UserProfile(models.Model):
 class UserParcel(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cadastral_code = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = ('user', 'cadastral_code')
