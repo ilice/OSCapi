@@ -41,7 +41,7 @@ def get_token_from_google_auth(google_auth_url):
         given_name = json_response['given_name'] if 'given_name' in json_response else None
         link = json_response['link'] if 'link' in json_response else None
         locale = json_response['locale'] if 'locale' in json_response else None
-        picture_url = json_response['picture_url'] if 'picture_url' in json_response else None
+        picture_url = json_response['picture'] if 'picture' in json_response else None
 
         username = 'google_' + google_id
 

@@ -25,7 +25,7 @@ class CreateUser(APIView):
         gender = request.data['gender'] if 'gender' in request.data else None
         link = request.data['link'] if 'link' in request.data else None
         locale = request.data['locale'] if 'locale' in request.data else None
-        picture_link = request.data['picture_link'] if 'picture_link' in request.data else None
+        picture_link = request.data['picture'] if 'picture' in request.data else None
 
         if username is not None and password is not None:
             user = users_service.create_user(username, password,
@@ -63,7 +63,7 @@ class UpdateUser(APIView):
         gender = request.data['gender'] if 'gender' in request.data else None
         link = request.data['link'] if 'link' in request.data else None
         locale = request.data['locale'] if 'locale' in request.data else None
-        picture_link = request.data['picture_link'] if 'picture_link' in request.data else None
+        picture_link = request.data['picture'] if 'picture' in request.data else None
 
         if username is not None:
             user = users_service.update_user_profile(username,
