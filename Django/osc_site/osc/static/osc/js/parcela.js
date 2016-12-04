@@ -1677,9 +1677,9 @@ function statusChangeCallback(response) {
 	// app know the current login status of the person.
 	// Full docs on the response object can be found in the documentation
 	// for FB.getLoginStatus().
-	if (response.status === 'connected' && response.accessToken != undefined) {
+	if (response.status === 'connected' && response.token != undefined) {
 		console.log('statusChangeCallback: Logged into Open Smart Country');
-		var accessToken = response.accessToken;
+		var accessToken = response.token;
 		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
 		drawUser(accessToken);
 		drawPlotProfile(accessToken);
@@ -1842,27 +1842,70 @@ function facebookAuthorizationGrant() {
 
 function getAccessToken(authorizationGrant){
 
-	var authorizationTokenEndPoint = "/....";
+	authorizationGrant.username = authorizationGrant.email;
+	authorizationGrant.given_name = authorizationGrant.email.split('@')[0];
+	authorizationGrant.family_name = authorizationGrant.email.split('@')[0];
+	
+	var createUserTokenEndPoint = "/auth-create-user";
 		
-	/*var request = jQuery.ajax({
+	var createUserRequest = jQuery.ajax({
 		crossDomain : true,
-		url : authorizationTokenEndPoint,
+		url : createUserTokenEndPoint,
 		data : JSON.stringify(authorizationGrant),
 		type : 'POST',
 		dataType : "json",
 		contentType: 'application/json'
 	});
 
-	request.done(function (response, textStatus, jqXHR) {*/
-		//TODO quitar esto de response =
-		var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
-		if (response.status == "connected") {
-			var accessToken = response.accessToken;
-			setCookie('accessToken', accessToken, 1);
+	createUserRequest.done(function (response, textStatus, request) {
+		// TODO quitar esto de response =
+		//var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
+		if (createUserRequest.status == "201") {
+			var token = response.token;
+			setCookie('token', token, 1);
+			response.status = 'connected';
 			statusChangeCallback(response);
+		}else if (createUserRequest.status == "200"){
+
 		}
 			
-//  });
+		//}
+	});
+	
+	createUserRequest.fail(function( createUserRequest, textStatus, errorThrown ) {
+		if(createUserRequest.status == 412 && createUserRequest.responseText.indexOf("existing user") !== -1){
+			var authorizationTokenEndPoint = "/auth-login";
+			
+			var loginRequest = jQuery.ajax({
+				crossDomain : true,
+				url : authorizationTokenEndPoint,
+				data : JSON.stringify(authorizationGrant),
+				type : 'POST',
+				dataType : "json",
+				contentType: 'application/json'
+			});
+			
+			loginRequest.done(function (loginResponse, loginTextStatus, loginRequest) {
+				var loginToken = loginResponse.token;
+				setCookie('token', loginToken, 1);
+				loginResponse.status = 'connected';
+				statusChangeCallback(loginResponse);
+			});
+			
+			loginRequest.fail(function (loginRequest, loginTextStatus, errorThrown) {
+				showError({message: 'Usuario existente con contraseña incorrecta'});
+				document.getElementById('esMiParcela').style.display='none';
+				document.getElementById('infoDropnav').style.display='block'
+			});
+			
+		}else{
+			showError({message: errorThrown + request.responseText});
+			document.getElementById('esMiParcela').style.display='none';
+			document.getElementById('infoDropnav').style.display='block'
+		}
+		
+	});
+
 }
 
 function getProperty(property){

@@ -41,9 +41,8 @@ class CreateUser(APIView):
         else:
             return Response(data={'error': 'no user in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-        token = auth_service.get_token(username)
-
-        return Response({'token': token[0].key})
+        token, created = auth_service.get_token(username)
+        return Response(data={'token': token.key}, status=status.HTTP_201_CREATED)
 
 
 class UpdateUser(APIView):
