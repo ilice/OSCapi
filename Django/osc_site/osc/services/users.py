@@ -13,6 +13,82 @@ def get_user(username):
     return user
 
 
+def get_user_profile(username):
+    user_profile = None
+
+    user = get_user(username)
+    if user is not None:
+        user_profile = UserProfile.objects.get(user=user)
+
+    return user_profile
+
+
+def create_user(username,
+                password,
+                given_name,
+                family_name,
+                email=None,
+                gender=None,
+                link=None,
+                locale=None,
+                picture_link=None):
+    if get_user(username) is not None:
+        return None
+
+    user = User.objects.create_user(username=username,
+                                    password=password,
+                                    email=email,
+                                    first_name=given_name,
+                                    last_name=family_name)
+    user.save()
+
+    update_user_profile(username,
+                        email=email,
+                        family_name=family_name,
+                        given_name=given_name,
+                        gender=gender,
+                        link=link,
+                        picture_link=picture_link,
+                        locale=locale)
+
+    return user
+
+
+def update_user_profile(username,
+                        password=None,
+                        email=None,
+                        family_name=None,
+                        gender=None,
+                        given_name=None,
+                        google_id=None,
+                        link=None,
+                        locale=None,
+                        picture_link=None):
+    user = get_user(username)
+
+    if user is not None:
+        if password is not None:
+            user.set_password(password)
+            
+        user.email = email if email is not None else user.email
+        user.first_name = given_name if given_name is not None else user.first_name
+        user.last_name = family_name if family_name is not None else user.family_name
+
+        user.save()
+
+        profile = get_user_profile(username)
+
+        profile.gender = gender if gender is not None else profile.gender
+        profile.google_id = google_id if google_id is not None else profile.google_id
+        profile.link = link if link is not None else profile.link
+        profile.locale = locale if locale is not None else profile.locale
+        profile.picture_link = picture_link if picture_link is not None else profile.picture_link
+
+        profile.save()
+
+    return user
+
+
 def get_parcels(username, retrieve_public_info=False, retrieve_climate_info=False, retrieve_soil_info=False):
     user = get_user(username)
     user_parcels = UserParcel.objects.filter(user=user)
