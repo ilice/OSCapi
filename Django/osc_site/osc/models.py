@@ -52,6 +52,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     gender = models.CharField(max_length=10, null=True)
     google_id = models.CharField(max_length=255, null=True)
+    facebook_id = models.CharField(max_length=255, null=True)
     link = models.URLField(null=True)
     picture_link = models.URLField(null=True)
     locale = models.CharField(max_length=10, null=True)

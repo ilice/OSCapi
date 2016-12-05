@@ -110,4 +110,8 @@ class FacebookLogin(APIView):
     def put(self, request, format=None):
         pass
 
+    def post(self, request, format=None):
+        facebookToken = request.data['idtoken'] if 'idtoken' in request.data else None
+        token = auth_service.get_token_from_facebook_token(facebookToken)
 
+        return Response({'token': token.key}, status=status.HTTP_200_OK)

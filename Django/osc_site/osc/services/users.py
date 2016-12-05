@@ -61,6 +61,7 @@ def update_user_profile(username,
                         gender=None,
                         given_name=None,
                         google_id=None,
+                        facebook_id=None,
                         link=None,
                         locale=None,
                         picture_link=None):
@@ -80,6 +81,7 @@ def update_user_profile(username,
 
         profile.gender = gender if gender is not None else profile.gender
         profile.google_id = google_id if google_id is not None else profile.google_id
+        profile.facebook_id = facebook_id if facebook_id is not None else profile.facebook_id
         profile.link = link if link is not None else profile.link
         profile.locale = locale if locale is not None else profile.locale
         profile.picture_link = picture_link if picture_link is not None else profile.picture_link

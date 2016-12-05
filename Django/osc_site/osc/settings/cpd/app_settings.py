@@ -53,6 +53,11 @@ GOOGLE = {
     'auth_client_secret': get_secret(secrets, 'Google Auth', 'client_secret'),
 }
 
+FACEBOOK = {
+    'auth_app_id': get_secret(secrets, 'Facebook Auth', 'app_id'),
+    'auth_app_secret': get_secret(secrets, 'Facebook Auth', 'app_secret'),
+}
+
 INFORIEGO = {
     'url.daily': 'http://www.inforiego.org/opencms/rest/diario',
     'index': 'inforiego',

@@ -1524,7 +1524,7 @@ function signOut() {
 window.fbAsyncInit = function () {
 	FB.init({
 		appId : '1620985944870143',
-		cookie : true, // enable cookies to allow the server to access
+		cookie : false, // enable cookies to allow the server to access
 		// the session
 		xfbml : true, // parse social plugins on this page
 		version : 'v2.5' // use graph api version 2.5
@@ -1544,6 +1544,7 @@ window.fbAsyncInit = function () {
 
 	FB.getLoginStatus(function (response) {
 		console.log('FB.getLoginStatus');
+		response.token = response.authResponse.accessToken;
 		statusChangeCallback(response);
 	});
 
@@ -1919,6 +1920,19 @@ function getAccessToken(authorizationGrant){
 			statusChangeCallback(loginResponse);
 		};
 		xhr.send(JSON.stringify({idtoken: authorizationGrant.googleAccessToken}));
+	}else if(authorizationGrant.facebookAccessToken != undefined){
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', '/auth-facebook-login');
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
+		  console.log('Signed in as: ' + xhr.responseText);
+		  loginResponse = JSON.parse(xhr.response);
+		  var loginToken = loginResponse.token;
+			setCookie('token', loginToken, 1);
+			loginResponse.status = 'connected';
+			statusChangeCallback(loginResponse);
+		};
+		xhr.send(JSON.stringify({idtoken: authorizationGrant.facebookAccessToken}));
 	}
 
 }

@@ -8,6 +8,8 @@ from rest_framework.authtoken.models import Token
 
 from oauth2client import client, crypt
 
+import facebook
+
 
 def get_token(username):
     user = users_service.get_user(username)
@@ -113,5 +115,46 @@ def get_token_from_google_token(googleToken):
     except crypt.AppIdentityError:
         # Invalid token
         return 'error'
+        
+    return token
+
+def get_token_from_facebook_token(facebookToken):
+    token = None
+    
+    graph = facebook.GraphAPI(access_token=facebookToken, version='2.2')
+    profile = graph.get_object("me", fields='email,first_name,gender,last_name,locale,name,timezone,link,birthday,age_range,id')
+        
+    
+    
+    facebook_id = profile['id'] if 'id' in profile else None
+    email = profile['email'] if 'email' in profile else None
+    family_name = profile['last_name'] if 'last_name' in profile else None
+    gender = profile['gender'] if 'gender' in profile else None
+    given_name = profile['first_name'] if 'first_name' in profile else None
+    link = profile['link'] if 'link' in profile else None
+    locale = profile['locale'] if 'locale' in profile else None
+    picture_url = 'http://graph.facebook.com/' + facebook_id + '/picture'
+    
+    facebook_info_url = "https://graph.facebook.com/oauth/access_token"
+        
+    username = 'facebook_' + facebook_id
+        
+    user = users_service.get_user(username)
+    if user is None:
+        users_service.create_user(username,
+                                  password=facebook_info_url,
+                                  given_name=given_name,
+                                  family_name=family_name)
+
+    users_service.update_user_profile(username,
+                                      email=email,
+                                      family_name=family_name,
+                                      gender=gender,
+                                      given_name=given_name,
+                                      facebook_id=facebook_id,
+                                      link=link,
+                                      locale=locale,
+                                      picture_link=picture_url)
+    token = get_token(username)
         
     return token
