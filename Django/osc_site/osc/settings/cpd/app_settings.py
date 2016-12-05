@@ -48,7 +48,7 @@ ELASTICSEARCH = {
 
 GOOGLE = {
     'chunk_size': 512,
-    'api_key': get_secret(secrets, 'Google Elevation', 'api_key'),
+    'elevation_api_key': get_secret(secrets, 'Google Elevation', 'api_key'),
     'auth_client_id': get_secret(secrets, 'Google Auth', 'client_id'),
     'auth_client_secret': get_secret(secrets, 'Google Auth', 'client_secret'),
 }
