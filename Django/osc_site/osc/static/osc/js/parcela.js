@@ -457,7 +457,7 @@ function drawCompletionParcelProfileBar(cadastralParcelFeature){
 	//TODO esto debe de mostrarse por la información que nos llega a pintar no por el access token 
 	//if(parcelProfile === undefined){
 	
-	if(getCookie("accessToken") != ''){
+	if(getCookie("token") != ''){
 		document.getElementById('completionParcelProfileBarCard').style.display = 'block';
 		createProgressCircle('10');
 	}else{
@@ -1544,8 +1544,20 @@ window.fbAsyncInit = function () {
 
 	FB.getLoginStatus(function (response) {
 		console.log('FB.getLoginStatus');
-		response.token = response.authResponse.accessToken;
-		statusChangeCallback(response);
+		
+		if(response.status === 'connected'){
+		
+			var authorizationGrant =  {
+					facebookAccessToken: response.authResponse.accessToken , 
+					plot: getNationalCadastreReference(),
+					relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+			};
+			
+			getAccessToken(authorizationGrant);
+		}else{
+			statusChangeCallback(response);
+		}
+		
 	});
 
 };
@@ -1612,24 +1624,26 @@ function drawUser(accessToken) {
 	
 	console.log('drawUser');
 	
-	var userEndPoint = "/....";
-	var data = {accessToken: accessToken};
+	var userEndPoint = "/user";
 	
-	/*var request = jQuery.ajax({
+	var request = jQuery.ajax({
 		crossDomain : true,
 		url : userEndPoint,
-		data : JSON.stringify(data),
-		type : 'POST',
+		headers: {
+		    "Authorization": "Token " + accessToken
+		  },
+		type : 'GET',
 		dataType : "json",
 		contentType: 'application/json'
 	});
 
-	request.done(function (response, textStatus, jqXHR) {*/
+	request.done(function (response, textStatus, jqXHR) {
 		//TODO eliminar cuando esté el servicio de consulta de usuario
-		var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':(accessToken=='66')?'facebook':'google'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
+		//var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':(accessToken=='66')?'facebook':'google'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
 		
-		if (response.status == "SUCCESS") {
-			var user = response.user;
+		//if (response.status == "SUCCESS") {
+			var user = response;
+			
 			
 			console.log('Successful login for: ' + user.email);
 
@@ -1642,9 +1656,9 @@ function drawUser(accessToken) {
 			
 			drawUserMenu(user);
 			
-		}
+		//}
 			
-//  });
+  });
 		
 }
 
@@ -1658,11 +1672,11 @@ function login(callback){
 
 function getLoginStatus(callback) {
 	console.log('getLoginStatus');
-	var accessToken=getCookie("accessToken");
+	var accessToken=getCookie("token");
 	var response = {};
 	if (accessToken != "") {
 		console.log('getLoginStatus: with accessToken');
-		response = {status: 'connected', accessToken: accessToken};
+		response = {status: 'connected', token: accessToken};
     }else{
     	console.log('getLoginStatus: without accessToken');
     	response = {status: 'not_connected'};
@@ -1699,7 +1713,7 @@ function logout(socialNetwork) {
 	
 	console.log('logout('+socialNetwork+')');
 	
-	setCookie('accessToken', '', 0);
+	setCookie('token', '', 0);
 	
 	if (socialNetwork == 'google') {
 		signOut();
@@ -1724,7 +1738,10 @@ function logout(socialNetwork) {
 
 
 function drawUserMenu(user) {
-	var profile_image_url = user.userProfilePicture;
+	var profile_image_url = user.picture_link;
+	if(profile_image_url == null){
+		profile_image_url = "/static/osc/img/avatar.PNG";
+	}
 	console.log('drawUserMenu');
 
 	var userMenu = document.createElement('div');
@@ -1825,7 +1842,7 @@ function emailAuthorizationGrant(){
 function facebookAuthorizationGrant() {
 	console.log('login');
 	FB.login(function (response) {
-		console.log('login: statusChangeCallback');
+		console.log('login: facebookAuthorizationGrant');
 		
 		var authorizationGrant =  {
 				facebookAccessToken: response.authResponse.accessToken , 

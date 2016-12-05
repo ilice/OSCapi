@@ -160,3 +160,11 @@ class UserParcelsDetail(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class UserDetail(APIView):
+    renderer_classes = (JSONRenderer,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = request.user
+        return Response(data = {'first_name' : user.first_name, 'last_name': user.last_name, 'email': user.email, 'loginMethod': user.username[0:user.username.find('_')], 'picture_link': user.userprofile.picture_link}, status=status.HTTP_200_OK)
