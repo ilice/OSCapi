@@ -1842,69 +1842,84 @@ function facebookAuthorizationGrant() {
 
 function getAccessToken(authorizationGrant){
 
-	authorizationGrant.username = authorizationGrant.email;
-	authorizationGrant.given_name = authorizationGrant.email.split('@')[0];
-	authorizationGrant.family_name = authorizationGrant.email.split('@')[0];
-	
-	var createUserTokenEndPoint = "/auth-create-user";
+	if(authorizationGrant.email != undefined){
+		authorizationGrant.username = authorizationGrant.email;
+		authorizationGrant.given_name = authorizationGrant.email.split('@')[0];
+		authorizationGrant.family_name = authorizationGrant.email.split('@')[0];
 		
-	var createUserRequest = jQuery.ajax({
-		crossDomain : true,
-		url : createUserTokenEndPoint,
-		data : JSON.stringify(authorizationGrant),
-		type : 'POST',
-		dataType : "json",
-		contentType: 'application/json'
-	});
-
-	createUserRequest.done(function (response, textStatus, request) {
-		// TODO quitar esto de response =
-		//var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
-		if (createUserRequest.status == "201") {
-			var token = response.token;
-			setCookie('token', token, 1);
-			response.status = 'connected';
-			statusChangeCallback(response);
-		}else if (createUserRequest.status == "200"){
-
-		}
+		var createUserTokenEndPoint = "/auth-create-user";
 			
-		//}
-	});
+		var createUserRequest = jQuery.ajax({
+			crossDomain : true,
+			url : createUserTokenEndPoint,
+			data : JSON.stringify(authorizationGrant),
+			type : 'POST',
+			dataType : "json",
+			contentType: 'application/json'
+		});
 	
-	createUserRequest.fail(function( createUserRequest, textStatus, errorThrown ) {
-		if(createUserRequest.status == 412 && createUserRequest.responseText.indexOf("existing user") !== -1){
-			var authorizationTokenEndPoint = "/auth-login";
-			
-			var loginRequest = jQuery.ajax({
-				crossDomain : true,
-				url : authorizationTokenEndPoint,
-				data : JSON.stringify(authorizationGrant),
-				type : 'POST',
-				dataType : "json",
-				contentType: 'application/json'
-			});
-			
-			loginRequest.done(function (loginResponse, loginTextStatus, loginRequest) {
-				var loginToken = loginResponse.token;
-				setCookie('token', loginToken, 1);
-				loginResponse.status = 'connected';
-				statusChangeCallback(loginResponse);
-			});
-			
-			loginRequest.fail(function (loginRequest, loginTextStatus, errorThrown) {
-				showError({message: 'Usuario existente con contraseña incorrecta'});
+		createUserRequest.done(function (response, textStatus, request) {
+			// TODO quitar esto de response =
+			//var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
+			if (createUserRequest.status == "201") {
+				var token = response.token;
+				setCookie('token', token, 1);
+				response.status = 'connected';
+				statusChangeCallback(response);
+			}else if (createUserRequest.status == "200"){
+	
+			}
+				
+			//}
+		});
+		
+		createUserRequest.fail(function( createUserRequest, textStatus, errorThrown ) {
+			if(createUserRequest.status == 412 && createUserRequest.responseText.indexOf("existing user") !== -1){
+				var authorizationTokenEndPoint = "/auth-login";
+				
+				var loginRequest = jQuery.ajax({
+					crossDomain : true,
+					url : authorizationTokenEndPoint,
+					data : JSON.stringify(authorizationGrant),
+					type : 'POST',
+					dataType : "json",
+					contentType: 'application/json'
+				});
+				
+				loginRequest.done(function (loginResponse, loginTextStatus, loginRequest) {
+					var loginToken = loginResponse.token;
+					setCookie('token', loginToken, 1);
+					loginResponse.status = 'connected';
+					statusChangeCallback(loginResponse);
+				});
+				
+				loginRequest.fail(function (loginRequest, loginTextStatus, errorThrown) {
+					showError({message: 'Usuario existente con contraseña incorrecta'});
+					document.getElementById('esMiParcela').style.display='none';
+					document.getElementById('infoDropnav').style.display='block'
+				});
+				
+			}else{
+				showError({message: errorThrown + request.responseText});
 				document.getElementById('esMiParcela').style.display='none';
 				document.getElementById('infoDropnav').style.display='block'
-			});
+			}
 			
-		}else{
-			showError({message: errorThrown + request.responseText});
-			document.getElementById('esMiParcela').style.display='none';
-			document.getElementById('infoDropnav').style.display='block'
-		}
-		
-	});
+		});
+	}else if (authorizationGrant.googleAccessToken != undefined){
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', '/auth-google-login');
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
+		  console.log('Signed in as: ' + xhr.responseText);
+		  loginResponse = JSON.parse(xhr.response);
+		  var loginToken = loginResponse.token;
+			setCookie('token', loginToken, 1);
+			loginResponse.status = 'connected';
+			statusChangeCallback(loginResponse);
+		};
+		xhr.send(JSON.stringify({idtoken: authorizationGrant.googleAccessToken}));
+	}
 
 }
 

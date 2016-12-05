@@ -90,7 +90,13 @@ class GoogleLogin(APIView):
     def get(self, request, format=None):
         token = auth_service.get_token_from_google_auth('https://localhost:8000' + request.get_full_path())
 
-        return Response({'token': token[0].key})
+        return Response({'token': token.key}, status=status.HTTP_200_OK)
+    
+    def post(self, request, format=None):
+        googleToken = request.data['idtoken'] if 'idtoken' in request.data else None
+        token = auth_service.get_token_from_google_token(googleToken)
+
+        return Response({'token': token.key}, status=status.HTTP_200_OK)
 
 
 
