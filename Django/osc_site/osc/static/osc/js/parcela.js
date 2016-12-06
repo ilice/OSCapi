@@ -1757,6 +1757,16 @@ function drawUserMenu(user) {
 	avatar_dropdown_content.setAttribute('class', 'w3-dropdown-content w3-card-4 w3-margin-right');
 	avatar_dropdown_content.setAttribute('style', 'right:0');
 	avatar_dropdown_hover.appendChild(avatar_dropdown_content);
+	
+	var settings_row = document.createElement('a');
+	settings_row.setAttribute('href', 'javascript:void(0)');
+	settings_row.setAttribute('onclick', 'openSettings(\'' + JSON.stringify(user) + '\')');
+	avatar_dropdown_content.appendChild(settings_row);
+
+	var settings_icon = document.createElement('i');
+	settings_icon.setAttribute('class', 'fa fa-wrench')
+	settings_row.appendChild(settings_icon);
+	settings_row.appendChild(document.createTextNode(' Configuración'));
 
 	var logout_row = document.createElement('a');
 	logout_row.setAttribute('href', 'javascript:void(0)');
@@ -2069,3 +2079,52 @@ function debug(message){
 		console.log(message);
 	}
 }
+
+
+function openSettings(user){
+	
+	user = JSON.parse(user);
+	
+	document.getElementById('settings_modal_given_name').value = user.first_name;
+	document.getElementById('settings_modal_family_name').value = user.last_name; 
+	document.getElementById('settings_modal_email').value = user.email; 
+	document.getElementById('settings_modal_picture_link').value = user.picture_link; 
+	
+	
+	document.getElementById('settings_modal_avatar').src = user.picture_link; 
+	document.getElementById('settings_form').setAttribute( 'onsubmit' , 'updateSettings(' + JSON.stringify(user) + ')');
+	document.getElementById("settings_modal").style.display='block';
+
+}
+
+function updateSettings(user){
+	
+	var data = {
+			username: user.username,
+			given_name: document.forms["settings_form"]["given_name"].value,	
+			family_name: document.forms["settings_form"]["family_name"].value,
+			email: document.forms["settings_form"]["email"].value,
+			picture: document.forms["settings_form"]["picture_link"].value,
+		};
+
+		var url = "/auth-update-user";
+		
+		var accessToken = getCookie('token');
+		var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
+
+		var request = jQuery.ajax({
+				crossDomain : true,
+				url : url,
+				data : JSON.stringify(data),
+				type : 'PUT',
+				headers: headers,
+				dataType : "json",
+				contentType: 'application/json',
+			});
+
+		request.done(function (response, textStatus, jqXHR) {
+			location.reload();
+		});
+	
+}
+

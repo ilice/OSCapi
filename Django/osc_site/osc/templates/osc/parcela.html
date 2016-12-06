@@ -1636,6 +1636,38 @@
         <!--FIN !PAGE CONTENT! -->
 </div>
 
+<!-- Settings Modal -->
+<div id="settings_modal" class="w3-modal">
+    <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px">
+
+      <div class="w3-center"><br>
+        <span onclick="document.getElementById('settings_modal').style.display='none'" class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright" title="Close Modal">&times;</span>
+        <img id='settings_modal_avatar' alt="Avatar" style="width:30%" class="w3-circle w3-margin-top">
+      </div>
+
+      <form id="settings_form" action="javascript:;"  class="w3-container" method="post">
+        <div class="w3-section">
+          
+          <label><b>Nombre</b></label>
+          <input id="settings_modal_given_name" class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Nombre" name="given_name" required>
+          <label><b>Apellidos</b></label>
+          <input id="settings_modal_family_name" class="w3-input w3-border" type="text" placeholder="Apellidos" name="family_name" required>
+          <label><b>Correo electrónico</b></label>
+          <input id="settings_modal_email" class="w3-input w3-border" type="email" placeholder="e-mail" name="email" required>
+          <label><b>Avatar</b></label>
+          <input id="settings_modal_picture_link" class="w3-input w3-border" type="url" placeholder="avatar url" name="picture_link" required>
+          
+          <button id="settings_form_update_button" class="w3-btn-block w3-green w3-section w3-padding" type="submit">Modificar</button>
+          
+        </div>
+      </form>
+
+      <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+        <button onclick="document.getElementById('settings_modal').style.display='none'" type="button" class="w3-btn w3-red">Cancel</button>
+      </div>
+
+    </div>
+ </div>
 <!-- Footer -->
     <footer>
         <ul class="w3-navbar w3-card-2 w3-left-align w3-light-grey">
