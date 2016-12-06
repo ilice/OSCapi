@@ -1,9 +1,7 @@
-# Google
 import osc.services.users as users_service
 
 from django.conf import settings
 
-from requests_oauthlib import OAuth2Session
 from rest_framework.authtoken.models import Token
 
 from oauth2client import client, crypt
@@ -19,56 +17,6 @@ def get_token(username):
 
     return token
 
-
-def get_token_from_google_auth(google_auth_url):
-    token = None
-
-    google_client_id = settings.GOOGLE['auth_client_id']
-    google_client_secret = settings.GOOGLE['auth_client_secret']
-    google_token_url = "https://www.googleapis.com/oauth2/v4/token"
-    google_scope = ["https://www.googleapis.com/auth/userinfo.email",
-                    "https://www.googleapis.com/auth/userinfo.profile"]
-    google_info_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-    google_redirect_uri = "http://localhost:8000/auth-google-login"
-
-    google = OAuth2Session(client_id=google_client_id, scope=google_scope, redirect_uri=google_redirect_uri)
-    google.fetch_token(google_token_url, client_secret=google_client_secret, authorization_response=google_auth_url)
-
-    response = google.get(google_info_url)
-
-    if response.ok:
-        json_response = response.json()
-        google_id = json_response['id']
-        email = json_response['email'] if 'email' in json_response else None
-        family_name = json_response['family_name'] if 'family_name' in json_response else None
-        gender = json_response['gender'] if 'gender' in json_response else None
-        given_name = json_response['given_name'] if 'given_name' in json_response else None
-        link = json_response['link'] if 'link' in json_response else None
-        locale = json_response['locale'] if 'locale' in json_response else None
-        picture_url = json_response['picture'] if 'picture' in json_response else None
-
-        username = 'google_' + google_id
-
-        user = users_service.get_user(username)
-        if user is None:
-            users_service.create_user(username,
-                                      password=google_info_url,
-                                      given_name=given_name,
-                                      family_name=family_name)
-
-        users_service.update_user_profile(username,
-                                          email=email,
-                                          family_name=family_name,
-                                          gender=gender,
-                                          given_name=given_name,
-                                          google_id=google_id,
-                                          link=link,
-                                          locale=locale,
-                                          picture_link=picture_url)
-
-        token = get_token(username)
-
-    return token
 
 def get_token_from_google_token(googleToken):
     token = None
@@ -119,7 +67,6 @@ def get_token_from_google_token(googleToken):
     return token
 
 def get_token_from_facebook_token(facebookToken):
-    token = None
     
     graph = facebook.GraphAPI(access_token=facebookToken, version='2.2')
     profile = graph.get_object("me", fields='email,first_name,gender,last_name,locale,name,timezone,link,birthday,age_range,id')
@@ -155,6 +102,30 @@ def get_token_from_facebook_token(facebookToken):
                                       link=link,
                                       locale=locale,
                                       picture_link=picture_url)
+    token = get_token(username)
+        
+    return token
+
+
+def get_token_from_email_and_password(email, password):
+        
+    family_name = email[:email.find('@')]
+    given_name = email[:email.find('@')]
+        
+    username = email
+        
+    user = users_service.get_user(username)
+    if user is None:
+        users_service.create_user(username,
+                                  password=password,
+                                  given_name=given_name,
+                                  family_name=family_name)
+        
+    users_service.update_user_profile(username,
+                                      email=email,
+                                      given_name=given_name,
+                                      family_name=family_name)
+
     token = get_token(username)
         
     return token

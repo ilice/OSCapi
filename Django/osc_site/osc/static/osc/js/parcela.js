@@ -1528,7 +1528,7 @@ function signOut() {
 window.fbAsyncInit = function () {
 	FB.init({
 		appId : '1620985944870143',
-		cookie : false, // enable cookies to allow the server to access
+		cookie : true, // enable cookies to allow the server to access
 		// the session
 		xfbml : true, // parse social plugins on this page
 		version : 'v2.5' // use graph api version 2.5
@@ -1853,95 +1853,20 @@ function facebookAuthorizationGrant() {
 }
 
 function getAccessToken(authorizationGrant){
-
-	if(authorizationGrant.email != undefined){
-		authorizationGrant.username = authorizationGrant.email;
-		authorizationGrant.given_name = authorizationGrant.email.split('@')[0];
-		authorizationGrant.family_name = authorizationGrant.email.split('@')[0];
-		
-		var createUserTokenEndPoint = "/auth-create-user";
-			
-		var createUserRequest = jQuery.ajax({
-			crossDomain : true,
-			url : createUserTokenEndPoint,
-			data : JSON.stringify(authorizationGrant),
-			type : 'POST',
-			dataType : "json",
-			contentType: 'application/json'
-		});
-	
-		createUserRequest.done(function (response, textStatus, request) {
-
-			if (createUserRequest.status == "201") {
-				var token = response.token;
-				setCookie('token', token, 1);
-				response.status = 'connected';
-				statusChangeCallback(response);
-			}
-				
-		});
-		
-		createUserRequest.fail(function( createUserRequest, textStatus, errorThrown ) {
-			if(createUserRequest.status == 412 && createUserRequest.responseText.indexOf("existing user") !== -1){
-				var authorizationTokenEndPoint = "/auth-login";
-				
-				var loginRequest = jQuery.ajax({
-					crossDomain : true,
-					url : authorizationTokenEndPoint,
-					data : JSON.stringify(authorizationGrant),
-					type : 'POST',
-					dataType : "json",
-					contentType: 'application/json'
-				});
-				
-				loginRequest.done(function (loginResponse, loginTextStatus, loginRequest) {
-					var loginToken = loginResponse.token;
-					setCookie('token', loginToken, 1);
-					loginResponse.status = 'connected';
-					statusChangeCallback(loginResponse);
-				});
-				
-				loginRequest.fail(function (loginRequest, loginTextStatus, errorThrown) {
-					showError({message: 'Usuario existente con contraseña incorrecta'});
-					document.getElementById('esMiParcela').style.display='none';
-					document.getElementById('infoDropnav').style.display='block'
-				});
-				
-			}else{
-				showError({message: errorThrown + request.responseText});
-				document.getElementById('esMiParcela').style.display='none';
-				document.getElementById('infoDropnav').style.display='block'
-			}
-			
-		});
-	}else if (authorizationGrant.googleAccessToken != undefined){
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', '/auth-google-login');
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = function() {
-		  debug('Signed in as: ' + xhr.responseText);
-		  loginResponse = JSON.parse(xhr.response);
-		  var loginToken = loginResponse.token;
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', '/auth-signIn');
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.onload = function() {
+		if(xhr.status == '200'){
+			debug('Signed in as: ' + xhr.responseText);
+			loginResponse = JSON.parse(xhr.response);
+			var loginToken = loginResponse.token;
 			setCookie('token', loginToken, 1);
 			loginResponse.status = 'connected';
 			statusChangeCallback(loginResponse);
-		};
-		xhr.send(JSON.stringify({idtoken: authorizationGrant.googleAccessToken}));
-	}else if(authorizationGrant.facebookAccessToken != undefined){
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', '/auth-facebook-login');
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = function() {
-		  debug('Signed in as: ' + xhr.responseText);
-		  loginResponse = JSON.parse(xhr.response);
-		  var loginToken = loginResponse.token;
-			setCookie('token', loginToken, 1);
-			loginResponse.status = 'connected';
-			statusChangeCallback(loginResponse);
-		};
-		xhr.send(JSON.stringify({idtoken: authorizationGrant.facebookAccessToken}));
-	}
-
+		}
+	};
+	xhr.send(JSON.stringify({authorizationGrant}));
 }
 
 function getProperty(property){

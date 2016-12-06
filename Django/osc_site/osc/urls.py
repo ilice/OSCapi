@@ -29,9 +29,7 @@ urlpatterns = [
     url(r'^user/$', rest_api.UserDetail.as_view(), name='get_user'),
 
     # Autentication
-    url(r'^auth-create-user', auth.CreateUser.as_view()),
+    url(r'^auth-signIn', auth.SignIn.as_view()),
     url(r'^auth-update-user', auth.UpdateUser.as_view()),
-    url(r'^auth-google-login', auth.GoogleLogin.as_view()),
-    url(r'^auth-facebook-login', auth.FacebookLogin.as_view()),
     url(r'^auth-login', rf_views.obtain_auth_token),
 ]

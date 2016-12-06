@@ -28,7 +28,6 @@ pyshp==1.2.10
 python-dateutil==2.6.0
 pytz==2016.7
 requests==2.12.1
-requests-oauthlib==0.7.0
 rsa==3.4.2
 six==1.10.0
 slacker==0.9.30
