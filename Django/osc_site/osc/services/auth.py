@@ -64,7 +64,7 @@ def get_token_from_google_token(googleToken):
         # Invalid token
         return 'error'
         
-    return token
+    return username, token
 
 def get_token_from_facebook_token(facebookToken):
     
@@ -104,7 +104,7 @@ def get_token_from_facebook_token(facebookToken):
                                       picture_link=picture_url)
     token = get_token(username)
         
-    return token
+    return username, token
 
 
 def get_token_from_email_and_password(email, password):
@@ -128,4 +128,4 @@ def get_token_from_email_and_password(email, password):
 
     token = get_token(username)
         
-    return token
+    return username, token

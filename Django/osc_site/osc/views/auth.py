@@ -27,13 +27,16 @@ class SignIn(APIView):
         plotRelation = authorizationGrant['plotRelation'] if 'plotRelation' in authorizationGrant else None
         
         if googleAccessToken is not None:
-            token = auth_service.get_token_from_google_token(googleAccessToken)
+            username, token = auth_service.get_token_from_google_token(googleAccessToken)
         elif facebookAccessToken is not None:
-            token = auth_service.get_token_from_facebook_token(facebookAccessToken)
+            username, token = auth_service.get_token_from_facebook_token(facebookAccessToken)
         elif email is not None and password is not None:
-            token = auth_service.get_token_from_email_and_password(email, password)
+            username, token = auth_service.get_token_from_email_and_password(email, password)
         else:
             return Response(data={'error': 'not enough data in request'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if plotRelation == 'myPlot':
+            users_service.add_parcel(username, plot)
 
         return Response({'token': token.key}, status=status.HTTP_200_OK) 
 
