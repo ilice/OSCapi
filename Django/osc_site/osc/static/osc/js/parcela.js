@@ -15,7 +15,7 @@ Date.prototype.getDOY = function () {
  */
 $(window).resize(function () {
 	FB.getLoginStatus(function (response) {
-		console.log('FB.getLoginStatus');
+		debug('FB.getLoginStatus');
 		statusChangeCallback(response);
 	});
 });
@@ -23,9 +23,9 @@ $(window).resize(function () {
 function drawPlotProfile(accessToken) {
 
 	if (accessToken === undefined) {
-		console.log('drawPlotProfile without user');
+		debug('drawPlotProfile without user');
 	} else {
-		console.log('drawPlotProfile for user');
+		debug('drawPlotProfile for user');
 	}
 
 	var nationalCadastralReference = getNationalCadastreReference();
@@ -1488,11 +1488,11 @@ function w3_close() {
 // --------------------- Google code ---------------------
 function onSignIn(googleUser) {
 	
-	var accessToken=getCookie("accessToken");
+	var accessToken=getCookie("token");
 	
 		if(accessToken == ''){
 		
-		console.log('onSignIn(googleUser)');
+		debug('onSignIn(googleUser)');
 	
 		var authorizationGrant =  {
 				googleAccessToken: googleUser.getAuthResponse().id_token , 
@@ -1507,10 +1507,10 @@ function onSignIn(googleUser) {
 
 
 function signOut() {
-	console.log('signOut');
+	debug('signOut');
 	var auth2 = gapi.auth2.getAuthInstance();
 	auth2.signOut().then(function () {
-		console.log('User signed out.');
+		debug('User signed out.');
 		var response = {status: 'unknown'};
 		statusChangeCallback(response);
 	});
@@ -1543,7 +1543,7 @@ window.fbAsyncInit = function () {
 	// These three cases are handled in the callback function.
 
 	FB.getLoginStatus(function (response) {
-		console.log('FB.getLoginStatus');
+		debug('FB.getLoginStatus');
 		
 		if(response.status === 'connected'){
 		
@@ -1582,8 +1582,8 @@ window.fbAsyncInit = function () {
 
 
 
-function emailInit() {
-	console.log('emailInit');
+function checkLoginStatus() {
+	debug('checkLoginStatus');
 	getLoginStatus(statusChangeCallback);
 }
 
@@ -1594,7 +1594,7 @@ function emailInit() {
 
 function getEmailLogin(userEmailTokenID){
 	
-	console.log('getEmailLogin');
+	debug('getEmailLogin');
 
 	data = {userEmailTokenID: userEmailTokenID};
 	
@@ -1622,7 +1622,7 @@ function getEmailLogin(userEmailTokenID){
 
 function drawUser(accessToken) {
 	
-	console.log('drawUser');
+	debug('drawUser');
 	
 	var userEndPoint = "/user";
 	
@@ -1645,14 +1645,14 @@ function drawUser(accessToken) {
 			var user = response;
 			
 			
-			console.log('Successful login for: ' + user.email);
+			debug('Successful login for: ' + user.email);
 
 			document.getElementById('esMiParcela').style.display = 'none';
 			document.getElementById('esMiParcelaButton').disabled = true;
 			document.getElementById('meInteresaEstaParcelaButton').disabled = true;
 
 
-			console.log(user);	
+			debug(user);	
 			
 			drawUserMenu(user);
 			
@@ -1671,39 +1671,39 @@ function login(callback){
 }
 
 function getLoginStatus(callback) {
-	console.log('getLoginStatus');
+	debug('getLoginStatus');
 	var accessToken=getCookie("token");
 	var response = {};
 	if (accessToken != "") {
-		console.log('getLoginStatus: with accessToken');
+		debug('getLoginStatus: with accessToken');
 		response = {status: 'connected', token: accessToken};
     }else{
-    	console.log('getLoginStatus: without accessToken');
+    	debug('getLoginStatus: without accessToken');
     	response = {status: 'not_connected'};
     }
 	callback(response);
 }
 
 function statusChangeCallback(response) {
-	console.log('statusChangeCallback');
-	console.log(response);
+	debug('statusChangeCallback');
+	debug(response);
 	
 	// The response object is returned with a status field that lets the
 	// app know the current login status of the person.
 	// Full docs on the response object can be found in the documentation
 	// for FB.getLoginStatus().
 	if (response.status === 'connected' && response.token != undefined) {
-		console.log('statusChangeCallback: Logged into Open Smart Country');
+		debug('statusChangeCallback: Logged into Open Smart Country');
 		var accessToken = response.token;
 		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
 		drawUser(accessToken);
 		drawPlotProfile(accessToken);
 	} else if (response.status == 'not_connected'){
-		console.log('statusChangeCallback: Not logged into Open Smart Country'); 
+		debug('statusChangeCallback: Not logged into Open Smart Country'); 
 		drawPlotProfile();	
 	} else {
-		console.log('statusChangeCallback: unknown'); 
-		emailInit();
+		debug('statusChangeCallback: unknown');
+		checkLoginStatus();
 	}
 }
 
@@ -1711,7 +1711,7 @@ function logout(socialNetwork) {
 	
 	
 	
-	console.log('logout('+socialNetwork+')');
+	debug('logout('+socialNetwork+')');
 	
 	setCookie('token', '', 0);
 	
@@ -1723,7 +1723,7 @@ function logout(socialNetwork) {
 			statusChangeCallback(response);
 			
 		});
-	} else if (socialNetwork == 'email'){
+	} else {
 		var response = {status: 'unknown'};
 		statusChangeCallback(response);
 	}
@@ -1742,7 +1742,7 @@ function drawUserMenu(user) {
 	if(profile_image_url == null){
 		profile_image_url = "/static/osc/img/avatar.PNG";
 	}
-	console.log('drawUserMenu');
+	debug('drawUserMenu');
 
 	var userMenu = document.createElement('div');
 	userMenu.setAttribute('id', 'userMenu');
@@ -1840,9 +1840,9 @@ function emailAuthorizationGrant(){
 
 
 function facebookAuthorizationGrant() {
-	console.log('login');
+	debug('login');
 	FB.login(function (response) {
-		console.log('login: facebookAuthorizationGrant');
+		debug('login: facebookAuthorizationGrant');
 		
 		var authorizationGrant =  {
 				facebookAccessToken: response.authResponse.accessToken , 
@@ -1929,7 +1929,7 @@ function getAccessToken(authorizationGrant){
 		xhr.open('POST', '/auth-google-login');
 		xhr.setRequestHeader('Content-Type', 'application/json');
 		xhr.onload = function() {
-		  console.log('Signed in as: ' + xhr.responseText);
+		  debug('Signed in as: ' + xhr.responseText);
 		  loginResponse = JSON.parse(xhr.response);
 		  var loginToken = loginResponse.token;
 			setCookie('token', loginToken, 1);
@@ -1942,7 +1942,7 @@ function getAccessToken(authorizationGrant){
 		xhr.open('POST', '/auth-facebook-login');
 		xhr.setRequestHeader('Content-Type', 'application/json');
 		xhr.onload = function() {
-		  console.log('Signed in as: ' + xhr.responseText);
+		  debug('Signed in as: ' + xhr.responseText);
 		  loginResponse = JSON.parse(xhr.response);
 		  var loginToken = loginResponse.token;
 			setCookie('token', loginToken, 1);
@@ -2147,4 +2147,10 @@ function has(description){
 		}		
 	}
 	return hasDescription;
+}
+
+function debug(message){
+	if(window.location.href.includes('localhost')){
+		console.log(message);
+	}
 }
