@@ -1760,7 +1760,7 @@ function drawUserMenu(user) {
 	
 	var settings_row = document.createElement('a');
 	settings_row.setAttribute('href', 'javascript:void(0)');
-	settings_row.setAttribute('onclick', 'openSettings(\'' + JSON.stringify(user) + '\')');
+	settings_row.setAttribute('onclick', 'document.getElementById("settings_modal").style.display=\'block\'');
 	avatar_dropdown_content.appendChild(settings_row);
 
 	var settings_icon = document.createElement('i');
@@ -1781,6 +1781,33 @@ function drawUserMenu(user) {
 	document.getElementById('userMenuItem').appendChild(userMenu);
 
 	document.getElementById("avatar").src = profile_image_url;
+	
+	document.getElementById('settings_modal_given_name').value = user.first_name;
+	document.getElementById('settings_modal_family_name').value = user.last_name; 
+	document.getElementById('settings_modal_email').value = user.email; 
+	document.getElementById('settings_modal_picture_link').value = user.picture_link; 
+	
+	
+	document.getElementById('settings_modal_avatar').src = user.picture_link; 
+	document.getElementById('settings_form').setAttribute( 'onsubmit' , 'updateSettings(' + JSON.stringify(user) + ')');
+	
+	var myPlots = document.getElementById('myPlots');
+	
+	for(parcelNumber in user.parcels){
+		
+		var cadastralCode = user.parcels[parcelNumber].properties.nationalCadastralReference;
+		var plot = document.createElement('li');
+		var plotLink = document.createElement('a');
+		plotLink.setAttribute('href', '/parcela/?cadastral_code=' + cadastralCode);
+		plotLink.appendChild(document.createTextNode(cadastralCode));
+		plot.appendChild(plotLink);
+		var deletePlot = document.createElement('span');
+		deletePlot.setAttribute('onclick', 'this.parentElement.style.display=\'none\'');
+		deletePlot.setAttribute('class', 'w3-closebtn w3-margin-right w3-medium');
+		deletePlot.appendChild(document.createTextNode('x'));
+		plot.appendChild(deletePlot);
+		myPlots.appendChild(plot);
+	}
 }
 
 function authorizationRequest(plotRelation) {
@@ -2080,51 +2107,34 @@ function debug(message){
 	}
 }
 
-
-function openSettings(user){
-	
-	user = JSON.parse(user);
-	
-	document.getElementById('settings_modal_given_name').value = user.first_name;
-	document.getElementById('settings_modal_family_name').value = user.last_name; 
-	document.getElementById('settings_modal_email').value = user.email; 
-	document.getElementById('settings_modal_picture_link').value = user.picture_link; 
-	
-	
-	document.getElementById('settings_modal_avatar').src = user.picture_link; 
-	document.getElementById('settings_form').setAttribute( 'onsubmit' , 'updateSettings(' + JSON.stringify(user) + ')');
-	document.getElementById("settings_modal").style.display='block';
-
-}
-
 function updateSettings(user){
 	
 	var data = {
-			username: user.username,
-			given_name: document.forms["settings_form"]["given_name"].value,	
-			family_name: document.forms["settings_form"]["family_name"].value,
-			email: document.forms["settings_form"]["email"].value,
-			picture: document.forms["settings_form"]["picture_link"].value,
-		};
+		username: user.username,
+		given_name: document.forms["settings_form"]["given_name"].value,	
+		family_name: document.forms["settings_form"]["family_name"].value,
+		email: document.forms["settings_form"]["email"].value,
+		picture: document.forms["settings_form"]["picture_link"].value,
+	};
 
-		var url = "/auth-update-user";
-		
-		var accessToken = getCookie('token');
-		var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
+	var url = "/auth-update-user";
+	
+	var accessToken = getCookie('token');
+	var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
 
-		var request = jQuery.ajax({
-				crossDomain : true,
-				url : url,
-				data : JSON.stringify(data),
-				type : 'PUT',
-				headers: headers,
-				dataType : "json",
-				contentType: 'application/json',
-			});
-
-		request.done(function (response, textStatus, jqXHR) {
-			location.reload();
+	var request = jQuery.ajax({
+			crossDomain : true,
+			url : url,
+			data : JSON.stringify(data),
+			type : 'PUT',
+			headers: headers,
+			dataType : "json",
+			contentType: 'application/json',
 		});
+
+	request.done(function (response, textStatus, jqXHR) {
+		location.reload();
+	});
 	
 }
 

@@ -172,5 +172,6 @@ class UserDetail(APIView):
                                 'last_name': user.last_name, 
                                 'email': user.email, 
                                 'loginMethod': user.username[0:user.username.find('_')], 
-                                'picture_link': user.userprofile.picture_link}, 
+                                'picture_link': user.userprofile.picture_link, 
+                                'parcels': users_service.get_parcels(user.username, False, False, False)}, 
                         status=status.HTTP_200_OK)
