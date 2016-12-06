@@ -1501,7 +1501,7 @@ function onSignIn(googleUser) {
 		var authorizationGrant =  {
 				googleAccessToken: googleUser.getAuthResponse().id_token , 
 				plot: getNationalCadastreReference(),
-				relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+				plotRelation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
 		};
 		
 		getAccessToken(authorizationGrant);
@@ -1554,7 +1554,7 @@ window.fbAsyncInit = function () {
 			var authorizationGrant =  {
 					facebookAccessToken: response.authResponse.accessToken , 
 					plot: getNationalCadastreReference(),
-					relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+					plotRelation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
 			};
 			
 			getAccessToken(authorizationGrant);
@@ -1612,7 +1612,7 @@ function getEmailLogin(userEmailTokenID){
 			//userProfilePicture : response.userProfilePinture, 
 			userProfilePicture : "/static/osc/img/avatar.PNG",
 			plot : getNationalCadastreReference(), 
-			relation : 'myPlot'
+			plotRelation : 'myPlot'
 	};
 	
 	var response = {status: 'connected', user: user};
@@ -1773,8 +1773,8 @@ function drawUserMenu(user) {
 	document.getElementById("avatar").src = profile_image_url;
 }
 
-function authorizationRequest(relation) {
-	if (relation == 'esMiParcela') {
+function authorizationRequest(plotRelation) {
+	if (plotRelation == 'esMiParcela') {
 		document.getElementById('interestingPlotRadio').checked = false;
 		document.getElementById('interestingPlotRadio').disabled = true;
 		document.getElementById('myPlotRadio').checked = true;
@@ -1826,7 +1826,7 @@ function emailAuthorizationGrant(){
 			email: document.getElementById('email').value , 
 			password: document.getElementById('password').value, 
 			plot: getNationalCadastreReference(),
-			relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+			plotRelation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
 	};
 	
 	getAccessToken(authorizationGrant);
@@ -1841,7 +1841,7 @@ function facebookAuthorizationGrant() {
 		var authorizationGrant =  {
 				facebookAccessToken: response.authResponse.accessToken , 
 				plot: getNationalCadastreReference(),
-				relation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
+				plotRelation : document.getElementById('myPlotRadio').checked?'myPlot':'interestingPlot'			
 		};
 		
 		getAccessToken(authorizationGrant);

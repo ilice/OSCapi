@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 import osc.services.auth as auth_service
 import osc.services.users as users_service
+from osc.views.rest_api import UserParcelsDetail
 
 
 class CreateUser(APIView):
@@ -26,6 +27,8 @@ class CreateUser(APIView):
         link = request.data['link'] if 'link' in request.data else None
         locale = request.data['locale'] if 'locale' in request.data else None
         picture_link = request.data['picture'] if 'picture' in request.data else None
+        plot = request.data['plot'] if 'plot' in request.data else None
+        plotRelation = request.data['plotRelation'] if 'plotRelation' in request.data else None
 
         if username is not None and password is not None:
             user = users_service.create_user(username, password,
@@ -41,7 +44,13 @@ class CreateUser(APIView):
         else:
             return Response(data={'error': 'no user in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-        token, created = auth_service.get_token(username)
+        user.save()
+        
+        token = auth_service.get_token(username)
+        
+        if plotRelation == 'myPlot':
+            users_service.add_parcel(username, plot)
+            
         return Response(data={'token': token.key}, status=status.HTTP_201_CREATED)
 
 

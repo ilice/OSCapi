@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^crops/elastic/(?P<crop_id>[0-9]+)/$', rest_api.CropDetail.as_view(), name='update_crops_elastic'),
     url(r'^userparcel/query/$', rest_api.UserParcelsList.as_view(), name='obtain_user_parcels'),
     url(r'^userparcel/add/$', rest_api.UserParcelsDetail.as_view(), name='add_user_parcel'),
-    url(r'^user/$', rest_api.UserDetail.as_view(), name='get_user_'),
+    url(r'^user/$', rest_api.UserDetail.as_view(), name='get_user'),
 
     # Autentication
     url(r'^auth-create-user', auth.CreateUser.as_view()),
