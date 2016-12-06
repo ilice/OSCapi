@@ -392,19 +392,20 @@ function drawParcelInfoByNationalCadastralReference(
 	nationalCadastralReference, accessToken) {
 	var cadastralParcelFeature = {};
 	
-	//TODO creo el accessToken que debe ir en el cuerpo y no en la url
-
 	var url = '/cadastral/parcel?cadastral_code='
 		 + nationalCadastralReference
-		 + '&retrieve_public_info=True&retrieve_climate_info=True&retrieve_soil_info=True&accessToken='
-		 + (accessToken===undefined?'':accessToken);
+		 + '&retrieve_public_info=True&retrieve_climate_info=True&retrieve_soil_info=True';
 
-	var request = jQuery.ajax({
-			url : url,
-			type : 'GET',
-			dataType : "json"
-		});
+	var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
 
+	request = jQuery.ajax({
+		url : url,
+		type : 'GET',
+		headers: headers,
+		dataType : "json"
+	});
+
+	
 	request
 	.done(function (response, textStatus, jqXHR) {
 		if(response.error === undefined){
@@ -414,11 +415,11 @@ function drawParcelInfoByNationalCadastralReference(
 			showError(new Error('Se ha producido un error al recuperar la información de la parcela.'));
 		}
 		cadastralParcelFeature.getProperty = getProperty;
-		drawCardsAndWidgets(cadastralParcelFeature);
+		drawCardsAndWidgets(cadastralParcelFeature, accessToken);
 	});
 }
 
-function drawCardsAndWidgets(cadastralParcelFeature) {
+function drawCardsAndWidgets(cadastralParcelFeature, accessToken) {
 
 	setValueInField(
 		cadastralParcelFeature.getProperty('properties.nationalCadastralReference'), "rc");
@@ -428,7 +429,7 @@ function drawCardsAndWidgets(cadastralParcelFeature) {
 	
 	drawCompletionParcelProfileBar(cadastralParcelFeature);
 
-	drawAlternatives(cadastralParcelFeature);
+	drawAlternatives(cadastralParcelFeature, accessToken);
 
 	drawLocationCard(cadastralParcelFeature);
 
@@ -469,7 +470,7 @@ function drawCompletionParcelProfileBar(cadastralParcelFeature){
 
 
 
-function drawAlternatives(cadastralParcelFeatures) {
+function drawAlternatives(cadastralParcelFeatures, accessToken) {
 
 	var queries = [];
 
@@ -529,12 +530,15 @@ function drawAlternatives(cadastralParcelFeatures) {
 	};
 
 	var url = "/crops/elastic/search/";
+	
+	var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
 
 	var request = jQuery.ajax({
 			crossDomain : true,
 			url : url,
 			data : JSON.stringify(data),
 			type : 'POST',
+			headers: headers,
 			dataType : "json",
 			contentType: 'application/json',
 		});
@@ -1626,37 +1630,32 @@ function drawUser(accessToken) {
 	
 	var userEndPoint = "/user";
 	
+	var headers = accessToken===undefined?{}:{Authorization: "Token " + accessToken};
+	
 	var request = jQuery.ajax({
 		crossDomain : true,
 		url : userEndPoint,
-		headers: {
-		    "Authorization": "Token " + accessToken
-		  },
+		headers: headers,
 		type : 'GET',
 		dataType : "json",
 		contentType: 'application/json'
 	});
 
 	request.done(function (response, textStatus, jqXHR) {
-		//TODO eliminar cuando esté el servicio de consulta de usuario
-		//var response = {status: 'SUCCESS', user: user = { name : 'Invitado', email : 'test@email.com',	loginMethod: ((accessToken=='33')?'email':(accessToken=='66')?'facebook':'google'), userProfilePicture : "/static/osc/img/avatar.PNG", plots : [getNationalCadastreReference()], relation : 'myPlot'}};
+	
+		var user = response;
 		
-		//if (response.status == "SUCCESS") {
-			var user = response;
-			
-			
-			debug('Successful login for: ' + user.email);
+		
+		debug('Successful login for: ' + user.email);
 
-			document.getElementById('esMiParcela').style.display = 'none';
-			document.getElementById('esMiParcelaButton').disabled = true;
-			document.getElementById('meInteresaEstaParcelaButton').disabled = true;
+		document.getElementById('esMiParcela').style.display = 'none';
+		document.getElementById('esMiParcelaButton').disabled = true;
+		document.getElementById('meInteresaEstaParcelaButton').disabled = true;
 
 
-			debug(user);	
-			
-			drawUserMenu(user);
-			
-		//}
+		debug(user);	
+		
+		drawUserMenu(user);
 			
   });
 		
@@ -1688,14 +1687,9 @@ function statusChangeCallback(response) {
 	debug('statusChangeCallback');
 	debug(response);
 	
-	// The response object is returned with a status field that lets the
-	// app know the current login status of the person.
-	// Full docs on the response object can be found in the documentation
-	// for FB.getLoginStatus().
 	if (response.status === 'connected' && response.token != undefined) {
 		debug('statusChangeCallback: Logged into Open Smart Country');
 		var accessToken = response.token;
-		//TODO eliminar esto cuanto esté el django server con consulta de datos de usuario, ahora pasamos el response porque tiene más info
 		drawUser(accessToken);
 		drawPlotProfile(accessToken);
 	} else if (response.status == 'not_connected'){
@@ -1877,18 +1871,14 @@ function getAccessToken(authorizationGrant){
 		});
 	
 		createUserRequest.done(function (response, textStatus, request) {
-			// TODO quitar esto de response =
-			//var response = {status: 'connected', accessToken: (authorizationGrant.facebookAccessToken != undefined)?"66":(authorizationGrant.googleAccessToken != undefined)?"99":"33" };
+
 			if (createUserRequest.status == "201") {
 				var token = response.token;
 				setCookie('token', token, 1);
 				response.status = 'connected';
 				statusChangeCallback(response);
-			}else if (createUserRequest.status == "200"){
-	
 			}
 				
-			//}
 		});
 		
 		createUserRequest.fail(function( createUserRequest, textStatus, errorThrown ) {
