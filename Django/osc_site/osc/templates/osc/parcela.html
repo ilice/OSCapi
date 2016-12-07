@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{% static 'osc/css/estilo.css' %}"/>
     <link href="{% static 'osc/img/OpenSmartCountry_logo_192x192.png' %}" rel="icon"
             sizes="192x192"/>
-    <link href="{% static 'osc/img/OpenSmartCountry_logo_128x128.png' %}" rel="icon" 
+    <link href="{% static 'osc/img/OpenSmartCountry_logo_128x128.png' %}" rel="icon"
             sizes="128x128"/>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script
@@ -45,7 +45,7 @@
     		m.parentNode.insertBefore(a, m)
     	})(window, document, 'script',
     			'https://www.google-analytics.com/analytics.js', 'ga');
-    
+
     	ga('create', 'UA-87069839-1', 'auto');
     	ga('require', 'eventTracker');
         ga('require', 'outboundLinkTracker');
@@ -195,7 +195,7 @@
             <h3>O mediante correo electrónico</h3>
         </div>
         <div>
-            <div class="zend_form">
+            <form id="email_signIn_form" action="javascript:;"  method="post" onsubmit="login(emailAuthorizationGrant)">
                 <div class="w3-row-padding w3-padding-large"
                      style="margin: 0 -16px 8px -16px">
                     <div class="w3-half">
@@ -249,12 +249,12 @@
                             ga-event-action="click"
                             ga-event-label="e-mail signIn"
                             class="w3-btn w3-dark-grey w3-right"
-                                onClick="login(emailAuthorizationGrant)">Enviar
+                                 type="submit">Enviar
                         </button>
                     </div>
                 </div>
 
-            </div>
+            </form>
         </div>
 
 
@@ -277,14 +277,14 @@
                     ga-event-label="Home button" href="/"
                     class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge">
                     <i class="fa fa-home"></i>
-                </a> 
+                </a>
                 <a ga-on="click" ga-event-category="Interactions"
                     ga-event-action="click"
                     ga-event-label="Map button"
                     href="/mapaDeParcelas"
                     class="w3-hover-none w3-hover-text-dark-grey w3-show-inline-block w3-xlarge">
                     <i class="fa fa-globe"></i>
-                </a> 
+                </a>
                 <a ga-on="click" ga-event-category="Interactions"
                     ga-event-action="click"
                     ga-event-label="Close lateral menu button"
@@ -310,13 +310,13 @@
                 ga-event-action="click"
                 ga-event-label="Envelope button" href="#"
                 class="w3-hover-none w3-hover-text-red w3-show-inline-block">
-               <i class="fa fa-envelope"></i></a> 
+               <i class="fa fa-envelope"></i></a>
              <a ga-on="click"
                 ga-event-category="Interactions"
                 ga-event-action="click"
                 ga-event-label="User button" href="#"
                 class="w3-hover-none w3-hover-text-green w3-show-inline-block">
-                <i class="fa fa-user"></i></a> 
+                <i class="fa fa-user"></i></a>
              <a ga-on="click"
                 ga-event-category="Interactions"
                 ga-event-action="click"
@@ -325,38 +325,38 @@
                 <i class="fa fa-cog"></i></a>
         </div>
     </div>
-    
+
     <div class="w3-container">
         <h5>Panel de navegación</h5>
     </div>
 
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="General"
         href="#" class="w3-padding w3-blue" onclick="w3_close();">
-        <i class="fa fa fa-television fa-fw"></i>  General</a> 
+        <i class="fa fa fa-television fa-fw"></i>  General</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternativas"
         href="#" class="w3-padding" onclick="document.getElementById('AlternativesCard').style.display='block';w3_close();">
-        <i class="fa fa-refresh fa-fw"></i>  Alternativas</a> 
+        <i class="fa fa-refresh fa-fw"></i>  Alternativas</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Mapa"
         href="#tarjetaMapa" class="w3-padding" onclick="document.getElementById('LocationCard').style.display='block';w3_close();">
-        <i class="fa fa-map fa-fw"></i>  Mapa</a> 
+        <i class="fa fa-map fa-fw"></i>  Mapa</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Catastro"
         href="#catastro" class="w3-padding" onclick="document.getElementById('catastro').style.display='block';w3_close();">
-        <i class="fa fa-institution fa-fw"></i>  Catastro</a> 
+        <i class="fa fa-institution fa-fw"></i>  Catastro</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Precipitaciones"
         href="#precipitacion" class="w3-padding" onclick="document.getElementById('precipitacion').style.display='block';w3_close();">
-        <i class="fa fa-tint fa-fw"></i>  Precipitaciones</a> 
+        <i class="fa fa-tint fa-fw"></i>  Precipitaciones</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Temperatura"
         href="#temperatura" class="w3-padding" onclick="document.getElementById('temperatura').style.display='block';w3_close();">
-        <i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a> 
+        <i class="fa fa-eyedropper fa-fw"></i>  Temperatura</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Sol"
         href="#sol" class="w3-padding" onclick="document.getElementById('sol').style.display='block';w3_close();">
-        <i class="fa fa-certificate fa-fw"></i>  Sol</a> 
+        <i class="fa fa-certificate fa-fw"></i>  Sol</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Radiación"
         href="#radiacion" class="w3-padding" onclick="document.getElementById('radiacion').style.display='block';w3_close();">
-        <i class="fa fa-rss fa-fw"></i>  Radiacion</a> 
+        <i class="fa fa-rss fa-fw"></i>  Radiacion</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Usos cercanos"
         id='fixedLink' href="#fixed" class="w3-padding" onclick="document.getElementById('fixed').style.display='block';w3_close();">
-        <i class="fa fa-eye fa-fw"></i>  Usos cercanos</a> 
+        <i class="fa fa-eye fa-fw"></i>  Usos cercanos</a>
     <a ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Información"
         href="#informacion" class="w3-padding" onclick="document.getElementById('informacion').style.display='block';w3_close();">
         <i class="fa fa-info fa-fw"></i>  Información</a>
@@ -390,7 +390,7 @@
         <span  ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="completionParcelProfileBarCard close"
             onclick="this.parentElement.style.display='none'"
             class="w3-closebtn fa fa-times w3-padding"></span>
-            <div class="w3-container w3-padding-large">        
+            <div class="w3-container w3-padding-large">
                 <div class="w3-row">
                         <h5>Completa el perfil de la parcela</h5>
                 </div>
@@ -418,7 +418,7 @@
                                 <i
                                     class="fa fa-camera w3-xxlarge w3-circle w3-text-grey"
                                     style='padding: 20px 20px 20px 20px; border: 5px solid grey;'></i>
-    
+
                             </button> <span
                             style="position: absolute; left: 0; top: 40px"
                             class="w3-text">Añade más imágenes</span>
@@ -469,7 +469,7 @@
                             <div id='progressCircle'></div>
                             <p>Eficacia del perfil</p>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -479,7 +479,7 @@
     <div class="w3-row-padding">
         <div class="w3-half w3-container w3-margin-top">
             <div class="w3-margin-bottom">
-                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget lluvia" 
+                <div ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Widget lluvia"
                     class="w3-half w3-hover-opacity w3-small" onclick="location.href='#precipitacion'">
                     <div class="w3-container w3-blue w3-padding-large w3-margin">
                         <div class="w3-left">
@@ -557,7 +557,7 @@
 
         <div class="w3-half">
             <div id="AlternativesCard" class="w3-card-8">
-                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives close" 
+                <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives close"
                     onclick="this.parentElement.style.display='none'"
                     class=" w3-closebtn w3-padding fa fa-close fa-fw"></span>
                 <span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="Alternatives open table"
@@ -625,7 +625,7 @@
             </div>
         </div>
     </div>
-    
+
    <!-- The Modal -->
     <div id="AlternativesTable" class="w3-modal">
         <div class="w3-modal-content">
@@ -648,7 +648,7 @@
                             <th>Puntuación</th>
                         </tr>
                     </thead>
-                    
+
                 </table>
             </div>
         </div>
@@ -699,7 +699,7 @@
                     </h5>
                     <div id="LocationErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="LocationErrorData close" 
+							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="LocationErrorData close"
                                 onclick="this.parentElement.style.display='none'"
                                   class="w3-closebtn w3-padding fa fa-close"></span><span
                             id="LocationCardErrorText"></span>
@@ -727,7 +727,7 @@
         </div>
         <div class="w3-twothird">
             <div id="catastro" class="w3-card-8" style="min-height: 451px;">
-					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="catastro close" 
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="catastro close"
                         onclick="this.parentElement.style.display='none'"
                           class="w3-closebtn w3-padding fa fa-close"></span>
                 <div class="w3-container">
@@ -745,7 +745,7 @@
                     </h5>
                     <div id="CatastralCardErrorData"
                          class="w3-col w3-panel w3-red w3-card-8" style="display: none">
-							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="CatastralCardErrorData close" 
+							<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="CatastralCardErrorData close"
                                 onclick="this.parentElement.style.display='none'"
                                   class="w3-closebtn w3-padding fa fa-close"></span> <span
                             id="CatastralCardErrorText"></span>
@@ -828,7 +828,7 @@
     <div id="idea_modal" class="w3-modal w3-animate-zoom">
         <div class="w3-modal-content">
             <div class="w3-container">
-					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="idea_modal close" 
+					<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="idea_modal close"
                             onclick="document.getElementById('idea_modal').style.display='none'"
                             class="w3-closebtn fa fa-close"></span>
                 <p>
@@ -853,7 +853,7 @@
     <!--Una observación-->
     <div class="w3-container w3-section ">
         <div class="w3-orange w3-text-dark-grey w3-row-padding">
-				<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="observación close"  
+				<span ga-on="click" ga-event-category="Interactions" ga-event-action="click" ga-event-label="observación close"
                     onclick="this.parentElement.style.display='none'"
                       class="w3-closebtn w3-padding fa fa-close"></span>
             <h3>Observación</h3>
@@ -908,7 +908,7 @@
                                 alt="Textura suelo" style="width: 100%;">
                         </div>
                         <div class="w3-twothird" >
-                            
+
                                 <h6><strong>pH:</strong> <span id="pH_in_H2O"></span> <em>(<span id="pH_in_CaCl2"></span> - CaCl2)</em></h6>
                                 <div style="position: relative;">
                                 <input id="phRange" class="w3-input"  style="width: 100%;" type="range"  min="1" max="15" step="0.01" disabled/>
@@ -1157,7 +1157,7 @@
                         <button id="RadiationCardErrorBadge" ga-on="click"
                             ga-event-category="Interactions"
                             ga-event-action="click"
-                            ga-event-label="Error badge" 
+                            ga-event-label="Error badge"
                             class="w3-badge w3-red w3-hover-opacity w3-small w3-btn w3-right"
                             style="display: none"
                             onclick="document.getElementById('RadiationErrorData').style.display='block'">
@@ -1647,7 +1647,7 @@
 
       <form id="settings_form" action="javascript:;"  class="w3-container" method="post">
         <div class="w3-section">
-          
+
           <label><b>Nombre</b></label>
           <input id="settings_modal_given_name" class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Nombre" name="given_name" required>
           <label><b>Apellidos</b></label>
@@ -1656,13 +1656,13 @@
           <input id="settings_modal_email" class="w3-input w3-border" type="email" placeholder="e-mail" name="email" required>
           <label><b>Avatar</b></label>
           <input id="settings_modal_picture_link" class="w3-input w3-border" type="url" placeholder="avatar url" name="picture_link" required>
-          
+
           <hr/>
-           
+
           <ul class="w3-ul w3-hoverable w3-card-4" id='myPlots'></ul>
-          
+
           <button id="settings_form_update_button" class="w3-btn-block w3-green w3-section w3-padding" type="submit">Modificar</button>
-          
+
         </div>
       </form>
 
