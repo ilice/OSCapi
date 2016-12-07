@@ -175,3 +175,12 @@ class UserDetail(APIView):
                                 'picture_link': user.userprofile.picture_link, 
                                 'parcels': users_service.get_parcels(user.username, False, False, False)}, 
                         status=status.HTTP_200_OK)
+        
+class OwnedParcels(APIView):
+    renderer_classes = (JSONRenderer,)
+    parser_classes = (JSONParser,)
+
+    def get(self, request, format=None):
+        
+        return Response(data = {'parcels': users_service.get_parcels(None, True, False, False)}, 
+                        status=status.HTTP_200_OK)

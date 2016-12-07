@@ -92,8 +92,12 @@ def update_user_profile(username,
 
 
 def get_parcels(username, retrieve_public_info=False, retrieve_climate_info=False, retrieve_soil_info=False):
-    user = get_user(username)
-    user_parcels = UserParcel.objects.filter(user=user)
+    
+    if username is not None:
+        user = get_user(username)
+        user_parcels = UserParcel.objects.filter(user=user)
+    else:
+        user_parcels = UserParcel.objects.filter()
 
     parcels = []
     for user_parcel in user_parcels:

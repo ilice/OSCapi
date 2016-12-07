@@ -1,24 +1,3 @@
-var parcelas = [
-		{
-			lat : 40.439983,
-			lng : -5.737026,
-			foto : "/static/osc/img/IMG_20160501_175931.jpg",
-			url : "/parcela?cadastral_code=37284A00600098&nombre=Viña%20de%20la%20estación&avatar=avatar_vinia.PNG"
-		},
-		{
-			lat : 41.080364,
-			lng : -4.588973,
-			foto : "/static/osc/img/IMG_0882.JPG",
-			url : "/parcela?cadastral_code=40066A00500025&nombre=La%20Nueva"
-		},
-		{
-			lat : 42.42134234731058,
-			lng : -2.9352070971348705,
-			foto : "/static/osc/img/basajaun.jpg",
-			url : "/parcela/?cadastral_code=26138A50100036&nombre=La%20parcela%20del%20Basajaun"
-		}
-		];
-
 var marcadores = [];
 var mapa;
 
@@ -292,29 +271,30 @@ function inicializaMapa() {
 
 function dibujaMarcadores() {
 	limpiaMarcadores();
-	for (var i = 0; i < parcelas.length; i++) {
-		aniadeMarcadorConTimeout(parcelas[i], i * 200);
-	}
+	var parcelas = getOwnedParcels();
+	
 }
 
-function aniadeMarcadorConTimeout(posicion, timeout) {
+function aniadeMarcadorConTimeout(parcel, timeout) {
 
-	window.setTimeout(function() {
+		window.setTimeout(function() {
 		var unaCosa = 'uno';
 
 		var image = '/static/osc/img/OpenSmartCountry_marker_rojo.png';
+		
+		var position = {lat: parcel.properties.reference_point.lat, lng: parcel.properties.reference_point.lon};
 
 		var marcador = new google.maps.Marker({
-			position : posicion,
+			position : position,
 			map : mapa,
 			animation : google.maps.Animation.DROP,
 			icon : image
 		});
 
 		var contenidoVentana = '<div id="content">' + '<h1>Parcela</h1>'
-				+ '<img src="' + posicion.foto + '" height="400""/>' + '<div>'
-				+ '<ul><li>Latitud: ' + posicion.lat + '</li>'
-				+ '<li>Longitud: ' + posicion.lng + '</li></ul>' + '</div>'
+				+ '<img src="' + "/static/osc/img/OpenSmartCountry_gif_animado_25x25.gif" + '" height="100""/>' + '<div>'
+				+ '<ul><li>Latitud: ' + parcel.properties.reference_point.lat + '</li>'
+				+ '<li>Longitud: ' + parcel.properties.reference_point.lon + '</li></ul>' + '</div>'
 				+ '</div> ' 
 				+ ' <button ga-on="click" '
                 + '			ga-event-category="Interactions" '
@@ -322,7 +302,7 @@ function aniadeMarcadorConTimeout(posicion, timeout) {
                 + '         ga-event-label="Más detalles" '
                 + '			type="button" '
                 + '			onclick="window.open(\''
-				+ posicion.url + '\')">Más detalles</button>';
+				+ "/parcela?cadastral_code=" + parcel.properties.nationalCadastralReference + '\')">Más detalles</button>';
 
 		var ventanaInformacion = new google.maps.InfoWindow({
 			content : contenidoVentana
@@ -478,4 +458,32 @@ function getOptimalBbox(bbox) {
 						.getNorthEast(), offsetdistance, -135));
 	}
 	return reducedBbox;
+}
+
+function getOwnedParcels(){
+	
+
+	var url = "/owned-parcels";
+
+	var accessToken = undefined; // getCookie('token');
+	var headers = accessToken === undefined ? {} : {
+		Authorization : "Token " + accessToken
+	};
+
+	var request = jQuery.ajax({
+		crossDomain : true,
+		url : url,
+		type : 'GET',
+		headers : headers,
+		dataType : "json",
+		contentType : 'application/json',
+	});
+
+	request
+			.done(function(response, textStatus, jqXHR) {
+				var parcels = response.parcels;
+				for (parcelNumber in parcels) {
+					aniadeMarcadorConTimeout(parcels[parcelNumber], parcelNumber * 200);
+				}
+			});
 }

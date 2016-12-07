@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^userparcel/query/$', rest_api.UserParcelsList.as_view(), name='obtain_user_parcels'),
     url(r'^userparcel/add/$', rest_api.UserParcelsDetail.as_view(), name='add_user_parcel'),
     url(r'^user/$', rest_api.UserDetail.as_view(), name='get_user'),
+    url(r'^owned-parcels/$', rest_api.OwnedParcels.as_view(), name='get_owned_parcels'),
+
 
     # Autentication
     url(r'^auth-signIn', auth.SignIn.as_view()),
