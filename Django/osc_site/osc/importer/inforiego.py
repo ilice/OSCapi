@@ -19,7 +19,7 @@ __all__ = ['insert_all_stations_inforiego_daily',
            'insert_all_stations_inforiego_hourly',
            'get_stations_from_elastic']
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 daily_url = settings.INFORIEGO['url.daily']
 user = settings.INFORIEGO['user']
@@ -117,7 +117,7 @@ def insert_inforiego_daily_years(provincia,
                                  user=user,
                                  passwd=password):
     for year in years:
-        logger.info('Inserting year ' + year)
+        logger.info('Inserting year ' + str(year))
         response = get_inforiego_daily_year(provincia,
                                             estacion,
                                             anno=year,
