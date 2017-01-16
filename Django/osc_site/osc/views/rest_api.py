@@ -72,7 +72,7 @@ class ParcelList(APIView):
 
             return Response(parcels_geojson)
         except OSCException as e:
-            return Response({'error': str(type(e)) + ': ' + e.message})
+            return Response({'error': str(type(e)) + ': ' + e.message + ' - ' + str(e.cause)})
 
 
 class CropList(APIView):
