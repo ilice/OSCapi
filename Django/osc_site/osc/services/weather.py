@@ -219,7 +219,7 @@ def get_weather(lat, lon):
         weather_record['coordinates'] = weather_record['coord']
         del(weather_record['coord'])
     else:
-        raise ConnectionError('OPENWEATHERMAP', 'Error connecting to ' + owm_url + '. Status code: ' + response.status_code)
+        raise ConnectionError('OPENWEATHERMAP', 'Error connecting to ' + owm_url + '. Status code: ' + str(response.status_code))
 
     return weather_record
 
@@ -316,4 +316,3 @@ def get_all_locations():
     locations = [(hits['_id'], hits['_source']) for hits in result['hits']['hits']]
 
     return locations
-
