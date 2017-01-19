@@ -10,8 +10,14 @@ services:
       - ./nginx/ssl:/etc/ssl
     depends_on:
       - web
+    network_mode: "bridge"
+    container_name: nginx
+    links:
+      - web
   db:
     image: postgres
+    network_mode: "bridge"
+    container_name: db
   web:
     environment:
       - DJANGO_SETTINGS_MODULE=osc.settings.cpd.app_settings
@@ -23,3 +29,9 @@ services:
       - "8000"
     depends_on:
       - db
+    links:
+      - db
+    external_links:
+      - elastic
+    network_mode: "bridge"
+    container_name: web

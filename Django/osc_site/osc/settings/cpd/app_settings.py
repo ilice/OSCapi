@@ -14,14 +14,14 @@ SECRET_KEY = secrets.get('django', 'SECRET_KEY')
 DEBUG = False
 ALLOWED_HOSTS = [u'web']
 
-# Whether to use a secure cookie for the CSRF cookie. If this is set to True, the cookie will be 
+# Whether to use a secure cookie for the CSRF cookie. If this is set to True, the cookie will be
 # marked as secure, which means browsers may ensure that the cookie is only sent with an HTTPS connection.
 CSRF_COOKIE_SECURE = True
 
 # Whether to use a secure cookie for the session cookie. If this is set to True, the cookie will be marked
 #  as secure, which means browsers may ensure that the cookie is only sent under an HTTPS connection.
-# Since its trivial for a packet sniffer (e.g. Firesheep) to hijack a users session if the session cookie 
-# is sent unencrypted, theres really no good excuse to leave this off. It will prevent you from using 
+# Since its trivial for a packet sniffer (e.g. Firesheep) to hijack a users session if the session cookie
+# is sent unencrypted, theres really no good excuse to leave this off. It will prevent you from using
 # sessions on insecure requests and thats a good thing.
 #SESSION_COOKIE_SECURE = True
 
@@ -31,18 +31,18 @@ CSRF_COOKIE_SECURE = True
 # A tuple representing a HTTP header/value combination that signifies a request is secure
 #SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# As part of deploying your application youll need to run ./manage.py 
+# As part of deploying your application youll need to run ./manage.py
 # collectstatic to put all your static files into STATIC_ROOT
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# WhiteNoise comes with a storage backend which automatically takes care of 
+# WhiteNoise comes with a storage backend which automatically takes care of
 # compressing your files and creating unique names for each version so they can
 # safely be cached forever.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ELASTICSEARCH = {
     'chunk_size': 100,
-    'host': '94.76.229.213',
+    'host': 'elastic',
     'port': 9200
 }
 
