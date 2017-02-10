@@ -14,10 +14,13 @@ services:
     container_name: nginx
     links:
       - web
+      - kibana
   db:
     image: postgres
     network_mode: "bridge"
     container_name: db
+    volumes:
+      - postgres-db-volume:/usr/share/postgres/data
   web:
     environment:
       - DJANGO_SETTINGS_MODULE=osc.settings.cpd.app_settings
@@ -35,3 +38,15 @@ services:
       - elastic
     network_mode: "bridge"
     container_name: web
+  kibana:
+    image: my-kibana-image
+    expose:
+      - "5601"
+    container_name: kibana
+    network_mode: "bridge"
+    external_links:
+      - elastic
+
+volumes:
+  postgres-db-volume:
+    external: true

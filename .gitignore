@@ -73,3 +73,6 @@ Django/osc_site/osc/settings/dev_*
 #SSL config files
 Django/osc_site/nginx/ssl/*
 
+# Password file
+.htpasswd
+
