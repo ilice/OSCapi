@@ -8,9 +8,6 @@ services:
     volumes:
       - ./nginx/nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/ssl
-    depends_on:
-      - web
-    network_mode: "bridge"
     container_name: nginx
     links:
       - web
@@ -19,8 +16,9 @@ services:
       - elastic
   db:
     image: postgres
-    network_mode: "bridge"
     container_name: db
+    expose:
+      - "5432"
     volumes:
       - postgres-db-volume:/usr/share/postgres/data
   web:
@@ -32,23 +30,49 @@ services:
       - .:/code
     expose:
       - "8000"
-    depends_on:
-      - db
     links:
       - db
-    external_links:
       - elastic
-    network_mode: "bridge"
     container_name: web
-  kibana:
-    image: my-kibana-image
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.0
+    container_name: elastic
+    environment:
+      - cluster.name=osc-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - path.repo=["/usr/share/elasticsearch/backups"]
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 8g
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+      - esbackup:/usr/share/elasticsearch/backups
     expose:
-      - "5601"
+      - 9300
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.2.0
     container_name: kibana
-    network_mode: "bridge"
-    external_links:
-      - elastic
-
+    environment:
+      - XPACK_SECURITY_ENABLED=false
+    expose:
+      - 5601
+    links:
+      - elastic:elasticsearch
 volumes:
   postgres-db-volume:
+    external: true
+  esdata:
+    external: true
+  esbackup:
     external: true
