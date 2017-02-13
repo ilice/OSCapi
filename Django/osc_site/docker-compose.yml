@@ -1,19 +1,20 @@
 version: '2'
 services:
   nginx:
-    image: nginx:latest
+    image: teanocrata/osclb
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./nginx/nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/ssl
     container_name: nginx
     links:
       - web
       - kibana
-    external_links:
+      - letsencrypt
       - elastic
+    environment:
+      - MY_DOMAIN_NAME=opensmartcountry.com
+    volumes_from:
+      - letsencrypt
   db:
     image: postgres
     container_name: db
@@ -69,6 +70,19 @@ services:
       - 5601
     links:
       - elastic:elasticsearch
+  letsencrypt:
+    image: quay.io/letsencrypt/letsencrypt:latest
+    command:  bash -c "sleep 6 && certbot certonly --standalone -d opensmartcountry.com --text --agree-tos --email george@opsrobot.co.uk --server https://acme-v01.api.letsencrypt.org/directory -$
+    entrypoint: ""
+    volumes:
+      - /etc/letsencrypt
+      - /var/lib/letsencrypt
+    ports:
+      - "80"
+      - "443"
+    environment:
+      - TERM=xterm
+
 volumes:
   postgres-db-volume:
     external: true
