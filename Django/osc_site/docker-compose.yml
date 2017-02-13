@@ -12,7 +12,9 @@ services:
       - letsencrypt
       - elastic
     environment:
-      - MY_DOMAIN_NAME=opensmartcountry.com
+      - OPENSMARTCOUNTRY_DOMAIN=opensmartcountry.com
+      - KIBANA_OPENSMARTCOUNTRY_DOMAIN=kibana.opensmartcountry.com
+      - ELASTIC_OPENSMARTCOUNTRY_DOMAIN=elastic.opensmartcountry.com
     volumes_from:
       - letsencrypt
   db:
@@ -72,16 +74,16 @@ services:
       - elastic:elasticsearch
   letsencrypt:
     image: quay.io/letsencrypt/letsencrypt:latest
-    command:  bash -c "sleep 6 && certbot certonly --standalone -d opensmartcountry.com --text --agree-tos --email george@opsrobot.co.uk --server https://acme-v01.api.letsencrypt.org/directory -$
-    entrypoint: ""
-    volumes:
-      - /etc/letsencrypt
-      - /var/lib/letsencrypt
-    ports:
-      - "80"
-      - "443"
-    environment:
-      - TERM=xterm
+    command:  bash -c "sleep 6 && certbot certonly --standalone -d opensmartcountry.com -d kibana.opensmartcountry.com -d elastic.opensmartcountry.com --text --agree-tos --email george@opsrobot.co.uk --server https://acme-v01.api.letsencrypt.org/directory --rsa-key-size 4096 --verbose --renew-by-default --standalone-supported-challenges http-01"
+  entrypoint: ""
+  volumes:
+    - /etc/letsencrypt
+    - /var/lib/letsencrypt
+  ports:
+    - "80"
+    - "443"
+  environment:
+    - TERM=xterm
 
 volumes:
   postgres-db-volume:
