@@ -45,7 +45,7 @@ services:
     environment:
       - cluster.name=osc-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
       - path.repo=["/usr/share/elasticsearch/backups"]
       - xpack.security.enabled=false
       - xpack.monitoring.enabled=true
@@ -57,11 +57,11 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    mem_limit: 8g
+    mem_limit: 16g
     cap_add:
       - IPC_LOCK
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - es_data:/usr/share/elasticsearch/data
       - esbackup:/usr/share/elasticsearch/backups
     expose:
       - 9300
@@ -90,7 +90,7 @@ services:
 volumes:
   postgres-db-volume:
     external: true
-  esdata:
+  es_data:
     external: true
   esbackup:
     external: true
