@@ -15,6 +15,8 @@ services:
       - OPENSMARTCOUNTRY_DOMAIN=opensmartcountry.com
       - KIBANA_OPENSMARTCOUNTRY_DOMAIN=kibana.opensmartcountry.com
       - ELASTIC_OPENSMARTCOUNTRY_DOMAIN=elastic.opensmartcountry.com
+    volumes:
+      - ./.htpasswd:/etc/nginx/conf.d/.htpasswd
     volumes_from:
       - letsencrypt
   db:
