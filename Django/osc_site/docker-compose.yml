@@ -61,7 +61,7 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
-      - es_data:/usr/share/elasticsearch/data
+      - es-data:/usr/share/elasticsearch/data
       - esbackup:/usr/share/elasticsearch/backups
     expose:
       - 9300
@@ -90,7 +90,7 @@ services:
 volumes:
   postgres-db-volume:
     external: true
-  es_data:
+  es-data:
     external: true
   esbackup:
     external: true
