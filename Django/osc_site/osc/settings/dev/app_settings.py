@@ -16,7 +16,7 @@ ALLOWED_HOSTS = []
 
 ELASTICSEARCH = {
     'chunk_size': 100,
-    'host': '94.76.229.213',
+    'host': '192.168.1.81',
     'port': 9200
 }
 
@@ -45,7 +45,7 @@ CADASTRE = {
     'index': 'parcels',
     'mapping': 'parcel',
     'zone.for.queries': 'EPSG::25830',
-    'query.cadastre.when.bbox': True,
+    'query.cadastre.when.bbox': False,
     'max.query.size': 5000
 }
 

@@ -16,6 +16,8 @@ from pyproj import Proj
 
 from .google import obtain_elevation_from_google
 
+import Geohash
+
 __all__ = ['get_parcels_by_bbox',
            'get_public_cadastre_info',
            'store_parcels',
@@ -844,5 +846,51 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
             store_parcels(updatable_parcels)
 
         return parcels
+    except ElasticsearchException as e:
+        raise ElasticException('PARCEL', e.message, e)
+    
+
+@error_managed(default_answer={})
+def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_lon, precision):
+    try:
+        query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "must": {
+                        "match_all": {}
+                    },
+                    "filter": {
+                        "geo_shape": {
+                            "bbox": {
+                                "shape": {
+                                    "type": "envelope",
+                                    "coordinates": [[min_lon, min_lat], [max_lon, max_lat]]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "aggs": {
+                "2": {
+                    "geohash_grid": {
+                      "field": "properties.reference_point",
+                      "precision": precision
+                    }
+                }
+            }
+        }
+        
+
+        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
+        
+        parcels_buckets = []
+        
+        for bucket in result['aggregations']['2']['buckets']:
+            (lat, lng) = Geohash.decode(bucket['key'])
+            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": bucket['doc_count']}) 
+        
+        return parcels_buckets
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)

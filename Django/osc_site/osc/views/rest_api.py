@@ -46,6 +46,7 @@ class ParcelList(APIView):
         try:
             bbox_param = request.query_params.get('bbox', None)
             cadastral_code_param = request.query_params.get('cadastral_code', None)
+            precision_param = request.query_params.get('precision', None)
 
             parcels = []
 
@@ -60,8 +61,13 @@ class ParcelList(APIView):
                                                                           retrieve_soil_info_param == 'True')
             elif bbox_param is not None:
                 lat_min, lon_min, lat_max, lon_max = map(lambda x: float(x), bbox_param.split(','))
+                
+                if precision_param is not None:
+                    precision = float(precision_param)
+                else:
+                    precision = 0
 
-                parcels = parcel_service.obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
+                parcels = parcel_service.obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision)
 
             # Convert into geojson
             for parcel in parcels:

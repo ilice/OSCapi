@@ -43,11 +43,17 @@ def obtain_parcels_by_cadastral_code(cadastral_code, retrieve_public_info=False,
     return parcels
 
 
-def obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max):
-    parcels = cadastre.get_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
+def obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision):
+    
+    if precision == 0:
+        parcels = cadastre.get_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max)
 
-    # Filter the parcels that are roads, ways, etc.
-    # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
-    parcels = filter(is_valid_parcel, parcels)
-
-    return parcels
+        # Filter the parcels that are roads, ways, etc.
+        # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
+        parcels = filter(is_valid_parcel, parcels)
+        return parcels
+    else:
+        parcels_bucket = cadastre.get_bucket_of_parcels_by_bbox_and_precision(lat_min, lon_min, lat_max, lon_max, precision)
+    
+        return parcels_bucket
+    
