@@ -60,18 +60,15 @@ weathercrawler/data
 
 #Django and venv directories
 *.sqlite3
-Django/osc_site/oscenv
-Django/osc_site/staticfiles
-Django/osc_site/tmp/*
-Django/osc_site/osc/settings/dev_*
+oscenv
+staticfiles
+tmp/*
+osc/settings/dev_*
 
 #IDE metadata
 .idea/
 *.pydevproject
 .settings
-
-#SSL config files
-Django/osc_site/nginx/ssl/*
 
 # Password file
 .htpasswd
