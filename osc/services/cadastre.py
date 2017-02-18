@@ -889,7 +889,7 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
         
         for bucket in result['aggregations']['2']['buckets']:
             (lat, lng) = Geohash.decode(bucket['key'])
-            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": bucket['doc_count']}) 
+            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count']}}) 
         
         return parcels_buckets
     except ElasticsearchException as e:
