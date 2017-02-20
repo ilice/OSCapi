@@ -902,7 +902,7 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
                            'features': parcels_buckets, 
                            'properties': {
                                'total': result['hits']['total'], 
-                               'num_buckets': parcels_buckets.length,
+                               'num_buckets': len(parcels_buckets),
                                'max': max,
                                'min': min
                                 }
