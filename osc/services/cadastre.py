@@ -844,8 +844,11 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
             updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
             store_parcels(updatable_parcels)
+            
+        parcels_geojson = {'type': 'FeatureCollection',
+                               'features': parcels}
 
-        return parcels
+        return parcels_geojson
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
     
@@ -886,11 +889,25 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
         
         parcels_buckets = []
-        
+        max = min = 0
         for bucket in result['aggregations']['2']['buckets']:
             (lat, lng) = Geohash.decode(bucket['key'])
             parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count']}}) 
+            if bucket['doc_count'] > max :
+                max = bucket['doc_count']
+            if bucket['doc_count'] < min :
+                min = bucket['doc_count']
+            
+        parcels_geojson = {'type': 'FeatureCollection',
+                           'features': parcels_buckets, 
+                           'properties': {
+                               'total': result['hits']['total'], 
+                               'num_buckets': parcels_buckets.length,
+                               'max': max,
+                               'min': min
+                                }
+                           }
         
-        return parcels_buckets
+        return parcels_geojson
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)

@@ -39,8 +39,11 @@ def obtain_parcels_by_cadastral_code(cadastral_code, retrieve_public_info=False,
                 soil.get_closest_soil_measure(parcel['properties']['reference_point']['lat'],
                                               parcel['properties']['reference_point']['lon'])
             parcel['properties']['closest_soil_measure'] = closest_soil_measure
+            
+    parcels_geojson = {'type': 'FeatureCollection',
+                        'features': parcels}
 
-    return parcels
+    return parcels_geojson
 
 
 def obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision):
@@ -50,7 +53,7 @@ def obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision):
 
         # Filter the parcels that are roads, ways, etc.
         # (JLG ATTENTION: To be removed when we have everything in ELASTIC)
-        parcels = filter(is_valid_parcel, parcels)
+        # parcels = filter(is_valid_parcel, parcels)
         return parcels
     else:
         parcels_bucket = cadastre.get_bucket_of_parcels_by_bbox_and_precision(lat_min, lon_min, lat_max, lon_max, precision)

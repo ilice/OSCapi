@@ -69,14 +69,8 @@ class ParcelList(APIView):
 
                 parcels = parcel_service.obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision)
 
-            # Convert into geojson
-            for parcel in parcels:
-                parcel['type'] = 'Feature'
-
-            parcels_geojson = {'type': 'FeatureCollection',
-                               'features': parcels}
-
-            return Response(parcels_geojson)
+                        
+            return Response(parcels)
         except OSCException as e:
             return Response({'error': str(type(e)) + ': ' + e.message + ' - ' + str(e.cause)})
 
