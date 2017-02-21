@@ -742,13 +742,17 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
-
+        
         if not parcels:
             parcels = get_inspire_data_by_code(cadastral_code)
 
         if include_public_info:
             add_public_cadastral_info(parcels)
 
+        # Convert into geojson    
+        for parcel in parcels:
+            parcel['type'] = 'Feature'
+            
         add_elevation_from_google(parcels)
 
         return parcels
@@ -832,7 +836,7 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
         }
 
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, size=max_elastic_query_size)
-
+        
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
         if query_cadastre_when_bbox:
@@ -844,6 +848,10 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
             updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
             store_parcels(updatable_parcels)
+            
+        # Convert into geojson    
+        for parcel in parcels:
+            parcel['type'] = 'Feature'
             
         parcels_geojson = {'type': 'FeatureCollection',
                                'features': parcels}
