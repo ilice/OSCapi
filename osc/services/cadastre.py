@@ -899,7 +899,7 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
         parcels_buckets = []
         max = min = 0
         for bucket in result['aggregations']['2']['buckets']:
-            (lat, lng) = Geohash.decode(bucket['key'])
+            (lat, lng, lat_err, lng_err) = Geohash.decode_exactly(bucket['key'])
             parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count']}, "type": "Feature"}) 
             if bucket['doc_count'] > max :
                 max = bucket['doc_count']

@@ -14,6 +14,10 @@ SECRET_KEY = secrets.get('django', 'SECRET_KEY')
 DEBUG = True
 ALLOWED_HOSTS = []
 
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000'
+)
+
 ELASTICSEARCH = {
     'chunk_size': 100,
     'host': '192.168.1.81',
@@ -66,10 +70,6 @@ SOIL = {
 SLACK = {
     'token': get_secret(secrets, 'slack', 'token'),
     'flush_bucket': 200
-}
-
-WEB = {
-    'url': 'http://localhost:8000'
 }
 
 AUX_DIRS = {
