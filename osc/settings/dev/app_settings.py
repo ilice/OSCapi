@@ -72,6 +72,10 @@ SLACK = {
     'flush_bucket': 200
 }
 
+WEB = {
+    'url': 'http://localhost:8000'
+}
+
 AUX_DIRS = {
     'data_dir': os.path.join(BASE_DIR, 'tmp/data'),
     'tmp_dir': os.path.join(BASE_DIR, 'tmp/tmp'),
