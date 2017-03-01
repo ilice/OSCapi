@@ -888,23 +888,34 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
                     "geohash_grid": {
                       "field": "properties.reference_point",
                       "precision": precision
+                    },"aggs": {
+                        "area": {
+                          "sum": {
+                            "field": "properties.areaValue"
+                          }
+                        }
                     }
                 }
             }
         }
         
 
-        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
+        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, request_timeout=30)
         
         parcels_buckets = []
         max = min = 0
         for bucket in result['aggregations']['2']['buckets']:
             (lat, lng, lat_err, lng_err) = Geohash.decode_exactly(bucket['key'])
-            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count']}, "type": "Feature"}) 
+            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count'], "area": bucket['area']['value']}, "type": "Feature"}) 
             if bucket['doc_count'] > max :
                 max = bucket['doc_count']
             if bucket['doc_count'] < min :
                 min = bucket['doc_count']
+                
+        for parcel in parcels_buckets:
+            parcel['properties']['num_buckets'] = len(parcels_buckets)
+            parcel['properties']['min_value'] = min
+            parcel['properties']['max_value'] = max
             
         parcels_geojson = {'type': 'FeatureCollection',
                            'features': parcels_buckets, 
