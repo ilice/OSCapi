@@ -43,7 +43,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 ELASTICSEARCH = {
     'chunk_size': 100,
     'host': 'elastic',
-    'port': 9200
+    'port': 9200, 
+    'use_ssl': False
 }
 
 GOOGLE = {

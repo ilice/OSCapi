@@ -1,7 +1,7 @@
 import ConfigParser
 from osc.settings.base_settings import *
 
-SECRETS_PATH = os.path.join(BASE_DIR, 'tmp/secrets.ini')
+SECRETS_PATH = os.path.join(BASE_DIR, 'settings/dev/secrets.ini')
 
 secrets = ConfigParser.ConfigParser()
 secrets.read(SECRETS_PATH)
@@ -20,8 +20,9 @@ CORS_ORIGIN_WHITELIST = (
 
 ELASTICSEARCH = {
     'chunk_size': 100,
-    'host': '192.168.1.81',
-    'port': 9200
+    'host': 'elastic.opensmartcountry.com',
+    'port': 443,
+    'use_ssl': True
 }
 
 GOOGLE = {
@@ -49,7 +50,7 @@ CADASTRE = {
     'index': 'parcels',
     'mapping': 'parcel',
     'zone.for.queries': 'EPSG::25830',
-    'query.cadastre.when.bbox': False,
+    'query.cadastre.when.bbox': True,
     'max.query.size': 5000
 }
 

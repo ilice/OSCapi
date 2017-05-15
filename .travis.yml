@@ -20,4 +20,4 @@ env:
   - DJANGO_SETTINGS_MODULE=osc.settings.dev.app_settings
 before_install:
 - openssl aes-256-cbc -K $encrypted_67f55953e375_key -iv $encrypted_67f55953e375_iv
-  -in secrets.ini.enc -out tmp/secrets.ini -d
+  -in secrets.ini.enc -out settings/dev/secrets.ini -d

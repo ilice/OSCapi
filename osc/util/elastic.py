@@ -1,4 +1,5 @@
 import elasticsearch.helpers as es_helpers
+import certifi
 from osc.util import error_managed
 from osc.exceptions import ElasticException
 from elasticsearch import Elasticsearch
@@ -8,7 +9,9 @@ __all__ = ['wait_for_yellow_cluster_status', 'elastic_bulk_update', 'elastic_bul
 
 
 # Elastic Search
-es = Elasticsearch('http://{}:{}'.format(settings.ELASTICSEARCH['host'], settings.ELASTICSEARCH['port']))
+es = Elasticsearch([settings.ELASTICSEARCH['host']],
+                   port=settings.ELASTICSEARCH['port'],
+                   use_ssl=settings.ELASTICSEARCH['use_ssl'])
 
 
 def wait_for_yellow_cluster_status():
