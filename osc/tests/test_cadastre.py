@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from django.test import TestCase
+from unittest import skip
 
 import osc.importer.cadastre as impcadastre
 import osc.services.cadastre as cadastre
@@ -17,6 +18,7 @@ class CadastreServiceTest(TestCase):
     def test_public_cadastre_info(self):
         cadastre.get_public_cadastre_info('40167A00805001')
 
+    @skip("Very very long test")
     def test_update_cadastral_information(self):
         impcadastre.update_cadastral_information()
 

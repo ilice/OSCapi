@@ -74,3 +74,4 @@ osc/settings/dev_*
 .htpasswd
 
 osc/settings/dev/secrets.ini
+operation_log.txt
