@@ -32,8 +32,9 @@ def get_closest_station(lat, lon):
                  ]
                  }
 
-        result = es.search(index=es_index, doc_type=es_station_mapping, body=query)
-
+        result = es.search(index=es_index,
+                           doc_type=es_station_mapping,
+                           body=query)
         stations = [hits['_source'] for hits in result['hits']['hits']]
 
         closest_station = {}
@@ -42,14 +43,18 @@ def get_closest_station(lat, lon):
             closest_station = stations[0]
 
             this_loc = (lat, lon)
-            station_loc = (closest_station['lat_lon']['lat'], closest_station['lat_lon']['lon'])
+            station_loc = (closest_station['lat_lon']['lat'],
+                           closest_station['lat_lon']['lon'])
 
-            closest_station['distance_to_parcel'] = great_circle(this_loc, station_loc).kilometers
+            closest_station['distance_to_parcel'] = \
+                great_circle(this_loc, station_loc).kilometers
 
         return closest_station
 
     except ElasticsearchException as e:
-        raise ElasticException('CLIMATE', 'ElasticSearch Error getting closest station', e)
+        raise ElasticException('CLIMATE',
+                               'ElasticSearch Error getting closest station',
+                               e)
 
 
 def parse_by_month(bymonth):
@@ -291,8 +296,9 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
             }
         }
 
-        result = es.search(index=es_index, doc_type=es_daily_mapping, body=query)
-
+        result = es.search(index=es_index,
+                           doc_type=es_daily_mapping,
+                           body=query)
         hit = result['aggregations']
 
         by_month = parse_by_month(hit['by_month']['buckets'])
@@ -303,4 +309,6 @@ def get_aggregated_climate_measures(station_id, province_id, num_years_back):
                 'by_day': by_day,
                 'last_year': last_year}
     except ElasticsearchException as e:
-        raise ElasticException('CLIMATE', 'ElasticSearch error getting climate aggregates', e)
+        raise ElasticException('CLIMATE',
+                               'ElasticSearch error getting climate aggrs',
+                               e)

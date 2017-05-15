@@ -11,12 +11,10 @@ class CadastreServiceTest(TestCase):
     def setUp(self):
         pass
 
-    @tag('elastic_connection')
     def test_get_inspire_data(self):
         parcels = cadastre.get_inspire_data_by_code('11015A01400009')
         print str(parcels)
 
-    @tag('elastic_connection')
     def test_public_cadastre_info(self):
         cadastre.get_public_cadastre_info('40167A00805001')
 
