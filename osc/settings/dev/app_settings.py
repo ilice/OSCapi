@@ -1,7 +1,7 @@
 import ConfigParser
 from osc.settings.base_settings import *
 
-SECRETS_PATH = os.path.join(BASE_DIR, 'settings/dev/secrets.ini')
+SECRETS_PATH = os.path.join(BASE_DIR, 'osc/settings/dev/secrets.ini')
 
 secrets = ConfigParser.ConfigParser()
 secrets.read(SECRETS_PATH)

@@ -73,3 +73,4 @@ osc/settings/dev_*
 # Password file
 .htpasswd
 
+osc/settings/dev/secrets.ini
