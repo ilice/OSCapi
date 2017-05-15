@@ -1,4 +1,4 @@
-# OpenSmartCountry [![Build Status](https://travis-ci.org/teanocrata/OpenSmartCountry.svg?branch=master)](https://travis-ci.org/teanocrata/OpenSmartCountry)
+# OpenSmartCountry [![Build Status](https://travis-ci.org/ilice/OSCapi.svg?branch=master)](https://travis-ci.org/ilice/OSCapi)
 
 ¡Hola! ¡Bienvenid@ a Open Smart Country! Soy **OSC&#945;r**, te voy a contar qué estoy haciendo y por qué.
 
