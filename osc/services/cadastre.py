@@ -23,10 +23,11 @@ __all__ = ['get_parcels_by_bbox',
            'store_parcels',
            'get_parcels_by_cadastral_code']
 
-url_public_cadastral_info = 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC'
+url_public_cadastral_info = settings.CADASTRE['cadastral_info_url']
 
-#Example: http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?service=wfs&request=getfeature&STOREDQUERIE_ID=GetParcel&SRSname=EPSG::25830&REFCAT=37284A01600146
-url_inspire = 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx'
+# Example: http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?
+# service=wfs&request=getfeature&STOREDQUERIE_ID=GetParcel&SRSname=EPSG::25830&REFCAT=37284A01600146
+url_inspire = settings.CADASTRE['url_inspire']
 
 parcel_index = settings.CADASTRE['index']
 parcel_mapping = settings.CADASTRE['mapping']
@@ -65,7 +66,8 @@ def get_zone_number(node):
         if pos > 0:
             zone_number = srs_name[pos:].replace('::', ':')
     if zone_number is None:
-        raise CadastreException("No zone in srsName", actionable_info=str(srs_name))
+        raise CadastreException("No zone in srsName",
+                                actionable_info=str(srs_name))
 
     return zone_number
 
@@ -75,7 +77,9 @@ def parse_inspire_exception(elem):
     exception_text_elem = elem.find('./ows:Exception/ows:ExceptionText', ns)
 
     message = ''
-    if exception is not None and exception.attrib is not None and 'exceptionCode' in exception.attrib:
+    if exception is not None \
+       and exception.attrib is not None \
+       and 'exceptionCode' in exception.attrib:
         message += exception.attrib['exceptionCode']
     message += ' - '
 
@@ -655,20 +659,24 @@ def get_inspire_data_by_bbox(min_x, min_y, max_x, max_y):
 @error_managed(default_answer=[])
 def get_inspire_data_by_code(codes):
     """
-    Documented in http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
+    Documented in:
+    http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
     """
     parcels = []
 
-    response = requests.get(url_inspire, params={'service': 'wfs',
-                                                 'request': 'getfeature',
-                                                 'STOREDQUERIE_ID': 'GetParcel',
-                                                 'srsname': zone_for_queries,
-                                                 'REFCAT': codes})
-
+    response = requests.get(url_inspire,
+                            params={'service': 'wfs',
+                                    'request': 'getfeature',
+                                    'STOREDQUERIE_ID': 'GetParcel',
+                                    'srsname': zone_for_queries,
+                                    'REFCAT': codes})
     if response.ok:
         parcels += parse_inspire_response(response.text)
     else:
-        raise CadastreException('Error connecting to ' + url_inspire + '. Status code: ' + response.status_code)
+        raise CadastreException('Error connecting to '
+                                + url_inspire
+                                + '. Status code: '
+                                + str(response.status_code))
     return parcels
 
 
@@ -742,17 +750,17 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
-        
+
         if not parcels:
             parcels = get_inspire_data_by_code(cadastral_code)
 
         if include_public_info:
             add_public_cadastral_info(parcels)
 
-        # Convert into geojson    
+        # Convert into geojson
         for parcel in parcels:
             parcel['type'] = 'Feature'
-            
+
         add_elevation_from_google(parcels)
 
         return parcels
@@ -836,7 +844,7 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
         }
 
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, size=max_elastic_query_size)
-        
+
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
         if query_cadastre_when_bbox:
@@ -848,18 +856,18 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
 
             updatable_parcels = [parcel for parcel in parcels if Parcel.get_cadastral_reference(parcel) in to_update]
             store_parcels(updatable_parcels)
-            
-        # Convert into geojson    
+
+        # Convert into geojson
         for parcel in parcels:
             parcel['type'] = 'Feature'
-            
+
         parcels_geojson = {'type': 'FeatureCollection',
                                'features': parcels}
 
         return parcels_geojson
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
-    
+
 
 @error_managed(default_answer={})
 def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_lon, precision):
@@ -898,35 +906,35 @@ def get_bucket_of_parcels_by_bbox_and_precision(min_lat, min_lon, max_lat, max_l
                 }
             }
         }
-        
+
 
         result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, request_timeout=30)
-        
+
         parcels_buckets = []
         max = min = 0
         for bucket in result['aggregations']['2']['buckets']:
             (lat, lng, lat_err, lng_err) = Geohash.decode_exactly(bucket['key'])
-            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count'], "area": bucket['area']['value']}, "type": "Feature"}) 
+            parcels_buckets.append({"geometry": {"type": "Point", "coordinates": [float(lng), float(lat)]}, "properties": {"value": bucket['doc_count'], "area": bucket['area']['value']}, "type": "Feature"})
             if bucket['doc_count'] > max :
                 max = bucket['doc_count']
             if bucket['doc_count'] < min :
                 min = bucket['doc_count']
-                
+
         for parcel in parcels_buckets:
             parcel['properties']['num_buckets'] = len(parcels_buckets)
             parcel['properties']['min_value'] = min
             parcel['properties']['max_value'] = max
-            
+
         parcels_geojson = {'type': 'FeatureCollection',
-                           'features': parcels_buckets, 
+                           'features': parcels_buckets,
                            'properties': {
-                               'total': result['hits']['total'], 
+                               'total': result['hits']['total'],
                                'num_buckets': len(parcels_buckets),
                                'max': max,
                                'min': min
                                 }
                            }
-        
+
         return parcels_geojson
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
