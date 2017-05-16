@@ -31,7 +31,7 @@ def mocked_requests(*args, **kwargs):
     return MockResponse(None, 404)
 
 
-class CadastreServiceTest(TestCase):
+class InspireServiceTest(TestCase):
 
     fixtures_file = 'osc/tests/services/fixtures/cadastre_fixtures.json'
 
@@ -74,11 +74,25 @@ class CadastreServiceTest(TestCase):
         parcels = cadastre.get_inspire_data_by_code('11015A01400009')
         self.assertTrue(len(parcels) == 1, "should obtain one and only one "
                         "parcel for a cadastral reference")
-        self.maxDiff = None
-        self.assertDictEqual(self.cadastralParcel, parcels[0])
+        self.assertTrue("geometry" in parcels[0],
+                        "returns geometry for the parcel")
 
-    def test_public_cadastre_info(self):
-        cadastre.get_public_cadastre_info('40167A00805001')
+
+class CadastreServiceTest(TestCase):
+    @mock.patch('osc.services.cadastre.requests.get',
+                side_effect=mocked_requests)
+    @mock.patch('osc.services.cadastre.parse_inspire_response')
+    def test_call_cadastre_when_public_cadastre_info(self,
+                                                     mock_parse,
+                                                     mock_request_get):
+        mock_parse.return_value = []
+        code = '40167A00805001'
+        cadastre.get_public_cadastre_info(code)
+        mock_request_get.assert_called_with(
+            settings.CADASTRE['cadastral_info_url'],
+            params={'Provincia': '',
+                    'Municipio': '',
+                    'RC': code})
 
     @skip("Very very long test")
     @tag('elastic_connection')

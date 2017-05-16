@@ -713,7 +713,10 @@ def get_public_cadastre_info(code):
         root = ET.fromstring(response.text.encode('utf-8'))
         return parse_public_cadastre_response(root)
     else:
-        raise CadastreException('Error connecting to ' + url_public_cadastral_info + '. Status code: ' + str(response.status_code))
+        raise CadastreException('Error connecting to '
+                                + url_public_cadastral_info
+                                + '. Status code: '
+                                + str(response.status_code))
 
 
 def store_parcels(parcels):
