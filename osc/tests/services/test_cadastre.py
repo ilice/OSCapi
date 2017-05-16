@@ -27,6 +27,9 @@ def mocked_requests(*args, **kwargs):
             return self.json_data
     if args[0] == 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx':
         return MockResponse({"key1": "value1"}, 200)
+    elif args[0] == 'http://ovc.catastro.meh.es/ovcservweb/' \
+                    'OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC':
+        return MockResponse({"key2": "value2"}, 200)
 
     return MockResponse(None, 404)
 
@@ -93,6 +96,22 @@ class CadastreServiceTest(TestCase):
             params={'Provincia': '',
                     'Municipio': '',
                     'RC': code})
+
+    @mock.patch('osc.services.cadastre.requests.get',
+                side_effect=mocked_requests)
+    @mock.patch('osc.services.cadastre.parse_inspire_response', '')
+    @mock.patch('osc.services.cadastre.url_public_cadastral_info',
+                'http://ovc.catastro.meh.es/ovcservweb/' +
+                'OVCSWLocalizacionRC/OVCCallejero.asmx/bad_url')
+    def test_dont_raise_exception_even_when_cadastre_returns_404(
+            self,
+            mock_request_get):
+        code = '40167A00805001'
+        cadastre.get_public_cadastre_info(code)
+        # The test runner will catch all exceptions you didn't assert
+        # would be raised, assert_(True) do nothing but ensures that didn't
+        # forget an assertion
+        self.assert_(True)
 
     @skip("Very very long test")
     @tag('elastic_connection')
