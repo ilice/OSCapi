@@ -1,6 +1,7 @@
 # coding=utf-8
 
-from django.test import TestCase, tag
+from django.test import TestCase
+from nose.plugins.attrib import attr
 from unittest import skip
 import json
 import mock
@@ -113,11 +114,13 @@ class CadastreServiceTest(TestCase):
         # forget an assertion
         self.assert_(True)
 
+
+
     @skip("Very very long test")
-    @tag('elastic_connection')
+    @attr('elastic_connection')
     def test_update_cadastral_information(self):
         impcadastre.update_cadastral_information()
 
-    @tag('elastic_connection')
+    @attr('elastic_connection')
     def test_create_mapping(self):
         cadastre.create_parcel_mapping()
