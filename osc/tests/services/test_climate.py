@@ -1,4 +1,5 @@
-from django.test import TestCase, tag
+from django.test import TestCase
+from nose.plugins.attrib import attr
 from django.conf import settings
 import mock
 import json
@@ -42,7 +43,7 @@ class ClimateServiceTest(TestCase):
         self.assertDictEqual(self.api_closest_station,
                              elastic.get_closest_station(40.439983, -5.737026))
 
-    @tag('elastic_connection')
+    @attr('elastic_connection')
     def test_get_closest_station_from_elastic(self):
 
         self.maxDiff = None
@@ -73,7 +74,7 @@ class ClimateServiceTest(TestCase):
             self.api_aggregated_measures,
             elastic.get_aggregated_climate_measures('102', '5', 2))
 
-    @tag('elastic_connection')
+    @attr('elastic_connection')
     def test_get_aggregated_measures_from_elastic(self):
         res = elastic.get_aggregated_climate_measures('102', '5', 2)
         self.maxDiff = None
