@@ -116,7 +116,6 @@ class CadastreServiceTest(TestCase):
 
     def test_get_cadastre_data_from_cadastre_source(self):
         parcels = cadastre.get_public_cadastre_info('11015A01400009')
-        print(parcels)
         self.assertTrue(parcels['control']['cudnp'] == 1, "should obtain one "
                         "and only one parcel data for a cadastral reference")
 
