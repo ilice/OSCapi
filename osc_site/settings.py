@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django_cron',
-    'corsheaders'
+    'corsheaders',
+    'django_nose'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+       '--with-coverage',  # activate coverage report
+       '--with-doctest',  # activate doctest: find and run docstests
+       '--verbosity=2',   # verbose output
+       '--with-html',
+       '--html-file=./tmp/test/nosetest.html',
+       '--cover-html',     # produle XML coverage info
+       '--cover-html-dir=./tmp/test/cover',  # the coverage info dir
+       # You may also specify the packages to be covered here
+       '--cover-package=osc.services',
+       '--ignore-files=.*_settings.py'
+]
+
+if not os.path.exists('./tmp/test'):
+    os.makedirs('./tmp/test')

@@ -75,3 +75,4 @@ osc/settings/dev_*
 
 osc/settings/dev/secrets.ini
 operation_log.txt
+.coverage
