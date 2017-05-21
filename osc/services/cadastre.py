@@ -23,10 +23,13 @@ __all__ = ['get_parcels_by_bbox',
            'store_parcels',
            'get_parcels_by_cadastral_code']
 
+# Example: http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/
+# OVCCallejero.asmx/Consulta_DNPRC?Provincia=&Municipio=&RC=11015A01400009
 url_public_cadastral_info = settings.CADASTRE['cadastral_info_url']
 
 # Example: http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?
-# service=wfs&request=getfeature&STOREDQUERIE_ID=GetParcel&SRSname=EPSG::25830&REFCAT=37284A01600146
+# service=wfs&request=getfeature&STOREDQUERIE_ID=GetParcel&SRSname=
+# EPSG::25830&REFCAT=37284A01600146
 url_inspire = settings.CADASTRE['url_inspire']
 
 parcel_index = settings.CADASTRE['index']
@@ -92,8 +95,8 @@ def parse_inspire_exception(elem):
 def parse_cadastre_exception(elem):
     message = ''
 
-    err_cod = elem.find('./ct:lerr/ct:err/ct:cod', ns)
-    err_msg = elem.find('./ct:lerr/ct:err/ct:des', ns)
+    err_cod = elem.find('./ct:lerr/ct:err/ct:cod', ns).text
+    err_msg = elem.find('./ct:lerr/ct:err/ct:des', ns).text
 
     if err_cod is not None and err_msg is not None:
         message = 'code: ' + err_cod + ' message: ' + err_msg
@@ -695,7 +698,7 @@ def get_cadastral_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon, zone_numbe
 @error_managed(default_answer={})
 def parse_public_cadastre_response(elem):
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
-        raise CadastreException(ET.tostring(elem))
+        raise CadastreException(parse_cadastre_exception(elem))
 
     # The 'lists' come from the xsd: http://www.catastro.meh.es/ws/esquemas/consulta_dnp.xsd
     return xml_to_json(elem,

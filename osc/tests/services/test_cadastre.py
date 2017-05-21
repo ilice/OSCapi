@@ -6,6 +6,7 @@ from unittest import skip
 import json
 import mock
 from django.conf import settings
+import xml.etree.ElementTree as ET
 
 import osc.importer.cadastre as impcadastre
 import osc.services.cadastre as cadastre
@@ -36,13 +37,12 @@ def mocked_requests(*args, **kwargs):
 
 
 class InspireServiceTest(TestCase):
-
     fixtures_file = 'osc/tests/services/fixtures/cadastre_fixtures.json'
 
     with open(fixtures_file) as data_file:
         cadastre_fixture = json.load(data_file)
 
-    cadastralParcel = cadastre_fixture['cadastralParcel']
+    inspireError = cadastre_fixture['inspireError']
 
     def setUp(self):
         pass
@@ -81,8 +81,21 @@ class InspireServiceTest(TestCase):
         self.assertTrue("geometry" in parcels[0],
                         "returns geometry for the parcel")
 
+    def test_parse_inspire_response_when_inspire_returns_error(
+            self):
+        self.assertRaises(CadastreException,
+                          cadastre.parse_inspire_response,
+                          self.inspireError)
+
 
 class CadastreServiceTest(TestCase):
+    fixtures_file = 'osc/tests/services/fixtures/cadastre_fixtures.json'
+
+    with open(fixtures_file) as data_file:
+        cadastre_fixture = json.load(data_file)
+
+    cadastreError = cadastre_fixture['cadastreError']
+
     @mock.patch('osc.services.cadastre.requests.get',
                 side_effect=mocked_requests)
     @mock.patch('osc.services.cadastre.parse_inspire_response')
@@ -118,6 +131,13 @@ class CadastreServiceTest(TestCase):
         parcels = cadastre.get_public_cadastre_info('11015A01400009')
         self.assertTrue(parcels['control']['cudnp'] == 1, "should obtain one "
                         "and only one parcel data for a cadastral reference")
+
+    def test_parse_public_cadastre_response_when_cadastre_returns_error(
+            self):
+        elem = ET.fromstring(self.cadastreError)
+        self.assertRaises(CadastreException,
+                          cadastre.parse_public_cadastre_response,
+                          elem)
 
     @skip("Very very long test")
     @attr('elastic_connection')

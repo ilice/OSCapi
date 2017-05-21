@@ -75,5 +75,7 @@
         ]
       ]
     }
-  }
+  },
+  "cadastreError": "<?xml version=\"1.0\" encoding=\"utf-8\"?><consulta_dnp xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.catastro.meh.es/\"><control><cuerr>1</cuerr></control><lerr><err><cod>3</cod><des>LA REFERENCIA CATASTRAL DEBE TENER 14,18 o 20 POSICIONES</des></err></lerr></consulta_dnp>",
+  "inspireError": "<?xml version='1.0' encoding=\"ISO-8859-1\"  standalone=\"no\"?><ExceptionReport xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" version=\"1.0.0\" xml:lang=\"en-US\" xmlns=\"http://www.opengis.net/ows/1.1\"><Exception exceptionCode=\"OperationProcessingFailed\"><ExceptionText>Invalid length of REFCAT parameter</ExceptionText></Exception></ExceptionReport>"
 }
