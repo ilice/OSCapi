@@ -95,6 +95,7 @@ class CadastreServiceTest(TestCase):
         cadastre_fixture = json.load(data_file)
 
     cadastreError = cadastre_fixture['cadastreError']
+    parcels = cadastre_fixture['parcels']
 
     @mock.patch('osc.services.cadastre.requests.get',
                 side_effect=mocked_requests)
@@ -138,6 +139,19 @@ class CadastreServiceTest(TestCase):
         self.assertRaises(CadastreException,
                           cadastre.parse_public_cadastre_response,
                           elem)
+
+    @mock.patch('osc.services.cadastre.get_public_cadastre_info',
+                side_effect=mocked_requests)
+    def test_call_get_public_cadastre_info_when_add_public_cadastral_info(
+            self,
+            mock_get_public_cadastre_info):
+        cadastre.add_public_cadastral_info(self.parcels)
+        for parcel in self.parcels:
+            mock_get_public_cadastre_info.assert_any_call(
+                parcel['properties']['nationalCadastralReference']
+            )
+        self.assertTrue(
+            mock_get_public_cadastre_info.call_count == len(self.parcels))
 
     @skip("Very very long test")
     @attr('elastic_connection')

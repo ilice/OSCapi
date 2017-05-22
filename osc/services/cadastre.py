@@ -739,7 +739,11 @@ def update_parcels(parcels):
         records = parcels[i:i+chunk_size]
         ids = [Parcel.get_cadastral_reference(r) for r in records]
 
-        elastic_bulk_update('STORE_PARCELS', parcel_index, parcel_mapping, records, ids)
+        elastic_bulk_update('STORE_PARCELS',
+                            parcel_index,
+                            parcel_mapping,
+                            records,
+                            ids)
 
 
 @error_managed(default_answer=[])
@@ -790,8 +794,11 @@ def add_public_cadastral_info(parcels):
     to_update = []
 
     for parcel in parcels:
-        if 'cadastralData' not in parcel['properties'] or not parcel['properties']['cadastralData']:
-            public_info = get_public_cadastre_info(Parcel.get_cadastral_reference(parcel))
+        if 'cadastralData' not in parcel['properties'] \
+                or not parcel['properties']['cadastralData']:
+
+            public_info = get_public_cadastre_info(
+                Parcel.get_cadastral_reference(parcel))
 
             if public_info:
                 parcel['properties']['cadastralData'] = public_info
@@ -849,7 +856,10 @@ def get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon):
             }
         }
 
-        result = es.search(index=parcel_index, doc_type=parcel_mapping, body=query, size=max_elastic_query_size)
+        result = es.search(index=parcel_index,
+                           doc_type=parcel_mapping,
+                           body=query,
+                           size=max_elastic_query_size)
 
         parcels = [hits['_source'] for hits in result['hits']['hits']]
 
