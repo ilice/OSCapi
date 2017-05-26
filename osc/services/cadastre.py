@@ -786,7 +786,10 @@ def index_parcel(parcel):
                  body=parcel,
                  id=Parcel.get_cadastral_reference(parcel))
     except ElasticsearchException as e:
-        raise ElasticException('CADASTRE', 'Error indexing parcel', cause=e, actionable_info=parcel)
+        raise ElasticException('CADASTRE',
+                               'Error indexing parcel',
+                               cause=e,
+                               actionable_info=parcel)
 
 
 @error_managed()

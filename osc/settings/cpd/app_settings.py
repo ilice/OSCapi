@@ -43,7 +43,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 ELASTICSEARCH = {
     'chunk_size': 100,
     'host': 'elastic',
-    'port': 9200, 
+    'port': 9200,
     'use_ssl': False
 }
 
@@ -71,6 +71,7 @@ INFORIEGO = {
 CADASTRE = {
     'cadastral_info_url': 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC',
     'url_inspire': 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx',
+    'url_atom_inspire': 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml',
     'index': 'parcels',
     'mapping': 'parcel',
     'zone.for.queries': 'EPSG::25830',

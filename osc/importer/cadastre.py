@@ -4,7 +4,8 @@ import zipfile
 import StringIO
 
 from datetime import datetime
-from osc.services import start_feed_read, finish_feed_read, get_last_successful_update_date, store_parcels
+from osc.services import start_feed_read, finish_feed_read
+from osc.services import get_last_successful_update_date, store_parcels
 from osc.util import error_managed
 
 from osc.services.cadastre import parse_inspire_response
@@ -16,7 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-url_atom_inspire = 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml'
+url_atom_inspire = settings.CADASTRE['url_atom_inspire']
 
 
 def partition_inspire_xml_file(xml_file, chunk_size):
@@ -79,7 +80,8 @@ def store_parcels_from_url(zipfile_url, chunk_size=1000):
                 parcels = parse_inspire_response(xml_chunk)
                 store_parcels(parcels)
     else:
-        raise CadastreException('Error connecting to ' + zipfile_url + '. Status code: ' + r.status_code)
+        raise CadastreException('Error connecting to ' + zipfile_url +
+                                '. Status code: ' + r.status_code)
 
     logger.debug('        ... Finished!!')
 
@@ -89,8 +91,10 @@ def update_catastral_municipality(municipality, force_update=False):
     logger.info("Updating Municipality: %s", municipality.title)
     last_update_date = get_last_successful_update_date(municipality.link)
 
-    if force_update or last_update_date is None or last_update_date < get_update_date(municipality):
-        feed_id = start_feed_read(municipality.link, get_update_date(municipality))
+    if force_update or last_update_date is None \
+            or last_update_date < get_update_date(municipality):
+        feed_id = start_feed_read(municipality.link,
+                                  get_update_date(municipality))
 
         try:
             store_parcels_from_url(municipality.link)
@@ -104,7 +108,7 @@ def update_catastral_municipality(municipality, force_update=False):
 
 
 @error_managed()
-def update_catastral_province(province, force_update=False):
+def update_cadastral_province(province, force_update=False):
     logger.info('Updating Province: %s', province.title)
     feed = feedparser.parse(province.link)
 
@@ -132,6 +136,6 @@ def update_cadastral_information(force_update=False):
     feed = feedparser.parse(url_atom_inspire)
 
     for province in feed.entries:
-        update_catastral_province(province, force_update)
+        update_cadastral_province(province, force_update)
 
-
+    return feed.entries

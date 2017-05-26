@@ -2,13 +2,11 @@
 
 from django.test import TestCase
 from nose.plugins.attrib import attr
-from unittest import skip
 import json
 import mock
 from django.conf import settings
 import xml.etree.ElementTree as ET
 
-import osc.importer.cadastre as impcadastre
 import osc.services.cadastre as cadastre
 from osc.exceptions import CadastreException
 
@@ -152,11 +150,6 @@ class CadastreServiceTest(TestCase):
             )
         self.assertTrue(
             mock_get_public_cadastre_info.call_count == len(self.parcels))
-
-    @skip("Very very long test")
-    @attr('elastic_connection')
-    def test_update_cadastral_information(self):
-        impcadastre.update_cadastral_information()
 
     @attr('elastic_connection')
     def test_create_mapping(self):

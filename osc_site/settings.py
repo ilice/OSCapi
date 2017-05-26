@@ -143,6 +143,7 @@ NOSE_ARGS = [
        '--cover-html-dir=./tmp/test/cover',  # the coverage info dir
        # You may also specify the packages to be covered here
        '--cover-package=osc.services',
+       '--cover-package=osc.importer',
        '--ignore-files=.*_settings.py'
 ]
 
