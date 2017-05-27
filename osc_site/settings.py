@@ -144,6 +144,7 @@ NOSE_ARGS = [
        # You may also specify the packages to be covered here
        '--cover-package=osc.services',
        '--cover-package=osc.importer',
+       '--cover-package=osc.management',
        '--ignore-files=.*_settings.py'
 ]
 
