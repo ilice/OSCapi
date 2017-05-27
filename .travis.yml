@@ -3,11 +3,6 @@ addons:
   firefox: "45.4.0esr"
 python:
 - '2.7'
-before_install:
-  - wget https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz
-  - mkdir geckodriver
-  - tar -xzf geckodriver-v0.11.1-linux64.tar.gz -C geckodriver
-  - export PATH=$PATH:$PWD/geckodriver
 install:
 - pip install -r requirements.txt
 script:
@@ -28,5 +23,9 @@ env:
   - DJANGO_SETTINGS_MODULE=osc.settings.dev.app_settings
   - PYTHONPATH=$TRAVIS_BUILD_DIR
 before_install:
-- openssl aes-256-cbc -K $encrypted_67f55953e375_key -iv $encrypted_67f55953e375_iv
-  -in secrets.ini.enc -out osc/settings/dev/secrets.ini -d
+  - wget https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz
+  - mkdir geckodriver
+  - tar -xzf geckodriver-v0.11.1-linux64.tar.gz -C geckodriver
+  - export PATH=$PATH:$PWD/geckodriver
+  - openssl aes-256-cbc -K $encrypted_67f55953e375_key -iv $encrypted_67f55953e375_iv
+    -in secrets.ini.enc -out osc/settings/dev/secrets.ini -d
