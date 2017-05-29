@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from osc.services.parcels import update_parcel_by_cadastral_code
 
 
 class Command(BaseCommand):
@@ -14,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['cadastral_reference']:
-            pass
+            update_parcel_by_cadastral_code(options['cadastral_reference'])
         else:
             raise CommandError('parcel arg is mandatory: --parcel=')
 
