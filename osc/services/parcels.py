@@ -20,7 +20,10 @@ def is_valid_parcel(parcel):
 
 
 def update_parcel_by_cadastral_code(cadastral_code):
-    pass
+    obtain_parcels_by_cadastral_code(cadastral_code,
+                                     retrieve_public_info=True,
+                                     retrieve_climate_info=True,
+                                     retrieve_soil_info=True)
 
 
 def obtain_parcels_by_cadastral_code(cadastral_code,
