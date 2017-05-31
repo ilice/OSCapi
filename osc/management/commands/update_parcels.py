@@ -1,5 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from osc.services.parcels import update_parcel_by_cadastral_code
+from osc.importer.cadastre import update_cadastre_information
 
 
 class Command(BaseCommand):
@@ -16,8 +17,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['cadastral_reference']:
             update_parcel_by_cadastral_code(options['cadastral_reference'])
+            self.stdout.write(
+                self.style.SUCCESS('Successfully updated parcel'))
         else:
-            raise CommandError('parcel arg is mandatory: --parcel=')
-
-        self.stdout.write(
-            self.style.SUCCESS('Successfully updated parcel'))
+            update_cadastre_information()
+            self.stdout.write(
+                self.style.SUCCESS('Successfully updated parcels'))

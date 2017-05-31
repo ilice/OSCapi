@@ -72,6 +72,7 @@ class InspireServiceTest(TestCase):
                           cadastre.get_inspire_data_by_code,
                           '11015A01400009')
 
+    @attr('cadastre_connection')
     def test_get_inspire_data_from_inspire_source(self):
         parcels = cadastre.get_inspire_data_by_code('11015A01400009')
         self.assertTrue(len(parcels) == 1, "should obtain one and only one "
@@ -126,6 +127,7 @@ class CadastreServiceTest(TestCase):
         # forget an assertion
         self.assert_(True)
 
+    @attr('cadastre_connection')
     def test_get_cadastre_data_from_cadastre_source(self):
         parcels = cadastre.get_public_cadastre_info('11015A01400009')
         self.assertTrue(parcels['control']['cudnp'] == 1, "should obtain one "

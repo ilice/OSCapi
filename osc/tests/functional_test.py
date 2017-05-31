@@ -1,5 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from nose.plugins.attrib import attr
 import unittest
 
 
@@ -15,6 +16,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         cls.selenium.quit()
         super(NewVisitorTest, cls).tearDownClass()
 
+    @attr('functional')
     def test_can_login_into_admin_pages_and_logout_later(self):
         # Teanocrata has heard about a cool new online app with an incredible
         # API. She goes to check the API.

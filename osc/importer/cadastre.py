@@ -139,3 +139,7 @@ def update_cadastral_information(force_update=False):
         update_cadastral_province(province, force_update)
 
     return feed.entries
+
+
+def update_cadastre_information(force_update=False):
+    pass

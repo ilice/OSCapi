@@ -6,7 +6,9 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- travis_wait python manage.py test osc.tests -a !elastic_connection
+- travis_wait python manage.py test osc.tests -a !elastic_connection,!cadastre_connection,!functional
+after_success:
+-  travis_wait python manage.py test osc.tests -a elastic_connection -a cadastre_connection -a functional
 notifications:
   email: false
   slack:
