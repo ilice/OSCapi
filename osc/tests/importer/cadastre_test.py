@@ -1,10 +1,10 @@
 # coding=utf-8
 
 from django.test import TestCase
+import json
+import mock
 from nose.plugins.attrib import attr
 from unittest import skip
-import mock
-import json
 
 import osc.importer.cadastre as impcadastre
 
@@ -14,8 +14,8 @@ def mock_update_cadastral_province():
 
 
 class mocked_feed(object):
-    # TODO: teanocrata - fixture returns dict but code accesses entries like
-    # attribute and I dont not how to do this without wrapper
+    # TODO(teanocrata): teanocrata - fixture returns dict but code accesses
+    # entries like attribute and I dont not how to do this without wrapper
     def __init__(self, d):
         self.__dict__ = d
 
@@ -37,7 +37,7 @@ class InspireImporterTest(TestCase):
     def test_call_inspire_when_get_inspire_data(self,
                                                 m_update_cadastral_province,
                                                 m_feedparser):
-        # TODO: teanocrata - smells, I need help with it
+        # TODO(teanocrata): smells, I need help with it
         m_update_cadastral_province.assert_not_called()
         m_feedparser.parse.return_value = mocked_feed(self.inspire_fixture)
         impcadastre.update_cadastral_information()

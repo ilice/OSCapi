@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from osc.services.parcels import update_parcel_by_cadastral_code
 from osc.importer.cadastre import update_cadastre_information
+from osc.services.parcels import update_parcel_by_cadastral_code
 
 
 class Command(BaseCommand):

@@ -42,9 +42,9 @@ def obtain_parcels_by_cadastral_code(cadastral_code,
                     parcel['properties']['reference_point']['lon'])
             parcel['properties']['closest_station'] = closest_station
             climate_agg = climate.get_aggregated_climate_measures(
-                        closest_station['IDESTACION'],
-                        closest_station['IDPROVINCIA'],
-                        3)
+                closest_station['IDESTACION'],
+                closest_station['IDPROVINCIA'],
+                3)
             parcel['properties']['climate_aggregations'] = climate_agg
 
     # Add soil info

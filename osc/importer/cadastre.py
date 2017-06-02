@@ -1,19 +1,23 @@
 import feedparser
 import requests
-import zipfile
 import StringIO
+import zipfile
+
 
 from datetime import datetime
-from osc.services import start_feed_read, finish_feed_read
-from osc.services import get_last_successful_update_date, store_parcels
+from osc.exceptions import CadastreException
+from osc.services import finish_feed_read
+from osc.services import get_last_successful_update_date
+from osc.services import start_feed_read
+from osc.services import store_parcels
 from osc.util import error_managed
 
 from osc.services.cadastre import parse_inspire_response
-from osc.exceptions import CadastreException
 
-import pytz
 from django.conf import settings
 import logging
+import pytz
+
 
 logger = logging.getLogger(__name__)
 
