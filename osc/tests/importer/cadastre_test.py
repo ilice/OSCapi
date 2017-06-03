@@ -6,7 +6,7 @@ import mock
 from nose.plugins.attrib import attr
 from unittest import skip
 
-import osc.importer.cadastre as impcadastre
+import osc.importer.cadastre as cadastre
 
 
 def mock_update_cadastral_province():
@@ -29,7 +29,7 @@ class InspireImporterTest(TestCase):
     @skip("Very very long test")
     @attr('elastic_connection')
     def test_update_cadastral_information(self):
-        impcadastre.update_cadastral_information()
+        cadastre.update_cadastral_information()
 
     @mock.patch('osc.importer.cadastre.feedparser')
     @mock.patch('osc.importer.cadastre.update_cadastral_province',
@@ -40,5 +40,15 @@ class InspireImporterTest(TestCase):
         # TODO(teanocrata): smells, I need help with it
         m_update_cadastral_province.assert_not_called()
         m_feedparser.parse.return_value = mocked_feed(self.inspire_fixture)
-        impcadastre.update_cadastral_information()
+        cadastre.update_cadastral_information()
         m_update_cadastral_province.assert_called_once()
+
+    @mock.patch('osc.importer.cadastre.scan_parcels')
+    @mock.patch('osc.importer.cadastre.update_parcel_by_cadastral_code')
+    def test_update_cadastre_information_scan_parcels_updating_it(
+            self,
+            m_update_parcel_by_cadastral_code,
+            m_scan_parcels):
+        cadastre.update_cadastre_information()
+        m_scan_parcels.assert_called_once()
+        m_scan_parcels.assert_called_with(m_update_parcel_by_cadastral_code)

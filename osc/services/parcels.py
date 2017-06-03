@@ -77,3 +77,7 @@ def obtain_parcels_by_bbox(lat_min, lon_min, lat_max, lon_max, precision):
             lat_min, lon_min, lat_max, lon_max, precision)
 
         return parcels_bucket
+
+
+def scan_parcels(update):
+    cadastre.scan_parcels(update)

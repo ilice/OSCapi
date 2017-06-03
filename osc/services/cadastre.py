@@ -1019,3 +1019,7 @@ def get_bucket_of_parcels_by_bbox_and_precision(
         return parcels_geojson
     except ElasticsearchException as e:
         raise ElasticException('PARCEL', e.message, e)
+
+
+def scan_parcels(update):
+    raise Exception('Not implemented')

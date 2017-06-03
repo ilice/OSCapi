@@ -8,6 +8,8 @@ from datetime import datetime
 from osc.exceptions import CadastreException
 from osc.services import finish_feed_read
 from osc.services import get_last_successful_update_date
+from osc.services.parcels import scan_parcels
+from osc.services.parcels import update_parcel_by_cadastral_code
 from osc.services import start_feed_read
 from osc.services import store_parcels
 from osc.util import error_managed
@@ -146,4 +148,4 @@ def update_cadastral_information(force_update=False):
 
 
 def update_cadastre_information(force_update=False):
-    pass
+    scan_parcels(update_parcel_by_cadastral_code)

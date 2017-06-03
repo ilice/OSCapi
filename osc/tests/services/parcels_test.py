@@ -17,3 +17,9 @@ class UpdateParcelTest(TestCase):
             retrieve_public_info=True,
             retrieve_climate_info=True,
             retrieve_soil_info=True)
+
+    @mock.patch('osc.services.parcels.cadastre.scan_parcels')
+    def test_scan_parcels(self,
+                          m_cadastre_scan_parcels):
+        parcels.scan_parcels(None)
+        m_cadastre_scan_parcels.assert_called()
