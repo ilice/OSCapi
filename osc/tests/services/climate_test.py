@@ -1,8 +1,8 @@
-from django.test import TestCase
-from nose.plugins.attrib import attr
 from django.conf import settings
-import mock
+from django.test import TestCase
 import json
+import mock
+from nose.plugins.attrib import attr
 
 import osc.services.climate as elastic
 

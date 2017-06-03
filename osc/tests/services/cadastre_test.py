@@ -1,19 +1,18 @@
 # coding=utf-8
-
+from django.conf import settings
 from django.test import TestCase
-from nose.plugins.attrib import attr
 import json
 import mock
-from django.conf import settings
+from nose.plugins.attrib import attr
 import xml.etree.ElementTree as ET
 
-import osc.services.cadastre as cadastre
 from osc.exceptions import CadastreException
+import osc.services.cadastre as cadastre
 
 
 # This method will be used by the mock to replace requests.get
 def mocked_requests(*args, **kwargs):
-    class MockResponse:
+    class MockResponse(object):
         def __init__(self, json_data, status_code):
             self.json_data = json_data
             self.status_code = status_code
@@ -123,9 +122,9 @@ class CadastreServiceTest(TestCase):
         code = '40167A00805001'
         cadastre.get_public_cadastre_info(code)
         # The test runner will catch all exceptions you didn't assert
-        # would be raised, assert_(True) do nothing but ensures that didn't
+        # would be raised, assertTrue() do nothing but ensures that didn't
         # forget an assertion
-        self.assert_(True)
+        self.assertTrue()
 
     @attr('cadastre_connection')
     def test_get_cadastre_data_from_cadastre_source(self):
