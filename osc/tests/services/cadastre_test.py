@@ -124,7 +124,7 @@ class CadastreServiceTest(TestCase):
         # The test runner will catch all exceptions you didn't assert
         # would be raised, assertTrue() do nothing but ensures that didn't
         # forget an assertion
-        self.assertTrue()
+        self.assertTrue(True, "shouldn't throw exceptions")
 
     @attr('cadastre_connection')
     def test_get_cadastre_data_from_cadastre_source(self):
