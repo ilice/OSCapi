@@ -1171,5 +1171,161 @@
         ]
       }
     }
-  ]
+  ],
+  "scanedParcels": {
+    "_scroll_id": "DnF1ZXJ5VGhlbkZldGNoBQAAAAAAAYJ-FmNNeGhWdURyVGdtZTA5MHppYXp4TlEAAAAAAAGCfxZjTXhoVnVEclRnbWUwOTB6aWF6eE5RAAAAAAABgn0WY014aFZ1RHJUZ21lMDkwemlhenhOUQAAAAAAAYKBFmNNeGhWdURyVGdtZTA5MHppYXp4TlEAAAAAAAGCgBZjTXhoVnVEclRnbWUwOTB6aWF6eE5R",
+    "took": 46,
+    "timed_out": false,
+    "_shards": {
+      "total": 5,
+      "successful": 5,
+      "failed": 0
+    },
+    "hits": {
+      "total": 3617,
+      "max_score": null,
+      "hits": [
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37133A00200129",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37133A00200129"
+            }
+          },
+          "sort": [
+            10364460
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37133A00200232",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37133A00200232"
+            }
+          },
+          "sort": [
+            10364462
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01600102",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01600102"
+            }
+          },
+          "sort": [
+            10364464
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01700190",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01700190"
+            }
+          },
+          "sort": [
+            10364466
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01300047",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01300047"
+            }
+          },
+          "sort": [
+            10364468
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "40167A00709002",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "40167A00709002"
+            }
+          },
+          "sort": [
+            10365289
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01400081",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01400081"
+            }
+          },
+          "sort": [
+            10365291
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01400089",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01400089"
+            }
+          },
+          "sort": [
+            10365293
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01400173",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01400173"
+            }
+          },
+          "sort": [
+            10365295
+          ]
+        },
+        {
+          "_index": "parcels_v3",
+          "_type": "parcel",
+          "_id": "37284A01400179",
+          "_score": null,
+          "_source": {
+            "properties": {
+              "nationalCadastralReference": "37284A01400179"
+            }
+          },
+          "sort": [
+            10365297
+          ]
+        }
+      ]
+    }
+  }
 }

@@ -16,6 +16,7 @@ from osc.util import xml_to_json
 
 from elasticsearch.client import IndicesClient
 from elasticsearch import ElasticsearchException
+from elasticsearch.helpers import scan
 from pyproj import Proj
 
 __all__ = ['get_parcels_by_bbox',
@@ -1022,4 +1023,12 @@ def get_bucket_of_parcels_by_bbox_and_precision(
 
 
 def scan_parcels(update):
-    raise Exception('Not implemented')
+    query = {"_source": [
+        "properties.nationalCadastralReference"
+        ]
+    }
+    index = 'parcels'
+    doc_type = 'parcel'
+    result_parcels = scan(es, query=query, index=index, doc_type=doc_type)
+    for parcel in result_parcels:
+        update(parcel['_source']['properties']['nationalCadastralReference'])

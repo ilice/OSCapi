@@ -94,6 +94,7 @@ class CadastreServiceTest(TestCase):
 
     cadastreError = cadastre_fixture['cadastreError']
     parcels = cadastre_fixture['parcels']
+    scaned_parcels = cadastre_fixture['scanedParcels']
 
     @mock.patch('osc.services.cadastre.requests.get',
                 side_effect=mocked_requests)
@@ -155,3 +156,19 @@ class CadastreServiceTest(TestCase):
     @attr('elastic_connection')
     def test_create_mapping(self):
         cadastre.create_parcel_mapping()
+
+    @mock.patch('osc.services.cadastre.scan')
+    def test_scan_parcels(self,
+                          m_scan):
+        update = mock.Mock()
+        m_scan.return_value = self.scaned_parcels['hits']['hits']
+        cadastre.scan_parcels(update)
+        call_counter = 0
+        for parcel in self.scaned_parcels['hits']['hits']:
+            call_counter += 1
+            update.assert_any_call(
+                parcel['_source']['properties']['nationalCadastralReference'])
+        self.assertTrue(
+            call_counter == len(self.scaned_parcels['hits']['hits']),
+            "called once per parcel"
+        )
