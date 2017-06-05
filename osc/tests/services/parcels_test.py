@@ -1,11 +1,13 @@
 from django.test import TestCase
 import mock
+from unittest import skip
 
 import osc.services.parcels as parcels
 
 
 class UpdateParcelTest(TestCase):
 
+    @skip
     @mock.patch('osc.services.parcels.obtain_parcels_by_cadastral_code')
     def test_update_parcel_by_catastral_code(
             self,
