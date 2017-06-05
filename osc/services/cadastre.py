@@ -1055,7 +1055,7 @@ def scan_parcels(update):
     doc_type = 'parcel'
     result_parcels = scan(es,
                           query=query,
-                          scroll=u'10m',
+                          scroll=u'600m',
                           size=100,
                           index=index,
                           doc_type=doc_type)
