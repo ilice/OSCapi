@@ -24,7 +24,7 @@ def is_valid_parcel(parcel):
 
 
 def update_parcel_by_cadastral_code(cadastral_code):
-    logger.debug('update_parcel_by_cadastral_code(%s)', cadastral_code)
+    logger.info('update_parcel_by_cadastral_code(%s)', cadastral_code)
     parcels_geojson = obtain_parcels_by_cadastral_code(
         cadastral_code,
         retrieve_public_info=True,

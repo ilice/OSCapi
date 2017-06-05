@@ -25,7 +25,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS('Successfully updated parcel'))
         else:
-            logger.info('Updating parcel %s', options['cadastral_reference'])
+            logger.info('Updating parcels')
             update_cadastre_information()
             self.stdout.write(
                 self.style.SUCCESS('Successfully updated parcels'))

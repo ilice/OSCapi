@@ -70,7 +70,7 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, parents=
 
 
 @error_managed()
-def elastic_update(process_name, index, doc_type, record, id, retry=True):
+def elastic_update(process_name, index, doc_type, record, id):
     try:
         wait_for_yellow_cluster_status()
         es.index(index=index, doc_type=doc_type, id=id, body=record)
