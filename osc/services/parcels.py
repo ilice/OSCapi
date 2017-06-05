@@ -1,6 +1,10 @@
+import logging
+
 from osc.services import cadastre
 from osc.services import climate
 from osc.services import soil
+
+logger = logging.getLogger(__name__)
 
 
 def is_valid_parcel(parcel):
@@ -20,6 +24,7 @@ def is_valid_parcel(parcel):
 
 
 def update_parcel_by_cadastral_code(cadastral_code):
+    logger.debug('update_parcel_by_cadastral_code(%s)', cadastral_code)
     obtain_parcels_by_cadastral_code(cadastral_code,
                                      retrieve_public_info=True,
                                      retrieve_climate_info=True,
@@ -30,6 +35,11 @@ def obtain_parcels_by_cadastral_code(cadastral_code,
                                      retrieve_public_info=False,
                                      retrieve_climate_info=False,
                                      retrieve_soil_info=False):
+    logger.debug('obtain_parcels_by_cadastral_code(%s,%s,%s,%s)',
+                 cadastral_code,
+                 retrieve_public_info,
+                 retrieve_climate_info,
+                 retrieve_soil_info)
     parcels = cadastre.get_parcels_by_cadastral_code(cadastral_code,
                                                      retrieve_public_info)
 

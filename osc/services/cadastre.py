@@ -1,4 +1,5 @@
 import Geohash
+import logging
 import requests
 import xml.etree.ElementTree as ET
 
@@ -23,6 +24,8 @@ __all__ = ['get_parcels_by_bbox',
            'get_public_cadastre_info',
            'store_parcels',
            'get_parcels_by_cadastral_code']
+
+logger = logging.getLogger(__name__)
 
 # Example: http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/
 # OVCCallejero.asmx/Consulta_DNPRC?Provincia=&Municipio=&RC=11015A01400009
@@ -643,6 +646,7 @@ def parse_cadastral_parcel(cadastral_parcel_elem):
 
 @error_managed(default_answer=[])
 def parse_inspire_response(xml_text):
+    logger.debug('parse_inspire_response(%s)', xml_text)
     parcels = []
 
     root = ET.fromstring(xml_text)
@@ -696,6 +700,7 @@ def get_inspire_data_by_code(codes):
 
     http://www.catastro.minhap.es/webinspire/documentos/inspire-cp-WFS.pdf
     """
+    logger.debug('get_inspire_data_by_code(%s)', codes)
     parcels = []
 
     response = requests.get(url_inspire,
@@ -731,6 +736,7 @@ def get_cadastral_parcels_by_bbox(
 
 @error_managed(default_answer={})
 def parse_public_cadastre_response(elem):
+    logger.debug('parse_public_cadastre_response(%s)', elem)
     if elem.find('./ct:control/ct:cuerr', ns) is not None:
         raise CadastreException(parse_cadastre_exception(elem))
 
@@ -744,6 +750,7 @@ def parse_public_cadastre_response(elem):
 
 @error_managed(default_answer={}, inhibit_exception=True)
 def get_public_cadastre_info(code):
+    logger.debug('get_public_cadastre_info(%s)', code)
     response = requests.get(url_public_cadastral_info, params={'Provincia': '',
                                                                'Municipio': '',
                                                                'RC': code})
@@ -788,6 +795,9 @@ def update_parcels(parcels):
 
 @error_managed(default_answer=[])
 def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
+    logger.debug('get_parcels_by_cadastral_code(%s,%s)',
+                 cadastral_code,
+                 include_public_info)
     try:
         query = {
             "query": {
@@ -836,6 +846,7 @@ def index_parcel(parcel):
 
 @error_managed()
 def add_public_cadastral_info(parcels):
+    logger.debug('add_public_cadastral_info(%s)', parcels)
     to_update = []
 
     for parcel in parcels:
@@ -856,6 +867,7 @@ def add_public_cadastral_info(parcels):
 
 @error_managed(inhibit_exception=True, default_answer=())
 def add_elevation_from_google(parcels):
+    logger.debug('add_elevation_from_google(%s)', parcels)
     to_update = []
     pending_elevations = \
         filter(lambda x: 'elevation' not in x['properties']
