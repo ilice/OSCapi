@@ -25,10 +25,23 @@ def is_valid_parcel(parcel):
 
 def update_parcel_by_cadastral_code(cadastral_code):
     logger.debug('update_parcel_by_cadastral_code(%s)', cadastral_code)
-    obtain_parcels_by_cadastral_code(cadastral_code,
-                                     retrieve_public_info=True,
-                                     retrieve_climate_info=True,
-                                     retrieve_soil_info=True)
+    parcels_geojson = obtain_parcels_by_cadastral_code(
+        cadastral_code,
+        retrieve_public_info=True,
+        retrieve_climate_info=False,
+        retrieve_soil_info=True)
+    logger.debug('parcels_geojson[\'features\'][0] = %s',
+                 parcels_geojson['features'][0])
+    json2source(parcels_geojson['features'][0])
+    cadastre.update_parcel(json2source(parcels_geojson['features'][0]))
+
+
+def json2source(json):
+    source = {}
+    source['geometry'] = json['geometry']
+    source['properties'] = json['properties']
+    source['bbox'] = json['bbox']
+    return source
 
 
 def obtain_parcels_by_cadastral_code(cadastral_code,

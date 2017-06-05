@@ -5,7 +5,7 @@ from osc.exceptions import ElasticException
 from elasticsearch import Elasticsearch
 from django.conf import settings
 
-__all__ = ['wait_for_yellow_cluster_status', 'elastic_bulk_update', 'elastic_bulk_save', 'es']
+__all__ = ['wait_for_yellow_cluster_status', 'elastic_bulk_update', 'elastic_bulk_save', 'elastic_update', 'es']
 
 
 # Elastic Search
@@ -67,3 +67,15 @@ def elastic_bulk_save(process_name, index, doc_type, records, ids=None, parents=
                 elastic_bulk_save(process_name, index, doc_type, [r], [idx], retry=False)
             else:
                 raise ElasticException(process_name, 'Error saving to Elastic', actionable_info=str(r), cause=e)
+
+
+@error_managed()
+def elastic_update(process_name, index, doc_type, record, id, retry=True):
+    try:
+        wait_for_yellow_cluster_status()
+        es.index(index=index, doc_type=doc_type, id=id, body=record)
+    except Exception as e:
+        raise ElasticException(process_name,
+                               'Error saving to Elastic',
+                               actionable_info="",
+                               cause=e)

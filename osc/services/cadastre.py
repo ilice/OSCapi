@@ -11,6 +11,7 @@ from osc.exceptions import ElasticException
 from osc.services.google import obtain_elevation_from_google
 from osc.util import elastic_bulk_save
 from osc.util import elastic_bulk_update
+from osc.util import elastic_update
 from osc.util import error_managed
 from osc.util import es
 from osc.util import xml_to_json
@@ -793,6 +794,15 @@ def update_parcels(parcels):
                             ids)
 
 
+def update_parcel(parcel):
+    logger.debug('update_parcel(%s)', parcel)
+    elastic_update('UPDATE_PARCEL',
+                   parcel_index,
+                   parcel_mapping,
+                   parcel,
+                   Parcel.get_cadastral_reference(parcel))
+
+
 @error_managed(default_answer=[])
 def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
     logger.debug('get_parcels_by_cadastral_code(%s,%s)',
@@ -1041,6 +1051,11 @@ def scan_parcels(update):
     }
     index = 'parcels'
     doc_type = 'parcel'
-    result_parcels = scan(es, query=query, index=index, doc_type=doc_type)
+    result_parcels = scan(es,
+                          query=query,
+                          scroll=u'10m',
+                          size=100,
+                          index=index,
+                          doc_type=doc_type)
     for parcel in result_parcels:
         update(parcel['_source']['properties']['nationalCadastralReference'])
