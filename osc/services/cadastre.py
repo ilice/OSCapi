@@ -804,7 +804,9 @@ def update_parcel(parcel):
 
 
 @error_managed(default_answer=[])
-def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
+def get_parcels_by_cadastral_code(cadastral_code,
+                                  include_public_info=False,
+                                  include_google_info=False):
     logger.debug('get_parcels_by_cadastral_code(%s,%s)',
                  cadastral_code,
                  include_public_info)
@@ -832,8 +834,8 @@ def get_parcels_by_cadastral_code(cadastral_code, include_public_info=False):
         # Convert into geojson
         for parcel in parcels:
             parcel['type'] = 'Feature'
-
-        add_elevation_from_google(parcels)
+        if include_google_info:
+            add_elevation_from_google(parcels)
 
         return parcels
     except ElasticsearchException as e:

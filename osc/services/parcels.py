@@ -29,7 +29,8 @@ def update_parcel_by_cadastral_code(cadastral_code):
         cadastral_code,
         retrieve_public_info=True,
         retrieve_climate_info=False,
-        retrieve_soil_info=True)
+        retrieve_soil_info=True,
+        retrieve_google_info=False)
     logger.debug('parcels_geojson[\'features\'][0] = %s',
                  parcels_geojson['features'][0])
     json2source(parcels_geojson['features'][0])
@@ -47,14 +48,16 @@ def json2source(json):
 def obtain_parcels_by_cadastral_code(cadastral_code,
                                      retrieve_public_info=False,
                                      retrieve_climate_info=False,
-                                     retrieve_soil_info=False):
+                                     retrieve_soil_info=False,
+                                     retrieve_google_info=False):
     logger.debug('obtain_parcels_by_cadastral_code(%s,%s,%s,%s)',
                  cadastral_code,
                  retrieve_public_info,
                  retrieve_climate_info,
                  retrieve_soil_info)
     parcels = cadastre.get_parcels_by_cadastral_code(cadastral_code,
-                                                     retrieve_public_info)
+                                                     retrieve_public_info,
+                                                     retrieve_google_info)
 
     # Add climate info
     if retrieve_climate_info:
