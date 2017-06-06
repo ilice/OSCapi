@@ -1047,15 +1047,27 @@ def get_bucket_of_parcels_by_bbox_and_precision(
 
 
 def scan_parcels(update):
-    query = {"_source": [
-        "properties.nationalCadastralReference"
-        ]
+    # TODO(teanocrata) must update all parcels but we need to have cadastre
+    # info as soon as possible, remove query then.
+    query = {
+        "_source": [
+            "properties.nationalCadastralReference"
+        ],
+        "query": {
+            "bool": {
+                "must_not": {
+                    "exists": {
+                        "field": "properties.cadastralData"
+                    }
+                }
+            }
+        }
     }
     index = 'parcels'
     doc_type = 'parcel'
     result_parcels = scan(es,
                           query=query,
-                          scroll=u'600m',
+                          scroll=u'5m',
                           size=100,
                           index=index,
                           doc_type=doc_type)
