@@ -1,6 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
 from nose.plugins.attrib import attr
+from selenium.webdriver.firefox.webdriver import WebDriver
 import unittest
 
 
