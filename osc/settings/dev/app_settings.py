@@ -73,7 +73,7 @@ SOIL = {
 
 SLACK = {
     'token': get_secret(secrets, 'slack', 'token'),
-    'flush_bucket': 200
+    'flush_bucket': 1
 }
 
 WEB = {
@@ -107,23 +107,31 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': AUX_DIRS['log_dir'] + '/debug.log',
+            'formatter': 'standard'
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'propagate': True,
             'level': 'WARN',
         },
         'django.db.backends': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'osc': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
         },
     }
 }
+
+ERROR_HANDLER = ['DBErrorHandler']
 
 TIME_ZONE = 'Europe/Madrid'

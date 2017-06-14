@@ -99,7 +99,7 @@ SLACK = {
 }
 
 WEB = {
-    'url': 'http://89.141.96.206:8080'
+    'url': 'https://opensmartcountry.com'
 }
 
 AUX_DIRS = {
@@ -157,5 +157,7 @@ LOGGING = {
         },
     }
 }
+
+ERROR_HANDLER = ['DBErrorHandler']
 
 TIME_ZONE = 'Europe/London'
