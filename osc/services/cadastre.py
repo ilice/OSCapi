@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import Geohash
 import logging
 import requests
@@ -105,6 +106,30 @@ def parse_cadastre_exception(elem):
 
     if err_cod is not None and err_msg is not None:
         message = 'code: ' + err_cod + ' message: ' + err_msg
+
+    return message
+
+
+def parse_cadastre_page(response):
+    message = ''
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    for script in soup(["script", "style"]):
+        script.extract()
+
+    # get text
+    text = soup.get_text()
+
+    # break into lines and remove leading and trailing space on each
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    message = ''.join(chunk for chunk in chunks if chunk).encode('ascii',
+                                                                 'ignore')
+
+    logger.error(message)
 
     return message
 
@@ -763,7 +788,11 @@ def get_public_cadastre_info(code):
         raise CadastreException('Error connecting to '
                                 + url_public_cadastral_info
                                 + '. Status code: '
-                                + str(response.status_code))
+                                + str(response.status_code),
+                                cause=parse_cadastre_page(response),
+                                actionable_info={'Provincia': '',
+                                                 'Municipio': '',
+                                                 'RC': code})
 
 
 def store_parcels(parcels):
