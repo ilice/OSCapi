@@ -79,6 +79,7 @@ class SlackErrorHandler(object):
                         "color": "#FF0000"
                     }],
                     as_user=True)
+                self.num_errors = 0
             elif self.num_errors > 0:
                 self.slack.chat.post_message(
                     '#ooops',
@@ -125,6 +126,7 @@ class SlackErrorHandler(object):
                     }],
                     as_user=True
                 )
+            self.num_errors = 0
         except Exception:
             pass
 
