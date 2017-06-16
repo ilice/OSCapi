@@ -158,6 +158,6 @@ LOGGING = {
     }
 }
 
-ERROR_HANDLER = ['DBErrorHandler']
+ERROR_HANDLER = ['DBErrorHandler', 'SlackErrorHandler']
 
 TIME_ZONE = 'Europe/London'
