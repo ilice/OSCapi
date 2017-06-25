@@ -47,9 +47,12 @@ INFORIEGO = {
 }
 
 CADASTRE = {
-    'cadastral_info_url': 'http://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC',
+    'cadastral_info_url': 'http://ovc.catastro.meh.es/ovcservweb/'
+                          + 'OVCSWLocalizacionRC/OVCCallejero.asmx/'
+                          + 'Consulta_DNPRC',
     'url_inspire': 'http://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx',
-    'url_atom_inspire': 'http://www.catastro.minhap.es/INSPIRE/CadastralParcels/ES.SDGC.CP.atom.xml',
+    'url_atom_inspire': 'http://www.catastro.minhap.es/INSPIRE/'
+                        + 'CadastralParcels/ES.SDGC.CP.atom.xml',
     'index': 'parcels',
     'mapping': 'parcel',
     'zone.for.queries': 'EPSG::25830',
@@ -97,7 +100,8 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'standard': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'format': "[%(asctime)s] %(levelname)s "
+                      + "[%(name)s:%(lineno)s] %(message)s",
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
     },
@@ -109,8 +113,10 @@ LOGGING = {
         },
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': AUX_DIRS['log_dir'] + '/debug.log',
+            'maxBytes': 1024*50,  # 50 kB
+            'backupCount': 10,
             'formatter': 'standard'
         },
     },
@@ -122,16 +128,17 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
         'osc': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'level': 'DEBUG',
+            'propagate': True,
         },
     }
 }
 
-ERROR_HANDLER = ['DBErrorHandler']
+ERROR_HANDLER = ['DBErrorHandler', 'SlackErrorHandler']
 
 TIME_ZONE = 'Europe/Madrid'

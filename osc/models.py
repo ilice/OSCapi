@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
-from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from rest_framework.authtoken.models import Token
 from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -28,6 +28,7 @@ class Error(models.Model):
     function_name = models.CharField(max_length=255)
     severity = models.CharField(max_length=1, choices=SEVERITIES)
     message = models.TextField()
+    cause = models.TextField(null=True)
     actionable_info = models.TextField(null=True)
 
 
@@ -49,7 +50,8 @@ def create_user_profile(sender, instance, created=False, **kwargs):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                on_delete=models.CASCADE)
     gender = models.CharField(max_length=10, null=True)
     google_id = models.CharField(max_length=255, null=True)
     facebook_id = models.CharField(max_length=255, null=True)
@@ -59,8 +61,9 @@ class UserProfile(models.Model):
 
 
 class UserParcel(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     cadastral_code = models.CharField(max_length=255)
 
-    class Meta:
+    class Meta(object):
         unique_together = ('user', 'cadastral_code')

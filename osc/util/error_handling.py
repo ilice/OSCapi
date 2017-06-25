@@ -31,6 +31,8 @@ class error_managed(object):
 
     def handle_exception(self, e, f):
         if not hasattr(e, 'osc_handled'):
+            cause = e.cause \
+                if isinstance(e, OSCException) else None
             actionable_info = e.actionable_info \
                 if isinstance(e, OSCException) else None
             service = e.service if isinstance(e, OSCException) else 'UNKNOWN'
@@ -38,7 +40,8 @@ class error_managed(object):
             error_handler.error(service,
                                 f.__module__,
                                 f.__name__,
-                                str(type(e)) + ': ' + str(e),
+                                str(type(e)) + ': ' + e.message,
+                                cause,
                                 actionable_info)
 
             # State the exception as handled, so that we don't print errors
@@ -58,6 +61,7 @@ class SlackErrorHandler(object):
     function_name = None
     actionable_info = None
     message = 'Error detected'
+    cause = None
     type = 'good'
 
     def __init__(self, token, flush_bucket, url):
@@ -111,8 +115,12 @@ class SlackErrorHandler(object):
                                 "value": self.message
                             },
                             {
+                                "title": "Cause",
+                                "value": self.cause
+                            },
+                            {
                                 "title": "Actionable info",
-                                "value": self.actionable_info
+                                "value": str(self.actionable_info)
                             }
                         ],
                         "image_url": "https://opensmartcountry.com",
@@ -135,11 +143,13 @@ class SlackErrorHandler(object):
               module_name,
               function_name,
               message,
+              cause=None,
               actionable_info=None):
         self.process_name = process_name
         self.module_name = module_name
         self.function_name = function_name
         self.message = message
+        self.cause = cause
         self.actionable_info = actionable_info
         self.type = "danger"
         self.num_errors += 1
@@ -150,11 +160,13 @@ class SlackErrorHandler(object):
                 module_name,
                 function_name,
                 message,
+                cause=None,
                 actionable_info=None):
         self.process_name = process_name
         self.module_name = module_name
         self.function_name = function_name
         self.message = message
+        self.cause = cause
         self.actionable_info = actionable_info
         self.type = "warning"
         self.num_errors += 1
@@ -165,11 +177,13 @@ class SlackErrorHandler(object):
              module_name,
              function_name,
              message,
+             cause=None,
              actionable_info=None):
         self.process_name = process_name
         self.module_name = module_name
         self.function_name = function_name
         self.message = message
+        self.cause = cause
         self.actionable_info = actionable_info
         self.type = "good"
         self.num_errors += 1
@@ -189,6 +203,7 @@ class DBErrorHandler(object):
               module_name,
               function_name,
               message,
+              cause=None,
               actionable_info=None):
         err = Error(date=timezone.now(),
                     process_name=process_name,
@@ -196,6 +211,7 @@ class DBErrorHandler(object):
                     function_name=function_name,
                     severity=Error.S_ERROR,
                     message=message,
+                    cause=cause,
                     actionable_info=actionable_info)
         err.save()
 
@@ -204,6 +220,7 @@ class DBErrorHandler(object):
                 module_name,
                 function_name,
                 message,
+                cause=None,
                 actionable_info=None):
         warn = Error(date=timezone.now(),
                      process_name=process_name,
@@ -211,6 +228,7 @@ class DBErrorHandler(object):
                      function_name=function_name,
                      severity=Error.S_ERROR,
                      message=message,
+                     cause=cause,
                      actionable_info=actionable_info)
         warn.save()
 
@@ -224,15 +242,15 @@ class CompositeErrorHandler(object):
     error_handlers = None
 
     def __init__(self, error_handlers):
-        self.error_handlers = []
+        self.error_handlers = {}
         for error_handler in error_handlers:
             if error_handler == 'DBErrorHandler':
-                self.error_handlers.append(DBErrorHandler())
+                self.error_handlers[error_handler] = DBErrorHandler()
             elif error_handler == 'SlackErrorHandler':
-                self.error_handlers.append(SlackErrorHandler(
+                self.error_handlers[error_handler] = SlackErrorHandler(
                     settings.SLACK['token'],
                     settings.SLACK['flush_bucket'],
-                    settings.WEB['url']))
+                    settings.WEB['url'])
             else:
                 raise Exception('Bad error handler configuration. '
                                 'Check app_settings.py.')
@@ -242,29 +260,33 @@ class CompositeErrorHandler(object):
               module_name,
               function_name,
               message,
+              cause=None,
               actionable_info=None):
-        for handler in self.error_handlers:
-            handler.error(process_name,
-                          module_name,
-                          function_name,
-                          message,
-                          actionable_info)
+        for handler in settings.ERROR_HANDLER:
+            self.error_handlers[handler].error(process_name,
+                                               module_name,
+                                               function_name,
+                                               message,
+                                               cause,
+                                               actionable_info)
 
     def warning(self,
                 process_name,
                 module_name,
                 function_name,
                 message,
+                cause=None,
                 actionable_info=None):
-        for handler in self.error_handlers:
-            handler.warning(process_name,
-                            module_name,
-                            function_name,
-                            message,
-                            actionable_info)
+        for handler in settings.ERROR_HANDLER:
+            self.error_handlers[handler].warning(process_name,
+                                                 module_name,
+                                                 function_name,
+                                                 message,
+                                                 cause,
+                                                 actionable_info)
 
     def flush(self):
-        for handler in self.error_handlers:
+        for handler_name, handler in self.error_handlers.iteritems():
             handler.flush()
 
 error_handler = CompositeErrorHandler(settings.ERROR_HANDLER)
