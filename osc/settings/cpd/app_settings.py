@@ -75,7 +75,7 @@ CADASTRE = {
     'index': 'parcels',
     'mapping': 'parcel',
     'zone.for.queries': 'EPSG::25830',
-    'query.cadastre.when.bbox': True,
+    'query.cadastre.when.bbox': False,
     'max.query.size': 5000
 }
 
