@@ -79,6 +79,14 @@ CADASTRE = {
     'max.query.size': 5000
 }
 
+ITACYL = {
+    'ITACYL_PROTOCOL': 'http',
+    'ITACYL_FTP': 'ftp.itacyl.es',
+    'SIGPAC_PATH': 'cartografia/05_SIGPAC/2017_ETRS89/'
+                   + 'Parcelario_SIGPAC_CyL_Municipios',
+    'SIGPAC_FILE_DBF': 'RECFE.dbf'
+}
+
 WEATHER = {
     'index': 'weather_v1',
     'weather.mapping': 'weather',

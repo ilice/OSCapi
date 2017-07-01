@@ -40,6 +40,19 @@ class CadastreException(ConnectionError):
             + ' actionable_info = ' + str(self.actionable_info)
 
 
+class ItacylException(ConnectionError):
+    def __init__(self, message, cause=None, actionable_info=None):
+        super(ItacylException, self).__init__('ITACYL',
+                                              message,
+                                              cause,
+                                              actionable_info)
+
+    def __str__(self):
+        return 'ItacylException (' + self.service + '): ' \
+            + self.message + ' cause = ' + str(self.cause) \
+            + ' actionable_info = ' + str(self.actionable_info)
+
+
 class ElasticException(ConnectionError):
     def __init__(self, service, message, cause=None, actionable_info=None):
         super(ElasticException, self).__init__(service,
