@@ -54,9 +54,11 @@ def updateMunicipality(province, municipality):
     conn.close()
 
     path = re.match(r'(\d{2})_?(\d{3})(?:_|\.)', municipality)
-    print('{}_{}'.format(path.group(0), path.group(1)))
-    if '37_901/' in zipfile.namelist():
-        dbf = zipfile.open('37_901/' + SIGPAC_FILE_DBF, 'r')
+    dirPath = '{}_{}/'.format(path.group(1), path.group(2))
+    print(dirPath)
+
+    if dirPath in zipfile.namelist():
+        dbf = zipfile.open(dirPath + SIGPAC_FILE_DBF, 'r')
     else:
         dbf = zipfile.open(SIGPAC_FILE_DBF, 'r')
 
