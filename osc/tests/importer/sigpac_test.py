@@ -48,7 +48,21 @@ class SigpacImporterTest(TestCase):
         sigpac.updateMunicipality(province, municipality)
         self.assertTrue(True, "shouldn't throw exceptions")
 
+    @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
+    @mock.patch('osc.importer.sigpac.ITACYL_FTP',
+                'D:/teanocrata/Development/OSCapi/osc/tests/importer/fixtures')
+    @mock.patch('osc.importer.sigpac.updateParcel')
+    def test_updateMunicipality_calls_updateParcel(self,
+                                                   m_updateParcel):
+        province = '37_Salamanca'
+        municipality = '37284_Sanchotello.zip'
+        sigpac.updateMunicipality(province, municipality)
+        self.assertTrue(m_updateParcel.call_count == 10, 'Updates 10 parcels')
+        m_updateParcel.assert_called()
+        m_updateParcel.assert_called_with(
+            [895882, 121.32291, 50.39169, 37, 284, 0, 0, 1, 4, 2, 0, 'IM'])
+
     @skip("Current development")
     def test_import_sigpac_data(self):
-        # sigpac.import_sigpac_data()
+        sigpac.import_sigpac_data()
         self.fail('Not implemented yet')

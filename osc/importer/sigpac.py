@@ -71,7 +71,8 @@ def updateMunicipality(province, municipality):
 @error_managed()
 def updateParcel(record):
     cadastral_reference = getCadastralReference(record)
-    logger.info('Updating cadastral parcel: %s - %s', cadastral_reference, record[11])
+    logger.info('Updating cadastral parcel: %s - %s',
+                cadastral_reference, record[11])
     # if cadastral_reference == '37284A00200076':
     #     print(record)
 
