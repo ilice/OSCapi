@@ -2,7 +2,7 @@ language: python
 addons:
   firefox: "latest"
 python:
-- '2.7'
+- '2.7.12'
 install:
 - pip install -r requirements.txt
 script:
