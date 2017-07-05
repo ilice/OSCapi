@@ -6,7 +6,7 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- travis_wait python manage.py test osc.tests.services.climate_test -a !elastic_connection,!cadastre_connection,!functional
+- travis_wait python manage.py test -a !elastic_connection,!cadastre_connection,!functional
 after_success:
 -  travis_wait python manage.py test -a cadastre_connection -a functional
 notifications:
