@@ -3,6 +3,7 @@
 from django.test import override_settings
 from django.test import TestCase
 import mock
+import os
 from unittest import skip
 
 from osc.exceptions import ItacylException
@@ -30,30 +31,27 @@ class SigpacImporterTest(TestCase):
                           [410991618, 8274.60336, 368.00616,
                            5.1, 1, 0, 0, 507, 435, 1, 0, 'TA'])
 
-    @skip('travis error')
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                'D:/teanocrata/Development/OSCapi/osc/tests/importer/fixtures')
+                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_wont_fail_when_updateMunicipality_from_mucipality_zip_url(self):
         province = '05_Avila'
         municipality = '05271_Comunidad-Arenas-San-Pedro-Candeleda.zip'
         sigpac.updateMunicipality(province, municipality)
         self.assertTrue(True, "shouldn't throw exceptions")
 
-    @skip('travis error')
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                'D:/teanocrata/Development/OSCapi/osc/tests/importer/fixtures')
+                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_wont_fail_when_updateMunicipality_with_inner_folder(self):
         province = '37_Salamanca'
         municipality = '37_901.zip'
         sigpac.updateMunicipality(province, municipality)
         self.assertTrue(True, "shouldn't throw exceptions")
 
-    @skip('travis error')
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                'D:/teanocrata/Development/OSCapi/osc/tests/importer/fixtures')
+                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
     @mock.patch('osc.importer.sigpac.updateParcel')
     def test_updateMunicipality_calls_updateParcel(self,
                                                    m_updateParcel):
@@ -65,10 +63,10 @@ class SigpacImporterTest(TestCase):
         m_updateParcel.assert_called_with(
             [895882, 121.32291, 50.39169, 37, 284, 0, 0, 1, 4, 2, 0, 'IM'])
 
-    @skip('travis error')
+    @skip("Current development")
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                'D:/teanocrata/Development/OSCapi/osc/tests/importer/fixtures')
+                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_updateMunicipality(self):
         province = '37_Salamanca'
         municipality = '37284_Sanchotello.zip'
