@@ -33,7 +33,7 @@ class SigpacImporterTest(TestCase):
 
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
+                '{}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_wont_fail_when_updateMunicipality_from_mucipality_zip_url(self):
         province = '05_Avila'
         municipality = '05271_Comunidad-Arenas-San-Pedro-Candeleda.zip'
@@ -42,7 +42,7 @@ class SigpacImporterTest(TestCase):
 
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
+                '{}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_wont_fail_when_updateMunicipality_with_inner_folder(self):
         province = '37_Salamanca'
         municipality = '37_901.zip'
@@ -51,7 +51,7 @@ class SigpacImporterTest(TestCase):
 
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
+                '{}/osc/tests/importer/fixtures'.format(os.getcwd()))
     @mock.patch('osc.importer.sigpac.updateParcel')
     def test_updateMunicipality_calls_updateParcel(self,
                                                    m_updateParcel):
@@ -66,7 +66,7 @@ class SigpacImporterTest(TestCase):
     @skip("Current development")
     @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
     @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                '${}/osc/tests/importer/fixtures'.format(os.getcwd()))
+                '{}/osc/tests/importer/fixtures'.format(os.getcwd()))
     def test_updateMunicipality(self):
         province = '37_Salamanca'
         municipality = '37284_Sanchotello.zip'
