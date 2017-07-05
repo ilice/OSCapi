@@ -10,12 +10,11 @@ import osc.importer.sigpac as sigpac
 
 
 class SigpacImporterTest(TestCase):
-    @skip('travis error')
+
     @override_settings(ERROR_HANDLER=['DBErrorHandler'])
     def test_updateParcel_raises_exception_when_no_params(self):
         self.assertRaises(ItacylException, sigpac.updateParcel, [])
 
-    @skip('travis error')
     @override_settings(ERROR_HANDLER=['DBErrorHandler'])
     def test_updateParcel_raises_exception_when_bad_params(self):
         self.assertRaises(ItacylException,
