@@ -99,7 +99,7 @@ def store_daily_document(document,
              document[u'IDPROVINCIA'] + '_' + \
              document[u'IDESTACION']
 
-        util.wait_for_yellow_cluster_status()
+        util.wait_for_yellow_cluster_status('STORE_INFORIEGO_DAILY')
         es.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
         raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))
@@ -230,7 +230,7 @@ def store_hourly_document(document,
              document[u'IDPROVINCIA'] + '_' + \
              document[u'IDESTACION']
 
-        util.wait_for_yellow_cluster_status()
+        util.wait_for_yellow_cluster_status('STORE_INFORIEGO_HOURLY')
         es.index(index=index, doc_type=mapping, id=id, body=document)
     except Exception as e:
         raise ElasticException('INFORIEGO', 'Error saving to Elastic', actionable_info=str(document))

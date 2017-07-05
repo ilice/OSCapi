@@ -22,7 +22,9 @@ ELASTICSEARCH = {
     'chunk_size': 100,
     'host': 'elastic.opensmartcountry.com',
     'port': 443,
-    'use_ssl': True
+    'use_ssl': True,
+    'timeout': 3,
+    'retries': 1
 }
 
 GOOGLE = {

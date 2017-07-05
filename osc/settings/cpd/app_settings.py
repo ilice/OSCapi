@@ -44,7 +44,9 @@ ELASTICSEARCH = {
     'chunk_size': 100,
     'host': 'elastic',
     'port': 9200,
-    'use_ssl': False
+    'use_ssl': False,
+    'timeout': 60,
+    'retries': 3
 }
 
 GOOGLE = {

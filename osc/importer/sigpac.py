@@ -11,6 +11,7 @@ from zipfile import ZipFile
 from django.conf import settings
 
 from osc.exceptions import ItacylException
+from osc.services.cadastre import update_parcel
 from osc.util import error_managed
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,8 @@ ITACYL_PROTOCOL = settings.ITACYL['ITACYL_PROTOCOL']
 ITACYL_FTP = settings.ITACYL['ITACYL_FTP']
 SIGPAC_PATH = settings.ITACYL['SIGPAC_PATH']
 SIGPAC_FILE_DBF = settings.ITACYL['SIGPAC_FILE_DBF']
+
+parcels = []
 
 
 def getDemarcations(demarcation=''):
@@ -70,11 +73,28 @@ def updateMunicipality(province, municipality):
 
 @error_managed()
 def updateParcel(record):
-    cadastral_reference = getCadastralReference(record)
+    nationalCadastralReference = getCadastralReference(record)
     logger.info('Updating cadastral parcel: %s - %s',
-                cadastral_reference, record[11])
-    # if cadastral_reference == '37284A00200076':
-    #     print(record)
+                nationalCadastralReference, record[11])
+    properties = {}
+    properties['nationalCadastralReference'] = nationalCadastralReference
+    sigpacData = {}
+    sigpacData['DN_OID'] = record[0]
+    sigpacData['SUPERFICIE'] = record[1]
+    sigpacData['PERIMETRO'] = record[2]
+    sigpacData['PROVINCIA'] = record[3]
+    sigpacData['MUNICIPIO'] = record[4]
+    sigpacData['AGREGADO'] = record[5]
+    sigpacData['ZONA'] = record[6]
+    sigpacData['POLIGONO'] = record[7]
+    sigpacData['PARCELA'] = record[8]
+    sigpacData['RECINTO'] = record[9]
+    sigpacData['COEF_REGAD'] = record[10]
+    sigpacData['USO_SIGPAC'] = record[11]
+    properties['sigpacData'] = sigpacData
+    parcel = {}
+    parcel['properties'] = properties
+    update_parcel(parcel)
 
 
 def getCadastralReference(record):
