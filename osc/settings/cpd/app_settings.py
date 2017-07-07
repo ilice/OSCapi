@@ -45,7 +45,7 @@ ELASTICSEARCH = {
     'host': 'elastic',
     'port': 9200,
     'use_ssl': False,
-    'timeout': 60,
+    'timeout': '60s',
     'retries': 3
 }
 

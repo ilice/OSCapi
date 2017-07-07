@@ -23,7 +23,7 @@ ELASTICSEARCH = {
     'host': 'elastic.opensmartcountry.com',
     'port': 443,
     'use_ssl': True,
-    'timeout': 3,
+    'timeout': '3s',
     'retries': 1
 }
 
