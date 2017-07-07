@@ -64,16 +64,6 @@ class SigpacImporterTest(TestCase):
             [895882, 121.32291, 50.39169, 37, 284, 0, 0, 1, 4, 2, 0, 'IM'])
 
     @skip("Current development")
-    @mock.patch('osc.importer.sigpac.ITACYL_PROTOCOL', 'file:///')
-    @mock.patch('osc.importer.sigpac.ITACYL_FTP',
-                '{}/osc/tests/importer/fixtures'.format(os.getcwd()))
-    def test_updateMunicipality(self):
-        province = '37_Salamanca'
-        municipality = '37284_Sanchotello.zip'
-        sigpac.updateMunicipality(province, municipality)
-        self.fail('Implementing')
-
-    @skip("Current development")
     def test_import_sigpac_data(self):
         sigpac.import_sigpac_data()
         self.fail('Not implemented yet')

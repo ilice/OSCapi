@@ -34,7 +34,7 @@ def update_parcel_by_cadastral_code(cadastral_code):
     logger.debug('parcels_geojson[\'features\'][0] = %s',
                  parcels_geojson['features'][0])
     json2source(parcels_geojson['features'][0])
-    cadastre.update_parcel(json2source(parcels_geojson['features'][0]))
+    cadastre.index_parcel(json2source(parcels_geojson['features'][0]))
 
 
 def json2source(json):

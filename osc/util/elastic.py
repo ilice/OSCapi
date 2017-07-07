@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['wait_for_yellow_cluster_status',
            'elastic_bulk_update',
            'elastic_bulk_save',
+           'elastic_index',
            'elastic_update',
            'es']
 
@@ -130,10 +131,22 @@ def elastic_bulk_save(process_name,
 
 
 @error_managed()
-def elastic_update(process_name, index, doc_type, record, id):
+def elastic_index(process_name, index, doc_type, record, id):
     try:
         wait_for_yellow_cluster_status(process_name)
         es.index(index=index, doc_type=doc_type, id=id, body=record)
+    except Exception as e:
+        raise ElasticException(process_name,
+                               'Error saving to Elastic',
+                               actionable_info="",
+                               cause=e)
+
+
+@error_managed()
+def elastic_update(process_name, index, doc_type, record, id):
+    try:
+        wait_for_yellow_cluster_status(process_name)
+        es.update(index=index, doc_type=doc_type, id=id, body=record)
     except Exception as e:
         raise ElasticException(process_name,
                                'Error saving to Elastic',

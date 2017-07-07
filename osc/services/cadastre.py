@@ -13,6 +13,7 @@ from osc.exceptions import ElasticException
 from osc.services.google import obtain_elevation_from_google
 from osc.util import elastic_bulk_save
 from osc.util import elastic_bulk_update
+from osc.util import elastic_index
 from osc.util import elastic_update
 from osc.util import error_managed
 from osc.util import es
@@ -63,7 +64,10 @@ class Parcel(object):
 
     @staticmethod
     def get_cadastral_reference(parcel):
-        return parcel['properties']['nationalCadastralReference']
+        if 'doc' in parcel:
+            return parcel['doc']['properties']['nationalCadastralReference']
+        else:
+            return parcel['properties']['nationalCadastralReference']
 
 
 @error_managed()
@@ -443,6 +447,15 @@ def update_parcels(parcels):
                             parcel_mapping,
                             records,
                             ids)
+
+
+def index_parcel(parcel):
+    logger.info('update_parcel(%s)', parcel)
+    elastic_index('INDEX_PARCEL',
+                   parcel_index,
+                   parcel_mapping,
+                   parcel,
+                   Parcel.get_cadastral_reference(parcel))
 
 
 def update_parcel(parcel):

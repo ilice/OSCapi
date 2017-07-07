@@ -92,8 +92,10 @@ def updateParcel(record):
     sigpacData['COEF_REGAD'] = record[10]
     sigpacData['USO_SIGPAC'] = record[11]
     properties['sigpacData'] = sigpacData
+    doc = {}
+    doc['properties'] = properties
     parcel = {}
-    parcel['properties'] = properties
+    parcel['doc'] = doc
     update_parcel(parcel)
 
 
