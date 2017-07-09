@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             import_sigpac_data()
-        except Exception:
-            raise CommandError('Error importing SIGPAC data')
+        except Exception as e:
+            raise CommandError('Error importing SIGPAC data: {}'.format(e))
 
         self.stdout.write(self.style.SUCCESS('Successfully imported data'))
