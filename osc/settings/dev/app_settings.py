@@ -105,6 +105,15 @@ for dir_name in AUX_DIRS:
     if not os.path.exists(AUX_DIRS[dir_name]):
         os.makedirs(AUX_DIRS[dir_name])
 
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

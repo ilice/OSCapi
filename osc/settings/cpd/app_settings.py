@@ -105,7 +105,7 @@ SOIL = {
 
 SLACK = {
     'token': get_secret(secrets, 'slack', 'token'),
-    'flush_bucket': 200
+    'flush_bucket': 1
 }
 
 WEB = {
@@ -124,6 +124,8 @@ for dir_name in AUX_DIRS:
     if not os.path.exists(AUX_DIRS[dir_name]):
         os.makedirs(AUX_DIRS[dir_name])
 
+# Database
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -170,4 +172,4 @@ LOGGING = {
 
 ERROR_HANDLER = ['DBErrorHandler', 'SlackErrorHandler']
 
-TIME_ZONE = 'Europe/London'
+TIME_ZONE = 'Europe/Madrid'
