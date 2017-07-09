@@ -13,7 +13,6 @@ from osc.exceptions import ElasticException
 from osc.services.google import obtain_elevation_from_google
 from osc.util import elastic_bulk_save
 from osc.util import elastic_bulk_update
-from osc.util import elastic_index
 from osc.util import elastic_update
 from osc.util import error_managed
 from osc.util import es

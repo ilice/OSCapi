@@ -86,7 +86,7 @@ def elastic_bulk_update(process_name,
             else:
                 raise ElasticException(process_name,
                                        'Error saving to Elastic',
-                                       cause=e.message,
+                                       cause=str(e).message,
                                        actionable_info=str(r))
 
 
@@ -127,7 +127,7 @@ def elastic_bulk_save(process_name,
                 raise ElasticException(process_name,
                                        'Error saving to Elastic',
                                        actionable_info=str(r),
-                                       cause=e)
+                                       cause=str(e))
 
 
 @error_managed()
@@ -137,9 +137,9 @@ def elastic_index(process_name, index, doc_type, record, id):
         es.index(index=index, doc_type=doc_type, id=id, body=record)
     except Exception as e:
         raise ElasticException(process_name,
-                               'Error saving to Elastic',
-                               actionable_info="",
-                               cause=e)
+                               'Error indexing {} to Elastic'.format(id),
+                               actionable_info=str(record),
+                               cause=str(e))
 
 
 @error_managed()
@@ -149,6 +149,6 @@ def elastic_update(process_name, index, doc_type, record, id):
         es.update(index=index, doc_type=doc_type, id=id, body=record)
     except Exception as e:
         raise ElasticException(process_name,
-                               'Error saving to Elastic',
-                               actionable_info="",
-                               cause=e)
+                               'Error updating {} in Elastic'.format(id),
+                               actionable_info=str(record),
+                               cause=str(e))
