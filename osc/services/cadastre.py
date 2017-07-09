@@ -450,7 +450,7 @@ def update_parcels(parcels):
 
 
 def update_parcel(parcel):
-    logger.info('update_parcel(%s)', parcel)
+    logger.debug('update_parcel(%s)', parcel)
     elastic_update('UPDATE_PARCEL',
                    parcel_index,
                    parcel_mapping,
