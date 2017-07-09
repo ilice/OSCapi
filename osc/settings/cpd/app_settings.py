@@ -82,7 +82,7 @@ CADASTRE = {
 }
 
 ITACYL = {
-    'ITACYL_PROTOCOL': 'http',
+    'ITACYL_PROTOCOL': 'http://',
     'ITACYL_FTP': 'ftp.itacyl.es',
     'SIGPAC_PATH': 'cartografia/05_SIGPAC/2017_ETRS89/'
                    + 'Parcelario_SIGPAC_CyL_Municipios',
