@@ -13,21 +13,21 @@ import osc.importer.sigpac as sigpac
 class SigpacImporterTest(TestCase):
 
     @override_settings(ERROR_HANDLER=['DBErrorHandler'])
-    def test_updateParcel_raises_exception_when_no_params(self):
-        self.assertRaises(ItacylException, sigpac.updateParcel, [])
+    def test_createParcelDocument_raises_exception_when_no_params(self):
+        self.assertRaises(ItacylException, sigpac.createParcelDocument, [])
 
     @override_settings(ERROR_HANDLER=['DBErrorHandler'])
-    def test_updateParcel_raises_exception_when_bad_params(self):
+    def test_createParcelDocument_raises_exception_when_bad_params(self):
         self.assertRaises(ItacylException,
-                          sigpac.updateParcel,
+                          sigpac.createParcelDocument,
                           [410991618, 8274.60336, 368.00616,
                            'no number', 1, 0, 0, 507, 435, 1, 0, 'TA'])
         self.assertRaises(ItacylException,
-                          sigpac.updateParcel,
+                          sigpac.createParcelDocument,
                           [410991618, 8274.60336, 368.00616,
                            'no number', 1, 0, 0, 507])
         self.assertRaises(ItacylException,
-                          sigpac.updateParcel,
+                          sigpac.createParcelDocument,
                           [410991618, 8274.60336, 368.00616,
                            5.1, 1, 0, 0, 507, 435, 1, 0, 'TA'])
 
@@ -61,7 +61,21 @@ class SigpacImporterTest(TestCase):
         self.assertTrue(m_updateParcel.call_count == 10, 'Updates 10 parcels')
         m_updateParcel.assert_called()
         m_updateParcel.assert_called_with(
-            [895882, 121.32291, 50.39169, 37, 284, 0, 0, 1, 4, 2, 0, 'IM'])
+            {'doc':
+                {'properties':
+                    {'nationalCadastralReference': '37284A00100004',
+                     'sigpacData': {'ZONA': 0,
+                                    'PROVINCIA': 37,
+                                    'USO_SIGPAC': 'IM',
+                                    'RECINTO': 2,
+                                    'PERIMETRO': 50.39169,
+                                    'DN_OID': 895882,
+                                    'PARCELA': 4,
+                                    'POLIGONO': 1,
+                                    'COEF_REGAD': 0,
+                                    'SUPERFICIE': 121.32291,
+                                    'AGREGADO': 0,
+                                    'MUNICIPIO': 284}}}})
 
     @skip("Current development")
     def test_import_sigpac_data(self):

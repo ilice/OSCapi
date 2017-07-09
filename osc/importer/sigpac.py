@@ -58,7 +58,6 @@ def updateMunicipality(province, municipality):
 
     path = re.match(r'(\d{2})_?(\d{3})(?:_|\.)', municipality)
     dirPath = '{}_{}/'.format(path.group(1), path.group(2))
-    print(dirPath)
 
     if dirPath in zipfile.namelist():
         dbf = zipfile.open(dirPath + SIGPAC_FILE_DBF, 'r')
@@ -68,14 +67,18 @@ def updateMunicipality(province, municipality):
     sf = shapefile.Reader(dbf=StringIO(dbf.read()))
     records = sf.records()
     for record in records:
-        updateParcel(record)
+        updateParcel(createParcelDocument(record))
 
 
-@error_managed()
-def updateParcel(record):
+@error_managed(inhibit_exception=True)
+def updateParcel(parcel):
+    update_parcel(parcel)
+
+
+def createParcelDocument(record):
     nationalCadastralReference = getCadastralReference(record)
-    logger.info('Updating cadastral parcel: %s - %s',
-                nationalCadastralReference, record[11])
+    logger.debug('Updating cadastral parcel: %s - %s',
+                 nationalCadastralReference, record[11])
     properties = {}
     properties['nationalCadastralReference'] = nationalCadastralReference
     sigpacData = {}
@@ -96,7 +99,7 @@ def updateParcel(record):
     doc['properties'] = properties
     parcel = {}
     parcel['doc'] = doc
-    update_parcel(parcel)
+    return parcel
 
 
 def getCadastralReference(record):

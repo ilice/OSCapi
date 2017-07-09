@@ -449,15 +449,6 @@ def update_parcels(parcels):
                             ids)
 
 
-def index_parcel(parcel):
-    logger.info('update_parcel(%s)', parcel)
-    elastic_index('INDEX_PARCEL',
-                   parcel_index,
-                   parcel_mapping,
-                   parcel,
-                   Parcel.get_cadastral_reference(parcel))
-
-
 def update_parcel(parcel):
     logger.info('update_parcel(%s)', parcel)
     elastic_update('UPDATE_PARCEL',
