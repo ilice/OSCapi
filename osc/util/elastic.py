@@ -86,7 +86,7 @@ def elastic_bulk_update(process_name,
             else:
                 raise ElasticException(process_name,
                                        'Error saving to Elastic',
-                                       cause=str(e).message,
+                                       cause=str(e),
                                        actionable_info=str(r))
 
 
