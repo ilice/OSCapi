@@ -123,10 +123,10 @@ def getCadastralReference(record):
             record)
 
 
-def import_sigpac_data():
-    provinces = getProvinces()
-
-    for province in provinces:
-        municipalities = getMunicipalities(province)
-        for municipality in municipalities:
-            updateMunicipality(province, municipality)
+def import_sigpac_data(provinces=[]):
+    available_provinces = getProvinces()
+    for province in available_provinces:
+        if province in provinces or len(provinces) == 0:
+            municipalities = getMunicipalities(province)
+            for municipality in municipalities:
+                updateMunicipality(province, municipality)

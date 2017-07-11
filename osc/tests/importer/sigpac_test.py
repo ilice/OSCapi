@@ -77,7 +77,9 @@ class SigpacImporterTest(TestCase):
                                     'AGREGADO': 0,
                                     'MUNICIPIO': 284}}}})
 
-    @skip("Current development")
-    def test_import_sigpac_data(self):
-        sigpac.import_sigpac_data()
-        self.fail('Not implemented yet')
+    @mock.patch('osc.importer.sigpac.getMunicipalities')
+    def test_import_sigpac_data_call_detMunicipalities(self,
+                                                       m_getMunicipalities):
+        provinces = ['37_Salamanca']
+        sigpac.import_sigpac_data(provinces)
+        m_getMunicipalities.assert_called_with('37_Salamanca')
