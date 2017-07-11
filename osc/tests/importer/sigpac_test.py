@@ -4,7 +4,6 @@ from django.test import override_settings
 from django.test import TestCase
 import mock
 import os
-from unittest import skip
 
 from osc.exceptions import ItacylException
 import osc.importer.sigpac as sigpac

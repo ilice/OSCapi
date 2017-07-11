@@ -11,8 +11,8 @@ class ImportSigpacDataTest(TestCase):
     def test_call_import_sigpac_data(
             self,
             mock_import_sigpac_data):
-            call_command('import_sigpac_data')
-            mock_import_sigpac_data.assert_called()
+        call_command('import_sigpac_data')
+        mock_import_sigpac_data.assert_called()
 
     @mock.patch('osc.management.commands.import_sigpac_data.'
                 'import_sigpac_data')
@@ -20,5 +20,6 @@ class ImportSigpacDataTest(TestCase):
             self,
             mock_import_sigpac_data):
         provinces = ['37_Salamanca', '05_Avila']
-        call_command('import_sigpac_data', '--provinces=%s' % ','.join(provinces))
+        call_command('import_sigpac_data', '--provinces=%s' %
+                     ','.join(provinces))
         mock_import_sigpac_data.assert_called_with(provinces)
