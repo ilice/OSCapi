@@ -34,4 +34,5 @@ urlpatterns = [
     url(r'^auth-signIn', auth.SignIn.as_view()),
     url(r'^auth-update-user', auth.UpdateUser.as_view()),
     url(r'^auth-login', rf_views.obtain_auth_token),
+
 ]

@@ -222,3 +222,12 @@ class CadastreServiceTest(TestCase):
             call_counter == len(self.scaned_parcels['hits']['hits']),
             "called once per parcel"
         )
+
+    def test_get_parcels_by_bbox(self):
+        min_lat = 40.440727
+        min_lon = -5.758944
+        max_lat = 40.440917
+        max_lon = -5.757657
+
+        cadastre.get_parcels_by_bbox(min_lat, min_lon, max_lat, max_lon)
+        # self.assertTrue(False, 'not implemented yet')

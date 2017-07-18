@@ -16,10 +16,13 @@ Including another URLconf
 from django.conf.urls import include
 from django.conf.urls import url
 from django.contrib import admin
+from osc import api_urls
 from osc.views import web
 
 urlpatterns = [
     url(r'^$', web.index, name='index'),
     url(r'', include('osc.urls')),
     url(r'^admin/', admin.site.urls),
+    # Api
+    url(r'^api/', include(api_urls)),
 ]
