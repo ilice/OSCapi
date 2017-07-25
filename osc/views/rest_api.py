@@ -1,23 +1,24 @@
+from osc.exceptions import OSCException
+from osc.models import UserParcel
+from osc.serializers import UserParcelSerializer
 import osc.services.crop as crop_service
 import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.users as users_service
 
-from osc.exceptions import OSCException
-
-from osc.serializers import UserParcelSerializer
-
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import viewsets
 
 
 class GoogleElevationList(APIView):
     """Obtain elevations from google from google"""
-    renderer_classes = (JSONRenderer,)
 
     def get(self, request, format=None):
         param = request.query_params.get('locations', '')
@@ -38,7 +39,6 @@ class GoogleElevationList(APIView):
 
 class ParcelList(APIView):
     """Obtain parcels with associated information"""
-    renderer_classes = (JSONRenderer,)
 
     def get(self, request):
         try:
@@ -84,7 +84,6 @@ class ParcelList(APIView):
 
 
 class CropList(APIView):
-    renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
 
     def post(self, request, format=None):
@@ -101,7 +100,6 @@ class CropList(APIView):
 
 
 class CropDetail(APIView):
-    renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
 
     def put(self, request, crop_id, format=None):
@@ -128,7 +126,6 @@ class CropDetail(APIView):
 
 
 class UserParcelsList(APIView):
-    renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
     permission_classes = (IsAuthenticated,)
 
@@ -155,7 +152,6 @@ class UserParcelsList(APIView):
 
 
 class UserParcelsDetail(APIView):
-    renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticated,)
 
     def put(self, request, format=None):
@@ -178,7 +174,6 @@ class UserParcelsDetail(APIView):
 
 
 class UserDetail(APIView):
-    renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -198,7 +193,6 @@ class UserDetail(APIView):
 
 
 class OwnedParcels(APIView):
-    renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
 
     def get(self, request, format=None):
@@ -209,3 +203,26 @@ class OwnedParcels(APIView):
                                                        False,
                                                        False)},
             status=status.HTTP_200_OK)
+
+
+class UserParcelSet(viewsets.ModelViewSet):
+    """API endpoint that allows user parcel to be viewed or edited. """
+    queryset = UserParcel.objects.all()
+    serializer_class = UserParcelSerializer
+
+
+class APIRootView(APIView):
+    def get(self, request):
+        data = {
+            'altitude': reverse('altitud', request=request),
+            'cadastral_parcel': reverse('get_cadastral_parcels',
+                                        request=request),
+            'crops': reverse('obtain_crops_elastic_query', request=request),
+            # 'crop': reverse('update_crops_elastic', request=request),
+            'userparcel': reverse('obtain_user_parcels', request=request),
+            'userparcel_add': reverse('add_user_parcel', request=request),
+            'user-url': reverse('get_user', args=[], request=request),
+            'owned-parcels': reverse('get_owned_parcels', request=request),
+            'api-root': reverse('api-root', request=request)
+        }
+        return Response(data)

@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -74,29 +74,36 @@ WSGI_APPLICATION = 'osc_site.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': ('django.contrib.auth.password_validation'
+                 '.UserAttributeSimilarityValidator'),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': ('django.contrib.auth.password_validation.'
+                 'MinimumLengthValidator'),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': ('django.contrib.auth.password_validation.'
+                 'CommonPasswordValidator'),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': ('django.contrib.auth.password_validation.'
+                 'NumericPasswordValidator'),
     },
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAdminUser',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+    ),
+    'PAGE_SIZE': 10
 }
 
 # Internationalization
@@ -122,19 +129,19 @@ STATIC_URL = '/static/'
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
-       '--with-coverage',  # activate coverage report
-       '--with-doctest',  # activate doctest: find and run docstests
-       '--verbosity=2',   # verbose output
-       '--with-html',
-       '--html-file=./tmp/test/nosetest.html',
-       '--cover-html',     # produle XML coverage info
-       '--cover-html-dir=./tmp/test/cover',  # the coverage info dir
-       # You may also specify the packages to be covered here
-       '--cover-package=osc.services',
-       '--cover-package=osc.importer',
-       '--cover-package=osc.management',
-       '--cover-package=osc.util',
-       '--ignore-files=.*_settings.py'
+    '--with-coverage',  # activate coverage report
+    '--with-doctest',  # activate doctest: find and run docstests
+    '--verbosity=2',   # verbose output
+    '--with-html',
+    '--html-file=./tmp/test/nosetest.html',
+    '--cover-html',     # produle XML coverage info
+    '--cover-html-dir=./tmp/test/cover',  # the coverage info dir
+    # You may also specify the packages to be covered here
+    '--cover-package=osc.services',
+    '--cover-package=osc.importer',
+    '--cover-package=osc.management',
+    '--cover-package=osc.util',
+    '--ignore-files=.*_settings.py'
 ]
 
 if not os.path.exists('./tmp/test'):

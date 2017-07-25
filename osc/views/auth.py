@@ -1,49 +1,53 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.renderers import JSONRenderer
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
 
 import osc.services.auth as auth_service
 import osc.services.users as users_service
 
+
 class SignIn(APIView):
-    """
-    Create a user given its authorization grant
-    """
+    """Create a user given its authorization grant"""
     renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
-    
+    authentication_classes = (TokenAuthentication,)
+
     def post(self, request, format=None):
-        
+
         authorizationGrant = request.data['authorizationGrant'] if 'authorizationGrant' in request.data else None
         googleAccessToken = authorizationGrant['googleAccessToken'] if 'googleAccessToken' in authorizationGrant else None
-        facebookAccessToken = authorizationGrant['facebookAccessToken'] if 'facebookAccessToken' in authorizationGrant else None
+        facebookAccessToken = authorizationGrant[
+            'facebookAccessToken'] if 'facebookAccessToken' in authorizationGrant else None
         email = authorizationGrant['email'] if 'email' in authorizationGrant else None
         password = authorizationGrant['password'] if 'password' in authorizationGrant else None
-        
+
         plot = authorizationGrant['plot'] if 'plot' in authorizationGrant else None
         plotRelation = authorizationGrant['plotRelation'] if 'plotRelation' in authorizationGrant else None
-        
+
         if googleAccessToken is not None:
-            username, token = auth_service.get_token_from_google_token(googleAccessToken)
+            username, token = auth_service.get_token_from_google_token(
+                googleAccessToken)
         elif facebookAccessToken is not None:
-            username, token = auth_service.get_token_from_facebook_token(facebookAccessToken)
+            username, token = auth_service.get_token_from_facebook_token(
+                facebookAccessToken)
         elif email is not None and password is not None:
-            username, token = auth_service.get_token_from_email_and_password(email, password)
+            username, token = auth_service.get_token_from_email_and_password(
+                email, password)
         else:
             return Response(data={'error': 'not enough data in request'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if plotRelation == 'myPlot':
             users_service.add_parcel(username, plot)
 
-        return Response({'token': token.key}, status=status.HTTP_200_OK) 
+        return Response({'token': token.key}, status=status.HTTP_200_OK)
+
 
 class UpdateUser(APIView):
-    """
-    Create a user given its user and password
-    """
+    """Create a user given its user and password"""
     renderer_classes = (JSONRenderer,)
     parser_classes = (JSONParser,)
     permission_classes = (IsAuthenticated, )
@@ -70,6 +74,8 @@ class UpdateUser(APIView):
                                                      locale=locale,
                                                      picture_link=picture_link)
             if user is None:
-                return Response(data={'error': 'unexisting user'}, status=status.HTTP_412_PRECONDITION_FAILED)
+                return Response(data={'error': 'unexisting user'},
+                                status=status.HTTP_412_PRECONDITION_FAILED)
 
-        return Response({'msg': 'updated user ' + str(request.user)}, status=status.HTTP_200_OK)
+        return Response({'msg': 'updated user ' + str(request.user)},
+                        status=status.HTTP_200_OK)
