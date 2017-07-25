@@ -6,10 +6,9 @@ import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.users as users_service
 
+from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -17,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 
 
-class GoogleElevationList(APIView):
+class GoogleElevationList(generics.RetrieveAPIView):
     """Obtain elevations from google from google"""
 
     def get(self, request, format=None):
@@ -211,9 +210,24 @@ class UserParcelSet(viewsets.ModelViewSet):
     serializer_class = UserParcelSerializer
 
 
-class APIRootView(APIView):
+class OpenSmartCountryApiView(APIView):
+    """This is the entry point for the API used in [Open Smart Country][osc].
+
+    Follow the hyperlinks each resource offers to explore the API.
+
+    Note that you can also explore the API from the command line, for instance
+    using the `curl` command-line tool.
+
+    For example: `curl -X GET https://opensmartcountry.com/api -H "Accept: application/json; indent=4"`
+    [osc]: https://opensmartcountry.com/
+    """
     def get(self, request):
         data = {
+            # TODO(teanocrata): generated with router...
+            # 'userParcel': reverse('userParcel-detail', request=request),
+            # 'userParcel': reverse('userParcel-', request=request),
+            # TODO(teanocrata): comented because if you follow the link, updates inforiego daily!!!
+            # 'inforiego_daily': reverse('update_inforiego_daily', request=request),
             'altitude': reverse('altitud', request=request),
             'cadastral_parcel': reverse('get_cadastral_parcels',
                                         request=request),
@@ -223,6 +237,15 @@ class APIRootView(APIView):
             'userparcel_add': reverse('add_user_parcel', request=request),
             'user-url': reverse('get_user', args=[], request=request),
             'owned-parcels': reverse('get_owned_parcels', request=request),
-            'api-root': reverse('api-root', request=request)
+            'api-root': reverse('api-root', request=request),
+            'parcels': reverse('api_parcels', request=request),
+            # TODO(teanocrata): arguments
+            # 'parcel': reverse('api_parcel', request=request),
+            'auth-signIn': reverse('auth_signIn', request=request),
+            # TODO(teanocrata): arguments
+            # 'auth-update-user': reverse('auth_update_user', request=request),
+            # 'auth-login': reverse('auth_login', request=request),
+            # 'api-auth': reverse('api_auth', request=request),
+
         }
         return Response(data)

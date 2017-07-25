@@ -1,10 +1,10 @@
 from django.conf.urls import include
 from django.conf.urls import url
 
+from osc import api
 from osc.views import auth
 from osc.views import jobs
 from osc.views import rest_api
-from osc.views import web
 
 import rest_framework.authtoken.views as rf_views
 from rest_framework import routers
@@ -14,13 +14,6 @@ router = routers.DefaultRouter()
 router.register(r'userParcel', rest_api.UserParcelSet)
 
 urlpatterns = [
-    # Relative to the web
-    url(r'^propietario/$', web.propietario, name='propietario'),
-    url(r'^mapaDeParcelas/$', web.mapa_de_parcelas, name='mapa_de_parcelas'),
-    url(r'^parcela/$', web.parcela, name='parcela'),
-    url(r'^team/$', web.team, name='team'),
-    url(r'^cultivo/$', web.cultivo, name='cultivo'),
-    url(r'^cultivos/$', web.cultivos, name='cultivos'),
 
     # Jobs (to be removed)
     url(r'^inforiego_daily/update/$', jobs.update_inforiego_daily,
@@ -32,8 +25,8 @@ urlpatterns = [
         name='get_cadastral_parcels'),
     url(r'^crops/elastic/search/$', rest_api.CropList.as_view(),
         name='obtain_crops_elastic_query'),
-    url(r'^crops/elastic/(?P<crop_id>[0-9]+)/$',
-        rest_api.CropDetail.as_view(), name='update_crops_elastic'),
+    # url(r'^crops/elastic/(?P<crop_id>[0-9]+)/$',
+    #     rest_api.CropDetail.as_view(), name='update_crops_elastic'),
     url(r'^userparcel/query/$', rest_api.UserParcelsList.as_view(),
         name='obtain_user_parcels'),
     url(r'^userparcel/add/$', rest_api.UserParcelsDetail.as_view(),
@@ -42,17 +35,19 @@ urlpatterns = [
     url(r'^owned-parcels/$', rest_api.OwnedParcels.as_view(),
         name='get_owned_parcels'),
 
+    url(r'^parcels/$', api.parcel_list, name='api_parcels'),
+    url(r'^parcels/(\w+)/$', api.parcel_detail, name='api_parcel'),
+
 
     # Autentication
-    url(r'^auth-signIn', auth.SignIn.as_view()),
+    url(r'^auth-signIn', auth.SignIn.as_view(), name='auth_signIn'),
     url(r'^auth-update-user', auth.UpdateUser.as_view()),
     url(r'^auth-login', rf_views.obtain_auth_token),
 
     # Rest framework
+    url(r'^$', rest_api.OpenSmartCountryApiView.as_view()),
     url(r'^', include(router.urls)),
     url(r'^api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api-root/$', rest_api.APIRootView.as_view(),
-        name='get_api')
 
 ]
