@@ -223,6 +223,7 @@ class CadastreServiceTest(TestCase):
             "called once per parcel"
         )
 
+    @attr('elastic_connection')
     def test_get_parcels_by_bbox(self):
         min_lat = 40.440727
         min_lon = -5.758944
