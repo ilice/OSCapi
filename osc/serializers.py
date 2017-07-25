@@ -1,7 +1,6 @@
-from rest_framework import serializers
-
 from osc.models import UserParcel
 from osc.models import UserProfile
+from rest_framework import serializers
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
