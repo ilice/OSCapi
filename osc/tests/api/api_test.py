@@ -11,14 +11,14 @@ class ParcelAPITest(TestCase):
         parcel_schema = json.load(data_file)
 
     def test_get_parcels_returns_json_200(self):
-        url = '/api/parcels/'
+        url = '/parcels/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'application/json')
 
     def test_get_parcels_by_cadastral_code_returns_valid_parcel(self):
         cadastralCode = "37284A00600114"
-        url = '/api/parcels/{}/'
+        url = '/parcels/{}/'
         response = self.client.get(url.format(cadastralCode))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'application/json')
