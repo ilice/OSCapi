@@ -1,6 +1,7 @@
 from django.test import TestCase
 import json
 from jsonschema import validate
+from nose.plugins.attrib import attr
 
 
 class ParcelAPITest(TestCase):
@@ -16,6 +17,7 @@ class ParcelAPITest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'application/json')
 
+    @attr('elastic_connection')
     def test_get_parcels_by_cadastral_code_returns_valid_parcel(self):
         cadastralCode = "37284A00600114"
         url = '/parcels/{}/'
