@@ -240,7 +240,7 @@ class OpenSmartCountryApiView(APIView):
             'api-root': reverse('api-root', request=request),
             'parcels': reverse('api_parcels', request=request),
             # TODO(teanocrata): arguments
-            # 'parcel': reverse('api_parcel', request=request),
+            'parcel': reverse('api_parcel', kwargs={'cadastralReference':'37284A00600114'}, request=request),
             'auth-signIn': reverse('auth_signIn', request=request),
             # TODO(teanocrata): arguments
             # 'auth-update-user': reverse('auth_update_user', request=request),

@@ -36,7 +36,7 @@ urlpatterns = [
         name='get_owned_parcels'),
 
     url(r'^parcels/$', api.parcel_list, name='api_parcels'),
-    url(r'^parcels/(\w+)/$', api.parcel_detail, name='api_parcel'),
+    url(r'^parcels/(?P<cadastralReference>\w+)/$', api.parcel_detail, name='api_parcel'),
 
 
     # Autentication
