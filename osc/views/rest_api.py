@@ -5,7 +5,9 @@ import osc.services.crop as crop_service
 import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.users as users_service
+from osc.util.parser import Parcel
 
+import json
 from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
@@ -208,6 +210,32 @@ class UserParcelSet(viewsets.ModelViewSet):
     """API endpoint that allows user parcel to be viewed or edited. """
     queryset = UserParcel.objects.all()
     serializer_class = UserParcelSerializer
+
+
+class ParcelViewSet(viewsets.ViewSet):
+    """API endpoint that allows retrieve parcel information"""
+
+    fixture_file = 'osc/tests/util/fixtures/get_parcel_by_bbox_response.json'
+    with open(fixture_file) as data_file:
+        get_parcel_by_bbox_response = json.load(data_file)
+
+    def list(self, request):
+        hits = self.get_parcel_by_bbox_response['hits']['hits']
+        parcels = []
+        for parcelDocument in hits:
+            parcels.append(Parcel(nationalCadastralReference=parcelDocument['_source']['properties']['nationalCadastralReference']).toGeoJSON)
+        # serializer = serializers.ParcelSerializer(
+        #     instance=parcels, many=True)
+        return Response(parcels)
+
+    def retrieve(self, request, pk=""):
+        try:
+            parcel = Parcel(nationalCadastralReference=pk)
+        except KeyError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(parcel.toGeoJSON)
 
 
 class OpenSmartCountryApiView(APIView):
