@@ -1,178 +1,83 @@
 {
   "type": "object",
   "properties": {
+    "geometry": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "polygon"
+          ]
+        },
+        "coordinates": {
+          "items": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        }
+      }
+    },
     "type": {
+      "type": "string",
       "enum": [
-        "FeatureCollection"
+        "Feature"
       ]
     },
-    "features": {
-      "type": "array",
-      "items": {
-        "type": "object",
+    "properties": {
+      "type": "object",
+      "nationalCadastralReference": {
+        "type": "string"
+      },
+      "areaValue": {
+        "type": "integer"
+      },
+      "beginLifespanVersion": {
+        "type": "string"
+      },
+      "cadastralData": {
         "properties": {
-          "geometry": {
-            "type": "object",
+          "bico": {
             "properties": {
-              "type": {
-                "enum": [
-                  "polygon"
-                ]
-              },
-              "coordinates": {
-                "items": {
-                  "items": {
-                    "items": {
-                      "type": "number"
-                    },
-                    "type": "array"
+              "bi": {
+                "properties": {
+                  "debi": {
+                    "type": "null"
                   },
-                  "type": "array"
-                },
-                "type": "array"
-              }
-            }
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "Feature"
-            ]
-          },
-          "properties": {
-            "type": "object",
-            "nationalCadastralReference": {
-              "type": "string"
-            },
-            "areaValue": {
-              "type": "integer"
-            },
-            "beginLifespanVersion": {
-              "type": "string"
-            },
-            "cadastralData": {
-              "properties": {
-                "bico": {
-                  "properties": {
-                    "bi": {
-                      "properties": {
-                        "debi": {
-                          "type": "null"
-                        },
-                        "dt": {
-                          "properties": {
-                            "cmc": {
-                              "type": "string"
-                            },
-                            "locs": {
-                              "properties": {
-                                "lors": {
-                                  "properties": {
-                                    "lorus": {
-                                      "properties": {
-                                        "cpaj": {
-                                          "type": "string"
-                                        },
-                                        "cpp": {
-                                          "properties": {
-                                            "cpa": {
-                                              "type": "string"
-                                            },
-                                            "cpo": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "type": "object"
-                                        },
-                                        "czc": {
-                                          "type": "string"
-                                        },
-                                        "npa": {
-                                          "type": "string"
-                                        }
-                                      },
-                                      "type": "object"
-                                    }
-                                  },
-                                  "type": "object"
-                                }
-                              },
-                              "type": "object"
-                            },
-                            "loine": {
-                              "properties": {
-                                "cm": {
-                                  "type": "string"
-                                },
-                                "cp": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object"
-                            },
-                            "nm": {
-                              "type": "string"
-                            },
-                            "np": {
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "idbi": {
-                          "properties": {
-                            "cn": {
-                              "type": "string"
-                            },
-                            "rc": {
-                              "properties": {
-                                "car": {
-                                  "type": "string"
-                                },
-                                "cc1": {
-                                  "type": "string"
-                                },
-                                "cc2": {
-                                  "type": "string"
-                                },
-                                "pc1": {
-                                  "type": "string"
-                                },
-                                "pc2": {
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "ldt": {
-                          "type": "string"
-                        }
+                  "dt": {
+                    "properties": {
+                      "cmc": {
+                        "type": "string"
                       },
-                      "type": "object"
-                    },
-                    "lspr": {
-                      "properties": {
-                        "spr": {
-                          "items": {
+                      "locs": {
+                        "properties": {
+                          "lors": {
                             "properties": {
-                              "cspr": {
-                                "type": "string"
-                              },
-                              "dspr": {
+                              "lorus": {
                                 "properties": {
-                                  "ccc": {
+                                  "cpaj": {
                                     "type": "string"
                                   },
-                                  "dcc": {
+                                  "cpp": {
+                                    "properties": {
+                                      "cpa": {
+                                        "type": "string"
+                                      },
+                                      "cpo": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "czc": {
                                     "type": "string"
                                   },
-                                  "ip": {
-                                    "type": "string"
-                                  },
-                                  "ssp": {
+                                  "npa": {
                                     "type": "string"
                                   }
                                 },
@@ -180,117 +85,199 @@
                               }
                             },
                             "type": "object"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "loine": {
+                        "properties": {
+                          "cm": {
+                            "type": "string"
                           },
-                          "type": "array"
+                          "cp": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "nm": {
+                        "type": "string"
+                      },
+                      "np": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "idbi": {
+                    "properties": {
+                      "cn": {
+                        "type": "string"
+                      },
+                      "rc": {
+                        "properties": {
+                          "car": {
+                            "type": "string"
+                          },
+                          "cc1": {
+                            "type": "string"
+                          },
+                          "cc2": {
+                            "type": "string"
+                          },
+                          "pc1": {
+                            "type": "string"
+                          },
+                          "pc2": {
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "ldt": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "lspr": {
+                "properties": {
+                  "spr": {
+                    "items": {
+                      "properties": {
+                        "cspr": {
+                          "type": "string"
+                        },
+                        "dspr": {
+                          "properties": {
+                            "ccc": {
+                              "type": "string"
+                            },
+                            "dcc": {
+                              "type": "string"
+                            },
+                            "ip": {
+                              "type": "string"
+                            },
+                            "ssp": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
-                    }
-                  },
-                  "type": "object"
-                },
-                "control": {
-                  "properties": {
-                    "cucul": {
-                      "type": "integer"
                     },
-                    "cudnp": {
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
             },
-            "elevation": {
-              "type": "number"
-            },
-            "endLifespanVersion": {
-              "type": "null"
-            },
-            "label": {
-              "type": "string"
-            },
-            "reference_point": {
-              "properties": {
-                "lat": {
-                  "type": "number"
-                },
-                "lon": {
-                  "type": "number"
-                }
-              },
-              "type": "object"
-            },
-            "sigpacData": {
-              "properties": {
-                "AGREGADO": {
-                  "type": "integer"
-                },
-                "COEF_REGAD": {
-                  "type": "integer"
-                },
-                "DN_OID": {
-                  "type": "integer"
-                },
-                "MUNICIPIO": {
-                  "type": "integer"
-                },
-                "PARCELA": {
-                  "type": "integer"
-                },
-                "PERIMETRO": {
-                  "type": "number"
-                },
-                "POLIGONO": {
-                  "type": "integer"
-                },
-                "PROVINCIA": {
-                  "type": "integer"
-                },
-                "RECINTO": {
-                  "type": "integer"
-                },
-                "SUPERFICIE": {
-                  "type": "number"
-                },
-                "USO_SIGPAC": {
-                  "type": "string"
-                },
-                "ZONA": {
-                  "type": "integer"
-                }
-              },
-              "type": "object"
-            }
+            "type": "object"
           },
-          "bbox": {
+          "control": {
             "properties": {
-              "coordinates": {
-                "items": {
-                  "items": {
-                    "type": "number",
-                    "minItems": 2,
-                    "maxItems": 2
-                  },
-                  "type": "array",
-                  "minItems": 2,
-                  "maxItems": 2
-                },
-                "type": "array"
+              "cucul": {
+                "type": "integer"
               },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "envelope"
-                ]
+              "cudnp": {
+                "type": "integer"
               }
             },
             "type": "object"
           }
-        }
+        },
+        "type": "object"
+      },
+      "elevation": {
+        "type": "number"
+      },
+      "endLifespanVersion": {
+        "type": "null"
+      },
+      "label": {
+        "type": "string"
+      },
+      "reference_point": {
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "sigpacData": {
+        "properties": {
+          "AGREGADO": {
+            "type": "integer"
+          },
+          "COEF_REGAD": {
+            "type": "integer"
+          },
+          "DN_OID": {
+            "type": "integer"
+          },
+          "MUNICIPIO": {
+            "type": "integer"
+          },
+          "PARCELA": {
+            "type": "integer"
+          },
+          "PERIMETRO": {
+            "type": "number"
+          },
+          "POLIGONO": {
+            "type": "integer"
+          },
+          "PROVINCIA": {
+            "type": "integer"
+          },
+          "RECINTO": {
+            "type": "integer"
+          },
+          "SUPERFICIE": {
+            "type": "number"
+          },
+          "USO_SIGPAC": {
+            "type": "string"
+          },
+          "ZONA": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
       }
+    },
+    "bbox": {
+      "properties": {
+        "coordinates": {
+          "items": {
+            "items": {
+              "type": "number",
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "type": "array"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "envelope"
+          ]
+        }
+      },
+      "type": "object"
     }
   }
 }

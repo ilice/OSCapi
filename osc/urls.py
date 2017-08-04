@@ -11,7 +11,8 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
-router.register(r'userParcel', rest_api.UserParcelSet)
+router.register(r'userParcel', rest_api.UserParcelSet, base_name='userParcel')
+router.register(r'parcels', api.ParcelViewSet, base_name='parcels')
 
 urlpatterns = [
 
@@ -35,8 +36,8 @@ urlpatterns = [
     url(r'^owned-parcels/$', rest_api.OwnedParcels.as_view(),
         name='get_owned_parcels'),
 
-    url(r'^parcels/$', api.parcel_list, name='api_parcels'),
-    url(r'^parcels/(?P<cadastralReference>\w+)/$', api.parcel_detail, name='api_parcel'),
+    # url(r'^parcels/$', api.parcel_list, name='api_parcels'),
+    # url(r'^parcels/(?P<cadastralReference>\w+)/$', api.parcel_detail, name='api_parcel'),
 
 
     # Autentication

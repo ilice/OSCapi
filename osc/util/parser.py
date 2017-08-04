@@ -2,33 +2,41 @@
 
 import logging
 
+from django.conf import settings
+
+from osc.util import es
+
 logger = logging.Logger(__name__)
 
-
-class JsonDataWrapper(object):
-    def __init__(self, json_data):
-        self._data = json_data
-
-    def get(self, name):
-        try:
-            return self._data[name]
-        except Exception as e:
-            print(name)
-            raise e
+parcel_index = settings.CADASTRE['index']
+parcel_mapping = settings.CADASTRE['mapping']
 
 
-class Parcel(JsonDataWrapper):
-    def __init__(self, data):
-        super(Parcel, self).__init__(data)
-        self._geometry = data['_source']['geometry']
-        self._properties = data['_source']['properties']
+class Parcel(object):
+    def __init__(self, *args, **kwargs):
+        self._nationalCadastralReference = kwargs.get('nationalCadastralReference', '')
+
+        query = {
+            "query": {
+                "match": {
+                    "properties.nationalCadastralReference": self._nationalCadastralReference
+                }
+            }
+        }
+
+        self._parcelDocument = es.search(
+            index=parcel_index,
+            doc_type=parcel_mapping,
+            body=query)['hits']['hits'][0]['_source']
+        self._geometry = self._parcelDocument['geometry']
+        self._properties = self._parcelDocument['properties']
         try:
             self._cadastralData = \
-                data['_source']['properties']['cadastralData']
+                self._parcelDocument['properties']['cadastralData']
         except KeyError:
             self._cadastralData = {}
-        self._sigpacData = data['_source']['properties']['sigpacData']
-        self._bbox = data['_source']['bbox']
+        self._sigpacData = self._parcelDocument['properties']['sigpacData']
+        self._bbox = self._parcelDocument['bbox']
 
     @property
     def nationalCadastralReference(self):

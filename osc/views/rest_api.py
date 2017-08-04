@@ -223,9 +223,6 @@ class OpenSmartCountryApiView(APIView):
     """
     def get(self, request):
         data = {
-            # TODO(teanocrata): generated with router...
-            # 'userParcel': reverse('userParcel-detail', request=request),
-            # 'userParcel': reverse('userParcel-', request=request),
             # TODO(teanocrata): comented because if you follow the link, updates inforiego daily!!!
             # 'inforiego_daily': reverse('update_inforiego_daily', request=request),
             'altitude': reverse('altitud', request=request),
@@ -234,13 +231,12 @@ class OpenSmartCountryApiView(APIView):
             'crops': reverse('obtain_crops_elastic_query', request=request),
             # 'crop': reverse('update_crops_elastic', request=request),
             'userparcel': reverse('obtain_user_parcels', request=request),
+            'userParcels': reverse('userParcel-list', request=request),
             'userparcel_add': reverse('add_user_parcel', request=request),
             'user-url': reverse('get_user', args=[], request=request),
             'owned-parcels': reverse('get_owned_parcels', request=request),
             'api-root': reverse('api-root', request=request),
-            'parcels': reverse('api_parcels', request=request),
-            # TODO(teanocrata): arguments
-            'parcel': reverse('api_parcel', kwargs={'cadastralReference':'37284A00600114'}, request=request),
+            'parcels': reverse('parcels-list', request=request),
             'auth-signIn': reverse('auth_signIn', request=request),
             # TODO(teanocrata): arguments
             # 'auth-update-user': reverse('auth_update_user', request=request),
