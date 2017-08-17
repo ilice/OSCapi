@@ -128,7 +128,7 @@ def getParcelByNationalCadastralReference(nationalCadastralReference):
     query = {
         "query": {
             "match": {
-                "properties.nationalCadastralReference": "15014A00200580"
+                "properties.nationalCadastralReference": nationalCadastralReference
             }
         }
     }
