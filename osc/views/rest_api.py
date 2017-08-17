@@ -1,11 +1,11 @@
 from osc.exceptions import OSCException
+from osc.models import Parcel
 from osc.models import UserParcel
 from osc.serializers import UserParcelSerializer
 import osc.services.crop as crop_service
 import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.users as users_service
-from osc.util.parser import Parcel
 
 import json
 from rest_framework import generics

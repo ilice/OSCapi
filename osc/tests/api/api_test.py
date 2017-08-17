@@ -66,14 +66,14 @@ class ParcelAPITest(TestCase):
         self.assertIsNone(validate(json.loads(response.content.decode('utf8')),
                           self.parcel_schema))
 
-    @mock.patch('osc.util.parser.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
+    @mock.patch('osc.models.parcel.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
     def test_get_parcels_by_cadastral_code_calls_elastic(self, mock_es):
         cadastralCode = "37284A00600114"
         url = '/parcels/{}/'
         self.client.get(url.format(cadastralCode))
         mock_es.assert_called_with(body={'query': {'match': {'properties.nationalCadastralReference': cadastralCode}}}, doc_type='parcel', index='parcels')
 
-    @mock.patch('osc.util.parser.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
+    @mock.patch('osc.models.parcel.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
     def test_get_parcels_by_cadastral_code_returns_correct_parcel(self, mock_es):
         self.maxDiff = None
         cadastralCode = "37284A00600114"

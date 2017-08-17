@@ -3,7 +3,7 @@ import json
 import logging
 import mock
 
-from osc.util.parser import Parcel
+from osc.models import Parcel
 
 logger = logging.getLogger(__name__)
 
@@ -15,12 +15,12 @@ class ParserTest(TestCase):
     with open(fixture_file) as data_file:
         get_parcel_by_bbox_response = json.load(data_file)
 
-    @mock.patch('osc.util.parser.es')
+    @mock.patch('osc.models.parcel.es')
     def test_parcel_toGeoJSON_parse_without_errors(self, mock_es):
         mock_es.search.return_value = self.get_parcel_by_bbox_response
         Parcel(nationalCadastralReference='37284A00600106').toGeoJSON
 
-    @mock.patch('osc.util.parser.es')
+    @mock.patch('osc.models.parcel.es')
     def test_Parcel_can_access_all_its_data_without_error(self, mock_es):
         mock_es.search.return_value = self.get_parcel_by_bbox_response
 
