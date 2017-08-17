@@ -15,19 +15,21 @@ parcel_mapping = settings.CADASTRE['mapping']
 class Parcel(object):
     def __init__(self, *args, **kwargs):
         self._nationalCadastralReference = kwargs.get('nationalCadastralReference', '')
+        self._parcelDocument = kwargs.get('parcelDocument', '')
 
-        query = {
-            "query": {
-                "match": {
-                    "properties.nationalCadastralReference": self._nationalCadastralReference
+        if self._parcelDocument == '':
+            query = {
+                "query": {
+                    "match": {
+                        "properties.nationalCadastralReference": self._nationalCadastralReference
+                    }
                 }
             }
-        }
+            self._parcelDocument = es.search(
+                index=parcel_index,
+                doc_type=parcel_mapping,
+                body=query)['hits']['hits'][0]['_source']
 
-        self._parcelDocument = es.search(
-            index=parcel_index,
-            doc_type=parcel_mapping,
-            body=query)['hits']['hits'][0]['_source']
         self._geometry = self._parcelDocument['geometry']
         self._properties = self._parcelDocument['properties']
         try:
@@ -120,3 +122,53 @@ class Parcel(object):
         parcelGeoJSON['sigpacData'] = self.sigpacData
         parcelGeoJSON['type'] = 'Feature'
         return parcelGeoJSON
+
+
+def getParcelByNationalCadastralReference(nationalCadastralReference):
+    query = {
+        "query": {
+            "match": {
+                "properties.nationalCadastralReference": "15014A00200580"
+            }
+        }
+    }
+
+    parcelDocument = es.search(
+        index=parcel_index,
+        doc_type=parcel_mapping,
+        body=query)['hits']['hits'][0]['_source']
+
+    return Parcel(parcelDocument=parcelDocument).toGeoJSON
+
+
+def getParcels():
+    query = {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": "properties.sigpacData"
+                        }
+                    },
+                    {
+                        "exists": {
+                            "field": "properties.elevation"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    parcelsDocuments = es.search(
+        index=parcel_index,
+        doc_type=parcel_mapping,
+        body=query)['hits']['hits']
+
+    parcels = []
+
+    for parcelDocument in parcelsDocuments:
+        parcels.append(Parcel(parcelDocument=parcelDocument['_source']).toGeoJSON)
+
+    return parcels
