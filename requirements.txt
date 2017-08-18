@@ -64,6 +64,5 @@ selenium==3.4.2
 six==1.10.0
 slacker==0.9.30
 snowballstemmer==1.2.1
-uritemplate==3.0.0
 urllib3==1.21.1
 whitenoise==3.2.2
