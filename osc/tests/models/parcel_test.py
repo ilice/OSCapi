@@ -2,6 +2,7 @@ from django.test import TestCase
 import json
 import logging
 import mock
+from nose.plugins.attrib import attr
 
 from osc.models import Parcel
 from osc.models.parcel import getParcelByNationalCadastralReference
