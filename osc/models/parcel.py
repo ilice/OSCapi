@@ -3,6 +3,7 @@
 import logging
 
 from django.conf import settings
+from rest_framework.reverse import reverse
 
 from osc.util import es
 
@@ -16,6 +17,7 @@ class Parcel(object):
     def __init__(self, *args, **kwargs):
         self._nationalCadastralReference = kwargs.get('nationalCadastralReference', '')
         self._parcelDocument = kwargs.get('parcelDocument', '')
+        self._request = kwargs.get('request', None)
 
         if self._parcelDocument == '':
             query = {
@@ -117,6 +119,8 @@ class Parcel(object):
         parcelGeoJSON['bbox'] = self.bbox
         parcelGeoJSON['nationalCadastralReference'] = \
             self.nationalCadastralReference
+        if self._request is not None:
+            parcelGeoJSON['parcel-url'] = reverse('parcels-detail', args=[self.nationalCadastralReference], request=self._request)
         parcelGeoJSON['properties'] = self.properties
         parcelGeoJSON['cadastralData'] = self.cadastralData
         parcelGeoJSON['sigpacData'] = self.sigpacData
@@ -141,7 +145,7 @@ def getParcelByNationalCadastralReference(nationalCadastralReference):
     return Parcel(parcelDocument=parcelDocument).toGeoJSON
 
 
-def getParcels():
+def getParcels(request=None):
     query = {
         "query": {
             "bool": {
@@ -169,6 +173,6 @@ def getParcels():
     parcels = []
 
     for parcelDocument in parcelsDocuments:
-        parcels.append(Parcel(parcelDocument=parcelDocument['_source']).toGeoJSON)
+        parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request).toGeoJSON)
 
     return parcels
