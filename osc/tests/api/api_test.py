@@ -50,6 +50,7 @@ class ParcelAPITest(TestCase):
     with open(parcel_schema_file) as data_file:
         parcel_schema = json.load(data_file)
 
+    @attr('elastic_connection')
     def test_get_parcels_returns_json_200(self):
         url = '/parcels/'
         response = self.client.get(url)
