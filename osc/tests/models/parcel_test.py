@@ -44,5 +44,6 @@ class ParcelTest(TestCase):
         getParcelByNationalCadastralReference(nationalCadastralReference='37284A00600106')
         mock_es.search.assert_called_once()
 
+    @attr('elastic_connection')
     def test_getParcels(self):
         logger.debug(getParcels())
