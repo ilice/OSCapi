@@ -1,14 +1,13 @@
 from osc.exceptions import OSCException
-from osc.models import UserParcel
 from osc.models.parcel import getParcelByNationalCadastralReference
 from osc.models.parcel import getParcels
+from osc.models import UserParcel
 from osc.serializers import UserParcelSerializer
 import osc.services.crop as crop_service
 import osc.services.google as google_service
 import osc.services.parcels as parcel_service
 import osc.services.users as users_service
 
-import json
 from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
