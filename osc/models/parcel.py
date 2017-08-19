@@ -3,6 +3,7 @@
 import logging
 
 from django.conf import settings
+from json import JSONEncoder
 from rest_framework.reverse import reverse
 
 from osc.util import es
@@ -11,6 +12,19 @@ logger = logging.Logger(__name__)
 
 parcel_index = settings.CADASTRE['index']
 parcel_mapping = settings.CADASTRE['mapping']
+
+
+class GeoJSON(object):
+    """docstring for GeoJSON."""
+    def __init__(self, arg):
+        super(GeoJSON, self).__init__()
+        self.arg = arg
+
+    def __getitem__(self, key):
+        return key * 2
+
+    def __str__(self):
+        return JSONEncoder().encode(featurestoGeoJSON(self.arg))
 
 
 class Parcel(object):
@@ -114,6 +128,10 @@ class Parcel(object):
 
     @property
     def toGeoJSON(self):
+        return featurestoGeoJSON([self.toFeatureJSON])
+
+    @property
+    def toFeatureJSON(self):
         parcelGeoJSON = {}
         parcelGeoJSON['geometry'] = self.geometry
         parcelGeoJSON['bbox'] = self.bbox
@@ -126,6 +144,13 @@ class Parcel(object):
         parcelGeoJSON['sigpacData'] = self.sigpacData
         parcelGeoJSON['type'] = 'Feature'
         return parcelGeoJSON
+
+
+def featurestoGeoJSON(features):
+    featureCollection = {}
+    featureCollection['type'] = 'FeatureCollection'
+    featureCollection['features'] = features
+    return featureCollection
 
 
 def getParcelByNationalCadastralReference(nationalCadastralReference):
@@ -173,6 +198,6 @@ def getParcels(request=None):
     parcels = []
 
     for parcelDocument in parcelsDocuments:
-        parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request).toGeoJSON)
+        parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request).toFeatureJSON)
 
     return parcels
