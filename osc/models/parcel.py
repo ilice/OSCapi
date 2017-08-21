@@ -3,7 +3,8 @@
 import logging
 
 from django.conf import settings
-from json import JSONEncoder
+import geojson
+
 from rest_framework.reverse import reverse
 
 from osc.util import es
@@ -12,19 +13,6 @@ logger = logging.Logger(__name__)
 
 parcel_index = settings.CADASTRE['index']
 parcel_mapping = settings.CADASTRE['mapping']
-
-
-class GeoJSON(object):
-    """docstring for GeoJSON."""
-    def __init__(self, arg):
-        super(GeoJSON, self).__init__()
-        self.arg = arg
-
-    def __getitem__(self, key):
-        return key * 2
-
-    def __str__(self):
-        return JSONEncoder().encode(featurestoGeoJSON(self.arg))
 
 
 class Parcel(object):
@@ -106,6 +94,12 @@ class Parcel(object):
         properties = {}
         properties['elevation'] = self.elevation
         properties['areaValue'] = self.areaValue
+        properties['nationalCadastralReference'] = \
+            self.nationalCadastralReference
+        if self._request is not None:
+            properties['parcel-url'] = reverse('parcels-detail', args=[self.nationalCadastralReference], request=self._request)
+        properties['cadastralData'] = self.cadastralData
+        properties['sigpacData'] = self.sigpacData
         return properties
 
     @property
@@ -128,22 +122,11 @@ class Parcel(object):
 
     @property
     def toGeoJSON(self):
-        return featurestoGeoJSON([self.toFeatureJSON])
+        return geojson.FeatureCollection([self.toFeatureJSON])
 
     @property
     def toFeatureJSON(self):
-        parcelGeoJSON = {}
-        parcelGeoJSON['geometry'] = self.geometry
-        parcelGeoJSON['bbox'] = self.bbox
-        parcelGeoJSON['nationalCadastralReference'] = \
-            self.nationalCadastralReference
-        if self._request is not None:
-            parcelGeoJSON['parcel-url'] = reverse('parcels-detail', args=[self.nationalCadastralReference], request=self._request)
-        parcelGeoJSON['properties'] = self.properties
-        parcelGeoJSON['cadastralData'] = self.cadastralData
-        parcelGeoJSON['sigpacData'] = self.sigpacData
-        parcelGeoJSON['type'] = 'Feature'
-        return parcelGeoJSON
+        return geojson.Feature(geometry=geojson.Polygon(self.geometry['coordinates']), properties=self.properties)
 
 
 def featurestoGeoJSON(features):
@@ -200,4 +183,4 @@ def getParcels(request=None):
     for parcelDocument in parcelsDocuments:
         parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request).toFeatureJSON)
 
-    return parcels
+    return geojson.FeatureCollection(parcels)

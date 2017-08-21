@@ -2,9 +2,9 @@
   "type": "FeatureCollection",
   "features": [
     {
-      "nationalCadastralReference": "37284A00600098",
+
       "geometry": {
-        "type": "polygon",
+        "type": "Polygon",
         "coordinates": [
           [
             [
@@ -123,30 +123,18 @@
         ]
       },
       "type": "Feature",
-      "bbox": {
-        "type": "envelope",
-        "coordinates": [
-          [
-            -5.7374552670523045,
-            40.43908885929834
-          ],
-          [
-            -5.736954501274859,
-            40.440030471304475
-          ]
-        ]
-      },
-      "sigpacData": {
-        "use": "PS"
-      },
-      "cadastralData": {
-        "use": "NO-USE",
-        "constructionUnits": 0,
-        "address": "Polígono 6 Parcela 98. 284 (37) "
-      },
       "properties": {
+        "nationalCadastralReference": "37284A00600098",
         "areaValue": 1409,
-        "elevation": 916.4950561523438
+        "elevation": 916.4950561523438,
+        "sigpacData": {
+          "use": "PS"
+        },
+        "cadastralData": {
+          "use": "NO-USE",
+          "constructionUnits": 0,
+          "address": "Polígono 6 Parcela 98. 284 (37) "
+        }
       }
     }
   ]

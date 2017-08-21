@@ -2,7 +2,6 @@ from osc.exceptions import OSCException
 from osc.models.parcel import getParcelByNationalCadastralReference
 from osc.models.parcel import getParcels
 from osc.models import UserParcel
-from osc.renderers.customRenderers import GeoJSONRenderer
 from osc.serializers import UserParcelSerializer
 import osc.services.crop as crop_service
 import osc.services.google as google_service
@@ -13,8 +12,6 @@ from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import AdminRenderer
-from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -220,7 +217,6 @@ class UserParcelSet(viewsets.ModelViewSet):
 
 class ParcelViewSet(viewsets.ViewSet):
     """API endpoint that allows retrieve parcel information"""
-    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, GeoJSONRenderer, )
 
     def list(self, request):
         return Response(getParcels(request=request))

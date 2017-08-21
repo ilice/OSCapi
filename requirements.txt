@@ -25,6 +25,7 @@ flake8-polyfill==1.0.1
 funcsigs==1.0.2
 functools32==3.2.3.post2
 Geohash==1.0
+geojson==2.0.0
 geopy==1.11.0
 gunicorn==19.6.0
 hacking==0.13.0
