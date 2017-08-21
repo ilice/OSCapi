@@ -38,6 +38,7 @@ class APITest(TestCase):
 class ParcelAPITest(TestCase):
 
     parcel_schema_file = 'osc/tests/api/fixtures/parcel_schema.json'
+    parcels_collection_schema_file = 'osc/tests/api/fixtures/parcels_collection_schema.json'
     parcel_document_by_nationalCadastralReference_response_file = 'osc/tests/api/fixtures/get_parcel_document_by_nationalCadastralReference_response.json'
     parcel_by_nationalCadastralReference_response_file = 'osc/tests/api/fixtures/get_parcel_by_nationalCadastralReference_response.json'
 
@@ -47,8 +48,11 @@ class ParcelAPITest(TestCase):
     with open(parcel_by_nationalCadastralReference_response_file) as parcel_data_file:
         parcel_by_nationalCadastralReference_response = json.load(parcel_data_file)
 
-    with open(parcel_schema_file) as data_file:
-        parcel_schema = json.load(data_file)
+    with open(parcel_schema_file) as parcel_schema_data_file:
+        parcel_schema = json.load(parcel_schema_data_file)
+
+    with open(parcels_collection_schema_file) as parcels_collection_schema_data_file:
+        parcels_collection_schema = json.load(parcels_collection_schema_data_file)
 
     @attr('elastic_connection')
     def test_get_parcels_returns_json_200(self):
@@ -58,7 +62,7 @@ class ParcelAPITest(TestCase):
         self.assertEqual(response['content-type'], 'application/json')
 
     @attr('elastic_connection')
-    def test_get_parcels_by_cadastral_code_returns_valid_parcel(self):
+    def test_get_parcel_by_cadastral_code_returns_valid_parcel(self):
         cadastralCode = "37284A00600114"
         url = '/parcels/{}/'
         response = self.client.get(url.format(cadastralCode))
@@ -67,15 +71,24 @@ class ParcelAPITest(TestCase):
         self.assertIsNone(validate(json.loads(response.content.decode('utf8')),
                           self.parcel_schema))
 
+    @attr('elastic_connection')
+    def test_get_parcels_returns_valid_parcels_collection(self):
+        url = '/parcels/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertIsNone(validate(json.loads(response.content.decode('utf8')),
+                          self.parcels_collection_schema))
+
     @mock.patch('osc.models.parcel.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
-    def test_get_parcels_by_cadastral_code_calls_elastic(self, mock_es):
+    def test_get_parcel_by_cadastral_code_calls_elastic(self, mock_es):
         cadastralCode = "37284A00600114"
         url = '/parcels/{}/'
         self.client.get(url.format(cadastralCode))
         mock_es.assert_called_with(body={'query': {'match': {'properties.nationalCadastralReference': cadastralCode}}}, doc_type='parcel', index='parcels')
 
     @mock.patch('osc.models.parcel.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
-    def test_get_parcels_by_cadastral_code_returns_correct_parcel(self, mock_es):
+    def test_get_parcel_by_cadastral_code_returns_correct_parcel(self, mock_es):
         self.maxDiff = None
         cadastralCode = "37284A00600114"
         url = '/parcels/{}/'

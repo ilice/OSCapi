@@ -15,125 +15,83 @@ parcel_index = settings.CADASTRE['index']
 parcel_mapping = settings.CADASTRE['mapping']
 
 
-class Parcel(object):
-    def __init__(self, *args, **kwargs):
-        self._nationalCadastralReference = kwargs.get('nationalCadastralReference', '')
-        self._parcelDocument = kwargs.get('parcelDocument', '')
-        self._request = kwargs.get('request', None)
+class ParcelMeta(type):
+    """docstring for ParcelMeta."""
+    def __name__(self):
+        return 'Feature'
 
-        if self._parcelDocument == '':
+
+class Parcel(geojson.Feature):
+
+    def __init__(self, *args, **kwargs):
+        _parcelDocument = kwargs.get('parcelDocument', '')
+        request = kwargs.get('request', None)
+        self.__class__.__name__ = 'Feature'
+        if _parcelDocument == '':
             query = {
                 "query": {
                     "match": {
-                        "properties.nationalCadastralReference": self._nationalCadastralReference
+                        "properties.nationalCadastralReference": kwargs.get('nationalCadastralReference', '')
                     }
                 }
             }
-            self._parcelDocument = es.search(
+            _parcelDocument = es.search(
                 index=parcel_index,
                 doc_type=parcel_mapping,
                 body=query)['hits']['hits'][0]['_source']
 
-        self._geometry = self._parcelDocument['geometry']
-        self._properties = self._parcelDocument['properties']
+        _properties = self.properties(_parcelDocument['properties'], request=request)
+
+        geojson.Feature.__init__(self, geometry=geojson.Polygon(_parcelDocument['geometry']['coordinates']), properties=_properties)
+
+    def address(self, _properties):
         try:
-            self._cadastralData = \
-                self._parcelDocument['properties']['cadastralData']
-        except KeyError:
-            self._cadastralData = {}
-        self._sigpacData = self._parcelDocument['properties']['sigpacData']
-        self._bbox = self._parcelDocument['bbox']
-
-    @property
-    def nationalCadastralReference(self):
-        return self._properties['nationalCadastralReference']
-
-    @property
-    def elevation(self):
-        return self._properties['elevation']
-
-    @property
-    def areaValue(self):
-        return self._properties['areaValue']
-
-    @property
-    def address(self):
-        try:
-            return self._cadastralData['bico']['bi']['ldt']
+            return _properties['cadastralData']['bico']['bi']['ldt']
         except KeyError:
             return (u'Pol\xedgono {} Parcela {}. {} ({}) '
-                    .format(self._sigpacData['POLIGONO'],
-                            self._sigpacData['PARCELA'],
-                            self._sigpacData['MUNICIPIO'],
-                            self._sigpacData['PROVINCIA']))
+                    .format(_properties['sigpacData']['POLIGONO'],
+                            _properties['sigpacData']['PARCELA'],
+                            _properties['sigpacData']['MUNICIPIO'],
+                            _properties['sigpacData']['PROVINCIA']))
 
-    @property
-    def constructionUnits(self):
+    def constructionUnits(self, _properties):
         try:
-            return self._cadastralData['control']['cucons']
+            return _properties['cadastralData']['control']['cucons']
         except KeyError:
             return 0
 
-    @property
-    def cadastralUse(self):
+    def cadastralUse(self, _properties):
         try:
-            return self._cadastralData['bico']['lspr']['spr'][0]['dspr']['dcc']
+            return _properties['cadastralData']['bico']['lspr']['spr'][0]['dspr']['dcc']
         except KeyError:
             return 'NO-USE'
 
-    @property
-    def sigpacUse(self):
-        return self._sigpacData['USO_SIGPAC']
+    def sigpacUse(self, _properties):
+        return _properties['sigpacData']['USO_SIGPAC']
 
-    @property
-    def geometry(self):
-        return self._geometry
-
-    @property
-    def properties(self):
+    def properties(self, _properties, request=None):
         properties = {}
-        properties['elevation'] = self.elevation
-        properties['areaValue'] = self.areaValue
+        properties['elevation'] = _properties['elevation']
+        properties['areaValue'] = _properties['areaValue']
         properties['nationalCadastralReference'] = \
-            self.nationalCadastralReference
-        if self._request is not None:
-            properties['parcel-url'] = reverse('parcels-detail', args=[self.nationalCadastralReference], request=self._request)
-        properties['cadastralData'] = self.cadastralData
-        properties['sigpacData'] = self.sigpacData
+            _properties['nationalCadastralReference']
+        if request is not None:
+            properties['parcel-url'] = reverse('parcels-detail', args=[_properties['nationalCadastralReference']], request=request)
+        properties['cadastralData'] = self.cadastralData(_properties)
+        properties['sigpacData'] = self.sigpacData(_properties)
         return properties
 
-    @property
-    def cadastralData(self):
+    def cadastralData(self, _properties):
         cadastralData = {}
-        cadastralData['address'] = self.address
-        cadastralData['constructionUnits'] = self.constructionUnits
-        cadastralData['use'] = self.cadastralUse
+        cadastralData['address'] = self.address(_properties)
+        cadastralData['constructionUnits'] = self.constructionUnits(_properties)
+        cadastralData['use'] = self.cadastralUse(_properties)
         return cadastralData
 
-    @property
-    def sigpacData(self):
+    def sigpacData(self, _properties):
         sigpacData = {}
-        sigpacData['use'] = self.sigpacUse
+        sigpacData['use'] = self.sigpacUse(_properties)
         return sigpacData
-
-    @property
-    def bbox(self):
-        return self._bbox
-
-    @property
-    def toGeoJSON(self):
-        return geojson.FeatureCollection([self.toFeatureJSON])
-
-    @property
-    def toFeatureJSON(self):
-        return geojson.Feature(geometry=geojson.Polygon(self.geometry['coordinates']), properties=self.properties)
-
-
-def featurestoGeoJSON(features):
-    featureCollection = {}
-    featureCollection['type'] = 'FeatureCollection'
-    featureCollection['features'] = features
-    return featureCollection
 
 
 def getParcelByNationalCadastralReference(nationalCadastralReference):
@@ -150,7 +108,7 @@ def getParcelByNationalCadastralReference(nationalCadastralReference):
         doc_type=parcel_mapping,
         body=query)['hits']['hits'][0]['_source']
 
-    return Parcel(parcelDocument=parcelDocument).toGeoJSON
+    return Parcel(parcelDocument=parcelDocument)
 
 
 def getParcels(request=None):
@@ -181,6 +139,6 @@ def getParcels(request=None):
     parcels = []
 
     for parcelDocument in parcelsDocuments:
-        parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request).toFeatureJSON)
+        parcels.append(Parcel(parcelDocument=parcelDocument['_source'], request=request))
 
     return geojson.FeatureCollection(parcels)
