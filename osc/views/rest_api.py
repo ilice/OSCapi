@@ -219,7 +219,8 @@ class ParcelViewSet(viewsets.ViewSet):
     """API endpoint that allows retrieve parcel information"""
 
     def list(self, request):
-        return Response(getParcels(request=request))
+        bbox = request.query_params.get('bbox', None)
+        return Response(getParcels(request=request, bbox=bbox))
 
     def retrieve(self, request, pk=""):
         try:

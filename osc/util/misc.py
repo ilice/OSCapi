@@ -3,7 +3,7 @@ import pytz
 
 from django.conf import settings
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def localize_datetime(datetime):

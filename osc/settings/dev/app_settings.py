@@ -24,7 +24,53 @@ ELASTICSEARCH = {
     'port': 443,
     'use_ssl': True,
     'timeout': '3s',
-    'retries': 1
+    'retries': 1,
+    'parcel_search_by_bbox': {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": "properties.sigpacData"
+                        }
+                    },
+                    {
+                        "exists": {
+                            "field": "properties.elevation"
+                        }
+                    }
+                ],
+                "filter": {
+                    "geo_bounding_box": {
+                        "properties.reference_point": {
+                            "top": "",
+                            "left": "",
+                            "bottom": "",
+                            "right": ""
+                        }
+                    }
+                }
+            }
+        }
+    },
+    'parcel_search': {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "exists": {
+                            "field": "properties.sigpacData"
+                        }
+                    },
+                    {
+                        "exists": {
+                            "field": "properties.elevation"
+                        }
+                    }
+                ]
+            }
+        }
+    }
 }
 
 GOOGLE = {
