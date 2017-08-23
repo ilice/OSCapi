@@ -13,6 +13,7 @@ SECRET_KEY = secrets.get('django', 'SECRET_KEY')
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 DEBUG = False
 ALLOWED_HOSTS = [u'oscapi', u'web']
+USE_X_FORWARDED_HOST=True
 
 # Whether to use a secure cookie for the CSRF cookie. If this is set to True, the cookie will be
 # marked as secure, which means browsers may ensure that the cookie is only sent with an HTTPS connection.
