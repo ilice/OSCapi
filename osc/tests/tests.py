@@ -21,9 +21,9 @@ class RestAPITest(TestCase):
         # forget an assertion
         self.assertTrue(True, "shouldn't throw exceptions")
 
-    def test_api_altitude_returns_400_when_no_locations(self):
+    def test_api_altitude_returns_401_when_no_authentication_credentials(self):
         c = Client()
         response = c.get('/altitud/')
-        self.assertTrue(response.status_code == 400,
-                        "Status code should be 400 because altitude"
-                        " request should bring locations")
+        self.assertTrue(response.status_code == 401,
+                        "Status code should be 401 because authentication "
+                        "credentials were not provided")

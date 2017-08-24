@@ -11,7 +11,6 @@ import osc.services.users as users_service
 from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import AdminRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import status
@@ -21,6 +20,7 @@ from rest_framework import viewsets
 
 class GoogleElevationList(generics.RetrieveAPIView):
     """Obtain elevations from google from google"""
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
         param = request.query_params.get('locations', '')
@@ -87,6 +87,7 @@ class ParcelList(APIView):
 
 class CropList(APIView):
     parser_classes = (JSONParser,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
         query = request.data
@@ -103,6 +104,7 @@ class CropList(APIView):
 
 class CropDetail(APIView):
     parser_classes = (JSONParser,)
+    permission_classes = (IsAuthenticated,)
 
     def put(self, request, crop_id, format=None):
         query = request.data
@@ -177,7 +179,6 @@ class UserParcelsDetail(APIView):
 
 class UserDetail(APIView):
     """Returns active users. """
-    renderer_classes = (AdminRenderer, )
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -198,6 +199,7 @@ class UserDetail(APIView):
 
 class OwnedParcels(APIView):
     parser_classes = (JSONParser,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
 
@@ -211,6 +213,7 @@ class OwnedParcels(APIView):
 
 class UserParcelSet(viewsets.ModelViewSet):
     """API endpoint that allows user parcel to be viewed or edited. """
+    permission_classes = (IsAuthenticated,)
     queryset = UserParcel.objects.all()
     serializer_class = UserParcelSerializer
 
