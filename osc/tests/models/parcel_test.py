@@ -43,7 +43,7 @@ class ParcelTest(TestCase):
                             'geo_bounding_box':
                             {
                                 'properties.reference_point':
-                                {'top': '40.441145', 'bottom': '40.435861', 'right': '-5.763941', 'left': '-5.746592'}
+                                {'top': '40.441145', 'bottom': '40.435861', 'left': '-5.763941', 'right': '-5.746592'}
                             }
                         },
                         'must': [

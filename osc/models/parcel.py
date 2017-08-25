@@ -111,7 +111,7 @@ def getParcelByNationalCadastralReference(nationalCadastralReference):
 def getParcels(request=None, bbox=None):
     __max_elastic_query_size = 20 if bbox is None else MAX_ELASTIC_QUERY_SIZE
 
-    bottom, right, top, left = bbox.split(',') if bbox is not None else ["", "", "", ""]
+    bottom, left, top, right = bbox.split(',') if bbox is not None else ["", "", "", ""]
     PARCEL_SEARCH_BY_BBOX['query']['bool']['filter']['geo_bounding_box']['properties.reference_point']['top'] = top
     PARCEL_SEARCH_BY_BBOX['query']['bool']['filter']['geo_bounding_box']['properties.reference_point']['left'] = left
     PARCEL_SEARCH_BY_BBOX['query']['bool']['filter']['geo_bounding_box']['properties.reference_point']['bottom'] = bottom
