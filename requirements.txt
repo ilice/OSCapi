@@ -24,7 +24,6 @@ flake8==2.5.5
 flake8-polyfill==1.0.1
 funcsigs==1.0.2
 functools32==3.2.3.post2
-Geohash==1.0
 geojson==2.0.0
 geopy==1.11.0
 gunicorn==19.6.0
@@ -58,6 +57,7 @@ pyparsing==2.1.10
 pyproj==1.9.5.1
 pyshp==1.2.11
 python-dateutil==2.6.0
+python-geohash==0.8.5
 pytz==2016.7
 requests==2.18.1
 rsa==3.4.2

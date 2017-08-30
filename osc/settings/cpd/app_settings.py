@@ -48,6 +48,21 @@ ELASTICSEARCH = {
     'use_ssl': False,
     'timeout': '60s',
     'retries': 3,
+    'cluster_agg': {
+        "2": {
+            "geohash_grid": {
+                "field": "properties.reference_point",
+                "precision": 0
+            },
+            "aggs": {
+                "area": {
+                    "sum": {
+                        "field": "properties.areaValue"
+                    }
+                }
+            }
+        }
+    },
     'parcel_search_by_bbox': {
         "query": {
             "bool": {

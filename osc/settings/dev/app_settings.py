@@ -25,6 +25,21 @@ ELASTICSEARCH = {
     'use_ssl': True,
     'timeout': '3s',
     'retries': 1,
+    'cluster_agg': {
+        "2": {
+            "geohash_grid": {
+                "field": "properties.reference_point",
+                "precision": 0
+            },
+            "aggs": {
+                "area": {
+                    "sum": {
+                        "field": "properties.areaValue"
+                    }
+                }
+            }
+        }
+    },
     'parcel_search_by_bbox': {
         "query": {
             "bool": {
@@ -172,32 +187,48 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
-        'file': {
+        'db_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': AUX_DIRS['log_dir'] + '/debug.log',
+            'filename': AUX_DIRS['log_dir'] + '/db_debug.log',
             'maxBytes': 1024*50,  # 50 kB
             'backupCount': 10,
             'formatter': 'standard'
         },
+        'django_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': AUX_DIRS['log_dir'] + '/django_debug.log',
+            'maxBytes': 1024*50,  # 50 kB
+            'backupCount': 10,
+            'formatter': 'standard'
+        },
+        'osc_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': AUX_DIRS['log_dir'] + '/osc_debug.log',
+            'maxBytes': 1024*50,  # 50 kB
+            'backupCount': 10,
+            'formatter': 'standard'
+        }
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console', 'django_file'],
             'propagate': True,
             'level': 'WARN',
         },
         'django.db.backends': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console', 'db_file'],
             'level': 'INFO',
-            'propagate': False,
+            'propagate': True,
         },
         'osc': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console', 'osc_file'],
             'level': 'DEBUG',
             'propagate': True,
         },

@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import Geohash
+import geohash
 import json
 import logging
 import requests
@@ -665,7 +665,7 @@ def get_bucket_of_parcels_by_bbox_and_precision(
         parcels_buckets = []
         max = min = 0
         for bucket in result['aggregations']['2']['buckets']:
-            (lat, lng, lat_err, lng_err) = Geohash.decode_exactly(
+            (lat, lng, lat_err, lng_err) = geohash.decode_exactly(
                 bucket['key'])
             parcels_buckets.append(
                 {"geometry": {

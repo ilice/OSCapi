@@ -223,7 +223,8 @@ class ParcelViewSet(viewsets.ViewSet):
 
     def list(self, request):
         bbox = request.query_params.get('bbox', None)
-        return Response(getParcels(request=request, bbox=bbox))
+        precision = request.query_params.get('precision', None)
+        return Response(getParcels(request=request, bbox=bbox, precision=precision))
 
     def retrieve(self, request, pk=""):
         try:
