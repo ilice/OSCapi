@@ -229,20 +229,46 @@ class ParcelViewSet(viewsets.ViewSet):
         GET /parcels
     <table class="table table-condensed">
         <tr>
-            <th>Parameter</th>
+            <th>URL Parameter</th>
             <th>Default</th>
             <th>Description</th>
+            <th>Example</th>
         </tr>
         <tr>
-            <td>Parameter</td>
-            <td>Default</td>
-            <td>Description</td>
+            <td>cadastralReference</td>
+            <td>None</td>
+            <td>[Official and obligatory identifier of real estate][cadastralReference], it consist of 14 characters: the first two identify the province, the next three the municipality, the following is the character corresponding to the sector, pointing aggregate or zone reparcelling (if any), the following three identify the polygon (the municipality is divided into polygons based homogeneity crop, existence of geographical features, etc.), the following five identify each parcel within the corresponding polygon.</td>
+            <td>37284A00600106</td>
         </tr>
     </table>
+
+    <table class="table table-condensed">
+        <tr>
+            <th>Query Parameter</th>
+            <th>Default</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td>bbox</td>
+            <td>None</td>
+            <td>Filter parcels using a bounding box. Array values are west, south, east, north</td>
+            <td>?bbox=-5.763941,40.435861,-5.746592,40.441145</td>
+        </tr>
+        <tr>
+            <td>precision</td>
+            <td>None</td>
+            <td>Agreggregates parcels and group it into buckets that represent cells ins a grid, can have a choice of presision between 1 and 12.</td>
+            <td>?bbox=-5.763941,40.435861,-5.746592,40.441145&precission=5</td>
+        </tr>
+    </table>
+    ### Show parcel
+        GET /parcels/{cadastralReference}
 
     [osc]: https://opensmartcountry.com/ "Open Smart Country"
     [geojson]: http://geojson.org/ "GeoJSON Home Page"
     [polygon]: https://tools.ietf.org/html/rfc7946#section-3.1.6 "The GeoJSON Polygon Specification (RFC 7946)"
+    [cadastralReference]: http://www.catastro.meh.es/esp/referencia_catastral.asp
     """
 
     def list(self, request):
