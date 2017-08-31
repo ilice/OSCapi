@@ -219,7 +219,31 @@ class UserParcelSet(viewsets.ModelViewSet):
 
 
 class ParcelViewSet(viewsets.ViewSet):
-    """API endpoint that allows retrieve parcel information"""
+    """A parcel is the core entity from [OSC][osc].
+
+    Its format is [GeoJSON][geojson], a format for encoding geographic data
+    structures, each parcel is a Feature with a [Polygon][polygon] geometry
+    type.
+
+    ### List parcels
+        GET /parcels
+    <table class="table table-condensed">
+        <tr>
+            <th>Parameter</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Parameter</td>
+            <td>Default</td>
+            <td>Description</td>
+        </tr>
+    </table>
+
+    [osc]: https://opensmartcountry.com/ "Open Smart Country"
+    [geojson]: http://geojson.org/ "GeoJSON Home Page"
+    [polygon]: https://tools.ietf.org/html/rfc7946#section-3.1.6 "The GeoJSON Polygon Specification (RFC 7946)"
+    """
 
     def list(self, request):
         bbox = request.query_params.get('bbox', None)
@@ -237,7 +261,9 @@ class ParcelViewSet(viewsets.ViewSet):
 
 
 class OpenSmartCountryApiView(APIView):
-    """This is the entry point for the API used in [Open Smart Country][osc].
+    """Welcome to the OSC API. This is the entry point for the API used by
+    [Open Smart Country][osc], so almost everything the web ui is able to do
+    can also be accomplished via the API.
 
     Follow the hyperlinks each resource offers to explore the API.
 
@@ -245,7 +271,7 @@ class OpenSmartCountryApiView(APIView):
     using the `curl` command-line tool.
 
     For example: `curl -X GET https://opensmartcountry.com/api -H "Accept: application/json; indent=4"`
-    [osc]: https://opensmartcountry.com/
+    [osc]: https://opensmartcountry.com/ "Open Smart Country"
     """
     def get(self, request):
         data = {
