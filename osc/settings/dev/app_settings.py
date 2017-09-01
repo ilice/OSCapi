@@ -43,18 +43,6 @@ ELASTICSEARCH = {
     'parcel_search_by_bbox': {
         "query": {
             "bool": {
-                "must": [
-                    {
-                        "exists": {
-                            "field": "properties.sigpacData"
-                        }
-                    },
-                    {
-                        "exists": {
-                            "field": "properties.elevation"
-                        }
-                    }
-                ],
                 "filter": {
                     "geo_bounding_box": {
                         "properties.reference_point": {
@@ -70,20 +58,6 @@ ELASTICSEARCH = {
     },
     'parcel_search': {
         "query": {
-            "bool": {
-                "must": [
-                    {
-                        "exists": {
-                            "field": "properties.sigpacData"
-                        }
-                    },
-                    {
-                        "exists": {
-                            "field": "properties.elevation"
-                        }
-                    }
-                ]
-            }
         }
     }
 }

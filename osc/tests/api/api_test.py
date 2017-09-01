@@ -90,7 +90,7 @@ class ParcelAPITest(TestCase):
     @mock.patch('osc.models.parcel.es.search', return_value=parcel_document_by_nationalCadastralReference_response)
     def test_get_parcel_by_cadastral_code_returns_correct_parcel(self, mock_es):
         self.maxDiff = None
-        cadastralCode = "37284A00600114"
+        cadastralCode = "37284A00600106"
         url = '/parcels/{}/'
         response = self.client.get(url.format(cadastralCode))
         self.assertEqual(response.data, self.parcel_by_nationalCadastralReference_response)

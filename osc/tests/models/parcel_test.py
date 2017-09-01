@@ -31,7 +31,7 @@ class ParcelTest(TestCase):
     @mock.patch('osc.models.parcel.es')
     def test_getParcel_calls_elastic_once(self, mock_es):
         mock_es.search.return_value = self.get_parcel_by_bbox_response
-        getParcels(bbox='40.435861,-5.763941,40.441145,-5.746592')
+        getParcels(bbox='-5.763941,40.435861,-5.746592,40.441145')
         mock_es.search.assert_called_with(
             body={
                 'query':
@@ -45,11 +45,7 @@ class ParcelTest(TestCase):
                                 'properties.reference_point':
                                 {'top': '40.441145', 'bottom': '40.435861', 'left': '-5.763941', 'right': '-5.746592'}
                             }
-                        },
-                        'must': [
-                            {'exists': {'field': 'properties.sigpacData'}},
-                            {'exists': {'field': 'properties.elevation'}}
-                        ]
+                        }
                     }
                 }
             },

@@ -53,7 +53,7 @@ class Parcel(geojson.Feature):
                     .format(properties['sigpacData']['POLIGONO'],
                             properties['sigpacData']['PARCELA'],
                             properties['sigpacData']['MUNICIPIO'],
-                            properties['sigpacData']['PROVINCIA']))
+                            properties['sigpacData']['PROVINCIA'])) if 'sigpacData' in properties else None
 
     def __constructionUnits(self, properties):
         try:
@@ -68,11 +68,11 @@ class Parcel(geojson.Feature):
             return 'NO-USE'
 
     def __sigpacUse(self, properties):
-        return properties['sigpacData']['USO_SIGPAC']
+        return properties['sigpacData']['USO_SIGPAC'] if 'sigpacData' in properties else None
 
     def __properties(self, properties, request=None):
         __properties = {}
-        __properties['elevation'] = properties['elevation']
+        __properties['elevation'] = properties['elevation'] if 'elevation' in properties else None
         __properties['areaValue'] = properties['areaValue']
         __properties['nationalCadastralReference'] = \
             properties['nationalCadastralReference']
@@ -178,9 +178,10 @@ def getParcels(request=None, bbox=None, precision=None):
         if __parcelBucketDocument['doc_count'] < min:
             min = __parcelBucketDocument['doc_count']
 
-    # for __parcels_bucket in __parcels_buckets:
-    #     __parcels_bucket['properties']['num_buckets'] = len(__parcels_buckets)
-    #     __parcels_bucket['properties']['min_value'] = min
-    #     __parcels_bucket['properties']['max_value'] = max
+    # TODO(teanocrata) For dot scaling in OSCWeb, depends from bbox, Q&D fix, redesing
+    for __parcels_bucket in __parcels_buckets:
+        __parcels_bucket['properties']['num_buckets'] = len(__parcels_buckets)
+        __parcels_bucket['properties']['min_value'] = min
+        __parcels_bucket['properties']['max_value'] = max
 
     return geojson.FeatureCollection(__parcels_buckets) if len(__parcels_buckets) > 0 else geojson.FeatureCollection(__parcels)
