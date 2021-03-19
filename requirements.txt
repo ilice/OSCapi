@@ -32,7 +32,7 @@ hacking==0.13.0
 httplib2==0.9.2
 idna==2.5
 itypes==1.1.0
-Jinja2==2.9.6
+Jinja2==2.11.3
 jsonschema==2.6.0
 Markdown==2.6.8
 MarkupSafe==1.0
